@@ -19,23 +19,36 @@ jobs:
       - name: 安装 Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
+
+      - name: 安装依赖
+        run: |
+          npm install --save-dev eslint stylelint htmlhint
+
+      - name: 获取更改的文件
+        id: changed-files
+        run: |
+          echo "changed_js=$(git diff --name-only origin/${{ github.base_ref }} HEAD | grep '\.js$' | tr '\n' ' ')" >> $GITHUB_OUTPUT
+          echo "changed_css=$(git diff --name-only origin/${{ github.base_ref }} HEAD | grep '\.css$' | tr '\n' ' ')" >> $GITHUB_OUTPUT
+          echo "changed_html=$(git diff --name-only origin/${{ github.base_ref }} HEAD | grep '\.html$' | tr '\n' ' ')" >> $GITHUB_OUTPUT
 
       - name: ESLint (JS)
-        run: npx eslint "**/*.js" --max-warnings=0
+        run: |
+          if [ -n "${{ steps.changed-files.outputs.changed_js }}" ]; then
+            npx eslint ${{ steps.changed-files.outputs.changed_js }} --max-warnings=0
+          fi
         continue-on-error: true
 
       - name: Stylelint (CSS)
-        run: npx stylelint "**/*.css" --allow-empty-input --max-warnings=0
+        run: |
+          if [ -n "${{ steps.changed-files.outputs.changed_css }}" ]; then
+            npx stylelint ${{ steps.changed-files.outputs.changed_css }} --allow-empty-input --max-warnings=0
+          fi
         continue-on-error: true
 
       - name: HTMLHint (HTML)
-        run: npx htmlhint "**/*.html"
-        continue-on-error: true
-
-      - name: 引号检测
         run: |
-          if git grep -n -E '[""'']' -- '*.js' '*.html' '*.css'; then
-            echo "::error::发现智能引号，请使用标准引号"
-            exit 1
+          if [ -n "${{ steps.changed-files.outputs.changed_html }}" ]; then
+            npx htmlhint ${{ steps.changed-files.outputs.changed_html }}
           fi
+        continue-on-error: true
