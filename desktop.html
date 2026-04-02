@@ -2202,9 +2202,9 @@ toggletheme() 切换主题
 				<a class="a" onclick="apps.edge.reload()">
 					<i class="bi bi-arrow-clockwise"></i>
 				</a>
-				<input type="text" onkeyup="if(event.keyCode==13&&$(this).val()!=''){apps.edge.goto($(this).val())}"
+				<input type="text" onkeyup="if(event.keyCode==13&&$(this).val().trim().length()!=0){apps.edge.goto($(this).val())}"
 					placeholder="在必应中搜索，或输入一个网址" class="url" spellcheck="false" id="edge-path" data-i18n-attr="placeholder" data-i18n-key="edge.schbing">
-				<input type="text" onkeyup="if(event.keyCode==13&&$(this).val()!=''){m_tab.rename('edge',$(this).val());}"
+				<input type="text" onkeyup="if(event.keyCode==13&&$(this).val().trim().length()!=0){m_tab.rename('edge',$(this).val());}"
 					placeholder="为标签页命名" class="rename" spellcheck="false"  data-i18n-attr="placeholder" data-i18n-key="edge.rename">
 				<a class="a">
 					<i class="bi bi-info-circle" win12_title="浏览器只能访问允许嵌套的网站。由于规则限制无法获取网页标题，请右键标签页手动命名"></i>
@@ -2215,7 +2215,7 @@ toggletheme() 切换主题
 					if(t.length>7){
 						t = t.substring(0,7) + '...';
 					}
-          var className = 'save_' + Math.random().toString(36).substr(2);
+            		var className = 'save_' + Math.random().toString(36).substr(2);
 					document.getElementById('save-bar').innerHTML += "<a class='save-item " + className + "' " + `oncontextmenu="return showcm(event,'save-bar', '${className}');"` + "  onclick='apps.edge.goto(`" + document.getElementById('edge-path').value +  "`)' win12_title='" + document.getElementById('edge-path').value + "' class='save-item'><i class='bi bi-file-earmark'></i>" + t + "</a>";
 				}
 				</script>

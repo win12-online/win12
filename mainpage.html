@@ -84,13 +84,16 @@
             if (event.keyCode === 13) {
                 // 获取输入框的值
                 var inputValue = event.target.value;
-                // 判断是否为搜索查询
-                if (isSearchQuery(inputValue)) {
-                    // 在Bing中搜索
+                const isInvalid = (inputValue == null) || (inputValue.trim().length === 0);
+                //空内容检查by@stxttkx 2026-03-02
+                if (!isInvalid) {
+                    if (isSearchQuery(inputValue)) {
+                    // 如果输入是搜索查询，执行搜索
                     searchInBing(inputValue);
-                } else {
-                    // 导航到指定URL
-                    navigateToURL(inputValue);
+                    } else {
+                        // 否则，导航到输入的URL
+                        navigateToURL(inputValue);
+                    }
                 }
             }
         }
