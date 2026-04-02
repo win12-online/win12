@@ -88,15 +88,19 @@
     animation: msg 400ms cubic-bezier(0,0,0,1);
     user-select:text;
 }
+:root.corner_squ #copilot>.chat>.line>.text {
+    corner-shape: squircle;
+    border-radius: 20px;
+}
 #copilot>.chat>.line.ai>.text{
     background-color: var(--msg);
 }
 #copilot>.chat>.line.user>.text{
-    background: linear-gradient(100deg,#3397e9c0,#024bb1d6);
+    background: linear-gradient(100deg,#3397e9c0,#1b5dbad6);
     color: #fff;
 }
 #copilot>.chat>.line.system>.text{
-    background: linear-gradient(100deg,#ca3ee0b0,#6f0bbcbe);
+    background: linear-gradient(100deg,#ca3ee0b0,#7e26c2be);
     color: #fff;
 }
 #copilot>.chat>.line.ai>.text>.action{
@@ -105,6 +109,10 @@
     border-radius: 9px;
     box-shadow: 0 1px 2px var(--s3d);
     margin: 10px 5px;
+}
+:root.corner_squ #copilot>.chat>.line.ai>.text>.action {
+    corner-shape: squircle;
+    border-radius: 20px;
 }
 #copilot>.chat>.line.ai>.text>.action>.tit{
     font-size: 20px;

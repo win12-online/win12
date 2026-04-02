@@ -23,10 +23,9 @@
     transition: 200ms;
 }
 
-
 :root.corner_squ .wg {
     corner-shape: squircle;
-    border-radius: 20px;
+    border-radius: 25px;
 }
 
 .wg>.titbar {

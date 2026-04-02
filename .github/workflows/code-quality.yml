@@ -1,0 +1,41 @@
+name: 代码质量检查
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '**.js'
+      - '**.css'
+      - '**.html'
+
+jobs:
+  lint:
+    name: 语法检查
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 安装 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: ESLint (JS)
+        run: npx eslint "**/*.js" --max-warnings=0
+        continue-on-error: true
+
+      - name: Stylelint (CSS)
+        run: npx stylelint "**/*.css" --allow-empty-input --max-warnings=0
+        continue-on-error: true
+
+      - name: HTMLHint (HTML)
+        run: npx htmlhint "**/*.html"
+        continue-on-error: true
+
+      - name: 引号检测
+        run: |
+          if git grep -n -E '[""'']' -- '*.js' '*.html' '*.css'; then
+            echo "::error::发现智能引号，请使用标准引号"
+            exit 1
+          fi

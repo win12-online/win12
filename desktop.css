@@ -7,10 +7,10 @@
 /* 通用颜色配置，分深浅主题 */
 :root {
     --text: #000;
-    --text2: #444;
+    --text2: #666;
     --bg: #ffffff;
-    --bg50: #ffffff90;
-    --bg70: #fefefeb7;
+    --bg50: #ffffffb0;
+    --bg70: #ffffffc0;
     --shadow: #22222230;
     --card: #efefef75;
     --hover: #ffffff65;
@@ -37,8 +37,8 @@
     --text: #eee;
     --text2: #aaa;
     --bg: #000000;
-    --bg50: #00000065;
-    --bg70: #111111c5;
+    --bg50: #111111a0;
+    --bg70: #1a1a1ac5;
     --shadow: #000000a0;
     --card: #72727240;
     --hover: #aaaaaa30;
@@ -240,18 +240,16 @@ input.foc {
 .btn-icon {
     border: 0px solid;
     border-radius: 10px;
-    padding: 1px 5px;
     background-color: #00000000;
-    font-size: 23px;
+    font-size: 22px;
     height: 33px;
     width: 33px;
     overflow: hidden;
-    /* display: flex; */
 }
 
 .btn-icon.big {
-    padding: 3px 7px;
-    font-size: 19px;
+    padding: 3px 8px;
+    font-size: 17px;
 }
 
 .btn:hover {
@@ -267,20 +265,21 @@ input.foc {
     background-color: #9f9f9f40;
     border-radius: 7px;
     padding: 6px 12px;
-    cursor: pointer;
+    cursor: default;
+    text-align: center;
 }
 
 :root.corner_squ .button {
     corner-shape: squircle;
-    border-radius: 15px;
+    border-radius: 20px;
 }
 
 .button:hover {
-    filter: brightness(1.2);
+    backdrop-filter: invert(0.1);
 }
 
 .button:active {
-    filter: brightness(1.2) opacity(0.8);
+    opacity: 0.8;
 }
 
 
@@ -448,11 +447,12 @@ list>span.focs.cl {
     border-radius: 10px;
     height: 100%;
     background-color: var(--contextmeu);
-    backdrop-filter: blur(20px) saturate(1.5);
-    -webkit-backdrop-filter: blur(20px) saturate(1.5);
+    backdrop-filter: blur(20px) saturate(2);
+    -webkit-backdrop-filter: blur(20px) saturate(2);
     box-shadow: 0 1px 2px #44444460, 0px 3px 25px 1px var(--shadow);
     padding: 7px 6px;
     margin: 0 3px;
+    outline: 1px solid #99999950;
     display: flex;
     transition: 200ms, transform 300ms cubic-bezier(0.14, 1.02, 0.17, 0.03), backdrop-filter, -webkit-backdrop-filter 0ms;
     bottom: 0;
@@ -462,7 +462,7 @@ list>span.focs.cl {
 
 :root.corner_squ .dock {
     corner-shape: squircle;
-    border-radius: 18px;
+    border-radius: 20px;
 }
 
 .dock>* {
@@ -470,7 +470,7 @@ list>span.focs.cl {
     padding-right: 3px;
 }
 
-/* .dock.about:hover, */
+.dock.control:hover,
 .dock.theme:hover,
 .dock.date:hover {
     backdrop-filter: blur(20px) saturate(1.5) brightness(1.2);
@@ -832,29 +832,26 @@ list>span.focs.cl {
 
 /*** 以下开始等菜单 ***/
 
-#start-menu {
+
+#start-menu,
+#search-win,
+#widgets,
+#datebox,
+#control{
     display: none;
     position: fixed;
-    bottom: -600px;
-    height: 594px;
-    max-height: calc(100% - 120px);
-    width: 900px;
-    left: calc(50% - 450px);
     border-radius: 20px;
-    background: var(--bg70);
-    backdrop-filter: blur(60px) saturate(3) contrast(0.8);
-    /* backdrop-filter: blur(80px) saturate(1.3); */
+    background: var(--bg50);
+    /* backdrop-filter: blur(60px) saturate(3) contrast(0.8); */
+    backdrop-filter: saturate(4) contrast(0.8) blur(70px);
     -webkit-backdrop-filter: blur(60px) saturate(3) contrast(0.8);
     opacity: 0.5;
-    transition: 200ms;
-    box-shadow: 3px 3px 25px 1px var(--shadow);
-    border: 1.5px solid #6f6f6f30;
+    border: 1.5px solid #99999950;
     z-index: 91;
-    padding: 2px 4px;
+    box-shadow: 3px 3px 20px 1px var(--shadow);
+    transition: 0ms, transform 400ms cubic-bezier(0.05, 0.96, 0.11, 1), opacity 300ms;
     bottom: 60px;
-    transform: translateY(650px);
 }
-
 
 :root.corner_squ {
 
@@ -868,12 +865,22 @@ list>span.focs.cl {
     }
 }
 
+#start-menu {
+    height: 594px;
+    max-height: calc(100% - 120px);
+    width: 900px;
+    left: calc(50% - 450px);
+    box-shadow: 3px 3px 25px 1px var(--shadow);
+    padding: 2px 4px;
+    bottom: 60px;
+    transform: translateY(700px);
+}
+
 #start-menu.show-begin {
     display: flex;
 }
 
 #start-menu.show {
-    display: flex;
     opacity: 1;
     transform: none !important;
 }
@@ -990,9 +997,6 @@ input-before {
     align-items: end;
 }
 
-/* #startmenu-r>.row1>.tool>* {
-    float: right;
-} */
 
 #startmenu-r>.row1>.tool>.pw {
     display: flex;
@@ -1007,10 +1011,6 @@ input-before {
     padding: 0;
     /* padding-left: 0; */
 }
-
-/* #startmenu-r>.row1>.tool>.pw>.btn-icon.power:active {
-    opacity: 0.7;
-} */
 
 #startmenu-r>.row1>.tool>.pw>.power.show {
     width: 100px;
@@ -1043,17 +1043,6 @@ input-before {
     border-radius: 0 10px 10px 0;
 }
 
-/* #startmenu-r>.row1>.tool>.pw>.btn-icon>.bi-arrow-counterclockwise::before {
-    position: relative;
-    top: 1.15px;
-} */
-
-/* #startmenu-r>.row1>.tool>.btn-icon>.bi-power::before {
-    position: relative;
-    top: -2px;
-} */
-
-
 #startmenu-r>.row1>.tool>.pw>.btn-icon.show>i {
     background-color: var(--hover-h);
 }
@@ -1073,7 +1062,7 @@ input-before {
     background-color: var(--card);
     box-shadow:  0px 1px 8px var(--s3d);
     border-radius: 10px;
-    padding: 10px;
+    padding: 7px 10px;
 }
 
 
@@ -1082,7 +1071,7 @@ input-before {
     #startmenu-r>.pinned,
     #startmenu-r>.tuijian {
         corner-shape: squircle;
-        border-radius: 20px;
+        border-radius: 25px;
     }
 }
 
@@ -1216,7 +1205,7 @@ input-before {
 
 .sm-app.enable {
     color: var(--text);
-    cursor: pointer;
+    cursor: default;
 }
 
 .sm-app.enable:hover {
@@ -1296,24 +1285,12 @@ input-before {
 }
 
 #search-win {
-    display: none;
-    position: fixed;
-    bottom: -500px;
-    height: 500px;
-    max-height: calc(90% - 120px);
+    height: 594px;
+    max-height: calc(100% - 120px);
     width: 600px;
     left: calc(50% - 300px);
-    border-radius: 20px;
-    background: var(--bg70);
-    backdrop-filter: blur(60px) saturate(3) contrast(0.8);
-    /* backdrop-filter: blur(80px) saturate(1.3); */
-    -webkit-backdrop-filter: blur(60px) saturate(3) contrast(0.8);
-    opacity: 0.8;
-    transition: 200ms;
-    box-shadow: 3px 3px 15px 1px var(--shadow);
-    border: 1.5px solid #6f6f6f30;
-    z-index: 91;
     padding: 15px;
+    transform: translateY(660px);
 }
 
 
@@ -1323,12 +1300,8 @@ input-before {
 }
 
 #search-win.show {
-    max-height: calc(100% - 120px);
-    height: 594px;
-    display: flex;
-    flex-direction: column;
-    bottom: 60px;
     opacity: 1;
+    transform: none;
 }
 
 #search-win>.input {
@@ -1456,23 +1429,13 @@ input-before {
 }
 
 #widgets {
-    display: none;
-    position: fixed;
-    bottom: -600px;
+    bottom: 60px;
     height: 600px;
     max-height: calc(90% - 50px);
     width: 1000px;
     left: calc(50% - 500px);
-    border-radius: 20px;
-    background: var(--bg70);
-    backdrop-filter: blur(60px) saturate(3) contrast(0.8);
-    /* backdrop-filter: blur(80px) saturate(1.3); */
-    -webkit-backdrop-filter: blur(60px) saturate(3) contrast(0.8);
-    transition: 200ms;
-    box-shadow: 3px 3px 15px 1px var(--shadow);
-    border: 1.5px solid #6f6f6f30;
-    z-index: 91;
     padding: 10px 0;
+    transform: translateY(660px);
 }
 
 #widgets.show-begin {
@@ -1480,7 +1443,8 @@ input-before {
 }
 
 #widgets.show {
-    bottom: 60px;
+    opacity: 1;
+    transform: none;
 }
 
 #widgets>div {
@@ -1653,25 +1617,30 @@ input-before {
 
 #datebox,
 #control {
-    display: none;
-    position: fixed;
-    bottom: -450px;
-    height: 450px;
     width: 350px;
-    border-radius: 20px;
-    background-color: var(--bg50);
-    backdrop-filter: blur(50px) saturate(3) contrast(0.8);
-    -webkit-backdrop-filter: blur(50px) saturate(3) contrast(0.8);
-    transition: 200ms;
-    box-shadow: 3px 3px 15px 1px var(--shadow);
-    border: 1.5px solid #6f6f6f30;
-    z-index: 91;
     padding: 10px;
 }
 
+#datebox.show-begin,
+#control.show-begin {
+    display: flex;
+    flex-direction: column;
+}
+
+#datebox.show,
+#control.show {
+    transform: none;
+    opacity: 1;
+}
 
 #control {
     height: 250px;
+    transform: translateY(320px);
+}
+
+#datebox{
+    height: 450px;
+    transform: translateY(520px);
 }
 
 .dock.control * {
@@ -1707,6 +1676,12 @@ input-before {
     align-items: center;
     transition: 70ms, transform 400ms cubic-bezier(0.14, 1.02, 0.17, 0.03);
 }
+
+:root.corner_squ #control>.cont>.top>div>.icon {
+    corner-shape: squircle;
+    border-radius: 20px;
+}
+
 
 #control>.cont>.top>div>.icon.active {
     background-image: linear-gradient(120deg, var(--theme-1), var(--theme-2));
@@ -1800,19 +1775,6 @@ input-before {
     border-width: 6px;
 }
 
-#datebox.show-begin,
-#control.show-begin {
-    display: flex;
-    flex-direction: column;
-}
-
-#datebox.show,
-#control.show {
-    display: flex;
-    flex-direction: column;
-    bottom: 60px;
-}
-
 #datebox>.tit {
     padding: 3px 5px;
     margin: 0;
@@ -1901,7 +1863,7 @@ input-before {
 
 :root.corner_squ #desktop>div {
     corner-shape: squircle;
-    border-radius: 15px;
+    border-radius: 20px;
 }
 
 #desktop>div:hover {
@@ -2233,6 +2195,11 @@ input-before {
     transform: scale(0.9);
 }
 
+:root.corner_squ .msg {
+    corner-shape: squircle;
+    border-radius: 20px;
+}
+
 .msg:hover {
     transition: 80ms;
     background-color: var(--msg);
@@ -2320,7 +2287,7 @@ input-before {
 
 :root.corner_squ #notice {
     corner-shape: squircle;
-    border-radius: 20px;
+    border-radius: 25px;
 }
 
 #notice.show {
@@ -2405,16 +2372,6 @@ input-before {
     z-index: 90;
 }
 
-:root.mica .window.foc {
-    /* background: url(bg-dark-mica.jpg) no-repeat fixed center; */
-    background: var(--mica) no-repeat fixed center;
-    background-size: cover;
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-    background-color: unset;
-    background-color: var(--unfoc);
-}
-
 :root.corner_squ .window {
     corner-shape: squircle;
     border-radius: 20px;
@@ -2426,10 +2383,19 @@ input-before {
 
 .window.foc {
     background: var(--bg70);
-    backdrop-filter: saturate(3.5) contrast(0.8) blur(60px);
+    backdrop-filter: saturate(4) contrast(0.8) blur(60px);
     filter: none;
-    -webkit-backdrop-filter: saturate(3.5) contrast(0.8) blur(60px);
+    -webkit-backdrop-filter: saturate(5) contrast(0.8) blur(60px);
     box-shadow: 3px 3px 20px 3px var(--shadow);
+}
+
+:root.mica .window.foc {
+    /* background: url(bg-dark-mica.jpg) no-repeat fixed center; */
+    background: var(--mica) no-repeat fixed center;
+    background-size: cover;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background-color: var(--unfoc);
 }
 
 .window.webapp {
@@ -2902,4 +2868,25 @@ body>.container>.image-container>.svg {
     height: 100%;
     object-fit: cover;
     pointer-events: none;
+}
+
+@media screen and (max-width: 768px) {
+    body .window.window {
+        width: 92vw;
+        height: 75vh;
+    }
+
+
+    body .taskbar-icon {
+        padding: 0 10px;
+    }
+
+    body ::-webkit-scrollbar {
+        width: 4px;
+    }
+
+    html {
+      scrollbar-width: thin; 
+    }
+}
 }

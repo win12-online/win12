@@ -45,6 +45,11 @@
     transition: 80ms;
 }
 
+:root.corner_squ #login {
+    corner-shape: squircle;
+    border-radius: 15px;
+}
+
 #login-welc{
     height: 100px;
     display: flex;
@@ -127,6 +132,7 @@
 
 #loginback>.langselect>*{
     padding: 4px 18px;
+    color: #fff;
 }
 #loginback>.langselect>.selected{
     pointer-events: none;

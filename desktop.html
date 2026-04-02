@@ -379,8 +379,8 @@ toggletheme() 切换主题
 					</a>
 				</div>
 				<div class="tool">
-					<p style="font-size: 40px;margin-bottom: -10px;" class="time">12:00</p>
-					<p class="date">星期一, 2368年13月34日</p>
+					<p style="font-size: 30px;margin: 12px 5px 2px 0;line-height:1;" class="time">12:00</p>
+					<p class="date" style="opacity: 0.5;">星期一, 2368年13月34日</p>
 					<div class="pw">
 						<a class="a btn btn-icon big" win12_title="切换全屏" onclick="
 							if($('#start-menu').hasClass('max')){
@@ -1292,7 +1292,7 @@ toggletheme() 切换主题
 		</div>
 		<div class="content" id="win-setting">
 			<div class="menu">
-				<a class="a user">
+				<a class="a user" onclick="$('#win-setting>.menu>list>a.user')[0].click();">
 					<svg viewBox="0,0,257,344" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" overflow="hidden"><defs><clipPath id="user-clip1"><rect x="382" y="195" width="257" height="344" /></clipPath><linearGradient x1="351.462" y1="233.56" x2="669.496" y2="500.422" gradientUnits="userSpaceOnUse" spreadMethod="reflect" id="user-fill3"><stop offset="0" stop-color="#A964C8" /><stop offset="0.35" stop-color="#A964C8" /><stop offset="0.87" stop-color="#2D8AD5" /><stop offset="1" stop-color="#2D8AD5" /></linearGradient><linearGradient x1="351.462" y1="233.56" x2="669.496" y2="500.422" gradientUnits="userSpaceOnUse" spreadMethod="reflect" id="user-fill4"><stop offset="0" stop-color="#A964C8" /><stop offset="0.35" stop-color="#A964C8" /><stop offset="0.87" stop-color="#2D8AD5" /><stop offset="1" stop-color="#2D8AD5" /></linearGradient></defs><g clip-path="url(#user-clip1)" transform="translate(-382 -195)"><path d="M637.755 433.872C642.215 515.221 579.577 537.983 508.011 537.983 436.444 537.983 376.676 507.833 383.513 437.11 383.109 425.234 389.59 414.133 398.634 409.891 413.82 402.768 444.753 402.936 507.484 402.997 570.214 403.058 609.164 402.279 621.521 407.947 633.878 413.614 638.011 424.609 637.755 433.872Z" fill="url(#user-fill3)" fill-rule="evenodd" /><path d="M422 285C422 235.847 461.623 196 510.5 196 559.377 196 599 235.847 599 285 599 334.153 559.377 374 510.5 374 461.623 374 422 334.153 422 285Z" fill="url(#user-fill4)" fill-rule="evenodd" /></g></svg>
 					<div>
 						<p data-i18n="setting.usrname">Administrator</p>
@@ -1321,7 +1321,7 @@ toggletheme() 切换主题
 				<!-- 主页  begin -->
 				<div class="cnt home show">
 					<p class="title">主页</p>
-					<div style="display: flex;margin: 25px;">
+					<div style="display: flex;margin: 25px;width: 100%;">
 						<p class="s-icon" style="font-size: 70px;margin: -8px 10px 0px 20px;"></p>
 						<div>
 							<p style="font-size: 28px;text-overflow: ellipsis;white-space: nowrap;">Desktop-PingGai</p>
@@ -1329,32 +1329,45 @@ toggletheme() 切换主题
 							<a style="color: var(--href);text-decoration: underline !important;;" class="a" onclick="shownotice('rename-pc')">重命名</a>
 						</div>
 					</div>
+					<!-- <div style="display: flex;"></div> -->
+					<div class="divider">
+						<div>
 					<div class="setting-card">
-						<p style="padding: 20px"><icon><img src="apps/icons/setting/ms.png" style="width: 35px; height: 35px;"></icon><br>所有功能尽在 Microsoft 账户<br><span style="font-size: 14px;color:var(--text2)">登录后，即可在设备上使用你最喜爱的 Microsoft 应用和服务。可以备份设备、让设备更安全，并使用 Microsoft 365 应用版和云储存空间。</span><br><img src="apps/icons/setting/ms365.png"></p>
-						<div style="padding:  20px">
-							<a class="a button" onclick="window.location.href='./bluescreen.html?code=YOU_CAN_NOT_SIGN_IN_YOUR_MICROSOFT_ACCOUNT'" win12_title="BSOD is coming!">登录</a>
-						</div>
+						<img src="apps/icons/setting/ms.png" style="width: 35px; height: 35px;margin: 5px;">
+						<span style="font-size: 18px;">所有功能尽在 Microsoft 账户</span>
+						<span style="font-size: 14px;color:var(--text2)">登录后，即可在设备上使用你最喜爱的 Microsoft 应用和服务。可以备份设备、让设备更安全，并使用 Microsoft 365 应用版和云储存空间。</span>
+						<img src="apps/icons/setting/ms365.png" style="height: 40px;width: max-content;">
+						<a class="a button" onclick="window.location.href='./bluescreen.html?code=YOU_CAN_NOT_SIGN_IN_YOUR_MICROSOFT_ACCOUNT'" win12_title="BSOD is coming!" style="width: 100px;">登录</a>
 					</div>
 					<div class="setting-card">
-						<p style="padding: 20px">推荐设置<br><span style="font-size: 14px;color:var(--text2)">最近使用的和常用的设置</span></p>
+						<p>推荐设置<br><span style="font-size: 14px;color:var(--text2)">最近使用的和常用的设置</span></p>
 						<div class="setting-list">
-							<a><icon><i class="bi bi-power"></i></icon><div><p>电源和电池</p><p></p></div><i class="bi bi-chevron-right"></i></a>
+							<a onclick="$('#win-setting>.menu>list>a.appearance')[0].click();">
+								<icon>&#xE771;</icon><div><p>个性化</p><p>个性化你的系统</p></div><i class="bi bi-chevron-right"></i></a>
+							<a onclick="$('#win-setting>.menu>list>a.sfae')[0].click();">
+								<icon>&#xE7EF;</icon><div><p>隐私与安全性</p><p>管理你的信息和数据</p></div><i class="bi bi-chevron-right"></i></a>
+							<!-- <a><icon><i class="bi bi-power"></i></icon><div><p>电源和电池</p><p></p></div><i class="bi bi-chevron-right"></i></a>
 							<a><icon><i class="bi bi-window-desktop"></i></icon><div><p>任务栏</p><p></p></div><i class="bi bi-chevron-right"></i></a>
-							<a><icon><i class="bi bi-camera"></i></icon><div><p>摄像头</p><p></p></div><i class="bi bi-chevron-right"></i></a>
+							<a><icon><i class="bi bi-camera"></i></icon><div><p>摄像头</p><p></p></div><i class="bi bi-chevron-right"></i></a> -->
+						</div>
+					</div>
+					</div>
+					<div>
+					<div class="setting-card">
+						<p>个性化<br><span style="font-size: 14px;color:var(--text2)">个性化你的系统</span></p>
+						<div class="setting-list">
+							<a onclick="$('#win-setting>.menu>list>a.appearance')[0].click();"><icon>&#xE790;</icon><div><p>主题色</p><p>设置 Windows 的主题色</p></div><i class="bi bi-chevron-right"></i></a>
+							<a onclick="$('#win-setting>.menu>list>a.appearance')[0].click();"><icon>&#xE58E;</icon><div><p>平滑圆角</p><p>启用平滑圆角</p></div><i class="bi bi-chevron-right"></i></a>
+							<a onclick="$('#win-setting>.menu>list>a.appearance')[0].click();"><icon>&#xE621;</icon><div><p>Mica 背景</p><p>为焦点窗口开启 Mica 效果</p></div><i class="bi bi-chevron-right"></i></a>
 						</div>
 					</div>
 					<div class="setting-card">
-						<p style="padding: 20px">蓝牙设备<br><span style="font-size: 14px;color:var(--text2)">管理、添加和删除设备</span></p>
+						<p>蓝牙设备<br><span style="font-size: 14px;color:var(--text2)">管理、添加和删除设备</span></p>
 						<div class="setting-list">
-							<a onclick="$('#win-setting>.menu>list>a.blueteeth')[0].click();"><icon></icon><div><p>蓝牙</p><p></p></div><i class="bi bi-chevron-right"></i></a>
+							<a onclick="$('#win-setting>.menu>list>a.blueteeth')[0].click();"><icon>&#xE702;</icon><div><p>蓝牙</p><p></p></div><i class="bi bi-chevron-right"></i></a>
 						</div>
 					</div>
-					<div class="setting-card">
-						<p style="padding:20px">个性化设备</p>
-						<div class="setting-list">
-							<a onclick="$('#win-setting>.menu>list>a.appearance')[0].click();"><icon><i class="bi bi-palette"></i></icon><div><p>个性化</p><p></p></div><i class="bi bi-chevron-right"></i></a>
-						</div>
-					</div>
+					</div></div>
 					<div style="height: 60px;"></div>
 				</div>
 				<!-- 主页  end -->
@@ -1477,8 +1490,8 @@ toggletheme() 切换主题
 								</svg>
 							</loading>
 						</div>
-						<div><icon></icon><div><p data-i18n="setting.psnl.round">平滑圆角</p><p data-i18n="setting.psnl.round-dt">启用平滑圆角</p></div>
-							<div class="alr">
+						<div><icon>&#xE58E;</icon><div><p data-i18n="setting.psnl.round">平滑圆角</p><p data-i18n="setting.psnl.round-dt">启用平滑圆角（需要较新浏览器）</p></div>
+							<div class="alr" id="toggle-corner-squ">
 								<a class="a checkbox checked" id="sys_setting_1" onclick="sys_setting[0]=1-sys_setting[0];$(this).toggleClass('checked',sys_setting[0]);$(':root').toggleClass('corner_squ',sys_setting[0]);saveDesktop();"></a>
 							</div>
 						</div>
@@ -1497,7 +1510,7 @@ toggletheme() 切换主题
 								<a class="a checkbox" id="sys_setting_4" onclick="sys_setting[3]=1-sys_setting[3];$(this).toggleClass('checked',sys_setting[3]);$(':root').toggleClass('moreblur',sys_setting[3]);saveDesktop();"></a>
 							</div>
 						</div>
-						<div><icon>&#xE621;</icon><div><p data-i18n="setting.psnl.mica">Mica效果</p><p data-i18n="setting.psnl.mica-dt">为焦点窗口开启mica效果</p></div>
+						<div><icon>&#xE621;</icon><div><p data-i18n="setting.psnl.mica">Mica 背景</p><p data-i18n="setting.psnl.mica-dt">为焦点窗口开启 Mica 效果</p></div>
 							<div class="alr">
 								<a class="a checkbox" id="sys_setting_5" onclick="sys_setting[4]=1-sys_setting[4];$(this).toggleClass('checked',sys_setting[4]);$(':root').toggleClass('mica',sys_setting[4]);saveDesktop();"></a>
 							</div>
@@ -1531,14 +1544,14 @@ toggletheme() 切换主题
 				<!-- 账户  @Junchen Yi 2023-9-11-->
 				<div class="cnt user">
 					<p class="title">账户</p>
-					<div style="display: flex;">
-						<a class="a user" style="display:flex">
-							<svg viewBox="0,0,257,344" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="width: 100px;height: 100px;background-color: var(--hover-b);/* box-shadow: 0 0 10px var(--shadow); */width: 60px;width: 60px;height: 60px;border-radius: 50%;padding: 20px;margin-right: 15px;margin-bottom: 15px;" overflow="hidden"><defs><clipPath id="user-clip1"><rect x="382" y="195" width="257" height="344" /></clipPath><linearGradient x1="351.462" y1="233.56" x2="669.496" y2="500.422" gradientUnits="userSpaceOnUse" spreadMethod="reflect" id="user-fill3"><stop offset="0" stop-color="#A964C8" /><stop offset="0.35" stop-color="#A964C8" /><stop offset="0.87" stop-color="#2D8AD5" /><stop offset="1" stop-color="#2D8AD5" /></linearGradient><linearGradient x1="351.462" y1="233.56" x2="669.496" y2="500.422" gradientUnits="userSpaceOnUse" spreadMethod="reflect" id="user-fill4"><stop offset="0" stop-color="#A964C8" /><stop offset="0.35" stop-color="#A964C8" /><stop offset="0.87" stop-color="#2D8AD5" /><stop offset="1" stop-color="#2D8AD5" /></linearGradient></defs><g clip-path="url(#user-clip1)" transform="translate(-382 -195)"><path d="M637.755 433.872C642.215 515.221 579.577 537.983 508.011 537.983 436.444 537.983 376.676 507.833 383.513 437.11 383.109 425.234 389.59 414.133 398.634 409.891 413.82 402.768 444.753 402.936 507.484 402.997 570.214 403.058 609.164 402.279 621.521 407.947 633.878 413.614 638.011 424.609 637.755 433.872Z" fill="url(#user-fill3)" fill-rule="evenodd" /><path d="M422 285C422 235.847 461.623 196 510.5 196 559.377 196 599 235.847 599 285 599 334.153 559.377 374 510.5 374 461.623 374 422 334.153 422 285Z" fill="url(#user-fill4)" fill-rule="evenodd" /></g></svg>
-							<div style="margin-top: 5px;">
-								<p>Administrator</p>
+					<div style="display: flex;margin: 10px 5px;">
+						<!-- <div style="display:flex"> -->
+							<svg viewBox="0,0,257,344" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="width: 100px;height: 100px;background-color: var(--hover-b);width: 60px;width: 60px;height: 60px;border-radius: 50%;padding: 15px;margin-right: 15px;margin-bottom: 15px;" overflow="hidden"><defs><clipPath id="user-clip1"><rect x="382" y="195" width="257" height="344" /></clipPath><linearGradient x1="351.462" y1="233.56" x2="669.496" y2="500.422" gradientUnits="userSpaceOnUse" spreadMethod="reflect" id="user-fill3"><stop offset="0" stop-color="#A964C8" /><stop offset="0.35" stop-color="#A964C8" /><stop offset="0.87" stop-color="#2D8AD5" /><stop offset="1" stop-color="#2D8AD5" /></linearGradient><linearGradient x1="351.462" y1="233.56" x2="669.496" y2="500.422" gradientUnits="userSpaceOnUse" spreadMethod="reflect" id="user-fill4"><stop offset="0" stop-color="#A964C8" /><stop offset="0.35" stop-color="#A964C8" /><stop offset="0.87" stop-color="#2D8AD5" /><stop offset="1" stop-color="#2D8AD5" /></linearGradient></defs><g clip-path="url(#user-clip1)" transform="translate(-382 -195)"><path d="M637.755 433.872C642.215 515.221 579.577 537.983 508.011 537.983 436.444 537.983 376.676 507.833 383.513 437.11 383.109 425.234 389.59 414.133 398.634 409.891 413.82 402.768 444.753 402.936 507.484 402.997 570.214 403.058 609.164 402.279 621.521 407.947 633.878 413.614 638.011 424.609 637.755 433.872Z" fill="url(#user-fill3)" fill-rule="evenodd" /><path d="M422 285C422 235.847 461.623 196 510.5 196 559.377 196 599 235.847 599 285 599 334.153 559.377 374 510.5 374 461.623 374 422 334.153 422 285Z" fill="url(#user-fill4)" fill-rule="evenodd" /></g></svg>
+							<div style="margin-top: 8px;">
+								<p style="font-size: 19px;line-height: 1;">Administrator</p>
 								<p>starry-source@Windows12.com</p>
 							</div>
-						</a>
+						<!-- </div> -->
 					</div>
 					<div class="setting-list">
 						<a><icon></icon><div><p>您的微软账户</p><p>订阅、账单等</p></div><i class="bi bi-chevron-right"></i></a>
@@ -1860,6 +1873,14 @@ toggletheme() 切换主题
 			<div class="cnt update">
 				<h1 class="tit" data-i18n="about.update.name"><span></span>更新记录</h1>
 				<div style="margin-left: 20px;">
+					<details><summary><span>v10.2.1</span> 界面调整优化</summary><p>
+						&emsp;&emsp;-(更新来自 @tjy-gitnub)<br>
+						&emsp;&emsp;-重写设置的主页<br>
+						&emsp;&emsp;-调整优化设置外观与操作<br>
+						&emsp;&emsp;-重写关机和重启界面<br>
+						&emsp;&emsp;-适配更多平滑圆角<br>
+						&emsp;&emsp;-细节优化和修复<br>
+					</p></details>
 					<details><summary><span>v10.2.0</span> 平滑圆角</summary><p>
 						&emsp;&emsp;-(更新来自 @tjy-gitnub)<br>
 						&emsp;&emsp;-修复一些沉积问题<br>
@@ -1904,8 +1925,7 @@ toggletheme() 切换主题
 						&emsp;&emsp;- 在“设置”中增加了“Windows预览体验计划”<br>
 						&emsp;&emsp;- 其他细微之处的更新<br>
 				    </p></details>
-					<details><summary><span>v10.0.4</span>
-					</v10></span> 扫雷</summary><p>
+					<details><summary><span>v10.0.4</span> 扫雷</summary><p>
 						&emsp;&emsp;-(更新来自 @kjmjh)<br>
 				        &emsp;&emsp;-更新了扫雷<br>
 				    </p></details>
@@ -1974,7 +1994,7 @@ toggletheme() 切换主题
 						&emsp;&emsp;- 代码整理<br>
 						&emsp;&emsp;- 修复一些问题</p>
 					</p></details>
-					<details><summary><span>v8.0.0</span> </summary><p>
+					<details><summary><span>v8.0.0</span> Microsoft Store</summary><p>
 						&emsp;&emsp;-(更新来自@User782Tec)<br>
 						&emsp;&emsp;-使用svg矢量图优化了任务管理器性能图表的绘制<br>
 						&emsp;&emsp;-加入了半成品的Microsoft Store<br>

@@ -28,10 +28,10 @@
 
 
 #win-setting>.menu {
-    width: 30% !important;
+    width: 35%;
     overflow: hidden;
-    min-width: 280px;
-    /* max-width: 30%; */
+    min-width: 270px;
+    max-width: 320px;
     padding: 3px 5px 5px 15px;
 }
 
@@ -125,42 +125,57 @@
 }
 
 #win-setting>.page {
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: scroll;
     padding-left: 15px;
     padding-right: 5px;
     margin: 2px 0 0 0;
 }
 
 #win-setting>.page>.cnt {
-    overflow-y: scroll;
-    opacity: 0;
+    opacity: 0.3;
     height: 0;
-    transition: transform 300ms cubic-bezier(0, 0, 0, 1), opacity 300ms 50ms, height 0ms;
-    transform: translate(0, 50%);
+    overflow: hidden;
+    /* display:none; */
+    transition: transform 400ms cubic-bezier(0.05, 0.96, 0.11, 1), opacity 300ms, height 0ms;
+    transform: translate(0, 40%);
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    visibility: collapse;
 }
 
 #win-setting>.page>.cnt.show {
-    height: 100%;
+    height: unset;
     transform: none;
     opacity: 1;
     display: block;
+    visibility: visible;
 }
 
+#win-setting>.page>.cnt.home>.divider{
+    display: flex;
+    gap: 10px;
+}
+
+#win-setting>.page>.cnt.home>.divider>*{
+    width: 50%;
+}
 
 .setting-card {
     background: var(--card);
     border-radius: 10px;
+
     margin-bottom: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 23px 20px;
 }
 
 :root.corner_squ .setting-card {
     corner-shape: squircle;
-    border-radius: 25px;
-}
-
-.setting-card>.setting-list {
-    padding-bottom: 5px;
-    padding: 20px;
+    border-radius: 35px;
 }
 
 .setting-list {
@@ -178,13 +193,11 @@
     background: var(--card);
     margin-bottom: 7px;
     border-radius: 8px;
-    /* border: 1.5px solid #6f6f6f30; */
     box-shadow: 0 1px 2px 0px var(--s3d);
     text-decoration: none;
     display: flex;
     padding: 10px 15px;
     justify-content: center;
-    /* box-shadow: 0 1px 2px 1.5px var(--s3d); */
     transition: 100ms;
     justify-content: space-around;
     border: 2px solid #00000000;
@@ -194,7 +207,19 @@
 
 :root.corner_squ .setting-list>* {
     corner-shape: squircle;
-    border-radius: 20px;
+    border-radius: 30px;
+}
+.setting-card>.setting-list {
+    padding: 0;
+    margin: 10px 15px 5px 15px;
+    width: auto;
+    /* box-shadow: 0 1px 2px 0px var(--s3d); */
+    /* overflow: hidden; */
+}
+.setting-card>.setting-list>*{
+    /* margin: 0; */
+    /* border-radius: 0; */
+    padding: 5px 10px;
 }
 
 .setting-list>a:hover {
@@ -300,6 +325,18 @@
     left: 18px;
 }
 
+.checkbox.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.corner-disabled-hint {
+    color: #888;
+    font-size: 14px;
+    margin-left: 10px;
+    display: inline-block;
+}
+
 div.app-color .color {
     width: 30px;
     height: 30px;
@@ -346,8 +383,8 @@ div.app-color input[type=color] {
 }
 
 .setting-list>*>div>p:last-child {
-    font-size: 10px;
-    color: #7f7f7f;
+    font-size: 12px;
+    opacity: 0.6;
     margin-bottom: 0px;
 }
 
