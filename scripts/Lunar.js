@@ -30,7 +30,7 @@ async function getLunar() {
                 //if (jsonContent.code !== 1) {
                 //    throw new Error(`服务器异常，错误码: ${jsonContent.code}`);
                 //}
-                if (typeof jsonContent?.农历 !== 'string') {
+                if (typeof jsonContent?.['农历'] !== 'string') {
                     throw new Error('服务器返回数据格式异常');
                 }
                 lunarCache = jsonContent;
@@ -50,8 +50,8 @@ async function getLunar() {
         await lunarCachePromise;
     }
 
-    if (lunarCache?.农历) {
-        const lunarContent = lunarCache.农历;
+    if (lunarCache?.['农历']) {
+        const lunarContent = lunarCache.['农历'];
         lunarDisplay.textContent = lunarContent;
     }
 }
