@@ -21,14 +21,123 @@
     --mica: linear-gradient(140deg,#2d161c,#102d53);
 }
 
-.window.terminal-apps.max>.content {
-    padding-bottom: 55px !important;
+.window.terminal-apps>.tab-bar {
+    display: flex;
+    align-items: center;
+    background-color: #1a1a1a;
+    border-bottom: 2px solid var(--bd);
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 0 8px;
+    gap: 4px;
+    height: 40px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--hover-b) transparent;
+}
+
+.window.terminal-apps>.tab-bar::-webkit-scrollbar {
+    height: 6px;
+}
+
+.window.terminal-apps>.tab-bar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.window.terminal-apps>.tab-bar::-webkit-scrollbar-thumb {
+    background: var(--hover-b);
+    border-radius: 3px;
+}
+
+.window.terminal-apps>.tab-bar::-webkit-scrollbar-thumb:hover {
+    background: var(--hover);
+}
+
+.window.terminal-apps>.tab-bar>.tab {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    background-color: var(--unfoc);
+    border: 1px solid var(--bd);
+    border-bottom: 2px solid transparent;
+    border-radius: 6px 6px 0 0;
+    color: #999;
+    font-size: 13px;
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+    white-space: nowrap;
+    transition: all 0.15s ease;
+    min-width: 100px;
+    max-width: 200px;
+    font-family: "Consolas", "Monaco", "monospace", system-ui;
+}
+
+.window.terminal-apps>.tab-bar>.tab:hover {
+    background-color: var(--msg);
+    border-color: var(--hover-b);
+    color: #bbb;
+}
+
+.window.terminal-apps>.tab-bar>.tab.active {
+    background-color: #000000;
+    border-bottom-color: #00b4ef;
+    color: #ddd;
+    font-weight: 500;
+}
+
+.window.terminal-apps>.tab-bar>.tab>p {
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
+}
+
+.window.terminal-apps>.tab-bar>.tab>.clbtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: all 0.15s ease;
+    opacity: 0.6;
+    font-size: 12px;
+    color: #999;
+}
+
+.window.terminal-apps>.tab-bar>.tab>.clbtn:hover {
+    background-color: rgba(255, 100, 100, 0.2);
+    color: #ff6b6b;
+    opacity: 1;
+}
+
+.window.terminal-apps>.tab-bar>.tab>.clbtn:active {
+    background-color: rgba(255, 100, 100, 0.3);
 }
 
 .window.terminal-apps>.content {
     overflow-y: auto !important;
     overflow-x: hidden !important;
     padding-bottom: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+.window.terminal-apps>.content>.terminal-content {
+    display: none;
+    flex-direction: column;
+    flex: 1;
+    min-height: 100%;
+}
+
+.window.terminal-apps>.content>.terminal-content.active {
+    display: flex;
+}
+
+.window.terminal-apps.max>.content {
+    padding-bottom: 55px !important;
 }
 
 .window.terminal-apps>.content>pre {
@@ -37,6 +146,105 @@
     font-family: "Consolas", "Monaco", "monospace", system-ui;
     user-select: text;
     font-size: 16px;
+}
+
+.window.terminal-apps>.content>.terminal-content>pre {
+    color: #ddd;
+    margin: 0px 15px;
+    font-family: "Consolas", "Monaco", "monospace", system-ui;
+    user-select: text;
+    font-size: 16px;
+}
+
+.window.terminal-apps>.content>.terminal-content>pre:first-child {
+    color: #00b4ef;
+    font-weight: 600;
+    margin-bottom: 5px;
+    border-bottom: 1px solid var(--bd);
+    padding-bottom: 8px;
+}
+
+.window.terminal-apps>.content>.terminal-content>pre.text-cmd {
+    flex: 1;
+    overflow-y: auto;
+    margin-bottom: 8px;
+    max-height: calc(100% - 100px);
+    scrollbar-width: thin;
+    scrollbar-color: var(--hover-b) transparent;
+}
+
+.window.terminal-apps>.content>.terminal-content>pre.text-cmd::-webkit-scrollbar {
+    width: 8px;
+}
+
+.window.terminal-apps>.content>.terminal-content>pre.text-cmd::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.window.terminal-apps>.content>.terminal-content>pre.text-cmd::-webkit-scrollbar-thumb {
+    background: var(--hover-b);
+    border-radius: 4px;
+}
+
+.window.terminal-apps>.content>.terminal-content>pre.text-cmd::-webkit-scrollbar-thumb:hover {
+    background: var(--hover);
+}
+
+.window.terminal-apps>.content>.terminal-content>pre.text-cmd>div {
+    margin: 2px 0;
+    word-break: break-word;
+    white-space: break-spaces;
+    color: #ddd;
+}
+
+.window.terminal-apps>.content>.terminal-content>pre.text-cmd>div.error {
+    color: #ff6b6b;
+}
+
+.window.terminal-apps>.content>.terminal-content>pre.text-cmd>div.success {
+    color: #00b4ef;
+}
+
+.window.terminal-apps>.content>.terminal-content>pre.text-cmd>div.warning {
+    color: #ffa500;
+}
+
+.window.terminal-apps>.content>.terminal-content>pre:last-child {
+    display: flex;
+    align-items: center;
+    padding: 6px 0;
+    margin: 0px 15px;
+    background-color: transparent;
+    border-top: 1px solid var(--bd);
+    margin-top: auto;
+    gap: 5px;
+}
+
+.window.terminal-apps>.content>.terminal-content>pre:last-child>.prompt {
+    color: #00b4ef;
+    font-weight: 600;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.window.terminal-apps>.content>.terminal-content>pre:last-child>input {
+    background: none;
+    border: none;
+    outline: none;
+    padding: 0;
+    color: #eee;
+    cursor: default;
+    width: 100%;
+    font-family: "Consolas", "Monaco", "monospace", system-ui;
+    font-size: 16px;
+}
+
+.window.terminal-apps>.content>.terminal-content>pre:last-child>input:focus {
+    outline: none;
+}
+
+.window.terminal-apps>.content>.terminal-content>pre:last-child>input::caret {
+    color: #00b4ef;
 }
 
 .window.terminal-apps>.content * {
@@ -49,18 +257,61 @@
     color: #333;
 }
 
-.window.terminal-apps>.content>pre>input {
-    background: none;
-    border: none;
-    outline: none;
-    padding: 0;
-    color: #eee;
-    cursor: default;
-    width: 100%;
-}
-
-.window.terminal-apps>pre>input::selection {
+.window.terminal-apps>.content>.terminal-content>pre>input::selection {
     background: #ddd;
     background-clip: content-box;
     color: #333;
+}
+
+@keyframes slideInTab {
+    from {
+        opacity: 0;
+        transform: translateX(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.window.terminal-apps>.tab-bar>.tab {
+    animation: slideInTab 0.2s ease;
+}
+
+@media (max-width: 768px) {
+    .window.terminal-apps>.tab-bar {
+        height: 36px;
+        padding: 0 6px;
+        gap: 2px;
+    }
+
+    .window.terminal-apps>.tab-bar>.tab {
+        min-width: 80px;
+        max-width: 150px;
+        padding: 4px 8px;
+        font-size: 12px;
+    }
+
+    .window.terminal-apps>.content>pre,
+    .window.terminal-apps>.content>.terminal-content>pre {
+        font-size: 14px;
+        margin: 0px 10px;
+    }
+
+    .window.terminal-apps>.content>.terminal-content>pre:last-child {
+        margin: 0px 10px;
+    }
+}
+
+/* Maximized Window Adjustment */
+.window.terminal-apps.max>.tab-bar {
+    padding: 0 12px;
+}
+
+.window.terminal-apps.max>.content {
+    padding-bottom: 55px !important;
+}
+
+.window.terminal-apps:focus-within>.tab-bar {
+    border-bottom-color: var(--hover);
 }
