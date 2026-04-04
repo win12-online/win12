@@ -7,7 +7,7 @@ function showwin(name) {
     setTimeout(() => { $('.window.' + name).addClass('show'); }, 0);
     setTimeout(() => { $('.window.' + name).addClass('notrans'); }, 200);
     if (name != 'run') {
-        $('.window.' + name).attr('style', 'top: 10%;left: 15%;');
+        $('.window.' + name).attr('style', 'top: calc(10% + ' + (wo.length % 10 * 25) + 'px); left: calc(15% + ' + (wo.length % 10 * 25) + 'px);');
     }
     $('#taskbar>.' + wo[0]).removeClass('foc');
     $('.window.' + wo[0]).removeClass('foc');
