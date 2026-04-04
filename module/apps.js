@@ -2252,19 +2252,13 @@ Micrȯsoft Windows [版本 12.0.39035.7324]
     
     tab: (index) => {
         if (index < 0 || index >= apps.terminal.tabs.length) return;
-        
-        $('#win-terminal>.content>.terminal-content').hide();
-        
+        $('#win-terminal>.content>.terminal-content').removeClass('active');
         const tabId = apps.terminal.tabs[index][0];
-        $('#win-terminal>.content>.' + tabId).show();
-        
+        $('#win-terminal>.content>.' + tabId).addClass('active');
         $('#win-terminal>.tab-bar>.tab.active').removeClass('active');
         $('#win-terminal>.tab-bar>.' + tabId).addClass('active');
-        
         apps.terminal.now = index;
-        
         $('#win-terminal>.' + tabId + ' input').focus();
-        
         apps.terminal.checkHistory(tabId);
     },
     
