@@ -1381,9 +1381,14 @@ let apps = {
             if (tmp == null) {
                 tmp = { folder: {}, file: [] };
             }
-            if (apps.explorer.traverseDirectory(tmp, name_)) {
-                shownotice('duplication file name');
-                return;
+            let finalName = name_;
+    		let counter = 1;
+    		while (apps.explorer.traverseDirectory(tmp, finalName)) {
+        	finalName = `${name_}(${counter})`;
+        	counter++;
+   			}
+    		// 更新名称供后续存档使用
+    		name_ = finalName;
             }
 
             // 检查是否是文件夹

@@ -19,17 +19,18 @@ async function getLunar() {
     if (!lunarCache && !lunarCachePromise) {
         lunarCachePromise = (async () => {
             try {
-                const response = await fetch('https://api.lolimi.cn/API/rl/api');
+                const response = await fetch('https://api.xcboke.cn/api/calendar');
                 if (!response.ok) {
                     // 你是怎么想出来往开发控制台打印这种东西的。。。
                     // throw new Error('网络不给力');
                     throw new Error('HTTP 状态码不符合预期: ' + response.status);
                 }
                 const jsonContent = await response.json();
-                if (jsonContent.code !== 1) {
-                    throw new Error(`服务器异常，错误码: ${jsonContent.code}`);
-                }
-                if (typeof jsonContent?.data?.lunar !== 'string') {
+                //新的api根本没有code这个参数。。。
+                //if (jsonContent.code !== 1) {
+                //    throw new Error(`服务器异常，错误码: ${jsonContent.code}`);
+                //}
+                if (typeof jsonContent?.农历 !== 'string') {
                     throw new Error('服务器返回数据格式异常');
                 }
                 lunarCache = jsonContent;
@@ -49,8 +50,8 @@ async function getLunar() {
         await lunarCachePromise;
     }
 
-    if (lunarCache?.data?.lunar) {
-        const lunarContent = lunarCache.data.lunar;
+    if (lunarCache?.农历) {
+        const lunarContent = lunarCache.农历;
         lunarDisplay.textContent = lunarContent;
     }
 }
