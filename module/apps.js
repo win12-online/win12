@@ -1389,7 +1389,6 @@ let apps = {
    			}
     		// 更新名称供后续存档使用
     		name_ = finalName;
-            }
 
             // 检查是否是文件夹
             if (type === 'folder') {
