@@ -1396,9 +1396,9 @@ let apps = {
 
     		while (apps.explorer.traverseDirectory(tmp, finalName)) {
         		if (type === 'file') {
-            		finalName = `${baseName}(${counter})${extension}`;
+            		finalName = `${baseName} (${counter})${extension}`;
         		} else {
-            		finalName = `${name_}(${counter})`;
+            		finalName = `${name_} (${counter})`;
         		}
         		counter++;
     		}
