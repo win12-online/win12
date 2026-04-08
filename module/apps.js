@@ -1375,16 +1375,16 @@ let apps = {
             var icon_ = '';
             var isMounted = !!apps.explorer.mounts[pathl[0]];
             let tmp = apps.explorer.path;
+			
             pathl.forEach(name => {
                 tmp = tmp['folder'][name];
             });
             if (tmp == null) {
                 tmp = { folder: {}, file: [] };
             }
-            
+			
     		let finalName = name_;
     		let counter = 1;
-
     		let baseName = name_;
     		let extension = "";
     
