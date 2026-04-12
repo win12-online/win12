@@ -204,9 +204,9 @@
 
     <div class="difficulty-selector">
         <div class="btn-group">
-            <button class="win12-button" data-difficulty="easy">简单</button>
-            <button class="win12-button" data-difficulty="medium">中等</button>
-            <button class="win12-button" data-difficulty="hard">困难</button>
+            <button class="win12-button" data-difficulty="easy">简单 (9x9, 10雷)</button>
+            <button class="win12-button" data-difficulty="medium">中等 (16x16, 40雷)</button>
+            <button class="win12-button" data-difficulty="hard">困难 (16x30, 99雷)</button>
         </div>
         <div class="custom-difficulty">
             <div><label>行数</label><input type="number" id="custom-rows" value="16" min="5" max="30"></div>
@@ -385,7 +385,7 @@
                 }
             }
         }
-        modalMessage.textContent = win ? "恭喜，你赢了！" : "再接再厉，你输了！";
+        modalMessage.textContent = win ? "恭喜，你赢了！" : "你输了，再接再厉！";
         setTimeout(() => { modal.style.display = "flex"; }, 500);
     }
 
@@ -437,14 +437,17 @@
     });
 
     customButton.addEventListener('click', () => {
-        const r = parseInt(document.getElementById('custom-rows').value);
-        const c = parseInt(document.getElementById('custom-cols').value);
-        const m = parseInt(document.getElementById('custom-mines').value);
-        if (r >= 5 && r <= 30 && c >= 5 && c <= 30 && m >= 1 && m < r * c) {
-            rows = r; cols = c; mines = m;
+        const customRows = parseInt(document.getElementById('custom-rows').value);
+        const customCols = parseInt(document.getElementById('custom-cols').value);
+        const customMines = parseInt(document.getElementById('custom-mines').value);
+    
+        if (customRows >= 5 && customRows <= 30 && customCols >= 5 && customCols <= 30 && customMines >= 1 && customMines < customRows * customCols) {
+            rows = customRows; 
+            cols = customCols; 
+            mines = customMines;
             resetGame();
         } else {
-            alert("设置无效（行/列范围5-30）");
+            shownotice("设置无效（行/列范围5-30）");
         }
     });
 
