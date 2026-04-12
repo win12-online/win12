@@ -1375,21 +1375,32 @@ let apps = {
             var icon_ = '';
             var isMounted = !!apps.explorer.mounts[pathl[0]];
             let tmp = apps.explorer.path;
+			
             pathl.forEach(name => {
                 tmp = tmp['folder'][name];
             });
             if (tmp == null) {
                 tmp = { folder: {}, file: [] };
             }
-            let finalName = name_;
+			
+    		let finalName = name_;
     		let counter = 1;
-    		while (apps.explorer.traverseDirectory(tmp, finalName)) {
-        	finalName = `${name_}(${counter})`;
-        	counter++;
-   			}
-    		// 更新名称供后续存档使用
-    		name_ = finalName;
+    		let baseName = name_;
+    		let extension = "";
+    
+    		if (type === 'file' && name_.includes('.')) {
+        		const lastDotIndex = name_.lastIndexOf('.');
+        		baseName = name_.substring(0, lastDotIndex);
+        		extension = name_.substring(lastDotIndex); // e.g., ".txt"
+    		}
 
+            while (apps.explorer.traverseDirectory(tmp, finalName)) {
+              finalName = `${baseName} (${counter})${extension}`;
+              counter++; 
+            }
+    
+            name_ = finalName; // Now this is safely back inside the function
+            //fix: resolved boot crash (syntax error on line 1403 and scope issue)
             // 检查是否是文件夹
             if (type === 'folder') {
                 if (icon !== '') {
