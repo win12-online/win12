@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Win12 扫雷</title>
+    <title>Windows 12 扫雷</title>
     <style>
         :root {
             --win-bg: #e3e9f3;
@@ -53,7 +53,7 @@
             font-family: 'Consolas', monospace;
             font-size: 1.4em;
             background: #202020;
-            color: #00ff41; /* 经典黑底绿字，比红字更现代 */
+            color: #00ff41;
             padding: 4px 12px;
             border-radius: 6px;
             min-width: 50px;
@@ -385,7 +385,7 @@
                 }
             }
         }
-        modalMessage.textContent = win ? "恭喜，你赢了！" : "你输了，再接再厉！";
+        modalMessage.textContent = win ? "恭喜，你赢了！" : "哎呀，你输了，再接再厉！";
         setTimeout(() => { modal.style.display = "flex"; }, 500);
     }
 
@@ -419,6 +419,7 @@
     }
 
     function stopTimer() {
+     // 写不到写啥，欢迎各位补充
     }
 
     // 事件绑定
