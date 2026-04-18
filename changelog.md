@@ -259,8 +259,8 @@
 		&emsp;&emsp;-优化窗口拖拽代码<br />
 		&emsp;&emsp;-其它一些更改<br />
 		&emsp;&emsp;-提示:在github项目页的一些<a
-			onclick="window.open('https://github.com/tjy-gitnub/win12','_blank');"
-			win12_title="https://github.com/tjy-gitnub/win12" class="jump">公告</a>
+			onclick="window.open('https://github.com/win12-online/win12','_blank');"
+			win12_title="https://github.com/win12-online/win12" class="jump">公告</a>
 		</p>
 </p></details>
 <details>
@@ -363,7 +363,7 @@
 </p></details>
 <details><summary><span>v3.8.0</span> 记事本字体，窗口焦点逻辑改善</summary><p>
 	&emsp;&emsp;<i>更新主要来源 @User782Tec 的pr</i><br />
-	&emsp;&emsp;-详见<a href="https://github.com/tjy-gitnub/win12/pull/50">pull</a>中的详细<br />
+	&emsp;&emsp;-详见<a href="https://github.com/win12-online/win12/pull/50">pull</a>中的详细<br />
 	&emsp;&emsp;-窗口焦点逻辑改善<br />
 	&emsp;&emsp;-细节优化和修复</p>
 </p></details>

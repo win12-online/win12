@@ -768,7 +768,7 @@ let apps = {
           return null;
         },
         load: () => {
-            $('#win-minesweeper')[0].insertAdjacentHTML('afterbegin', '<iframe src="https://tjy-gitnub.github.io/win12/games/minesweeper.html" frameborder="0" style="width: 100%; height: 100%;" loading="lazy"></iframe>');
+            $('#win-minesweeper')[0].insertAdjacentHTML('afterbegin', '<iframe src="https://win12-online.github.io/win12/games/minesweeper.html" frameborder="0" style="width: 100%; height: 100%;" loading="lazy"></iframe>');
         }
     },
     defender: {
@@ -1621,7 +1621,7 @@ let apps = {
         get: () => {
             apps.about.run_loading('#contri');
             // 实时获取项目贡献者
-            $.get('https://api.github.com/repos/tjy-gitnub/win12/contributors').then(cs => {
+            $.get('https://api.github.com/repos/win12-online/win12/contributors').then(cs => {
                 setTimeout(() => {
                     $('#contri').html('');
                     cs.forEach(c => {
@@ -1633,7 +1633,7 @@ let apps = {
         },
         get_star: () => {
             apps.about.run_loading('#StarShow');
-            const repoFullName = 'tjy-gitnub/win12';
+            const repoFullName = 'win12-online/win12';
             fetch(`https://api.github.com/repos/${repoFullName}`)
                 .then(response => response.json())
                 .then(data => {
