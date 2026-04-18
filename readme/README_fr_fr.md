@@ -3,14 +3,14 @@
 </p>
 <h1 align="center">Windows 12 version Web</h1>
 <p align="center" class="shields">
-  <span href="https://github.com/tjy-gitnub/win12/issues" style="text-decoration:none">
-    <img src="https://img.shields.io/github/issues/tjy-gitnub/win12.svg" alt="Problèmes GitHub"/>
+  <span href="https://github.com/win12-online/win12/issues" style="text-decoration:none">
+    <img src="https://img.shields.io/github/issues/win12-online/win12.svg" alt="Problèmes GitHub"/>
   </span>
-<span href="https://github.com/tjy-gitnub/win12/stargazers" style="text-decoration:none">
-    <img src="https://img.shields.io/github/stars/tjy-gitnub/win12.svg" alt="GitHub stars"/>
+<span href="https://github.com/win12-online/win12/stargazers" style="text-decoration:none">
+    <img src="https://img.shields.io/github/stars/win12-online/win12.svg" alt="GitHub stars"/>
   </span>
-  <span href="https://github.com/tjy-gitnub/win12/network" style="text-decoration:none">
-<img src="https://img.shields.io/github/forks/tjy-gitnub/win12.svg" alt="Fourches GitHub"/>
+  <span href="https://github.com/win12-online/win12/network" style="text-decoration:none">
+<img src="https://img.shields.io/github/forks/win12-online/win12.svg" alt="Fourches GitHub"/>
   </span>
 </p>
 <p align="center" class="language" title="Sélection de la langue 语言选择">
@@ -21,8 +21,8 @@
 </p>
 <details align="center">
   <summary>Historique des étoiles</summary>
-  <a href="https://star-history.com/#tjy-gitnub/win12&Date" style="text-decoration:none">
-<img src="https://api.star-history.com/svg?repos=tjy-gitnub/win12&type=Date" alt="Star History Chart">
+  <a href="https://star-history.com/#win12-online/win12&Date" style="text-decoration:none">
+<img src="https://api.star-history.com/svg?repos=win12-online/win12&type=Date" alt="Star History Chart">
   </a>
 </details>
 
@@ -51,26 +51,26 @@ C'est ainsi que ce projet est né (oui, la naissance de ce projet a été aussi 
 
 ## Expérience en ligne
 
-Cliquez [ici](tjy-gitnub.github.io/win12/desktop.html) pour essayer.
+Cliquez [ici](win12-online.github.io/win12/desktop.html) pour essayer.
 
 
 ## Présentation des résultats
 
-La nouvelle version comporte de nombreux changements, à titre indicatif seulement ; veuillez vous référer à l’objet réel (cliquez [ici](https://tjy-gitnub.github.io/win12/desktop.html) et vous verrez, ce n’est pas compliqué `-_-)o`)
+La nouvelle version comporte de nombreux changements, à titre indicatif seulement ; veuillez vous référer à l’objet réel (cliquez [ici](https://win12-online.github.io/win12/desktop.html) et vous verrez, ce n’est pas compliqué `-_-)o`)
 
-![image](https://tjy-gitnub.github.io/win12/img/start-menu.png)
+![image](https://win12-online.github.io/win12/img/start-menu.png)
 
 *Menu Démarrer*
 
-![image](https://tjy-gitnub.github.io/win12/img/colorful-apps.png)
+![image](https://win12-online.github.io/win12/img/colorful-apps.png)
 
 *Applications riches*
 
-![image](https://tjy-gitnub.github.io/win12/img/dark-mode.png)
+![image](https://win12-online.github.io/win12/img/dark-mode.png)
 
 *Mode sombre*
 
-![image](https://tjy-gitnub.github.io/win12/img/ai-copilot.png)
+![image](https://win12-online.github.io/win12/img/ai-copilot.png)
 *AI Copilot([实现方法](./scripts/AI%20Copilot%20service/README.md))*
 ## Planification future
 
@@ -122,11 +122,11 @@ Les fichiers multimédias de la version Web de Windows12 (œuvres graphiques, œ
 Les fichiers concernés relèvent de l'utilisation raisonnable ; il convient de noter qu'il existe des risques juridiques liés à l'utilisation de certains fichiers multimédias. Veuillez consulter les lois et règlements sur le droit d'auteur avant utilisation.
 
 ### Conditions supplémentaires
-1. Toute personne utilisant, partageant ou distribuant ce projet doit mentionner clairement les informations de l'auteur original (谭景元, tjy-gitnub) et le lien du projet original (<https://github.com/tjy-gitnub/win12>) dans la présentation du projet, la documentation ou les documents connexes. Vous ne devez pas dissimuler, supprimer ou modifier délibérément les informations de signature, les informations d'auteur ou le lien du projet dans le projet original ; vous ne devez pas restreindre l'accès de tiers à ces informations.
+1. Toute personne utilisant, partageant ou distribuant ce projet doit mentionner clairement les informations de l'auteur original (谭景元, tjy-gitnub) et le lien du projet original (<https://github.com/win12-online/win12>) dans la présentation du projet, la documentation ou les documents connexes. Vous ne devez pas dissimuler, supprimer ou modifier délibérément les informations de signature, les informations d'auteur ou le lien du projet dans le projet original ; vous ne devez pas restreindre l'accès de tiers à ces informations.
 2. Toute personne utilisant ce projet à des fins commerciales doit indiquer l'auteur original et le lien du projet, et publier en open source la totalité du code source concerné sous la licence EPL-2.0.
 3. Le code source non modifié ne peut pas être utilisé à des fins commerciales.
 4. Toute personne utilisant ou partageant ce projet ne doit pas retirer, cacher ou restreindre l'accès à cette déclaration open source.
-5. Si vous découvrez qu'une autre personne enfreint l'une quelconque des exigences énoncées dans les quatre alinéas précédents, veuillez-nous en [signaler](https://github.com/tjy-gitnub/win12/issues) immédiatement et, dans la mesure du possible, empêcher promptement la publication et la diffusion des contenus concernés.
+5. Si vous découvrez qu'une autre personne enfreint l'une quelconque des exigences énoncées dans les quatre alinéas précédents, veuillez-nous en [signaler](https://github.com/win12-online/win12/issues) immédiatement et, dans la mesure du possible, empêcher promptement la publication et la diffusion des contenus concernés.
 6. Si vous commettez un acte de contrefaçon, nous conserverons des enregistrements conformément aux dispositions légales et nous réservons le droit, à tout moment et par tous moyens, d'engager des actions en justice et de demander réparation (y compris, sans s'y limiter, signaler l'affaire aux organismes chargés de l'application de la loi, porter plainte devant les autorités judiciaires, collaborer aux enquêtes des autorités compétentes, etc.).
 ## Instructions pour les contributions
 
@@ -138,7 +138,7 @@ Ce projet utilise la bibliothèque i18n pour fournir la fonctionnalité multilin
 
 Développeurs principaux : tjy-gitnub([Bilibili](https://space.bilibili.com/2010692096/)), NB-group([Bilibili](https://space.bilibili.com/1570243738/)), 782([Bilibili](https://space.bilibili.com/1046361194/)) (les trois sont collégiens)
 
-Contributeurs du projet : voir [ici](https://github.com/tjy-gitnub/win12/graphs/contributors) (merci à nos excellents contributeurs ! )
+Contributeurs du projet : voir [ici](https://github.com/win12-online/win12/graphs/contributors) (merci à nos excellents contributeurs ! )
 
 ## Soutenez-nous
 

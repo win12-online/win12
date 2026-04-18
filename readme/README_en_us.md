@@ -3,14 +3,14 @@
 </p>
 <h1 align="center">Windows12 Online</h1>
 <p align="center" class="shields">
-  <span href="https://github.com/tjy-gitnub/win12/issues" style="text-decoration:none">
-    <img src="https://img.shields.io/github/issues/tjy-gitnub/win12.svg" alt="GitHub issues"/>
+  <span href="https://github.com/win12-online/win12/issues" style="text-decoration:none">
+    <img src="https://img.shields.io/github/issues/win12-online/win12.svg" alt="GitHub issues"/>
   </span>
-<span href="https://github.com/tjy-gitnub/win12/stargazers" style="text-decoration:none">
-<img src="https://img.shields.io/github/stars/tjy-gitnub/win12.svg" alt="GitHub stars"/>
+<span href="https://github.com/win12-online/win12/stargazers" style="text-decoration:none">
+<img src="https://img.shields.io/github/stars/win12-online/win12.svg" alt="GitHub stars"/>
 </span>
-<span href="https://github.com/tjy-gitnub/win12/network" style="text-decoration:none">
-<img src="https://img.shields.io/github/forks/tjy-gitnub/win12.svg" alt="GitHub forks"/>
+<span href="https://github.com/win12-online/win12/network" style="text-decoration:none">
+<img src="https://img.shields.io/github/forks/win12-online/win12.svg" alt="GitHub forks"/>
   </span>
 </p>
 <p align="center" class="language" title="Language selection">
@@ -21,8 +21,8 @@
 </p>
 <details align="center">
   <summary>Star History</summary>
-  <a href="https://star-history.com/#tjy-gitnub/win12&Date" style="text-decoration:none">
-<img src="https://api.star-history.com/svg?repos=tjy-gitnub/win12&type=Date" alt="Star History Chart">
+  <a href="https://star-history.com/#win12-online/win12&Date" style="text-decoration:none">
+<img src="https://api.star-history.com/svg?repos=win12-online/win12&type=Date" alt="Star History Chart">
   </a>
 </details>
 
@@ -51,26 +51,26 @@ Thus this project was born (yes, the birth of this project was just that sudden)
 
 ## Online Experience
 
-Click [here](tjy-gitnub.github.io/win12/desktop.html) to experience it.
+Click [here](win12-online.github.io/win12/desktop.html) to experience it.
 
 
 ## Feature Preview
 
-> The new version has many changes. This is for reference only. Please refer to the actual product (you can click [here](https://tjy-gitnub.github.io/win12/desktop.html) to see for yourself, no trouble `-_-)o` )
+> The new version has many changes. This is for reference only. Please refer to the actual product (you can click [here](https://win12-online.github.io/win12/desktop.html) to see for yourself, no trouble `-_-)o` )
 
-![image](https://tjy-gitnub.github.io/win12/img/start-menu.png)
+![image](https://win12-online.github.io/win12/img/start-menu.png)
 
 *Start Menu*
 
-![image](https://tjy-gitnub.github.io/win12/img/colorful-apps.png)
+![image](https://win12-online.github.io/win12/img/colorful-apps.png)
 
 *Rich Applications*
 
-![image](https://tjy-gitnub.github.io/win12/img/dark-mode.png)
+![image](https://win12-online.github.io/win12/img/dark-mode.png)
 
 *Dark Mode*
 
-![image](https://tjy-gitnub.github.io/win12/img/ai-copilot.png)
+![image](https://win12-online.github.io/win12/img/ai-copilot.png)
 *AI Copilot([Implementation Method](./scripts/AI%20Copilot%20service/README.md))*
 ## Future Planning
 
@@ -122,11 +122,11 @@ The media file content (graphic works, artistic works, audiovisual works) of Win
 Related files fall within the scope of fair use. Please note that the use of related media files carries legal risks. Please consult the provisions of copyright laws and regulations before use.
 
 ### Additional Terms
-1. Anyone who uses, shares, or distributes this project must clearly include the original author information (Tan Jingyuan, tjy-gitnub) and the original project link (<https://github.com/tjy-gitnub/win12>) in the project introduction, documentation, or related materials. **You must not intentionally conceal, remove, or modify the attribution information, author information, or project links in the original project; you must not restrict others from viewing this information**.
+1. Anyone who uses, shares, or distributes this project must clearly include the original author information (Tan Jingyuan, tjy-gitnub) and the original project link (<https://github.com/win12-online/win12>) in the project introduction, documentation, or related materials. **You must not intentionally conceal, remove, or modify the attribution information, author information, or project links in the original project; you must not restrict others from viewing this information**.
 2. Those who use this project for commercial purposes must clearly indicate the original author and project link, and open-source all related source code under the EPL-2.0 license.
 3. Unmodified source code must not be used for commercial purposes.
 4. Anyone who uses or shares this project must not remove, hide, or restrict access to this open-source statement.
-5. If you discover that others violate any of the requirements listed in the preceding four paragraphs, please [report it to us](https://github.com/tjy-gitnub/win12/issues) in a timely manner and prevent the publication and transmission of the relevant content as promptly as possible.
+5. If you discover that others violate any of the requirements listed in the preceding four paragraphs, please [report it to us](https://github.com/win12-online/win12/issues) in a timely manner and prevent the publication and transmission of the relevant content as promptly as possible.
 6. If you engage in infringing conduct, we will retain records in accordance with applicable laws and reserve the right to take legal action in any manner and pursue legal liability at any time (including but not limited to submitting reports to law enforcement agencies in accordance with law, filing complaints with judicial authorities, cooperating with law enforcement and judicial investigations, etc.).
 ## Contribution Guidelines
 
@@ -138,7 +138,7 @@ This project uses the i18n library to implement multi-language support. Translat
 
 Core developers: tjy-gitnub([Bilibili](https://space.bilibili.com/2010692096/)), NB-group([Bilibili](https://space.bilibili.com/1570243738/)), 782([Bilibili](https://space.bilibili.com/1046361194/)) (all three are middle school students)
 
-Project contributors: See [here](https://github.com/tjy-gitnub/win12/graphs/contributors) (Thank you to our excellent contributors!)
+Project contributors: See [here](https://github.com/win12-online/win12/graphs/contributors) (Thank you to our excellent contributors!)
 
 ## Support Us
 
