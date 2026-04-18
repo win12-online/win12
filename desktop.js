@@ -9,7 +9,7 @@ Windows 12 网页版
 
 /********** 禁止格式化此文档！ **********/
 
-console.log('%cWindows 12 网页版 (GitHub: tjy-gitnub/win12)', 'background-image: linear-gradient(to right,rgb(174, 115, 229),rgb(21, 105, 223)); border-radius: 8px; font-size: 1.3em; padding: 10px 15px; color: #fff; ');
+console.log('%cWindows 12 网页版 (GitHub: win12-online/win12)', 'background-image: linear-gradient(to right,rgb(174, 115, 229),rgb(21, 105, 223)); border-radius: 8px; font-size: 1.3em; padding: 10px 15px; color: #fff; ');
 // 好高级，还能这样？？
 
 
@@ -270,7 +270,7 @@ const cms = {
     'desktop': [
         [`<i class="bi bi-arrow-clockwise"></i> ${lang('刷新', 'refresh')} <info>F5</info>`, '$(\'#desktop\').css(\'opacity\',\'0\');setTimeout(()=>{$(\'#desktop\').css(\'opacity\',\'1\');},100);setIcon();'],
         ['<i class="bi bi-circle-square"></i> ' + lang('切换主题', 'desktop.tgltheme'), 'toggletheme()'],
-        `<a onmousedown="window.open(\'https://github.com/tjy-gitnub/win12\',\'_blank\');" win12_title="https://github.com/tjy-gitnub/win12" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)"><i class="bi bi-github"></i> ${lang('在 Github 中查看此项目', 'desktop.vogithub')}</a>`,
+        `<a onmousedown="window.open(\'https://github.com/win12-online/win12\',\'_blank\');" win12_title="https://github.com/win12-online/win12" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)"><i class="bi bi-github"></i> ${lang('在 Github 中查看此项目', 'desktop.vogithub')}</a>`,
         arg => {
             if (edit_mode) {
                 return ['<i class="bi bi-pencil"></i> ' + lang('退出编辑模式', 'desktop.exitedit'), 'editMode();'];
@@ -697,7 +697,7 @@ const nts = {
         cnt: `<p class="tit">${lang('反馈', 'nts.feedback.name')}</p>
             <p>${lang('我们非常注重用户的体验与反馈', 'nts.feedback.txt')}</p>
             <list class="new">
-                <a class="a" onclick="window.open('https://github.com/tjy-gitnub/win12/issues','_blank');" win12_title="在浏览器新窗口打开链接" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)">${lang('在github上提交issue (需要github账户)', 'nts.feedback.github')}</a>
+                <a class="a" onclick="window.open('https://github.com/win12-online/win12/issues','_blank');" win12_title="在浏览器新窗口打开链接" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)">${lang('在github上提交issue (需要github账户)', 'nts.feedback.github')}</a>
             </list>`,
         btn: [
             { type: 'main', text: lang(lang('关闭', 'close'), 'close'), js: 'closenotice();' },
@@ -2441,7 +2441,7 @@ document.getElementsByTagName('body')[0].onload = () => {
 let autoUpdate = true;
 function checkUpdate() {
     const sha = localStorage.getItem('sha');
-    api('repos/tjy-gitnub/win12/commits').then(res => {
+    api('repos/win12-online/win12/commits').then(res => {
         res.json().then(json => {
             if (sha != json[0].sha && sha) {
                 localStorage.setItem('update', true);

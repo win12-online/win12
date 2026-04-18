@@ -12,6 +12,9 @@
   <span href="https://github.com/win12-online/win12/network" style="text-decoration:none">
     <img src="https://img.shields.io/github/forks/win12-online/win12.svg" alt="GitHub forks"/>
   </span>
+  <span href="https://status.win12.tech/status/win12" style="text-decoration:none">
+    <img src="https://status.win12.tech/api/badge/5/status?style=plastic" alt="GitHub forks"/>
+  </span>
 </p>
 <p align="center">
   <a href="https://trendshift.io/repositories/115" target="_blank">
@@ -30,10 +33,6 @@
     <img src="https://api.star-history.com/svg?repos=win12-online/win12&type=Date" alt="Star History Chart">
   </a>
 </details>
-
-> [!WARNING]
-> 
-> 由于所有权迁移，本仓库代码等尚不能正常工作。正常使用还请移步[tjy-gitnub/win12](https://github.com/tjy-gitnub/win12)
 
 ## 目录
 
