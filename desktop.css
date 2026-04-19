@@ -2077,7 +2077,21 @@ input-before {
     margin: 8px 10px 2px 10px;
     padding: 0 3px 3px 3px;
     z-index: 3;
-    transition: 80ms;
+    transition: opacity 80ms, box-shadow 80ms;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+#desktop>div.dragging {
+    opacity: 0.85;
+    z-index: 100;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    transition: none;
+}
+
+#desktop>div.selected {
+    background-color: var(--hover-half);
+    border: 1px solid var(--href);
 }
 
 
