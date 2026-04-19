@@ -326,7 +326,7 @@ const cms = {
             return ['<i class="bi bi-link-45deg"></i> 在桌面创建链接', 'var s=`<div class=\'b\' ondblclick=openapp(\'' + arg[0] + '\')  ontouchstart=openapp(\'' + arg[0] + '\') appname=\'' + arg[0] + '\'><img src=\'icon/' + geticon(arg[0]) + '\'><p>' + arg[1] + '</p></div>`;$(\'#desktop\').append(s);desktopItem[desktopItem.length]=s;addMenu();saveDesktop();'];
         },
         arg => {
-            return ['<i class="bi bi-x"></i> 取消固定', `$('#startmenu-r>.pinned>.apps>.sm-app.${arg[0]}').remove()`];
+            return ['<i class="bi bi-x"></i> 取消固定', `$('#startmenu-r>.tile.${arg[0]}').remove()`];
         }
     ],
     'smlapp': [
@@ -1850,8 +1850,8 @@ for (let i = 1; i <= daysum; i++) {
     $('#datebox>.cont>.body')[0].innerHTML += `<p>${i}</p>`;
 }
 function pinapp(id, name, command) {
-    if ($('#startmenu-r>.pinned>.apps>.a.sm-app.' + id).length) return;
-    $('#startmenu-r>.pinned>.apps').append(`<a class='a sm-app enable ${id}' onclick='${command}';hide_startmenu();' oncontextmenu='return showcm(event,\"smapp\",[\"${id}\",\"${name}\"])'><img src='icon/${geticon(id)}'><p>${name}</p></a>`);
+    if ($('#startmenu-r>.tile.' + id).length) return;
+    $('#startmenu-r').append(`<a class='a tile medium ${id}' onclick='${command}';hide_startmenu();' oncontextmenu='return showcm(event,\"smapp\",[\"${id}\",\"${name}\"])'><img src='icon/${geticon(id)}'><p>${name}</p></a>`);
 }
 
 // 应用方法
@@ -2003,7 +2003,6 @@ function openDockWidget(name) {
         }
     } else if (name == "datebox") {  //打开时间框
         if ($('#datebox').hasClass('show')) {
-            $('.dock.date').removeClass('show');
             $('#datebox').removeClass('show');
             setTimeout(() => {
                 $('#datebox').removeClass('show-begin');
@@ -2016,8 +2015,18 @@ function openDockWidget(name) {
                     $('#control').removeClass('show-begin');
                 }, 200);
             }
-            $('.dock.date').addClass('show');
-            $('#datebox').css('left', $('.a.dock.date').position().left - 125);
+            const dateDock = $('.a.dock.date');
+            const dateDockRect = dateDock[0].getBoundingClientRect();
+            const dateboxWidth = 350;
+            let leftPos = dateDockRect.left + dateDockRect.width / 2 - dateboxWidth / 2;
+            // Ensure datebox stays within screen bounds
+            if (leftPos + dateboxWidth > window.innerWidth) {
+                leftPos = window.innerWidth - dateboxWidth - 10;
+            }
+            if (leftPos < 10) {
+                leftPos = 10;
+            }
+            $('#datebox').css('left', leftPos + 'px');
             $('#datebox').addClass('show-begin');
             setTimeout(() => {
                 $('#datebox').addClass('show');
@@ -2580,64 +2589,77 @@ let previewTimeout;
 function showTaskbarPreview(name, event) {
     clearTimeout(previewTimeout);
 
-    const preview = document.getElementById('taskbar-preview');
-    if (!preview) {
-        const previewEl = document.createElement('div');
-        previewEl.id = 'taskbar-preview';
-        previewEl.innerHTML = `
-            <div class="preview-title">
-                <img src="" alt="">
-                <span></span>
-            </div>
-            <div class="preview-content">
-                <div class="preview-window"></div>
-            </div>
-        `;
-        document.body.appendChild(previewEl);
-    }
+    previewTimeout = setTimeout(() => {
+        const preview = document.getElementById('taskbar-preview');
+        if (!preview) {
+            const previewEl = document.createElement('div');
+            previewEl.id = 'taskbar-preview';
+            previewEl.innerHTML = `
+                <div class="preview-title">
+                    <img src="" alt="">
+                    <span></span>
+                </div>
+                <div class="preview-content">
+                    <div class="preview-window"></div>
+                </div>
+            `;
+            document.body.appendChild(previewEl);
+        }
 
-    const win = $(`.window.${name}`);
-    if (win.length && !win.hasClass('min')) {
-        const preview = $('#taskbar-preview');
-        const taskbarItem = $(event.currentTarget);
-        const itemRect = taskbarItem[0].getBoundingClientRect();
+        const win = $(`.window.${name}`);
+        if (win.length && !win.hasClass('min')) {
+            const preview = $('#taskbar-preview');
+            const taskbarItem = $(event.currentTarget);
+            const itemRect = taskbarItem[0].getBoundingClientRect();
 
+            // Reset animation for content switch
+            preview.removeClass('show');
+            preview.css('transition', 'none');
+            
+            // Force reflow
+            preview[0].offsetHeight;
+            
+            // Restore transition
+            preview.css('transition', '');
 
+            // Set window title and icon
+            const titleImg = win.find('.titbar img.icon').attr('src');
+            const title = win.find('.titbar p').text() || win.find('.titbar span').text();
 
-        // Set window title and icon
-        const titleImg = win.find('.titbar img.icon').attr('src');
-        const title = win.find('.titbar p').text() || win.find('.titbar span').text();
+            preview.find('.preview-title img').attr('src', titleImg);
+            preview.find('.preview-title span').text(title);
 
-        preview.find('.preview-title img').attr('src', titleImg);
-        preview.find('.preview-title span').text(title);
+            // Create simplified window preview
+            const previewWindow = preview.find('.preview-content .preview-window');
+            previewWindow.empty();
 
-        // Create simplified window preview
-        const previewWindow = preview.find('.preview-content .preview-window');
-        previewWindow.empty();
+            // Clone important window elements for preview
+            const content = win.find('.content').clone();
+            content.find('script').remove();
+            content.find('iframe').remove();
 
-        // Clone important window elements for preview
-        const content = win.find('.content').clone();
-        content.find('script').remove(); // Remove any scripts
-        content.find('iframe').remove(); // Remove iframes
+            // Scale down the content
+            content.css({
+                transform: 'scale(0.2)',
+                transformOrigin: 'top left',
+                width: '500%',
+                height: '500%'
+            });
 
-        // Scale down the content
-        content.css({
-            transform: 'scale(0.2)',
-            transformOrigin: 'top left',
-            width: '500%', // 1/0.2 = 5
-            height: '500%'
-        });
-
-        previewWindow.append(content);
-        preview.addClass('show');
-
-        // Set preview position
-        console.log(content[0].offsetWidth * 0.2);
-        preview.css({
-            left: itemRect.left - (content[0].offsetWidth * 0.2 / 2),
-            bottom: '60px'
-        });
-    }
+            previewWindow.append(content);
+            
+            // Set preview position
+            preview.css({
+                left: itemRect.left - (content[0].offsetWidth * 0.2 / 2),
+                bottom: '60px'
+            });
+            
+            // Trigger animation
+            requestAnimationFrame(() => {
+                preview.addClass('show');
+            });
+        }
+    }, 500);
 }
 
 function hideTaskbarPreview() {

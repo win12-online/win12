@@ -16,6 +16,8 @@
     --hover: #ffffff65;
     --hover-half: #ffffff40;
     --hover-b: #1111110f;
+    --pressed: #ffffff50;
+    --taskbar-bg: rgba(243, 243, 243, 0.85);
     --bggrey: #eee;
     --fill: #d3d3d370;
     --bgul: url('bg.svg');
@@ -44,6 +46,8 @@
     --hover: #aaaaaa30;
     --hover-half: #ffffff20;
     --hover-b: #eeeeee0f;
+    --pressed: #aaaaaa20;
+    --taskbar-bg: rgba(24, 24, 24, 0.85);
     --bggrey: #444;
     --fill: #99999970;
     --bgul: url('bg-dark.svg');
@@ -429,45 +433,53 @@ list>span.focs.cl {
 
 #dock-box {
     position: fixed;
-    bottom: 10px;
-    height: 40px;
+    bottom: 0;
+    height: 48px;
     display: flex;
     width: 100%;
     z-index: 92;
-    padding: 0 5px;
-    justify-content: center;
-    transition: bottom 400ms;
+    padding: 0 10px;
+    justify-content: flex-start;
+    transition: bottom 400ms, transform 0.3s ease;
+    background-color: var(--taskbar-bg, rgba(24, 24, 24, 0.85));
+    backdrop-filter: blur(30px) saturate(1.8);
+    -webkit-backdrop-filter: blur(30px) saturate(1.8);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 #dock-box.hide {
-    bottom: -60px;
+    bottom: -48px;
 }
 
 .dock {
-    border-radius: 10px;
+    border-radius: 0;
     height: 100%;
-    background-color: var(--contextmeu);
-    backdrop-filter: blur(20px) saturate(2);
-    -webkit-backdrop-filter: blur(20px) saturate(2);
-    box-shadow: 0 1px 2px #44444460, 0px 3px 25px 1px var(--shadow);
-    padding: 7px 6px;
-    margin: 0 3px;
-    outline: 1px solid #99999950;
+    background-color: transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    box-shadow: none;
+    padding: 0;
+    margin: 0;
+    outline: none;
     display: flex;
-    transition: 200ms, transform 300ms cubic-bezier(0.14, 1.02, 0.17, 0.03), backdrop-filter, -webkit-backdrop-filter 0ms;
+    transition: background-color 100ms ease;
     bottom: 0;
-    /* transform: scale(1); */
-    /* border: 1.5px solid #6f6f6f30; */
+    position: relative;
+    overflow: hidden;
+}
+
+.dock:hover {
+    background-color: var(--hover);
 }
 
 :root.corner_squ .dock {
-    corner-shape: squircle;
-    border-radius: 20px;
+    corner-shape: initial;
+    border-radius: 0;
 }
 
 .dock>* {
-    padding-left: 3px;
-    padding-right: 3px;
+    padding-left: 6px;
+    padding-right: 6px;
 }
 
 .dock.control:hover,
@@ -478,27 +490,33 @@ list>span.focs.cl {
 }
 
 #toolbar {
-    display: flex;
+    display: none;
 }
 
 #taskbar {
-    padding: 3px 2px;
-    transition: 80ms;
-    overflow: hidden;
-    width: 0;
+    padding: 0;
+    transition: width 300ms ease;
+    overflow: visible;
+    width: auto;
+    display: none;
+    flex: 1;
+    min-width: 0;
 }
 
 #taskbar>a {
-    border-radius: 10px;
-    height: 34px;
-    width: 38px;
-    transition: 100ms;
-    padding: 4px 5px;
-    display: block;
+    border-radius: 0;
+    height: 48px;
+    width: 48px;
+    min-width: 48px;
+    transition: background-color 80ms ease;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     margin: 0;
     background-clip: padding-box;
-    border-left: 2px solid transparent;
-    border-right: 2px solid transparent;
+    border: none;
+    position: relative;
 }
 
 #taskbar>a:hover {
@@ -506,14 +524,14 @@ list>span.focs.cl {
 }
 
 #taskbar>a:active>img {
-    transform: scale(0.8);
+    transform: scale(0.85);
 }
 
 #taskbar>a>img {
-    width: 26px;
-    height: 26px;
+    width: 28px;
+    height: 28px;
     transition: 100ms;
-    margin: -1px 0 0 -0.5px;
+    margin: 0;
 }
 
 #taskbar>a:not(.min)>img {
@@ -581,72 +599,95 @@ list>span.focs.cl {
 #taskbar>a::after {
     content: '';
     display: block;
-    width: 18px;
+    width: 16px;
     background: linear-gradient(90deg, var(--theme-1), var(--theme-2));
-    height: 4px;
-    border-radius: 2px;
-    position: relative;
-    bottom: 4px;
-    left: 3.2px;
-    transition: 150ms;
+    height: 3px;
+    border-radius: 0;
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    transition: width 150ms ease, opacity 150ms ease;
+    opacity: 0;
+}
+
+#taskbar>a.foc::after {
+    opacity: 1;
+    width: 16px;
+}
+
+#taskbar>a:hover::after {
+    opacity: 1;
+    width: 48px;
 }
 
 #taskbar>a:not(.foc)::after {
     background: linear-gradient(90deg, #7f7f7f, #7f7f7f);
-    width: 12px;
-    left: 6px;
 }
 
 #taskbar>a:not(.foc):hover:after {
-    width: 16px;
-    left: 4.2px;
+    width: 48px;
 }
 
 #taskbar>a.foc:hover:after {
-    width: 22px;
-    left: 1.2px;
+    width: 48px;
 }
 
 #taskbar>a.min:hover:after {
-    width: 18px;
-    left: 3.2px;
+    width: 48px;
 }
 
 .dock.date {
-    width: 100px;
-    padding: 0px 5px;
-    display: block;
-    text-align: center;
+    height: 100%;
+    width: auto;
+    min-width: 80px;
+    padding: 0 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     overflow: hidden;
+    cursor: pointer;
+    transition: background-color 100ms ease;
+}
+
+.dock.date:hover {
+    background-color: var(--hover);
 }
 
 .dock.date:active {
-    transform: scale(0.9);
-    filter: opacity(0.6) !important;
+    background-color: var(--pressed);
 }
 
 .dock.control {
+    height: 100%;
+    padding: 0 8px;
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 5px;
+    gap: 8px;
+    cursor: pointer;
+    transition: background-color 100ms ease;
 }
 
-.dock.control>icon {
-    font-size: 17px;
-}
-
-.dock.control>* {
-    margin: 0 -2px 0 -1px;
+.dock.control:hover {
+    background-color: var(--hover);
 }
 
 .dock.control:active {
-    transform: scale(0.9);
-    filter: opacity(0.6) !important;
+    background-color: var(--pressed);
 }
 
 .dock.date>.date {
-    margin-top: -8px;
+    margin-top: 0;
+    font-size: 12px;
+    line-height: 1.3;
+}
+
+.dock.date>.time {
+    font-size: 12px;
+    line-height: 1.3;
+    margin-bottom: 2px;
 }
 
 .dock.date>p {
@@ -658,38 +699,37 @@ list>span.focs.cl {
 }
 
 .dock.date>.bi {
-    position: absolute;
-    display: block;
-    text-align: center;
-    left: 0;
-    top: 37px;
-    width: 100%;
-    transition: 200ms cubic-bezier(0.9, 0, 0.1, 1);
-}
-
-.dock.date.show>.bi {
-    top: 7px;
+    display: none;
 }
 
 .dock.theme {
-    width: 40px;
-    padding-left: 3.5px;
-    text-align: center;
-    overflow: hidden;
-    box-shadow: 0 0 6px 1px var(--shadow);
+    margin-left: auto;
+    width: 48px;
+    height: 100%;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: visible;
+    position: relative;
+    cursor: pointer;
+    transition: background-color 100ms ease;
+}
+
+.dock.theme:hover {
+    background-color: var(--hover);
 }
 
 .dock.theme:active {
-    transform: scale(0.9);
-    filter: opacity(0.6) !important;
+    background-color: var(--pressed);
 }
 
 .dock.theme>.dark {
     position: absolute;
     height: 30px;
     width: 30px;
-    top: 5px;
-    left: 40px;
+    top: 9px;
+    left: 9px;
     transition: 200ms cubic-bezier(0.9, 0, 0.1, 1);
     opacity: 0;
 }
@@ -698,26 +738,27 @@ list>span.focs.cl {
     height: 30px;
     width: 30px;
     position: absolute;
-    top: 5px;
-    left: 5px;
+    top: 9px;
+    left: 9px;
     transition: 200ms cubic-bezier(0.9, 0, 0.1, 1);
     opacity: 1;
 }
 
 .dock.theme.dk>.dark {
-    left: 5px;
+    left: 9px;
     opacity: 1;
 }
 
 .dock.theme.dk>.light {
-    left: -30px;
+    left: 9px;
     opacity: 0;
 }
 
 .dock-btn {
     transition: 200ms;
-    width: 32px;
-    height: 26px;
+    width: 38px;
+    height: 34px;
+    margin-top: 10px;
     overflow: hidden;
 }
 
@@ -726,28 +767,17 @@ list>span.focs.cl {
     filter: brightness(1.2);
 }
 
-#start-btn>svg.menu {
+.dock-btn:active {
+    transform: scale(0.85);
+}
+
+#start-btn {
     position: relative;
-    top: 27px;
-    transition: 200ms;
+    transition: all 200ms ease;
 }
 
-#start-btn.show>svg.menu {
-    top: 0;
-    transition-delay: 200ms;
-}
-
-#start-btn>.ico {
-    position: relative;
-    top: -32px;
-    transition: transform 200ms, top 200ms 100ms, left 200ms;
-    left: 0;
-    /* transition-delay: 100ms; */
-}
-
-#start-btn.show>.ico {
-    transform: scale(0.5);
-    top: -26px;
+#start-btn.show {
+    filter: drop-shadow(0 0 4px var(--theme-1));
 }
 
 #search-btn>svg.in {
@@ -868,12 +898,15 @@ list>span.focs.cl {
 #start-menu {
     height: 594px;
     max-height: calc(100% - 120px);
-    width: 900px;
-    left: calc(50% - 450px);
+    width: 800px;
+    left: 12px;
     box-shadow: 3px 3px 25px 1px var(--shadow);
     padding: 2px 4px;
     bottom: 60px;
-    transform: translateY(700px);
+    transform: translateY(50px) scale(0.8);
+    transform-origin: bottom left;
+    opacity: 0;
+    transition: transform 200ms cubic-bezier(0.1, 0.9, 0.2, 1), opacity 200ms cubic-bezier(0.1, 0.9, 0.2, 1);
 }
 
 #start-menu.show-begin {
@@ -882,7 +915,7 @@ list>span.focs.cl {
 
 #start-menu.show {
     opacity: 1;
-    transform: none !important;
+    transform: translateY(0) scale(1) !important;
 }
 
 #start-menu.max {
@@ -967,25 +1000,40 @@ input-before {
 #startmenu-r {
     flex-grow: 1;
     overflow: hidden;
-    padding-bottom: 10px;
-    display: flex;
-    flex-direction: column;
+    padding: 10px;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-auto-rows: 80px;
+    gap: 4px;
+    align-content: start;
+    position: relative;
 }
 
-#startmenu-r>* {
+#startmenu-r>.row1 {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+    transition-delay: 200ms;
+    z-index: 10;
+}
+
+#startmenu-r>.tile {
     opacity: 0;
     transition: transform 200ms cubic-bezier(0, 0, 0, 1), opacity 200ms 30ms;
     transform: translate(0, 50px);
 }
 
-#start-menu.show>#startmenu-r>* {
+#start-menu.show>#startmenu-r>.tile {
     transform: none;
     opacity: 1;
 }
 
-#startmenu-r>.row1 {
-    display: flex;
-    transition-delay: 200ms;
+#start-menu.show>#startmenu-r>.row1 {
+    transform: none;
+    opacity: 1;
 }
 
 #startmenu-r>.row1>.tool {
@@ -1056,8 +1104,6 @@ input-before {
     margin-right: 50px;
 }
 
-#startmenu-r>.row1>.folder,
-#startmenu-r>.pinned,
 #startmenu-r>.tuijian {
     background-color: var(--card);
     box-shadow:  0px 1px 8px var(--s3d);
@@ -1067,51 +1113,217 @@ input-before {
 
 
 :root.corner_squ {
-    #startmenu-r>.row1>.folder,
-    #startmenu-r>.pinned,
     #startmenu-r>.tuijian {
         corner-shape: squircle;
         border-radius: 25px;
     }
 }
 
-#startmenu-r>.row1>.folder {
-    display: flex;
-    margin: 15px 15px;
-    flex-grow: 1;
-}
-
-#startmenu-r>.row1>.folder>.sm-app {
-    height: 72px;
-}
-
-#startmenu-r>.pinned {
-    margin-right: 10px;
-    margin-left: 15px;
-    transition-delay: 300ms;
-    height: 220px;
+.tile {
     display: flex;
     flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background-color: var(--card-bg, rgba(255, 255, 255, 0.05));
+    transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    text-decoration: none;
+    color: var(--text);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
 }
 
-#startmenu-r>.pinned>.apps {
-    display: flex;
-    flex-wrap: wrap;
-    padding-left: 10px;
-    overflow: auto;
-    flex-grow: 1;
+.a.tile {
+    text-decoration: none;
+    color: inherit;
 }
 
-
-#startmenu-r>.pinned>.title {
-    padding: 5px 0 5px 10px;
-    font-size: 18px;
-    font-weight: 530;
-    display: flex;
+.tile::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 50%, rgba(0,0,0,0.05) 100%);
+    opacity: 1;
+    transition: opacity 200ms ease;
+    pointer-events: none;
 }
 
-#startmenu-r>.pinned>.title>* {
-    width: 100%;
+.tile::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle at center, rgba(255,255,255,0.15) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 200ms ease;
+    pointer-events: none;
+}
+
+.tile:hover::after {
+    opacity: 1;
+}
+
+.tile:hover {
+    transform: scale(1.03) translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.tile:active {
+    transform: scale(0.97);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+.tile.medium {
+    grid-column: span 1;
+    grid-row: span 1;
+}
+
+.tile.wide {
+    grid-column: span 2;
+    grid-row: span 1;
+}
+
+.tile.large {
+    grid-column: span 2;
+    grid-row: span 2;
+}
+
+.tile>img {
+    width: 32px;
+    height: 32px;
+    margin-bottom: 6px;
+    transition: transform 150ms ease;
+}
+
+.tile:hover>img {
+    transform: scale(1.1);
+}
+
+.tile>p {
+    font-size: 11px;
+    text-align: center;
+    line-height: 1.2;
+    padding: 0 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+.tile.wide>p,
+.tile.large>p {
+    max-width: calc(100% - 8px);
+}
+
+.tile.setting { 
+    background: linear-gradient(135deg, #6B6B6B 0%, #4A4A4A 100%); 
+    color: #fff; 
+}
+.tile.explorer { 
+    background: linear-gradient(135deg, #FFB900 0%, #E6A800 100%); 
+    color: #fff; 
+}
+.tile.edge { 
+    background: linear-gradient(135deg, #0078D7 0%, #005A9E 100%); 
+    color: #fff; 
+}
+.tile.msstore { 
+    background: linear-gradient(135deg, #0078D4 0%, #005A9E 100%); 
+    color: #fff; 
+}
+.tile.calc { 
+    background: linear-gradient(135deg, #744DA9 0%, #5B2C8E 100%); 
+    color: #fff; 
+}
+.tile.notepad { 
+    background: linear-gradient(135deg, #4A90D9 0%, #357ABD 100%); 
+    color: #fff; 
+}
+.tile.terminal { 
+    background: linear-gradient(135deg, #2D2D2D 0%, #1A1A1A 100%); 
+    color: #fff; 
+}
+.tile.defender { 
+    background: linear-gradient(135deg, #0078D4 0%, #005A9E 100%); 
+    color: #fff; 
+}
+.tile.camera { 
+    background: linear-gradient(135deg, #4A90D9 0%, #357ABD 100%); 
+    color: #fff; 
+}
+.tile.about { 
+    background: linear-gradient(135deg, #744DA9 0%, #5B2C8E 100%); 
+    color: #fff; 
+}
+.tile.windows12 { 
+    background: linear-gradient(135deg, #0078D4 0%, #005A9E 100%); 
+    color: #fff; 
+}
+
+.tile.run { 
+    background: linear-gradient(135deg, #0078D7 0%, #005A9E 100%); 
+    color: #fff; 
+}
+
+.tile.taskmgr { 
+    background: linear-gradient(135deg, #107C10 0%, #0B5B0B 100%); 
+    color: #fff; 
+}
+
+.tile.copilot { 
+    background: linear-gradient(135deg, #9B4DCA 0%, #3B91D8 100%); 
+    color: #fff; 
+}
+
+.tile.pythonEditor { 
+    background: linear-gradient(135deg, #3776AB 0%, #2B5B84 100%); 
+    color: #fff; 
+}
+
+.tile.python { 
+    background: linear-gradient(135deg, #3776AB 0%, #FFD43B 100%); 
+    color: #fff; 
+}
+
+.tile.whiteboard { 
+    background: linear-gradient(135deg, #17A589 0%, #0E6655 100%); 
+    color: #fff; 
+}
+
+.tile.word { 
+    background: linear-gradient(135deg, #2B579A 0%, #1B3A64 100%); 
+    color: #fff; 
+}
+
+.tile.minesweeper { 
+    background: linear-gradient(135deg, #6A5ACD 0%, #4B3FBF 100%); 
+    color: #fff; 
+}
+
+.tile.bilibili { 
+    background: linear-gradient(135deg, #FB7299 0%, #D4567A 100%); 
+    color: #fff; 
+}
+
+.tile.vscode { 
+    background: linear-gradient(135deg, #007ACC 0%, #005A9E 100%); 
+    color: #fff; 
+}
+
+.tile.wsa { 
+    background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%); 
+    color: #fff; 
+}
+
+.tile:hover {
+    filter: brightness(1.15);
 }
 
 #startmenu-r>.tuijian {
@@ -1288,9 +1500,13 @@ input-before {
     height: 594px;
     max-height: calc(100% - 120px);
     width: 600px;
-    left: calc(50% - 300px);
+    left: 12px;
     padding: 15px;
-    transform: translateY(660px);
+    bottom: 60px;
+    transform: translateY(50px) scale(0.8);
+    transform-origin: bottom left;
+    opacity: 0;
+    transition: transform 200ms cubic-bezier(0.1, 0.9, 0.2, 1), opacity 200ms cubic-bezier(0.1, 0.9, 0.2, 1);
 }
 
 
@@ -1433,9 +1649,12 @@ input-before {
     height: 600px;
     max-height: calc(90% - 50px);
     width: 1000px;
-    left: calc(50% - 500px);
+    left: 12px;
     padding: 10px 0;
-    transform: translateY(660px);
+    transform: translateY(50px) scale(0.8);
+    transform-origin: bottom left;
+    opacity: 0;
+    transition: transform 200ms cubic-bezier(0.1, 0.9, 0.2, 1), opacity 200ms cubic-bezier(0.1, 0.9, 0.2, 1);
 }
 
 #widgets.show-begin {
@@ -2428,10 +2647,7 @@ input-before {
 }
 
 .window.min {
-    top: calc(95%) !important;
-    left: 15% !important;
-    transform: scale(0.3) !important;
-    transition: cubic-bezier(0.9, 0, 0.1, 1) 200ms, top 200ms 100ms, backdrop-filter background-color 0s;
+    opacity: 0 !important;
 }
 
 .window.show-begin {
@@ -2540,16 +2756,11 @@ github-red2026 */
 /* 定义当窗口处于最大状态时的样式 */
 .window.max {
     width: 100% !important;
-    height: 100% !important;
-
-
-    /* 定位属性，确保窗口从屏幕的左上角开始 */
+    height: calc(100% - 48px) !important;
     left: 0 !important;
     top: 0 !important;
-    /* 移除圆角和边框，使窗口边缘与屏幕边缘无缝对接 */
     border-radius: 0;
     border: none;
-    /* 定义过渡效果，确保窗口在最大化时有平滑的过渡 */
     transition: cubic-bezier(0.9, 0, 0.1, 1) 200ms, top 200ms 100ms, backdrop-filter, background 0ms;
 }
 
@@ -2818,34 +3029,35 @@ body>.container>.image-container>.svg {
 #taskbar-preview {
     position: fixed;
     bottom: 60px;
-    background: var(--card-bg);
-    backdrop-filter: blur(20px) saturate(1.5);
-    -webkit-backdrop-filter: blur(20px) saturate(1.5);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: var(--bg70);
+    backdrop-filter: blur(30px) saturate(1.8);
+    -webkit-backdrop-filter: blur(30px) saturate(1.8);
+    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--bd);
     border-radius: 8px;
     padding: 12px;
-    display: none;
-    z-index: 10000;
-    transition: all 0.2s ease-out;
+    display: block;
+    visibility: hidden;
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(8px) scale(0.95);
+    z-index: 10000;
+    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
     pointer-events: none;
 }
 
 #taskbar-preview.show {
-    display: block;
+    visibility: visible;
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
 }
 
 #taskbar-preview .preview-title {
     font-size: 13px;
-    margin-bottom: 10px;
+    font-weight: 500;
+    margin-bottom: 8px;
     display: flex;
     align-items: center;
     color: var(--text);
-    opacity: 0.9;
 }
 
 #taskbar-preview .preview-title img {
@@ -2855,19 +3067,20 @@ body>.container>.image-container>.svg {
 }
 
 #taskbar-preview .preview-content {
-    width: 280px;
-    height: 180px;
-    background: var(--hover);
-    border-radius: 6px;
+    width: 320px;
+    height: 200px;
+    background: var(--card);
+    border-radius: 4px;
     overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--bd);
 }
 
 #taskbar-preview .preview-content img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
     pointer-events: none;
+    background: var(--bg);
 }
 
 @media screen and (max-width: 768px) {
