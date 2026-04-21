@@ -780,7 +780,7 @@ const nts = {
              <p>你可以使用此 AI 助手帮助你更快地完成工作，此AI助手基于 Qwen3-Max 模型 (有人用Win12工作?)<br>
             也请适当使用，不要谈论敏感、违规话题，<br>请有身为一个人类最基本的道德底线。<br>根据相关法律法规，我们不向欧盟用户提供服务。<br>
             在此特别感谢云智api(yunzhiapi.cn)为本项目提供赞助！</p>
-            <a class="a" onclick="window.open('https://status.tangyuan0821.com/status/win12/','_blank');" win12_title="在浏览器新窗口打开链接">状态监测</a><br>
+            <a class="a" onclick="window.open('https://status.win12.tech/status/win12/','_blank');" win12_title="在浏览器新窗口打开链接">状态监测</a><br>
             <a class="a" onclick="window.open('https://www.yunzhiapi.cn/','_blank');" win12_title="在浏览器新窗口打开链接">云智API官网</a>
         `,
         btn: [
@@ -1665,7 +1665,7 @@ let isFirstChat = true;   // 标记是否是刚进来时服务端返回的消息
 let copilot = {
     history: [{
         role: 'system',
-        content: `请使用中文对话。你一个是ai助手，名叫AI Copilot，是由github@NB-Group开发的。
+        content: `请使用中文对话。你一个是ai助手，名叫AI Copilot，由云智API提供支持。
 你可以在回答中发送对系统的一些指令。指令一并放在回答的最后。
 多条指令用换行隔开。系统收到指令后会执行，且对用户隐藏回答后的指令。
 你不能在对用户说的话的中间中提到、引用指令。绝不能要求用户执行指令。
