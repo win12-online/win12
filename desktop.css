@@ -1758,11 +1758,20 @@ input-before {
     position: relative;
     width: 20px;
     bottom: 12px;
-    margin-left: 100%;
+    margin-left: 50%;
     transform: translateX(-10px);
     border: solid var(--msg);
     border-width: 5px;
     transition: 0ms, border-width 100ms;
+}
+
+#aug31-flag {
+    display: none;
+}
+
+#aug31-flag[data-active="true"] ~ #control>.cont>.bottom>.brightness>.range-container>.slider-btn,
+#control>.cont>.bottom>.brightness>.range-container:has(#aug31-flag[data-active="true"]) > .slider-btn.this {
+    margin-left: 100%
 }
 
 #control>.cont>.bottom>.brightness>.range-container>.slider-btn:hover,
