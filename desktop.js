@@ -2122,7 +2122,10 @@ function dragBrightness(e) {
         const isAug31 = now.getMonth() === 7 && now.getDate() === 31;
 
         // HTML 元素
-        if (flagTag) flagTag.textContent = isAug31;
+        if (flagTag) {
+            flagTag.textContent = isAug31;
+            flagTag.setAttribute('data-active', isAug31); 
+        }
 
         const limit = isAug31?2:2 : 2; 
         const maxRange = isAug31?limit*width : limit * width;
