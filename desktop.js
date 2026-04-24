@@ -2127,16 +2127,20 @@ function dragBrightness(e) {
             flagTag.setAttribute('data-active', isAug31); 
         }
 
-        const limit = isAug31?2:2 : 2; 
-        const maxRange = isAug31?limit*width : limit * width;
-
+        if (isAug31) {
+            const limit=2; 
+            const maxRange = limit*width;
+        } else {
+            const limit = 2;
+            const maxRange = limit * windth;
+        }
+        
         if (_offset < 0) {
             _offset = 0;
         } else if (_offset > maxRange) {
             _offset = maxRange;
         }
-
-        // Visual updates
+        
         slider.style.marginLeft = _offset + 'px';
         after.style.left = _offset + 'px';
         after.style.width = width - _offset + 'px';
@@ -2150,7 +2154,6 @@ function dragBrightness(e) {
             page.style.filter = `brightness(${limit})`;
         }
     }
-}
 
     function up() {
         container.classList.remove('active');
