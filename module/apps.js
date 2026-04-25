@@ -27,9 +27,7 @@ let apps = {
                             cnt.forEach(cn => {
                                 if (cn.name == 'theme.json') {
                                     $.getJSON('https://tjy-gitnub.github.io/win12-theme/' + cn.path).then(inf => {
-                                        // let infjs = inf;
-                                        if ($('#set-theme>loading').length)
-                                            $('#set-theme').html('');
+                                        $('#set-theme>loading').remove();
                                         $('#set-theme').append(`<a class="a act" onclick="apps.setting.theme_set('${c.name}')" style="background-image:url('https://tjy-gitnub.github.io/win12-theme/${c.name}/view.jpg')">${c.name}</a>`);
                                     });
                                 }
@@ -38,6 +36,7 @@ let apps = {
                     }
                 });
             })});
+            $('#set-theme').append(`<a class="a btn" onclick="$(':root').removeAttr('style');" style="background: #555;">默认主题</a>`);
         },
         theme_set: (infp) => {
             api('repos/tjy-gitnub/win12-theme/contents/' + infp).then(res => {res.json().then(cnt => {
@@ -71,8 +70,8 @@ let apps = {
             setTimeout(() => {
                 $('#win-setting>.page>.cnt.update>.lo>.update-main .notice')[0].innerText = '开发者暂未完善此功能';
                 $('#win-setting>.page>.cnt.update>.lo>.update-main .detail')[0].innerText = 'Windows 更新已被禁用';
-                $('#win-setting>.page>.cnt.update>.setting-list>.update-now>div>p:first-child')[0].innerText = '开发者暂未完善此功能';
-                $('#win-setting>.page>.cnt.update>.setting-list>.update-now>div>p:last-child')[0].innerText = 'Windows 更新已被禁用';
+                // $('#win-setting>.page>.cnt.update>.setting-list>.update-now>div>p:first-child')[0].innerText = '开发者暂未完善此功能';
+                // $('#win-setting>.page>.cnt.update>.setting-list>.update-now>div>p:last-child')[0].innerText = 'Windows 更新已被禁用';
                 // Keep buttons disabled as requested
                 $('#win-setting>.page>.cnt.update>.setting-list>.update-now').addClass('disabled');
                 $('#win-setting>.page>.cnt.update>.lo>.update-main>div:last-child').addClass('disabled');
@@ -769,7 +768,7 @@ let apps = {
           return null;
         },
         load: () => {
-            $('#win-minesweeper')[0].insertAdjacentHTML('afterbegin', '<iframe src="https://tjy-gitnub.github.io/win12/games/minesweeper.html" frameborder="0" style="width: 100%; height: 100%;" loading="lazy"></iframe>');
+            $('#win-minesweeper')[0].insertAdjacentHTML('afterbegin', '<iframe src="https://win12-online.github.io/win12/games/minesweeper.html" frameborder="0" style="width: 100%; height: 100%;" loading="lazy"></iframe>');
         }
     },
     defender: {
@@ -922,6 +921,9 @@ let apps = {
         }
     },
     explorer: {
+        mounts: {},
+        nextDriveLetter: 'E',
+        fsApiSupported: ('showDirectoryPicker' in window),
         init: () => {
             apps.explorer.tabs = [];
             apps.explorer.len = 0;
@@ -932,11 +934,115 @@ let apps = {
             apps.explorer.is_use2 = 0;//千万不要删除它，它依托bug运行
             apps.explorer.old_name = '';
             apps.explorer.clipboard = null;
+            if (!apps.explorer.fsApiSupported) $('#explorer-mount-btn').hide();
             document.addEventListener('keydown', function (event) {
                 if (event.key === 'Delete' && $('.window.foc')[0].classList[1] == 'explorer') {
                     apps.explorer.del(apps.explorer.Process_Of_Select);
                 }
             });
+        },
+        mountDrive: async () => {
+            if (!apps.explorer.fsApiSupported) { shownotice('fs-api-unsupported'); return; }
+            try {
+                const dirHandle = await window.showDirectoryPicker({ mode: 'readwrite' });
+                document.body.style.cursor = 'wait';
+                const letter = apps.explorer.nextDriveLetter + ':';
+                apps.explorer.nextDriveLetter = String.fromCharCode(
+                    apps.explorer.nextDriveLetter.charCodeAt(0) + 1);
+                apps.explorer.mounts[letter] = dirHandle;
+                apps.explorer.path.folder[letter] = { folder: {}, file: [], _mounted: true, _handle: dirHandle };
+                if (!apps.explorer.tabs[apps.explorer.now][2].length) apps.explorer.reset();
+                document.body.style.cursor = '';
+            } catch (e) {
+                document.body.style.cursor = '';
+                if (e.name !== 'AbortError') shownotice('fs-mount-error');
+            }
+        },
+        openMountedFile: async (path) => {
+            var pathl = path.split('/');
+            var fileName = pathl[pathl.length - 1];
+            var ext = fileName.split('.').pop().toLowerCase();
+            let tmp = apps.explorer.path;
+            for (let i = 0; i < pathl.length - 1; i++) {
+                tmp = tmp['folder'][pathl[i]];
+            }
+            var fileObj = tmp['file'].find(f => f.name === fileName);
+            if (!fileObj || !fileObj._mounted || !fileObj._handle) return;
+            try {
+                const file = await fileObj._handle.getFile();
+                const codeExts = ['js', 'ts', 'jsx', 'tsx', 'css', 'scss', 'less', 'html', 'htm', 'xml',
+                    'json', 'yaml', 'yml', 'py', 'java', 'c', 'cpp', 'h', 'cs', 'go',
+                    'rs', 'rb', 'php', 'sh', 'bat', 'ps1', 'sql', 'svg'];
+                const notepadExts = ['txt', 'log', 'md', 'csv', 'ini', 'cfg'];
+                if (codeExts.includes(ext)) {
+                    const text = await file.text();
+                    apps.codeEditor.open(text, fileName, fileObj._handle);
+                } else if (notepadExts.includes(ext)) {
+                    const text = await file.text();
+                    apps.notepad._mountedFileHandle = fileObj._handle;
+                    apps.notepad._dirty = false;
+                    apps.notepad._loading = true;
+                    if ($('#taskbar>.notepad').length != 0) {
+                        $('#win-notepad>.text-box')[0].innerText = text;
+                        if ($('.window.notepad').hasClass('min')) minwin('notepad');
+                        focwin('notepad');
+                        requestAnimationFrame(() => { apps.notepad._loading = false; });
+                    } else {
+                        apps.notepad._pendingContent = text;
+                        openapp('notepad');
+                    }
+                    $('.window.notepad>.titbar>p').text(fileName);
+                    apps.notepad.setMdMode(ext === 'md');
+                } else if (['png', 'jpg', 'jpeg', 'bmp', 'gif', 'webp', 'ico'].includes(ext)) {
+                    const url = URL.createObjectURL(file);
+                    apps.imgviewer.open(url, fileName);
+                } else if (['mp4', 'webm', 'mov', 'avi', 'mkv', 'flv', 'wmv'].includes(ext)) {
+                    const url = URL.createObjectURL(file);
+                    apps.mediaplayer.open(url, fileName, 'video');
+                } else if (['mp3', 'wav', 'flac', 'ogg', 'aac', 'wma', 'm4a'].includes(ext)) {
+                    const url = URL.createObjectURL(file);
+                    apps.mediaplayer.open(url, fileName, 'audio');
+                } else if (ext === 'pdf') {
+                    const url = URL.createObjectURL(file);
+                    apps.pdfviewer.open(url, fileName);
+                } else {
+                    shownotice('unsupported-file-type');
+                }
+            } catch (e) {
+                shownotice('file-read-error');
+            }
+        },
+        unmountDrive: (letter) => {
+            delete apps.explorer.mounts[letter];
+            delete apps.explorer.path.folder[letter];
+            if (!apps.explorer.tabs[apps.explorer.now][2].length) apps.explorer.reset();
+            else if (apps.explorer.tabs[apps.explorer.now][2].startsWith(letter)) apps.explorer.reset();
+        },
+        populateFromHandle: async (dirHandle, targetObj) => {
+            targetObj.folder = {};
+            targetObj.file = [];
+            for await (const entry of dirHandle.values()) {
+                if (entry.kind === 'directory') {
+                    targetObj.folder[entry.name] = { folder: {}, file: [], _mounted: true, _handle: entry };
+                } else {
+                    const ext = entry.name.split('.').pop().toLowerCase();
+                    let ico = 'icon/files/none.png';
+                    if (['txt', 'log', 'md', 'csv', 'ini', 'cfg'].includes(ext)) ico = 'icon/files/txt.png';
+                    else if (['js', 'ts', 'jsx', 'tsx', 'css', 'scss', 'less', 'html', 'htm', 'xml',
+                              'json', 'yaml', 'yml', 'py', 'java', 'c', 'cpp', 'h', 'cs', 'go',
+                              'rs', 'rb', 'php', 'sh', 'bat', 'ps1', 'sql'].includes(ext)) ico = 'icon/files/txt.png';
+                    else if (['png', 'jpg', 'bmp', 'jpeg', 'gif', 'webp', 'svg', 'ico', 'tiff'].includes(ext)) ico = 'icon/files/picture.png';
+                    else if (['doc', 'docx', 'rtf', 'odt'].includes(ext)) ico = 'icon/files/word.png';
+                    else if (['xls', 'xlsx', 'ods'].includes(ext)) ico = 'icon/files/excel.png';
+                    else if (['ppt', 'pptx', 'odp'].includes(ext)) ico = 'icon/files/ppt.png';
+                    else if (['mp3', 'wav', 'flac', 'ogg', 'aac', 'wma', 'm4a'].includes(ext)) ico = 'icon/files/music.png';
+                    else if (['mp4', 'avi', 'mkv', 'mov', 'wmv', 'webm', 'flv'].includes(ext)) ico = 'icon/files/vidio.png';
+                    else if (['exe', 'msi'].includes(ext)) ico = 'icon/files/exefile.png';
+                    else if (['zip', 'rar', '7z', 'tar', 'gz'].includes(ext)) ico = 'icon/files/none.png';
+                    else if ('pdf' === ext) ico = 'icon/files/pdf.svg';
+                    targetObj.file.push({ name: entry.name, ico: ico, command: '', _handle: entry, _mounted: true });
+                }
+            }
         },
         tabs: [],
         now: null,
@@ -970,7 +1076,7 @@ let apps = {
             apps.explorer.checkHistory(apps.explorer.tabs[c][0]);
         },
         reset: (clear = true) => {
-            $('#win-explorer>.page>.main>.content>.view')[0].innerHTML = `<style>#win-explorer>.page>.main>.content>.view>.class{margin: 5px 0 0 10px;display: flex;}
+            let resetHtml = `<style>#win-explorer>.page>.main>.content>.view>.class{margin: 5px 0 0 10px;display: flex;}
             #win-explorer>.page>.main>.content>.view>.class>img{width: 20px;height: 20px;margin-top: 3px;margin-right: 5px;filter:brightness(0.9);}
             #win-explorer>.page>.main>.content>.view>.group{display: flex;flex-wrap: wrap;padding: 10px 20px;}
             #win-explorer>.page>.main>.content>.view>.group>.item{width: 280px;margin: 5px;height:80px;
@@ -992,7 +1098,16 @@ let apps = {
             </div><p class="info">32.6 GB 可用, 共 143 GB</p></div></a><a class="a item act" ondblclick="apps.explorer.goto('D:')" ontouchend="apps.explorer.goto('D:')"
             oncontextmenu="showcm(event,'explorer.folder','D:');return stop(event);">
             <img src="apps/icons/explorer/disk.svg"><div><p class="name">本地磁盘 (D:)</p><div class="bar"><div class="content" style="width: 15%;"></div>
-            </div><p class="info">185.3 GB 可用, 共 216 GB</p></div></a></div>`;
+            </div><p class="info">185.3 GB 可用, 共 216 GB</p></div></a>`;
+            for (let letter in apps.explorer.mounts) {
+                const handle = apps.explorer.mounts[letter];
+                resetHtml += `<a class="a item act" ondblclick="apps.explorer.goto('${letter}')" ontouchend="apps.explorer.goto('${letter}')" oncontextmenu="showcm(event,'explorer.mounted','${letter}');return stop(event);">
+                <img src="apps/icons/explorer/disk.svg"><div><p class="name">${handle.name} (${letter})</p>
+                <div class="bar"><div class="content" style="width: 0%;"></div>
+                </div><p class="info">本地文件夹</p></div></a>`;
+            }
+            resetHtml += `</div>`;
+            $('#win-explorer>.page>.main>.content>.view')[0].innerHTML = resetHtml;
             $('#win-explorer>.path>.tit')[0].innerHTML = '<div class="icon" style="background-image: url(\'./apps/icons/explorer/thispc.svg\')"></div><div class="path"><div class="text" onclick="apps.explorer.reset()">此电脑</div><div class="arrow">&gt;</div></div>';
             // if(rename){
             m_tab.rename('explorer', '<img src="./apps/icons/explorer/thispc.svg"> 此电脑');
@@ -1114,10 +1229,27 @@ let apps = {
                 //这边可以适配更多的文件类型
 
                 aTag.innerHTML += inputTag.value;
+                var isMountedRename = !!apps.explorer.mounts[pathl[0]];
                 for (var j = 0; j < tmp['file'].length; j++) {
                     if (tmp['file'][j]['name'] == on) {
                         tmp['file'][j]['name'] = inputTag.value;
                         tmp['file'][j]['ico'] = icon_;
+                        if (isMountedRename && tmp._handle) {
+                            (async () => {
+                                try {
+                                    const oldHandle = await tmp._handle.getFileHandle(on);
+                                    const file = await oldHandle.getFile();
+                                    const newHandle = await tmp._handle.getFileHandle(inputTag.value, { create: true });
+                                    const writable = await newHandle.createWritable();
+                                    await writable.write(await file.arrayBuffer());
+                                    await writable.close();
+                                    await tmp._handle.removeEntry(on);
+                                    tmp['file'][j]._handle = newHandle;
+                                } catch (e) {
+                                    console.warn('Rename on mounted FS failed:', e);
+                                }
+                            })();
+                        }
                     }
                 }
                 const keys = Object.keys(tmp['folder']);
@@ -1141,16 +1273,38 @@ let apps = {
             apps.explorer.Process_Of_Select = '';
         },
         goto: (path, clear = true) => {
+            if (path == '此电脑') { apps.explorer.reset(clear); return null; }
+            var pathl = path.split('/');
+            if (apps.explorer.mounts[pathl[0]]) {
+                apps.explorer._gotoAsync(path, clear, !clear);
+            } else {
+                apps.explorer._gotoSync(path, clear);
+            }
+        },
+        _gotoAsync: async (path, clear, forceRefresh = false) => {
+            $('#win-explorer>.page>.main>.content>.view')[0].innerHTML = '<p class="info" style="opacity:0.6;">加载中...</p>';
+            var pathl = path.split('/');
+            let tmp = apps.explorer.path;
+            try {
+                for (let i = 0; i < pathl.length; i++) {
+                    tmp = tmp['folder'][pathl[i]];
+                    const needLoad = Object.keys(tmp.folder).length === 0 && tmp.file.length === 0;
+                    if (tmp._mounted && tmp._handle && (needLoad || (forceRefresh && i === pathl.length - 1))) {
+                        await apps.explorer.populateFromHandle(tmp._handle, tmp);
+                    }
+                }
+                apps.explorer._gotoSync(path, clear);
+            } catch (e) {
+                $('#win-explorer>.page>.main>.content>.view')[0].innerHTML = '<p class="info">无法读取此文件夹。</p>';
+            }
+        },
+        _gotoSync: (path, clear = true) => {
             apps.explorer.Process_Of_Select = '';
             $('#win-explorer>.page>.main>.content>.view')[0].innerHTML = '';
             var pathl = path.split('/');
             var pathqwq = '';
             var index_ = 0;
             let tmp = apps.explorer.path;
-            if (path == '此电脑') {
-                apps.explorer.reset(clear);
-                return null;
-            }
             $('#win-explorer>.path>.tit')[0].dataset.path = path;
             $('#win-explorer>.path>.tit>.path')[0].innerHTML = '<div class="text" onclick="apps.explorer.reset()">此电脑</div><div class="arrow">&gt;</div>';
             $('#win-explorer>.path>.tit>.icon')[0].style.marginTop = '0px';
@@ -1160,6 +1314,10 @@ let apps = {
                 m_tab.rename('explorer', '<img src="./apps/icons/explorer/diskwin.svg" style="margin-top:2.5px">' + pathl[pathl.length - 1]);
             }
             else if (pathl[pathl.length - 1] == 'D:') {
+                $('#win-explorer>.path>.tit>.icon')[0].style.backgroundImage = 'url("apps/icons/explorer/disk.svg")';
+                m_tab.rename('explorer', '<img src="./apps/icons/explorer/disk.svg">' + pathl[pathl.length - 1]);
+            }
+            else if (apps.explorer.mounts[pathl[pathl.length - 1]]) {
                 $('#win-explorer>.path>.tit>.icon')[0].style.backgroundImage = 'url("apps/icons/explorer/disk.svg")';
                 m_tab.rename('explorer', '<img src="./apps/icons/explorer/disk.svg">' + pathl[pathl.length - 1]);
             }
@@ -1189,7 +1347,11 @@ let apps = {
                 }
                 if (tmp['file']) {
                     tmp['file'].forEach(file => {
-                        ht += `<a class="a item file" id="file${index_}" onclick="apps.explorer.select('${path_}/${file['name']}','file${index_}');" ondblclick="${file['command']}" ontouchend="${file['command']}" oncontextmenu="showcm(event,'explorer.file','${path_}/${file['name']}');return stop(event);">
+                        let cmd = file['command'];
+                        if (file._mounted && file._handle) {
+                            cmd = `apps.explorer.openMountedFile('${path_}/${file['name']}')`;
+                        }
+                        ht += `<a class="a item file" id="file${index_}" onclick="apps.explorer.select('${path_}/${file['name']}','file${index_}');" ondblclick="${cmd}" ontouchend="${cmd}" oncontextmenu="showcm(event,'explorer.file','${path_}/${file['name']}');return stop(event);">
                             <img src="${file['ico']}">${file['name']}</a>`;
                         index_ += 1;
                     });
@@ -1207,24 +1369,38 @@ let apps = {
                 apps.explorer.pushHistory(apps.explorer.tabs[apps.explorer.now][0], $('#win-explorer>.path>.tit')[0].dataset.path);
             }
             apps.explorer.checkHistory(apps.explorer.tabs[apps.explorer.now][0]);
-
-            // $('#win-explorer>.path>.tit')[0].innerHTML = path;
         },
         add: (path, name_, type = 'file', command = '', icon = '') => { //type为文件类型，只有文件夹files和文件file
             var pathl = path.split('/');
             var icon_ = '';
+            var isMounted = !!apps.explorer.mounts[pathl[0]];
             let tmp = apps.explorer.path;
+			
             pathl.forEach(name => {
                 tmp = tmp['folder'][name];
             });
             if (tmp == null) {
                 tmp = { folder: {}, file: [] };
             }
-            if (apps.explorer.traverseDirectory(tmp, name_)) {
-                shownotice('duplication file name');
-                return;
+			
+    		let finalName = name_;
+    		let counter = 1;
+    		let baseName = name_;
+    		let extension = "";
+    
+    		if (type === 'file' && name_.includes('.')) {
+        		const lastDotIndex = name_.lastIndexOf('.');
+        		baseName = name_.substring(0, lastDotIndex);
+        		extension = name_.substring(lastDotIndex); // e.g., ".txt"
+    		}
+
+            while (apps.explorer.traverseDirectory(tmp, finalName)) {
+              finalName = `${baseName} (${counter})${extension}`;
+              counter++; 
             }
-            
+    
+            name_ = finalName; // Now this is safely back inside the function
+            //fix: resolved boot crash (syntax error on line 1403 and scope issue)
             // 检查是否是文件夹
             if (type === 'folder') {
                 if (icon !== '') {
@@ -1233,7 +1409,14 @@ let apps = {
                     icon_ = 'icon/folder.png';
                 }
                 try {
-                    tmp.folder[name_] = { folder: {}, file: [] };
+                    if (isMounted && tmp._handle) {
+                        tmp.folder[name_] = { folder: {}, file: [], _mounted: true };
+                        tmp._handle.getDirectoryHandle(name_, { create: true }).then(h => {
+                            tmp.folder[name_]._handle = h;
+                        }).catch(() => shownotice('file-write-error'));
+                    } else {
+                        tmp.folder[name_] = { folder: {}, file: [] };
+                    }
                 } catch {
                     tmp = { folder: {}, file: [] };
                     tmp.folder[name_] = { folder: {}, file: [] };
@@ -1264,7 +1447,15 @@ let apps = {
             }
 
             try {
-                tmp.file.push({ name: name_, ico: icon_, command: command });
+                if (isMounted && tmp._handle) {
+                    var fileEntry = { name: name_, ico: icon_, command: '', _mounted: true };
+                    tmp.file.push(fileEntry);
+                    tmp._handle.getFileHandle(name_, { create: true }).then(h => {
+                        fileEntry._handle = h;
+                    }).catch(() => shownotice('file-write-error'));
+                } else {
+                    tmp.file.push({ name: name_, ico: icon_, command: command });
+                }
             }
             catch {
                 tmp = { folder: {}, file: [] };
@@ -1314,6 +1505,7 @@ let apps = {
         del: (path) => {
             var pathl = path.split('/');
             var name = pathl[pathl.length - 1];
+            var isMounted = !!apps.explorer.mounts[pathl[0]];
             pathl.pop();
             let tmp = apps.explorer.path;
             pathl.forEach(name => {
@@ -1327,6 +1519,9 @@ let apps = {
             }
             let tmp_files = tmp['folder'];
             delete tmp_files[name];
+            if (isMounted && tmp._handle) {
+                tmp._handle.removeEntry(name, { recursive: true }).catch(() => shownotice('file-write-error'));
+            }
             apps.explorer.goto(pathl.join('/'));
             apps.explorer.history.forEach(item => {
                 while (item.includes(path)) {
@@ -1426,7 +1621,7 @@ let apps = {
         get: () => {
             apps.about.run_loading('#contri');
             // 实时获取项目贡献者
-            $.get('https://api.github.com/repos/tjy-gitnub/win12/contributors').then(cs => {
+            $.get('https://api.github.com/repos/win12-online/win12/contributors').then(cs => {
                 setTimeout(() => {
                     $('#contri').html('');
                     cs.forEach(c => {
@@ -1438,7 +1633,7 @@ let apps = {
         },
         get_star: () => {
             apps.about.run_loading('#StarShow');
-            const repoFullName = 'tjy-gitnub/win12';
+            const repoFullName = 'win12-online/win12';
             fetch(`https://api.github.com/repos/${repoFullName}`)
                 .then(response => response.json())
                 .then(data => {
@@ -1454,12 +1649,335 @@ let apps = {
         }
     },
     notepad: {
+        _pendingContent: null,
+        _mountedFileHandle: null,
+        _keyBound: false,
+        _isMd: false,
+        _previewing: false,
+        _dirty: false,
+        _loading: false,
+        _markDirty: () => {
+            if (!apps.notepad._dirty && apps.notepad._mountedFileHandle && !apps.notepad._loading) {
+                apps.notepad._dirty = true;
+                var p = $('.window.notepad>.titbar>p');
+                if (!p.text().startsWith('* ')) p.text('* ' + p.text());
+            }
+        },
         init: () => {
+            apps.notepad._resetPreview();
+            apps.notepad._dirty = false;
+            apps.notepad._loading = true;
             $('#win-notepad>.text-box').addClass('down');
             setTimeout(() => {
-                $('#win-notepad>.text-box').val('');
+                if (apps.notepad._pendingContent !== null) {
+                    $('#win-notepad>.text-box')[0].innerText = apps.notepad._pendingContent;
+                    apps.notepad._pendingContent = null;
+                } else {
+                    $('#win-notepad>.text-box').val('');
+                    apps.notepad._mountedFileHandle = null;
+                }
                 $('#win-notepad>.text-box').removeClass('down');
+                requestAnimationFrame(() => { apps.notepad._loading = false; });
             }, 200);
+            if (!apps.notepad._keyBound) {
+                apps.notepad._keyBound = true;
+                $('#win-notepad>.text-box').on('input', apps.notepad._markDirty);
+                document.addEventListener('keydown', function (e) {
+                    if (e.ctrlKey && e.key === 's' && $('.window.foc')[0]?.classList.contains('notepad')) {
+                        e.preventDefault();
+                        apps.notepad.saveMounted();
+                    }
+                });
+            }
+        },
+        _resetPreview: () => {
+            apps.notepad._isMd = false;
+            apps.notepad._previewing = false;
+            $('#notepad-md-toggle').hide().removeClass('active').html('<i class="bi bi-eye"></i> 预览');
+            $('#notepad-md-preview').hide();
+            $('#win-notepad>.text-box').show();
+        },
+        setMdMode: (enabled) => {
+            apps.notepad._resetPreview();
+            apps.notepad._isMd = enabled;
+            if (enabled) {
+                $('#notepad-md-toggle').show();
+            }
+        },
+        togglePreview: () => {
+            apps.notepad._previewing = !apps.notepad._previewing;
+            if (apps.notepad._previewing) {
+                var text = $('#win-notepad>.text-box')[0].innerText;
+                var html = marked.parse(text);
+                $('#notepad-md-preview').html(typeof DOMPurify !== 'undefined' ? DOMPurify.sanitize(html) : html).show();
+                $('#win-notepad>.text-box').hide();
+                $('#notepad-md-toggle').addClass('active').html('<i class="bi bi-pencil"></i> 编辑');
+            } else {
+                $('#notepad-md-preview').hide();
+                $('#win-notepad>.text-box').show();
+                $('#notepad-md-toggle').removeClass('active').html('<i class="bi bi-eye"></i> 预览');
+            }
+        },
+        saveMounted: async () => {
+            if (!apps.notepad._mountedFileHandle) return;
+            try {
+                const writable = await apps.notepad._mountedFileHandle.createWritable();
+                await writable.write($('#win-notepad>.text-box')[0].innerText);
+                await writable.close();
+                apps.notepad._dirty = false;
+                var p = $('.window.notepad>.titbar>p');
+                p.text(p.text().replace(/^\* /, ''));
+                p.css('opacity', '0.5');
+                setTimeout(() => p.css('opacity', ''), 300);
+            } catch (e) {
+                shownotice('file-write-error');
+            }
+        },
+        close: () => {
+            if (apps.notepad._dirty && apps.notepad._mountedFileHandle) {
+                shownotice('unsaved-notepad');
+                return;
+            }
+            apps.notepad._forceClose();
+        },
+        _forceClose: () => {
+            apps.notepad._dirty = false;
+            apps.notepad._mountedFileHandle = null;
+            hidewin('notepad');
+            hidewin('notepad-fonts', 'configs');
+        }
+    },
+    imgviewer: {
+        _blobUrl: null,
+        _scale: 1,
+        _rotate: 0,
+        init: () => {},
+        open: (url, name) => {
+            openapp('imgviewer');
+            apps.imgviewer._blobUrl = url;
+            apps.imgviewer._scale = 1;
+            apps.imgviewer._rotate = 0;
+            apps.imgviewer._applyTransform();
+            $('#win-imgviewer .preview-img').attr('src', url);
+            $('.window.imgviewer>.titbar>p').text(name || lang('图片查看器', 'imgviewer.name'));
+        },
+        close: () => {
+            if (apps.imgviewer._blobUrl) {
+                URL.revokeObjectURL(apps.imgviewer._blobUrl);
+                apps.imgviewer._blobUrl = null;
+            }
+            hidewin('imgviewer');
+        },
+        zoomIn: () => {
+            apps.imgviewer._scale = Math.min(apps.imgviewer._scale * 1.25, 10);
+            apps.imgviewer._applyTransform();
+        },
+        zoomOut: () => {
+            apps.imgviewer._scale = Math.max(apps.imgviewer._scale / 1.25, 0.1);
+            apps.imgviewer._applyTransform();
+        },
+        rotateRight: () => {
+            apps.imgviewer._rotate = (apps.imgviewer._rotate + 90) % 360;
+            apps.imgviewer._applyTransform();
+        },
+        resetView: () => {
+            apps.imgviewer._scale = 1;
+            apps.imgviewer._rotate = 0;
+            apps.imgviewer._applyTransform();
+        },
+        _applyTransform: () => {
+            $('#win-imgviewer .preview-img').css('transform',
+                `scale(${apps.imgviewer._scale}) rotate(${apps.imgviewer._rotate}deg)`);
+        }
+    },
+    mediaplayer: {
+        _blobUrl: null,
+        init: () => {},
+        open: (url, name, type) => {
+            openapp('mediaplayer');
+            apps.mediaplayer._blobUrl = url;
+            $('.window.mediaplayer>.titbar>p').text(name || lang('媒体播放器', 'mediaplayer.name'));
+            if (type === 'video') {
+                $('#mediaplayer-video').attr('src', url).show()[0].load();
+                $('#mediaplayer-audio').hide()[0].pause();
+                $('.window.mediaplayer>.titbar>img').attr('src', 'icon/files/vidio.png');
+            } else {
+                $('#mediaplayer-audio').attr('src', url).show()[0].load();
+                $('#mediaplayer-video').hide()[0].pause();
+                $('.window.mediaplayer>.titbar>img').attr('src', 'icon/files/music.png');
+            }
+        },
+        close: () => {
+            $('#mediaplayer-video')[0].pause();
+            $('#mediaplayer-audio')[0].pause();
+            if (apps.mediaplayer._blobUrl) {
+                URL.revokeObjectURL(apps.mediaplayer._blobUrl);
+                apps.mediaplayer._blobUrl = null;
+            }
+            hidewin('mediaplayer');
+        }
+    },
+    pdfviewer: {
+        _blobUrl: null,
+        init: () => {},
+        open: (url, name) => {
+            openapp('pdfviewer');
+            apps.pdfviewer._blobUrl = url;
+            $('#pdfviewer-frame').attr('src', url);
+            $('.window.pdfviewer>.titbar>p').text(name || lang('PDF 查看器', 'pdfviewer.name'));
+        },
+        close: () => {
+            $('#pdfviewer-frame').attr('src', '');
+            if (apps.pdfviewer._blobUrl) {
+                URL.revokeObjectURL(apps.pdfviewer._blobUrl);
+                apps.pdfviewer._blobUrl = null;
+            }
+            hidewin('pdfviewer');
+        }
+    },
+    codeEditor: {
+        editor: null,
+        _fileHandle: null,
+        _dirty: false,
+        _loading: false,
+        _wrap: false,
+        _fontSize: 15,
+        _modeMap: {
+            js: 'javascript', jsx: 'jsx', ts: 'typescript', tsx: 'tsx',
+            css: 'css', scss: 'scss', less: 'less',
+            html: 'html', htm: 'html', xml: 'xml', svg: 'svg',
+            json: 'json', yaml: 'yaml', yml: 'yaml',
+            py: 'python', java: 'java', c: 'c_cpp', cpp: 'c_cpp', h: 'c_cpp',
+            cs: 'csharp', go: 'golang', rs: 'rust', rb: 'ruby',
+            php: 'php', sh: 'sh', bat: 'batchfile', ps1: 'powershell',
+            sql: 'sql', md: 'markdown', r: 'r', lua: 'lua', swift: 'swift',
+            kt: 'kotlin', dart: 'dart', toml: 'toml', ini: 'ini',
+            dockerfile: 'dockerfile', makefile: 'makefile'
+        },
+        _modeLabelMap: {
+            javascript: 'JavaScript', jsx: 'JSX', typescript: 'TypeScript', tsx: 'TSX',
+            css: 'CSS', scss: 'SCSS', less: 'Less',
+            html: 'HTML', xml: 'XML', svg: 'SVG',
+            json: 'JSON', yaml: 'YAML',
+            python: 'Python', java: 'Java', c_cpp: 'C/C++',
+            csharp: 'C#', golang: 'Go', rust: 'Rust', ruby: 'Ruby',
+            php: 'PHP', sh: 'Shell', batchfile: 'Batch', powershell: 'PowerShell',
+            sql: 'SQL', markdown: 'Markdown', r: 'R', lua: 'Lua', swift: 'Swift',
+            kotlin: 'Kotlin', dart: 'Dart', toml: 'TOML', ini: 'INI',
+            text: 'Text'
+        },
+        init: () => { return null; },
+        load: () => {
+            ace.require('ace/ext/language_tools');
+            var ed = ace.edit('code-ace-editor');
+            apps.codeEditor.editor = ed;
+            ed.setTheme('ace/theme/vibrant_ink');
+            ed.setOptions({
+                enableBasicAutocompletion: true,
+                enableSnippets: true,
+                showPrintMargin: false,
+                enableLiveAutocompletion: true,
+                fontSize: 15,
+                tabSize: 4,
+                useSoftTabs: true,
+                scrollPastEnd: 0.5
+            });
+            ed.commands.addCommand({
+                name: 'save', bindKey: { win: 'Ctrl-S', mac: 'Command-S' },
+                exec: () => apps.codeEditor.save()
+            });
+            ed.commands.addCommand({
+                name: 'gotoline', bindKey: { win: 'Ctrl-G', mac: 'Command-G' },
+                exec: () => {
+                    var line = prompt('跳转到行:');
+                    if (line) ed.gotoLine(parseInt(line), 0, true);
+                }
+            });
+            ed.on('change', () => {
+                if (!apps.codeEditor._dirty && apps.codeEditor._fileHandle && !apps.codeEditor._loading) {
+                    apps.codeEditor._dirty = true;
+                    var p = $('.window.code-editor>.titbar>p');
+                    if (!p.text().startsWith('* ')) p.text('* ' + p.text());
+                }
+            });
+            ed.selection.on('changeCursor', () => apps.codeEditor._updateStatus());
+            ed.on('changeSession', () => apps.codeEditor._updateStatus());
+        },
+        _updateStatus: () => {
+            var ed = apps.codeEditor.editor;
+            if (!ed) return;
+            var cursor = ed.getCursorPosition();
+            $('#code-status-cursor').text('行 ' + (cursor.row + 1) + ', 列 ' + (cursor.column + 1));
+            var sel = ed.getSelectedText();
+            if (sel.length > 0) {
+                $('#code-status-cursor').text(
+                    '行 ' + (cursor.row + 1) + ', 列 ' + (cursor.column + 1) +
+                    ' (已选 ' + sel.length + ' 字符)');
+            }
+            var modePath = ed.session.getMode().$id || '';
+            var modeName = modePath.split('/').pop();
+            $('#code-status-lang').text(apps.codeEditor._modeLabelMap[modeName] || modeName || 'Text');
+            var tab = ed.session.getUseSoftTabs() ? '空格' : 'Tab';
+            $('#code-status-tab').text(tab + ': ' + ed.session.getTabSize());
+        },
+        open: (text, fileName, fileHandle) => {
+            apps.codeEditor._fileHandle = fileHandle || null;
+            apps.codeEditor._dirty = false;
+            openapp('code-editor');
+            if (!apps.codeEditor.editor) {
+                shownotice('file-read-error');
+                return;
+            }
+            var ext = fileName.split('.').pop().toLowerCase();
+            var mode = apps.codeEditor._modeMap[ext] || 'text';
+            apps.codeEditor._loading = true;
+            apps.codeEditor.editor.session.setMode('ace/mode/' + mode);
+            apps.codeEditor.editor.setValue(text, -1);
+            apps.codeEditor._loading = false;
+            apps.codeEditor._dirty = false;
+            $('.window.code-editor>.titbar>p').text(fileName);
+            apps.codeEditor._updateStatus();
+        },
+        save: async () => {
+            if (!apps.codeEditor._fileHandle) return;
+            try {
+                const writable = await apps.codeEditor._fileHandle.createWritable();
+                await writable.write(apps.codeEditor.editor.getValue());
+                await writable.close();
+                apps.codeEditor._dirty = false;
+                var p = $('.window.code-editor>.titbar>p');
+                p.text(p.text().replace(/^\* /, ''));
+                p.css('opacity', '0.5');
+                setTimeout(() => p.css('opacity', ''), 300);
+            } catch (e) {
+                shownotice('file-write-error');
+            }
+        },
+        setTheme: (theme) => {
+            if (apps.codeEditor.editor) apps.codeEditor.editor.setTheme(theme);
+        },
+        toggleWrap: () => {
+            apps.codeEditor._wrap = !apps.codeEditor._wrap;
+            if (apps.codeEditor.editor)
+                apps.codeEditor.editor.session.setUseWrapMode(apps.codeEditor._wrap);
+            $('#code-wrap-btn').toggleClass('active', apps.codeEditor._wrap);
+        },
+        changeFontSize: (delta) => {
+            apps.codeEditor._fontSize = Math.max(10, Math.min(30, apps.codeEditor._fontSize + delta));
+            if (apps.codeEditor.editor)
+                apps.codeEditor.editor.setFontSize(apps.codeEditor._fontSize);
+        },
+        close: () => {
+            if (apps.codeEditor._dirty && apps.codeEditor._fileHandle) {
+                shownotice('unsaved-code-editor');
+                return;
+            }
+            apps.codeEditor._forceClose();
+        },
+        _forceClose: () => {
+            apps.codeEditor._dirty = false;
+            apps.codeEditor._fileHandle = null;
+            hidewin('code-editor');
         }
     },
     pythonEditor: {

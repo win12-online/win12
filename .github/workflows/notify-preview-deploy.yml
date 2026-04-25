@@ -1,0 +1,48 @@
+name: PR 预览部署
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+
+
+permissions: {}
+
+jobs:
+  notify:
+    name: 发送部署通知
+    runs-on: ubuntu-latest
+    # 跳过草稿 PR
+    if: github.event.pull_request.draft == false
+    steps:
+      - name: 检查 Secret 是否存在
+        env:
+          TOKEN: ${{ secrets.DOWNSTREAM_PAT }}
+        run: |
+          if [ -z "$TOKEN" ]; then
+            echo "::error::DOWNSTREAM_PAT secret 未配置，请在仓库 Settings → Secrets 中添加"
+            exit 1
+          fi
+
+      - name: 构造事件类型
+        id: event-type
+        run: |
+          # 将 PR 动作映射为下游仓库的 repository_dispatch 事件类型
+          echo "type=upstream-pr-${{ github.event.action }}" >> "$GITHUB_OUTPUT"
+
+      - name: 触发下游仓库预览部署
+        env:
+          TOKEN: ${{ secrets.DOWNSTREAM_PAT }}
+        run: |
+          # 向下游仓库发送 repository_dispatch 请求
+          curl -fS -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $TOKEN" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            https://api.github.com/repos/tangyuan0821/win12-pr-preview/dispatches \
+            -d '{
+              "event_type": "${{ steps.event-type.outputs.type }}",
+              "client_payload": {
+                "pr_number": ${{ github.event.pull_request.number }},
+                "sha": "${{ github.event.pull_request.head.sha }}"
+              }
+            }'

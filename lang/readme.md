@@ -7,6 +7,9 @@ Before you start translating, **you must [contact](https://teams.live.com/l/invi
 2. 有一定的目标语言的基础 / 愿意将自己的 Windows 11 系统调成目标语言<br>Basic proficiency in the target language / willing to set your Windows 11 system to the target language
 3. 有代码基础<br>Basic coding knowledge
 
+### 致繁體中文譯者
+鑑於「兩岸四地」在中文語言使用上存在顯著差異，語言變體繁多，需注意在翻譯時請以繁體中文（中國臺灣）（zh‑TW）為基準標準，另請特別留意兩岸間在詞彙、表達方式及用語習慣上的差異。
+
 ## 方法 / Method
 项目使用 i18n 库实现多语言，可上网查阅，或自行研究已有翻译的部分
 

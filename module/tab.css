@@ -27,6 +27,11 @@
     white-space: nowrap;
 }
 
+:root.corner_squ .window.tabs>.titbar>.tabs>.tab {
+    corner-shape: squircle;
+    border-radius: 15px;
+}
+
 .window.tabs>.titbar>.tabs>.tab::before {
     content: '';
     position: relative;
@@ -48,7 +53,7 @@
 
 .window.tabs>.titbar>.tabs>.tab.show {
     background: var(--hover) !important;
-    box-shadow: 0 1px 2px var(--sd);
+    box-shadow: 0 1px 2px var(--shadow);
 }
 
 .window.tabs>.titbar>.tabs>.tab.close {
@@ -69,7 +74,7 @@
 
 .window.tabs>.titbar>.tabs>.tab.moving {
     /* background: var(--unfoc) !important; */
-    background: var(--bggrey) !important;
+    background: var(--bg) !important;
     z-index: 1;
 }
 

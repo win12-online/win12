@@ -18,9 +18,14 @@
 
 .wg {
     border-radius: 10px;
-    box-shadow: 1px 2px 5px var(--sd);
+    box-shadow: 1px 2px 5px var(--shadow);
     overflow: hidden;
     transition: 200ms;
+}
+
+:root.corner_squ .wg {
+    corner-shape: squircle;
+    border-radius: 25px;
 }
 
 .wg>.titbar {
@@ -32,8 +37,8 @@
     border-radius: 50%;
     width: 25px;
     height: 25px;
-    background-color: var(--bggrey);
-    box-shadow: 2px 2px 5px var(--sd);
+    /* background-color: var(--bggrey); */
+    /* box-shadow: 2px 2px 5px var(--shadow); */
     margin: 3px 3px 0 0;
     text-align: center;
     overflow: hidden;
@@ -51,7 +56,7 @@
 .wg>.titbar>.menu {
     transition: 200ms cubic-bezier(0.9, 0, 0.1, 1);
     max-width: 0;
-    box-shadow: 2px 2px 5px var(--sd);
+    box-shadow: 2px 2px 5px var(--shadow);
     overflow: hidden;
     margin: 3px 3px 0 3px;
     background-color: var(--bggrey);
@@ -105,10 +110,10 @@
 .wg.toolbar {
     border-radius: 8px;
     height: 100%;
-    background-color: var(--cm);
+    background-color: var(--contextmeu);
     backdrop-filter: blur(20px) saturate(1.5);
     -webkit-backdrop-filter: blur(20px) saturate(1.5);
-    box-shadow: 0 1px 2px #44444460, 0px 3px 25px 1px var(--sd);
+    box-shadow: 0 1px 2px #44444460, 0px 3px 25px 1px var(--shadow);
     margin: 0 3px;
 }
 
@@ -212,9 +217,10 @@
     display: flex;
 }
 
-.wg.weather.menu>.content>.img, .wg.desktop.desktop>.content>.img {
+.wg.weather.menu>.content>.img, .wg.weather.desktop>.content>.img {
     width: 70px;
     height: 100%;
+    padding: 5px;
     background-size: cover;
     margin: 0 10px;
 }

@@ -3,6 +3,8 @@
 
 若您想贡献本仓库，那您必须仔细阅读本指南的所有内容。您还应当注意本指南中**加粗的文字**和[开发规范](#开发规范)章节的内容。
 
+本仓库仍有很多问题待解决，Issue列表长期处于积压状态。您可以先试着解决[Issue列表](https://github.com/win12-online/win12/issues)中的已知问题和功能请求。
+
 ## 基本流程
 
 下面是贡献 pull request（下文中简称“PR”）所需的基本步骤。
@@ -15,11 +17,11 @@
 
 4. 将修改推送到您的仓库
 
-5. 再[创建一个Pull Request](https://github.com/tjy-gitnub/win12/pulls)。
+5. 再[创建一个Pull Request](https://github.com/win12-online/win12/pulls)。
 
 6. 然后`坐和放宽`，等待其他人对你的代码进行审查。
 >[!TIP]
->在此过程中请尽量使用Git命令行、Github Desktop、[https://github.dev](https://github.dev/tjy-gitnub/win12)等方式进行提交。
+>在此过程中请尽量使用Git命令行、Github Desktop、[https://github.dev](https://github.dev/win12-online/win12)等方式进行提交。
 
 ## 重要提醒
 * 若您的修改具有一定重要性或量级时，请按照以下格式阐述更新内容：
@@ -42,6 +44,8 @@
 >[!NOTE]
 >  1. **请不要**任意选取版本号。若您不清楚，可以通过[我们的交流群](https://teams.live.com/l/invite/FEA0yrNkE_bAn-ddwI)与我们取得联系并分配到版本号。
 >  2. 在更新时，**记住**要在“关于 Windows 12 网页版”应用的更新记录中，添加关于该更新的相关内容。
+
+* **请善用`Update branch`按钮**。点击`Update branch`按钮可将`main`分支的最新更改合并到当前PR中。但无充分理由请勿操作——会误通知关注者“有新变更”，且会消耗[预览机器人](https://github.com/Bedevere-win12-bot)的 GitHub Action 资源。
 
 * 根据中华人民共和国有关法律的规定您**不可以**通过本项目传播违法和违规内容，否则我们将会采取锁定+视情况封禁的处理（温馨提示：时事新闻也不行），同时我们保留在任何时间以一切方式采取法律行动、追究法律责任的权利。
 
@@ -71,7 +75,7 @@
 
       - storagedItems
 
-   3. 对于类名，请使用帕斯卡命名法（大驼峰式命名法），如：
+   3. 对于类名，请使用驼峰式命名法，如：
 
       - WindowManager
 

@@ -73,6 +73,11 @@
     transform-origin: bottom;
 }
 
+:root.corner_squ #win-calc>.keyb>.b {
+    corner-shape: squircle;
+    border-radius: 15px;
+}
+
 #win-calc>.keyb>.checked {
     background-color: var(--mm) !important;
 }

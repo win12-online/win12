@@ -1,6 +1,6 @@
 name: New Proposal / 提出建议
 description: Please provide us with your valuable suggestions / 请向我们提出宝贵的建议
-title: "[New Proposal] "
+title: '[建议] '
 body:
   - type: markdown
     id: introduction
@@ -14,12 +14,16 @@ body:
       label: 先决条件 (Prerequisites)
       options:
         - label: |
-            我已确认这个问题没有在[其他 issues](https://github.com/tjy-gitnub/win12/issues)中提出过。
-            I am sure that this problem has NEVER been discussed in [other issues](https://github.com/tjy-gitnub/win12/issues).
+            我已确认这个问题没有在[其他 issues](https://github.com/win12-online/win12/issues)中提出过。
+            I am sure that this problem has NEVER been discussed in [other issues](https://github.com/win12-online/win12/issues).
           required: true
         - label: |
-            我确认我正在使用官方地址 (tjy-gitnub.github.io/win12)。
-            I confirm that I am using the official url (tjy-gitnub.github.io/win12).
+            我确认我正在使用官方地址 (win12.tech)。
+            I confirm that I am using the official url (win12.tech).
+          required: true
+        - label: |
+            我确保我遵守行为准则
+            I have followed the code of conduct
           required: true
   - type: textarea
     id: name

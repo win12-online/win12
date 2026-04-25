@@ -1,14 +1,17 @@
-<!DOCTYPE html>
-<html lang="zh"> <!-- 优化：添加 lang 属性以指定页面语言 -->
+<html style="height:100%;">
+
 <head>
-    <meta charset="UTF-8"> <!-- 优化：指定字符集为UTF-8 -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- 优化：添加 viewport -->
-    <title>关机 - Win12</title>
-    <meta name="description" content="Win12正在关机，请稍候..."> <!-- 优化：修正 meta 描述内容 -->
     <style>
         body {
-            background: linear-gradient(130deg, #ad6ecaee, #3b91d8ee);
-            margin: 0; /* 优化：添加 margin 样式，确保页面外边距为0 */
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            height: 100%;
+            width: 100%;
+            padding: 0;
+            margin: 0;
         }
 
         loading>svg>circle:first-child {
@@ -16,68 +19,63 @@
             fill: none;
             stroke-width: 2px;
             stroke-linecap: round;
-            animation: spin-infinite 1.8s linear 0s infinite normal none running;
+            animation: spin-infinite 2.5s linear 0s infinite normal none running;
             transform-origin: 50% 50%;
-            transition: all .2s ease-in-out 0s;
         }
 
         loading>svg>circle:last-child {
-            fill: transparent; /* 优化：将填充颜色设置为透明 */
+            fill: #00000000
         }
 
         loading>svg {
-            background-color: transparent; /* 优化：将背景颜色设置为透明 */
-            border-radius: 50%;
+            background-color: #00000000;
+            border-radius: 50%
         }
 
         @keyframes spin-infinite {
             0% {
-                stroke-dasharray: 0.01px, 43.97px;
-                transform: rotate(0deg);
+                stroke-dasharray: .01px, 43.97px;
+                tansform: rotate(0deg)
             }
 
             50% {
                 stroke-dasharray: 21.99px, 21.99px;
-                transform: rotate(450deg);
+                transform: rotate(450deg)
             }
 
             to {
-                stroke-dasharray: 0.01px, 43.97px;
-                transform: rotate(3turn);
+                stroke-dasharray: .01px, 43.97px;
+                transform: rotate(3turn)
             }
         }
     </style>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>正在关机...</title>
 </head>
-<body onload="initShutdown()" onkeydown="boot(event)"> <!-- 优化：将JavaScript函数添加到 onload 事件中 -->
-    <div id="backdrop" style="transition: 1.5s; backdrop-filter: blur(30px); width: 100%; height: 100%; position: absolute; top: 0; left: 0; background-color: rgba(111, 111, 111, 0.5); opacity: 0;"></div> <!-- 优化：修改背景颜色，添加透明度 -->
-    <loading id="ld" style="transition: 2s; opacity: 0;">
-        <svg style="position: absolute; left: calc(50% - 25px); top: calc(50% - 35px); width: 50px; height: 50px;" width="50px" height="50px" viewBox="0 0 16 16">
-            <circle cx="8" cy="8" r="7"></circle> <!-- 优化：修改SVG元素 -->
-            <circle cx="8" cy="8" r="6"></circle> <!-- 优化：修改SVG元素 -->
+
+<body onload="
+setTimeout(()=>{
+    document.getElementById('ld').remove();
+    document.getElementById('ldt').textContent='按 Enter 键开机。';
+    document.getElementById('ldt').style.opacity=0.5;
+    document.title='已关机';
+    document.body.onkeydown=e=>{
+        if(e.key==='Enter') {
+            location.href='boot.html';
+        }
+    };
+},3000);">
+    </div>
+    <loading id="ld">
+        <svg width="50px" height="50px" viewBox="0 0 16 16">
+            <circle cx="8px" cy="8px" r="7px"></circle>
+            <circle cx="8px" cy="8px" r="6px"></circle>
         </svg>
     </loading>
-    <p id="ldt" style="transition: 1.5s; opacity: 0; width: 100px; left: calc(50% - 50px); text-align: center; position: absolute; top: calc(50% + 5px); color: #fff; font-size: 20px;">
+    <p id="ldt" style="text-align:center;color:#fff;font-size:20px">
         正在关机
     </p>
-    <script>
-        let shutdownStatus = false
-        function initShutdown() {
-            document.getElementById('backdrop').style.opacity = 1;
-            document.getElementById('ld').style.opacity = 1;
-            document.getElementById('ldt').style.opacity = 1;
-            setTimeout(() => {
-                document.getElementById('backdrop').style.display = 'none';
-                document.getElementById('ld').style.display = 'none';
-                document.getElementById('ldt').style.display = 'none';
-                document.body.style.background = '#000';
-                shutdownStatus = true;
-            }, 3000);
-        }
-        function boot(event) {
-            if (event.key == 'Enter' && shutdownStatus == true) {
-                window.location.href = 'boot.html'//优化：更改开机跳转位置
-            }
-        }
-    </script>
 </body>
+
 </html>

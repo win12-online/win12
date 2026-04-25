@@ -28,10 +28,10 @@
 
 
 #win-setting>.menu {
-    width: 30% !important;
+    width: 35%;
     overflow: hidden;
-    min-width: 280px;
-    /* max-width: 30%; */
+    min-width: 270px;
+    max-width: 320px;
     padding: 3px 5px 5px 15px;
 }
 
@@ -42,6 +42,11 @@
     margin-bottom: 10px;
     /* transition: 200ms; */
     align-items: center;
+}
+
+:root.corner_squ #win-setting>.menu>.user {
+    corner-shape: squircle;
+    border-radius: 25px;
 }
 
 #win-setting>.menu>.user:hover {
@@ -69,7 +74,7 @@
 
 #win-setting>.menu>.user>svg {
     background-color: var(--hover-b);
-    /* box-shadow: 0 0 10px var(--sd); */
+    /* box-shadow: 0 0 10px var(--shadow); */
     width: 60px;
     min-width: 60px;
     height: 60px;
@@ -96,12 +101,13 @@
 }
 
 #win-setting>.menu>list>a:not(.enable) {
-    transform: none !important;
-    filter: contrast(0.6) brightness(0.8) opacity(0.3);
+    /* transform: none !important; */
+    filter: contrast(0.6) opacity(0.3);
+    pointer-events: none;
 }
 
 #win-setting>.menu>list>a.enable:not(.avlb) {
-    filter: contrast(0.7)  opacity(0.7) !important;
+    filter: opacity(0.5) !important;
 }
 
 #win-setting>.menu>list>a>p {
@@ -119,25 +125,57 @@
 }
 
 #win-setting>.page {
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: scroll;
     padding-left: 15px;
     padding-right: 5px;
     margin: 2px 0 0 0;
 }
 
 #win-setting>.page>.cnt {
-    overflow-y: scroll;
-    opacity: 0;
+    opacity: 0.3;
     height: 0;
-    transition: transform 300ms cubic-bezier(0, 0, 0, 1), opacity 300ms 50ms, height 0ms;
-    transform: translate(0, 50%);
+    overflow: hidden;
+    /* display:none; */
+    transition: transform 400ms cubic-bezier(0.05, 0.96, 0.11, 1), opacity 300ms, height 0ms;
+    transform: translate(0, 40%);
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    visibility: collapse;
 }
 
 #win-setting>.page>.cnt.show {
-    height: 100%;
+    height: unset;
     transform: none;
     opacity: 1;
     display: block;
+    visibility: visible;
+}
+
+#win-setting>.page>.cnt.home>.divider{
+    display: flex;
+    gap: 10px;
+}
+
+#win-setting>.page>.cnt.home>.divider>*{
+    width: 50%;
+}
+
+.setting-card {
+    background: var(--card);
+    border-radius: 10px;
+
+    margin-bottom: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 23px 20px;
+}
+
+:root.corner_squ .setting-card {
+    corner-shape: squircle;
+    border-radius: 35px;
 }
 
 .setting-list {
@@ -155,18 +193,33 @@
     background: var(--card);
     margin-bottom: 7px;
     border-radius: 8px;
-    /* border: 1.5px solid #6f6f6f30; */
     box-shadow: 0 1px 2px 0px var(--s3d);
     text-decoration: none;
     display: flex;
     padding: 10px 15px;
     justify-content: center;
-    /* box-shadow: 0 1px 2px 1.5px var(--s3d); */
     transition: 100ms;
     justify-content: space-around;
     border: 2px solid #00000000;
     background-clip: padding-box;
     align-items: center; 
+}
+
+:root.corner_squ .setting-list>* {
+    corner-shape: squircle;
+    border-radius: 30px;
+}
+.setting-card>.setting-list {
+    padding: 0;
+    margin: 10px 15px 5px 15px;
+    width: auto;
+    /* box-shadow: 0 1px 2px 0px var(--s3d); */
+    /* overflow: hidden; */
+}
+.setting-card>.setting-list>*{
+    /* margin: 0; */
+    /* border-radius: 0; */
+    padding: 5px 10px;
 }
 
 .setting-list>a:hover {
@@ -186,8 +239,8 @@
 
 .setting-list>a.dp.show {
     /* border-bottom: none; */
-    border-bottom-left-radius: 0;
-    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
     margin-bottom: 1px;
     box-shadow: 0 0.5px 1px 1px var(--s3d);
 }
@@ -210,8 +263,8 @@
 
 .setting-list>div.dp {
     border-top: none;
-    border-top-left-radius: 0;
-    border-top-right-radius: 0;
+    border-top-left-radius: 0 !important;
+    border-top-right-radius: 0 !important;
     max-height: 0;
     transition: max-height 300ms, padding 300ms 100ms, opacity 200ms;
     overflow: hidden;
@@ -272,6 +325,18 @@
     left: 18px;
 }
 
+.checkbox.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.corner-disabled-hint {
+    color: #888;
+    font-size: 14px;
+    margin-left: 10px;
+    display: inline-block;
+}
+
 div.app-color .color {
     width: 30px;
     height: 30px;
@@ -318,15 +383,14 @@ div.app-color input[type=color] {
 }
 
 .setting-list>*>div>p:last-child {
-    font-size: 10px;
-    color: #7f7f7f;
+    font-size: 12px;
+    opacity: 0.6;
     margin-bottom: 0px;
 }
 
 .setting-list>*>.bi,
 .setting-list>*>.alr {
     flex-grow: 1;
-    margin-top: 15px;
     color: #7f7f7f;
     font-size: 20px;
 }
@@ -360,7 +424,7 @@ div.app-color input[type=color] {
     text-shadow: 1px 1px 3px #000;
     text-align: right;
     padding: 3px 8px;
-    box-shadow: 1px 1px 5px var(--sd);
+    box-shadow: 1px 1px 5px var(--shadow);
     margin: 7px 7px 0 0;
 }
 
@@ -423,7 +487,7 @@ div.app-color input[type=color] {
 	    width: 100px;
 	    height: 100px;
 	    background-color: var(--hover-b);
-	    /* box-shadow: 0 0 10px var(--sd); */
+	    /* box-shadow: 0 0 10px var(--shadow); */
 	    width: 60px;
 	    min-width: 60px;
 	    height: 60px;
@@ -467,9 +531,6 @@ div.app-color input[type=color] {
     align-content: center;
     justify-content: flex-start;
     align-items: center;
-}
-.settingTimeTitle{
-	
 }
 .settingTime{
 	font-size: 28px;

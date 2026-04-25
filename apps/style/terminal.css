@@ -3,7 +3,7 @@
     --bg: #000000;
     --bg50: #00000060;
     --bg70: radial-gradient(rgba(26, 31, 53, 0.96) 25%, rgba(32, 32, 32, 0.96) 100%);
-    --sd: #000000a0;
+    --shadow: #000000a0;
     --card: #72727240;
     --hover: #aaaaaa40;
     --hover-half: #ffffff20;
@@ -11,7 +11,7 @@
     --bggrey: #444;
     --fill:#54545470;
     --mm: #ffffff50;
-    --cm: #252525bb;
+    --contextmeu: #252525bb;
     --bar: #7272722a;
     --hr:#333;
     --unfoc:#202020;

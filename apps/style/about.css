@@ -22,10 +22,10 @@
 }
 
 #win-about>.menu {
-    width: 30% !important;
+    width: 25% !important;
     overflow: hidden;
-    min-width: 280px;
-    /* max-width: 30%; */
+    min-width: 180px;
+    max-width: 300px;
     padding: 3px 5px 5px 15px;
 }
 
@@ -71,7 +71,6 @@
     width: 6px;
     margin: 5px 8px 5px 5px;
     transition: 200ms;
-    /* opacity: 0; */
     transform: scaleY(0);
     transform-origin: top;
 }
@@ -84,12 +83,16 @@
     background-color: var(--card);
     padding: 10px 10px 0 15px;
     border-radius: 8px;
-    /* box-shadow: 3px 3px 5px var(--sd); */
     box-shadow: 0 1px 2px 1px var(--s3d);
     margin: 12px 10px 0 0;
     transition: 100ms, height 0ms, padding-bottom 100ms ease-out;
     overflow: hidden;
     height: 45px;
+}
+
+:root.corner_squ #win-about>.update>div>details {
+    corner-shape: squircle;
+    border-radius: 20px;
 }
 
 #win-about>.update>div>details[open] {
@@ -126,7 +129,7 @@
 #contri>.a {
     margin: 3px;
     background: var(--card);
-    box-shadow: 0 1px 2px var(--sd);
+    box-shadow: 0 1px 2px var(--shadow);
     border-radius: 10px;
     width: 110px;
     height: 70px;

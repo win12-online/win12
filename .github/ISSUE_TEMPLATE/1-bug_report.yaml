@@ -1,6 +1,6 @@
 name: Bug report / 故障报告
 description: Please report any vulnerabilities you discover during use to us / 请向我们汇报您在使用过程中发现的漏洞
-title: "[Bug]"
+title: '[Bug]'
 body:
   - type: markdown
     id: introduction
@@ -14,12 +14,20 @@ body:
       label: 先决条件 (Prerequisites)
       options:
         - label: |
-            我已确认这个问题没有在[其他 issues](https://github.com/tjy-gitnub/win12/issues)中提出过。
-            I am sure that this problem has NEVER been discussed in [other issues](https://github.com/tjy-gitnub/win12/issues).
+            我已确认这个问题没有在[其他 issues](https://github.com/win12-online/win12/issues)中提出过。
+            I am sure that this problem has NEVER been discussed in [other issues](https://github.com/win12-online/win12/issues).
           required: true
         - label: |
-            我确认我正在使用官方地址 (tjy-gitnub.github.io/win12)。
-            I confirm that I am using the official url (tjy-gitnub.github.io/win12).
+            我确认我正在使用官方地址 (win12.tech)。
+            I confirm that I am using the official url (win12.tech).
+          required: true
+        - label: |
+            我确保我遵守行为准则
+            I have followed the code of conduct
+          required: true
+        - label: |
+            我已查看了常见问题解答(#735)
+            I have reviewed the Frequently Asked Questions (#735)
           required: true
   - type: textarea
     id: what_happened

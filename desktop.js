@@ -9,7 +9,7 @@ Windows 12 网页版
 
 /********** 禁止格式化此文档！ **********/
 
-console.log('%cWindows 12 网页版 (GitHub: tjy-gitnub/win12)', 'background-image: linear-gradient(to right,rgb(174, 115, 229),rgb(21, 105, 223)); border-radius: 8px; font-size: 1.3em; padding: 10px 15px; color: #fff; ');
+console.log('%cWindows 12 网页版 (GitHub: win12-online/win12)', 'background-image: linear-gradient(to right,rgb(174, 115, 229),rgb(21, 105, 223)); border-radius: 8px; font-size: 1.3em; padding: 10px 15px; color: #fff; ');
 // 好高级，还能这样？？
 
 
@@ -20,74 +20,74 @@ function loadlang(code) {
         path: 'lang/', // 目录
         language: code,
         mode: 'map',
-        callback: function() {
-            $('[data-i18n]').each(function() {
+        callback: function () {
+            $('[data-i18n]').each(function () {
                 // 标签的内容
                 // console.log($(this).data("i18n"));
                 // console.log($.i18n.prop($(this).data("i18n")));
                 // if($.i18n.prop($(this).data("i18n"))!=$(this).html())console.log($(this).data("i18n"),$(this).html());
                 $(this).html($.i18n.prop($(this).data("i18n")));
             });
-            $('[data-i18n-attr]').each(function() {
+            $('[data-i18n-attr]').each(function () {
                 // 标签的属性
 
                 // if($.i18n.prop($(this).data("i18n-key"))!=$(this).attr($(this).data("i18n-attr")))console.log($(this).data("i18n-key"),$(this).attr($(this).data("i18n-attr")));
-                $(this).attr($(this).data("i18n-attr"),$.i18n.prop($(this).data("i18n-key")));
+                $(this).attr($(this).data("i18n-attr"), $.i18n.prop($(this).data("i18n-key")));
             });
         }
     });
 }
 
-let nl='zh-TW';
-let langc={
-    'zh-CN':'zh-CN',
-    'zh-cn':'zh-CN',
-    'zh-hans':'zh-CN',
-    'zh-Hans':'zh-CN',
-    'zh-TW':'zh-TW',
-    'zh-tw':'zh-TW',
-    'zh-hant':'zh-TW',
-    'zh-Hant':'zh-TW',
-    'zh-HK':'zh-TW',
-    'zh-hk':'zh-TW',
-    'zh':'zh-CN',
+let nl = 'zh-TW';
+let langc = {
+    'zh-CN': 'zh-CN',
+    'zh-cn': 'zh-CN',
+    'zh-hans': 'zh-CN',
+    'zh-Hans': 'zh-CN',
+    'zh-TW': 'zh-TW',
+    'zh-tw': 'zh-TW',
+    'zh-hant': 'zh-TW',
+    'zh-Hant': 'zh-TW',
+    'zh-HK': 'zh-TW',
+    'zh-hk': 'zh-TW',
+    'zh': 'zh-CN',
 
-    'en':'en',
-    'en-US':'en',
-    'en-us':'en',
-    'en-GB':'en',
-    'en-gb':'en'
+    'en': 'en',
+    'en-US': 'en',
+    'en-us': 'en',
+    'en-GB': 'en',
+    'en-gb': 'en'
 }
 
-let langcode,lang=(txt,id)=>{
+let langcode, lang = (txt, id) => {
     return $.i18n.prop(id);
 };
 
-if(localStorage.getItem('lang')!=null){
-    if(localStorage.getItem('lang')=='hans' || localStorage.getItem('lang')=='zh_cn' || localStorage.getItem('lang')=='zh-cn'){
-        localStorage.setItem('lang','zh-CN');
+if (localStorage.getItem('lang') != null) {
+    if (localStorage.getItem('lang') == 'hans' || localStorage.getItem('lang') == 'zh_cn' || localStorage.getItem('lang') == 'zh-cn') {
+        localStorage.setItem('lang', 'zh-CN');
     }
-}else{
-    if(navigator.language in langc)
-        localStorage.setItem('lang',langc[navigator.language]);
+} else {
+    if (navigator.language in langc)
+        localStorage.setItem('lang', langc[navigator.language]);
     else
-        localStorage.setItem('lang','en');
+        localStorage.setItem('lang', 'en');
 }
-langcode=localStorage.getItem('lang');
+langcode = localStorage.getItem('lang');
 
 
-if(document.querySelectorAll('#loginback>.langselect>.'+langcode).length!=0){
-    $('#loginback>.langselect>.'+langcode).addClass('selected')
-}else{
+if (document.querySelectorAll('#loginback>.langselect>.' + langcode).length != 0) {
+    $('#loginback>.langselect>.' + langcode).addClass('selected')
+} else {
     $('#loginback>.langselect>.en').addClass('selected')
 }
 
 
-if(langcode!='zh-CN')
+if (langcode != 'zh-CN')
     loadlang(langcode);
 
-if(langcode=='zh-CN'){
-    lang=(txt,id)=>{
+if (langcode == 'zh-CN') {
+    lang = (txt, id) => {
         // if(txt!=$.i18n.prop(id))console.log(id,txt);
         return txt;
     };
@@ -120,17 +120,17 @@ function enableIframes() {
     $('iframe:not(.nochanges)').css('touch-action', 'auto');
 }
 
-async function api(index, nobase=false) {
-    if (!nobase) index='https://api.github.com/' +index;
+async function api(index, nobase = false) {
+    if (!nobase) index = 'https://api.github.com/' + index;
     const token = localStorage.getItem('token');
     if (token) {
         const headers = new Headers();
         headers.append('Authorization', token);
-        const res = await fetch( index, {headers: headers});
+        const res = await fetch(index, { headers: headers });
         return res;
     }
     else {
-        const res = await fetch( index);
+        const res = await fetch(index);
         return res;
     }
 }
@@ -141,13 +141,13 @@ page.addEventListener('mouseup', enableIframes);
 page.addEventListener('touchend', enableIframes);
 page.addEventListener('touchcancel', enableIframes);
 
-page.addEventListener('click',(event)=>{
-    if($('#start-menu').hasClass('show')&&!$(event.target).closest('#start-menu').length){
+page.addEventListener('click', (event) => {
+    if ($('#start-menu').hasClass('show') && !$(event.target).closest('#start-menu').length) {
         hide_startmenu();
     }
 });
 //开始菜单收回
-	
+
 
 // 上古代码，列表前的小竖线
 document.querySelectorAll('list.focs').forEach(li => {
@@ -208,10 +208,10 @@ function addMenu() {
     }
 }
 var run_cmd = '';
-const nomax = { 'calc': 0 , 'notepad-fonts': 0, 'camera-notice': 0, 'winver': 0, 'run': 0, 'wsa': 0 };
+const nomax = { 'calc': 0, 'notepad-fonts': 0, 'camera-notice': 0, 'winver': 0, 'run': 0, 'wsa': 0 };
 const nomin = { 'notepad-fonts': 0, 'camera-notice': 0, 'run': 0 };
 var topmost = [];
-var sys_setting = [1, 1, 1, 0, 0, 1, 1];
+var sys_setting = [1, 1, 1, 0, 1, 1, 1];
 var use_music = true;
 var use_mic_voice = true;
 
@@ -228,10 +228,10 @@ var use_mic_voice = true;
     返回内容或为 'null' 表示跳过此项，或参考条目 2 的格式
 */
 const cms = {
-    'save-bar':[
-      arg => {
-        return ['<i class="bi bi-window-x"></i> 移除', `removeEdgeSaveUrl('${arg}')`];
-      }
+    'save-bar': [
+        arg => {
+            return ['<i class="bi bi-window-x"></i> 移除', `removeEdgeSaveUrl('${arg}')`];
+        }
     ],
     'titbar': [
         arg => {
@@ -239,10 +239,10 @@ const cms = {
                 return 'null';
             }
             if ($('.window.' + arg).hasClass('max')) {
-                return ['<i class="bi bi-window-stack"></i> '+lang('还原','window.restore'), `maxwin('${arg}')`];
+                return ['<i class="bi bi-window-stack"></i> ' + lang('还原', 'window.restore'), `maxwin('${arg}')`];
             }
             else {
-                return ['<i class="bi bi-window-fullscreen"></i> '+lang('最大化','window.max'), `maxwin('${arg}')`];
+                return ['<i class="bi bi-window-fullscreen"></i> ' + lang('最大化', 'window.max'), `maxwin('${arg}')`];
             }
         },
         arg => {
@@ -250,45 +250,45 @@ const cms = {
                 return 'null';
             }
             else {
-                return ['<i class="bi bi-window-dash"></i> '+lang('最小化','window.min'), `minwin('${arg}')`];
+                return ['<i class="bi bi-window-dash"></i> ' + lang('最小化', 'window.min'), `minwin('${arg}')`];
             }
         },
         arg => {
             if (arg in nomin) {
-                return ['<i class="bi bi-window-x"></i> '+lang('关闭','close'), `hidewin('${arg}', 'configs')`];
+                return ['<i class="bi bi-window-x"></i> ' + lang('关闭', 'close'), `hidewin('${arg}', 'configs')`];
             }
             else {
-                return ['<i class="bi bi-window-x"></i> '+lang('关闭','close'), `hidewin('${arg}')`];
+                return ['<i class="bi bi-window-x"></i> ' + lang('关闭', 'close'), `hidewin('${arg}')`];
             }
         },
     ],
     'taskbar': [
         arg => {
-            return ['<i class="bi bi-window-x"></i> '+lang('关闭','close'), `hidewin('${arg}')`];
+            return ['<i class="bi bi-window-x"></i> ' + lang('关闭', 'close'), `hidewin('${arg}')`];
         }
     ],
     'desktop': [
-        [`<i class="bi bi-arrow-clockwise"></i> ${lang('刷新','refresh')} <info>F5</info>`, '$(\'#desktop\').css(\'opacity\',\'0\');setTimeout(()=>{$(\'#desktop\').css(\'opacity\',\'1\');},100);setIcon();'],
-        ['<i class="bi bi-circle-square"></i> '+lang('切换主题','desktop.tgltheme'), 'toggletheme()'],
-        `<a onmousedown="window.open(\'https://github.com/tjy-gitnub/win12\',\'_blank\');" win12_title="https://github.com/tjy-gitnub/win12" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)"><i class="bi bi-github"></i> ${lang('在 Github 中查看此项目','desktop.vogithub')}</a>`,
+        [`<i class="bi bi-arrow-clockwise"></i> ${lang('刷新', 'refresh')} <info>F5</info>`, '$(\'#desktop\').css(\'opacity\',\'0\');setTimeout(()=>{$(\'#desktop\').css(\'opacity\',\'1\');},100);setIcon();'],
+        ['<i class="bi bi-circle-square"></i> ' + lang('切换主题', 'desktop.tgltheme'), 'toggletheme()'],
+        `<a onmousedown="window.open(\'https://github.com/win12-online/win12\',\'_blank\');" win12_title="https://github.com/win12-online/win12" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)"><i class="bi bi-github"></i> ${lang('在 Github 中查看此项目', 'desktop.vogithub')}</a>`,
         arg => {
             if (edit_mode) {
-                return ['<i class="bi bi-pencil"></i> '+lang('退出编辑模式','desktop.exitedit'), 'editMode();'];
+                return ['<i class="bi bi-pencil"></i> ' + lang('退出编辑模式', 'desktop.exitedit'), 'editMode();'];
             }
             else if (!edit_mode) {
-                return ['<i class="bi bi-pencil"></i> '+lang('进入编辑模式','desktop.enteredit'), 'editMode();'];
+                return ['<i class="bi bi-pencil"></i> ' + lang('进入编辑模式', 'desktop.enteredit'), 'editMode();'];
             }
         },
-        ['<i class="bi bi-info-circle"></i> '+lang('关于 Win12 网页版','about.name'), '$(\'#win-about>.about\').addClass(\'show\');$(\'#win-about>.update\').removeClass(\'show\');openapp(\'about\');if($(\'.window.about\').hasClass(\'min\'))minwin(\'about\');'],
-        ['<i class="bi bi-brush"></i> '+lang('个性化','psnl'), 'openapp(\'setting\');$(\'#win-setting > div.menu > list > a.enable.appearance\')[0].click()']
+        ['<i class="bi bi-info-circle"></i> ' + lang('关于 Win12 网页版', 'about.name'), '$(\'#win-about>.about\').addClass(\'show\');$(\'#win-about>.update\').removeClass(\'show\');openapp(\'about\');if($(\'.window.about\').hasClass(\'min\'))minwin(\'about\');'],
+        ['<i class="bi bi-brush"></i> ' + lang('个性化', 'psnl'), 'openapp(\'setting\');$(\'#win-setting > div.menu > list > a.enable.appearance\')[0].click()']
     ],
     'desktop.icon': [
         arg => {
-            return ['<i class="bi bi-folder2-open"></i> '+lang('打开','open'), 'openapp(`' + arg[0] + '`)'];
+            return ['<i class="bi bi-folder2-open"></i> ' + lang('打开', 'open'), 'openapp(`' + arg[0] + '`)'];
         },
         arg => {
             if (arg[1] >= 0) {
-                return ['<i class="bi bi-trash3"></i> '+lang('删除','del'), 'desktopItem.splice(' + (arg[1]) + ', 1);saveDesktop();setIcon();addMenu();'];
+                return ['<i class="bi bi-trash3"></i> ' + lang('删除', 'del'), 'desktopItem.splice(' + (arg[1]) + ', 1);saveDesktop();setIcon();addMenu();'];
             } else {
                 return 'null';
             }
@@ -308,9 +308,9 @@ const cms = {
             }
         },
         '<hr>',
-        ['<i class="bi bi-gear"></i> '+lang('设置','setting.name'), 'openapp(\'setting\')'],
-        ['<i class="bi bi-terminal"></i> '+lang('运行','run.name'), 'openapp(\'run\')'],
-        ['<i class="bi bi-folder2-open"></i> '+lang('文件资源管理器','explorer.name'), 'openapp(\'explorer\')'],
+        ['<i class="bi bi-gear"></i> ' + lang('设置', 'setting.name'), 'openapp(\'setting\')'],
+        ['<i class="bi bi-terminal"></i> ' + lang('运行', 'run.name'), 'openapp(\'run\')'],
+        ['<i class="bi bi-folder2-open"></i> ' + lang('文件资源管理器', 'explorer.name'), 'openapp(\'explorer\')'],
         ['<i class="bi bi-search"></i> 搜索', `$('#search-btn').addClass('show');hide_startmenu();
         $('#search-win').addClass('show-begin');setTimeout(() => {$('#search-win').addClass('show');
         $('#search-input').focus();}, 0);`],
@@ -320,18 +320,18 @@ const cms = {
     ],
     'smapp': [
         arg => {
-            return ['<i class="bi bi-window"></i> '+lang('打开','open'), `openapp('${arg[0]}');hide_startmenu();`];
+            return ['<i class="bi bi-window"></i> ' + lang('打开', 'open'), `openapp('${arg[0]}');hide_startmenu();`];
         },
         arg => {
             return ['<i class="bi bi-link-45deg"></i> 在桌面创建链接', 'var s=`<div class=\'b\' ondblclick=openapp(\'' + arg[0] + '\')  ontouchstart=openapp(\'' + arg[0] + '\') appname=\'' + arg[0] + '\'><img src=\'icon/' + geticon(arg[0]) + '\'><p>' + arg[1] + '</p></div>`;$(\'#desktop\').append(s);desktopItem[desktopItem.length]=s;addMenu();saveDesktop();'];
         },
         arg => {
-            return ['<i class="bi bi-x"></i> 取消固定', `$('#s-m-r>.pinned>.apps>.sm-app.${arg[0]}').remove()`];
+            return ['<i class="bi bi-x"></i> 取消固定', `$('#startmenu-r>.pinned>.apps>.sm-app.${arg[0]}').remove()`];
         }
     ],
     'smlapp': [
         arg => {
-            return ['<i class="bi bi-window"></i> '+lang('打开','open'), `openapp('${arg[0]}');hide_startmenu();`];
+            return ['<i class="bi bi-window"></i> ' + lang('打开', 'open'), `openapp('${arg[0]}');hide_startmenu();`];
         },
         arg => {
             return ['<i class="bi bi-link-45deg"></i> 在桌面创建链接', 'var s=`<div class=\'b\' ondblclick=openapp(\'' + arg[0] + '\')  ontouchstart=openapp(\'' + arg[0] + '\') appname=\'' + arg[0] + '\'><img src=\'icon/' + geticon(arg[0]) + '\'><p>' + arg[1] + '</p></div>`;$(\'#desktop\').append(s);desktopItem[desktopItem.length]=s;addMenu();saveDesktop();'];
@@ -348,14 +348,14 @@ const cms = {
     ],
     'explorer.folder': [
         arg => {
-            return ['<i class="bi bi-folder2-open"></i> '+lang('打开','open'), `apps.explorer.goto('${arg}')`];
+            return ['<i class="bi bi-folder2-open"></i> ' + lang('打开', 'open'), `apps.explorer.goto('${arg}')`];
         },
         arg => {
             return ['<i class="bi bi-arrow-up-right-square"></i> 在新标签页中打开', `apps.explorer.newtab('${arg}');`];
         },
         arg => {
             if ($('#win-explorer>.path>.tit>.path>div.text').length > 1)
-                return ['<i class="bi bi-trash3"></i> '+lang('删除','del'), `apps.explorer.del('${arg}')`];
+                return ['<i class="bi bi-trash3"></i> ' + lang('删除', 'del'), `apps.explorer.del('${arg}')`];
             return 'null';
         },
         arg => {
@@ -376,11 +376,25 @@ const cms = {
     ],
     'explorer.file': [
         arg => {
-            return ['<i class="bi bi-folder2-open"></i> 打开（目前毛用没有）', ''];
+            const drive = arg.split('/')[0];
+            if (apps.explorer.mounts[drive])
+                return ['<i class="bi bi-folder2-open"></i> ' + lang('打开','open'), `apps.explorer.openMountedFile('${arg}')`];
+            // Find the file's command from virtual FS
+            var pathl = arg.split('/'), fileName = pathl.pop();
+            var tmp = apps.explorer.path;
+            pathl.forEach(n => { if (tmp && tmp.folder) tmp = tmp.folder[n]; });
+            var fileCmd = '';
+            if (tmp && tmp.file) {
+                var f = tmp.file.find(f => f.name === fileName);
+                if (f && f.command) fileCmd = f.command;
+            }
+            if (fileCmd)
+                return ['<i class="bi bi-folder2-open"></i> ' + lang('打开','open'), fileCmd];
+            return 'null';
         },
         arg => {
             if ($('#win-explorer>.path>.tit>.path>div.text').length > 1)
-                return ['<i class="bi bi-trash3"></i> '+lang('删除','del'), `apps.explorer.del('${arg}')`];
+                return ['<i class="bi bi-trash3"></i> ' + lang('删除', 'del'), `apps.explorer.del('${arg}')`];
             return 'null';
         },
         arg => {
@@ -418,7 +432,16 @@ const cms = {
             if ($('#win-explorer>.path>.tit>.path>div.text').length > 1)
                 return ['<i class="bi bi-arrow-clockwise"></i> 刷新', 'apps.explorer.goto($(\'#win-explorer>.path>.tit\')[0].dataset.path, false)'];
             return ['<i class="bi bi-arrow-clockwise"></i> 刷新', 'apps.explorer.reset()'];
+        },
+        arg => {
+            if ($('#win-explorer>.path>.tit>.path>div.text').length <= 1 && apps.explorer.fsApiSupported)
+                return ['<i class="bi bi-usb-drive"></i> 挂载本地文件夹', 'apps.explorer.mountDrive()'];
+            return 'null';
         }
+    ],
+    'explorer.mounted': [
+        arg => ['<i class="bi bi-folder2-open"></i> 打开', `apps.explorer.goto('${arg}')`],
+        arg => ['<i class="bi bi-eject"></i> 卸载', `apps.explorer.unmountDrive('${arg}')`]
     ],
     'explorer.tab': [
         arg => {
@@ -521,8 +544,9 @@ let font_window = false;
 // 下拉菜单
 const dps = {
     'notepad.file': [
-        ['<i class="bi bi-file-earmark-plus"></i> 新建', `hidedp(true);$('#win-notepad>.text-box').addClass('down');
+        ['<i class="bi bi-file-earmark-plus"></i> 新建', `hidedp(true);apps.notepad._mountedFileHandle=null;$('#win-notepad>.text-box').addClass('down');
         setTimeout(()=>{$('#win-notepad>.text-box').val('');$('#win-notepad>.text-box').removeClass('down')},200);`],
+        ['<i class="bi bi-floppy"></i> 保存 <info>Ctrl+S</info>', `hidedp(true);apps.notepad.saveMounted();`],
         ['<i class="bi bi-box-arrow-right"></i> 另存为', `hidedp(true);$('#win-notepad>.save').attr('href', window.URL.createObjectURL(new Blob([$('#win-notepad>.text-box').html()])));
         $('#win-notepad>.save')[0].click();`],
         '<hr>',
@@ -663,47 +687,47 @@ const nts = {
             此项目绝不附属于微软,且不应与微软操作系统或产品混淆,<br />
             这也不是 Windows365 cloud PC<br />
             本项目中微软、Windows和其他示范产品是微软公司的商标<br />
-            本项目中 Android 是谷歌公司的商标。</p>`,'nts.about'),
+            本项目中 Android 是谷歌公司的商标。</p>`, 'nts.about'),
         btn: [
-            { type: 'main', text: lang(lang('关闭','close'),'close'), js: 'closenotice();' },
-            { type: 'detail', text: lang('更多','more'), js: 'closenotice();openapp(\'about\');if($(\'.window.about\').hasClass(\'min\'))minwin(\'about\');$(\'.dock.about\').removeClass(\'show\')' },
+            { type: 'main', text: lang(lang('关闭', 'close'), 'close'), js: 'closenotice();' },
+            { type: 'detail', text: lang('更多', 'more'), js: 'closenotice();openapp(\'about\');if($(\'.window.about\').hasClass(\'min\'))minwin(\'about\');$(\'.dock.about\').removeClass(\'show\')' },
         ]
     },
     'feedback': {
-        cnt: `<p class="tit">${lang('反馈','nts.feedback.name')}</p>
-            <p>${lang('我们非常注重用户的体验与反馈','nts.feedback.txt')}</p>
+        cnt: `<p class="tit">${lang('反馈', 'nts.feedback.name')}</p>
+            <p>${lang('我们非常注重用户的体验与反馈', 'nts.feedback.txt')}</p>
             <list class="new">
-                <a class="a" onclick="window.open('https://github.com/tjy-gitnub/win12/issues','_blank');" win12_title="在浏览器新窗口打开链接" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)">${lang('在github上提交issue (需要github账户)','nts.feedback.github')}</a>
+                <a class="a" onclick="window.open('https://github.com/win12-online/win12/issues','_blank');" win12_title="在浏览器新窗口打开链接" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)">${lang('在github上提交issue (需要github账户)', 'nts.feedback.github')}</a>
             </list>`,
         btn: [
-            { type: 'main', text: lang(lang('关闭','close'),'close'), js: 'closenotice();' },
+            { type: 'main', text: lang(lang('关闭', 'close'), 'close'), js: 'closenotice();' },
         ]
     },
     'widgets': {
         cnt: `
-            <p class="tit">${lang('添加小组件','nts.addwg')}</p>
+            <p class="tit">${lang('添加小组件', 'nts.addwg')}</p>
             <list class="new">
-                <a class="a" onclick="closenotice(); widgets.widgets.add('calc');">${lang('计算器','calc.name')}</a>
-                <a class="a" onclick="closenotice(); widgets.widgets.add('weather');">${lang('天气','nts.addwg.weather')}</a>
-                <a class="a" onclick="closenotice(); widgets.widgets.add('monitor');">${lang('系统性能监视器','nts.addwg.monitor')}</a>
+                <a class="a" onclick="closenotice(); widgets.widgets.add('calc');">${lang('计算器', 'calc.name')}</a>
+                <a class="a" onclick="closenotice(); widgets.widgets.add('weather');">${lang('天气', 'nts.addwg.weather')}</a>
+                <a class="a" onclick="closenotice(); widgets.widgets.add('monitor');">${lang('系统性能监视器', 'nts.addwg.monitor')}</a>
             </list>`,
         btn: [
-            { type: 'cancel', text: lang('取消','cancel'), js: 'closenotice();' }
+            { type: 'cancel', text: lang('取消', 'cancel'), js: 'closenotice();' }
         ]
     },
     'ZeroDivision': {//计算器报错窗口
         // 甚至还报错我真的哭死，直接输入框显示error啥的不就完了。。
         cnt: lang(`<p class="tit">错误</p>
-            <p>除数不得等于0</p>`,'calc.error.zero'),
+            <p>除数不得等于0</p>`, 'calc.error.zero'),
         btn: [
-            { type: 'main', text: lang('确定','ok'), js: 'closenotice();' },
+            { type: 'main', text: lang('确定', 'ok'), js: 'closenotice();' },
         ]
     },
     'Can-not-open-file': {
         cnt: '<p class="tit">' + run_cmd + `</p>
         <p>Windows 找不到文件 '` + run_cmd + '\'。请确定文件名是否正确后，再试一次。</p> ',
         btn: [
-            { type: 'main', text: lang('确定','ok'), js: 'closenotice();' },
+            { type: 'main', text: lang('确定', 'ok'), js: 'closenotice();' },
             { type: 'detail', text: '在 Micrsoft Edge 中搜索', js: 'closenotice();openapp(\'edge\');window.setTimeout(() => {apps.edge.newtab();apps.edge.goto(' + run_cmd + ');}, 300);' }
         ]
     },
@@ -719,7 +743,7 @@ const nts = {
             <a class="a" onclick="closenotice(); widgets.monitor.type = 'gpu';">GPU利用率</a>
         </list>`,
         btn: [
-            { type: 'cancel', text: lang('取消','cancel'), js: 'closenotice();' }
+            { type: 'cancel', text: lang('取消', 'cancel'), js: 'closenotice();' }
         ]
     },
     'widgets.desktop': {
@@ -731,7 +755,7 @@ const nts = {
                 <a class="a" onclick="closenotice(); widgets.widgets.addToDesktop('monitor');">系统性能监视器</a>
             </list>`,
         btn: [
-            { type: 'cancel', text: lang('取消','cancel'), js: 'closenotice();' }
+            { type: 'cancel', text: lang('取消', 'cancel'), js: 'closenotice();' }
         ]
     },
     'widgets.news.source': {
@@ -740,27 +764,27 @@ const nts = {
             <list class="new">
                 新闻源未加载，请检查网络连接
             </list>`,
-        btn: [{ type: 'cancel', text: lang('取消','cancel'), js: 'closenotice();' }],
+        btn: [{ type: 'cancel', text: lang('取消', 'cancel'), js: 'closenotice();' }],
     },
     'duplication file name': {
         cnt: `
             <p class="tit">错误</p>
             <p>文件名重复</p>`,
         btn: [
-            { type: 'cancel', text: lang('取消','cancel'), js: 'closenotice();' }
+            { type: 'cancel', text: lang('取消', 'cancel'), js: 'closenotice();' }
         ]
     },
     'about-copilot': {
         cnt: `
             <p class="tit">关于 Windows 12 Copilot</p>
              <p>你可以使用此 AI 助手帮助你更快地完成工作，此AI助手基于 Qwen3-Max 模型 (有人用Win12工作?)<br>
-            也请适当使用，不要谈论敏感、违规话题，<br>请有身为一个人类最基本的道德底线。<br>
+            也请适当使用，不要谈论敏感、违规话题，<br>请有身为一个人类最基本的道德底线。<br>根据相关法律法规，我们不向欧盟用户提供服务。<br>
             在此特别感谢云智api(yunzhiapi.cn)为本项目提供赞助！</p>
-            <a class="a" onclick="window.open('https://status.tangyuan0821.com/status/win12/','_blank');" win12_title="在浏览器新窗口打开链接">状态监测</a><br>
+            <a class="a" onclick="window.open('https://status.win12.tech/status/win12/','_blank');" win12_title="在浏览器新窗口打开链接">状态监测</a><br>
             <a class="a" onclick="window.open('https://www.yunzhiapi.cn/','_blank');" win12_title="在浏览器新窗口打开链接">云智API官网</a>
         `,
         btn: [
-            { type: 'main', text: lang('确定','ok'), js: 'closenotice();' },
+            { type: 'main', text: lang('确定', 'ok'), js: 'closenotice();' },
         ]
     },
     'shutdown': {
@@ -768,7 +792,7 @@ const nts = {
         <p class="tit">即将注销你的登录</p>
         <p>Windows 将在 114514 分钟后关闭。</p>`,
         btn: [
-            { type: 'main', text: lang('关闭','close'), js: 'closenotice();' }
+            { type: 'main', text: lang('关闭', 'close'), js: 'closenotice();' }
         ]
     },
     'setting.update': {
@@ -781,7 +805,7 @@ const nts = {
             { type: 'detail', text: '稍后重启', js: 'closenotice();' }
         ]
     },
-    'recognition' : {
+    'recognition': {
         cnt: `
         <p class="tit">语音输入法使用须知</p>
         <p>本语音输入法由@nb-group开发<br>
@@ -795,7 +819,7 @@ const nts = {
         </p>
          `,
         btn: [
-            { type: 'main', text: lang('确定','ok'), js: 'closenotice();' },
+            { type: 'main', text: lang('确定', 'ok'), js: 'closenotice();' },
         ]
     },
     'setting.down': {
@@ -809,20 +833,20 @@ const nts = {
     },
     'whiteboard-saveas': {
         cnt: `
-        <p class="tit">${lang('另存为','whiteboard.saveas.title')}</p>
-        <p>${lang('请输入文件名:','whiteboard.saveas.prompt')}</p>
-        <input type="text" id="whiteboard-filename" placeholder="Whiteboard_${new Date().toISOString().slice(0,10)}" style="width: 100%; padding: 8px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px;">
+        <p class="tit">${lang('另存为', 'whiteboard.saveas.title')}</p>
+        <p>${lang('请输入文件名:', 'whiteboard.saveas.prompt')}</p>
+        <input type="text" id="whiteboard-filename" placeholder="Whiteboard_${new Date().toISOString().slice(0, 10)}" style="width: 100%; padding: 8px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px;">
         `,
         btn: [
-            { type: 'main', text: lang('保存','whiteboard.saveas.save'), js: 'apps.whiteboard.doSaveAs();' },
-            { type: 'detail', text: lang('取消','whiteboard.saveas.cancel'), js: 'closenotice();' }
+            { type: 'main', text: lang('保存', 'whiteboard.saveas.save'), js: 'apps.whiteboard.doSaveAs();' },
+            { type: 'detail', text: lang('取消', 'whiteboard.saveas.cancel'), js: 'closenotice();' }
         ]
     },
     'no-files-permission': {
         cnt: lang(`<p class="tit">文件资源管理器</p>
             <p>你没有权限打开该文件，请向文件的所有者或管理员申请权限<br /></p>`),
         btn: [
-            { type: 'main', text: lang(lang('关闭','close'),'close'), js: 'closenotice();' }
+            { type: 'main', text: lang(lang('关闭', 'close'), 'close'), js: 'closenotice();' }
         ]
     },
     'rename-pc': {
@@ -832,15 +856,15 @@ const nts = {
         <input type="text" id="rename-name" placeholder="Desktop-${Math.floor(Math.random() * 1000000)}">
         `,
         btn: [
-            { type: 'main', text: lang('保存','pc.saveas.save'), js: '' },
-            { type: 'detail', text: lang('取消','pc.saveas.cancel'), js: 'closenotice();' }
+            { type: 'main', text: lang('保存', 'pc.saveas.save'), js: '' },
+            { type: 'detail', text: lang('取消', 'pc.saveas.cancel'), js: 'closenotice();' }
         ]
     },
     'no-files-permission': {
         cnt: lang(`<p class="tit">文件资源管理器</p>
             <p>你没有权限打开该文件，请向文件的所有者或管理员申请权限<br /></p>`),
         btn: [
-            { type: 'main', text: lang(lang('关闭','close'),'close'), js: 'closenotice();' }
+            { type: 'main', text: lang(lang('关闭', 'close'), 'close'), js: 'closenotice();' }
         ]
     },
     'rename-pc': {
@@ -850,15 +874,86 @@ const nts = {
         <input type="text" id="rename-name" placeholder="Desktop-${Math.floor(Math.random() * 1000000)}" style="width: 100%; padding: 8px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px;">
         `,
         btn: [
-            { type: 'main', text: lang('保存','pc.saveas.save'), js: 'closenotice();' },
-            { type: 'detail', text: lang('取消','pc.saveas.cancel'), js: 'closenotice();' }
+            { type: 'main', text: lang('保存', 'pc.saveas.save'), js: 'closenotice();' },
+            { type: 'detail', text: lang('取消', 'pc.saveas.cancel'), js: 'closenotice();' }
         ]
     },
     'word-open-files-fail': {
         cnt: lang(`<p class="tit">打开失败</p>
             <p>Word在试图打开文件时遇到错误<br /></p>`),
         btn: [
-            { type: 'main', text: lang(lang('关闭','close'),'close'), js: 'closenotice();' }
+            { type: 'main', text: lang(lang('关闭', 'close'), 'close'), js: 'closenotice();' }
+        ]
+    },
+    'fs-api-unsupported': {
+        cnt: lang(`<p class="tit">不支持的功能</p>
+            <p>您的浏览器不支持文件系统访问 API。请使用 Chrome 或 Edge 浏览器。</p>`, 'nts.fs-api-unsupported'),
+        btn: [
+            { type: 'main', text: lang('确定', 'ok'), js: 'closenotice();' }
+        ]
+    },
+    'fs-mount-error': {
+        cnt: lang(`<p class="tit">挂载失败</p>
+            <p>无法挂载本地文件夹，权限可能被拒绝。</p>`, 'nts.fs-mount-error'),
+        btn: [
+            { type: 'main', text: lang('确定', 'ok'), js: 'closenotice();' }
+        ]
+    },
+    'unsupported-file-type': {
+        cnt: lang(`<p class="tit">无法打开文件</p>
+            <p>没有找到可以打开此类型文件的应用程序。</p>`, 'nts.unsupported-file-type'),
+        btn: [
+            { type: 'main', text: lang('确定', 'ok'), js: 'closenotice();' }
+        ]
+    },
+    'file-read-error': {
+        cnt: lang(`<p class="tit">读取失败</p>
+            <p>无法读取文件内容，权限可能已过期。</p>`, 'nts.file-read-error'),
+        btn: [
+            { type: 'main', text: lang('确定', 'ok'), js: 'closenotice();' }
+        ]
+    },
+    'file-write-error': {
+        cnt: lang(`<p class="tit">保存失败</p>
+            <p>无法写入文件，权限可能已过期。</p>`, 'nts.file-write-error'),
+        btn: [
+            { type: 'main', text: lang('确定', 'ok'), js: 'closenotice();' }
+        ]
+    },
+    'unsaved-notepad': {
+        cnt: lang(`<p class="tit">是否保存更改？</p>
+            <p>文件有未保存的修改，关闭前是否保存？</p>`, 'nts.unsaved-changes'),
+        btn: [
+            { type: 'main', text: lang('保存','save'), js: 'closenotice();apps.notepad.saveMounted().then(()=>{apps.notepad._forceClose();})' },
+            { type: '', text: lang('不保存','discard'), js: 'closenotice();apps.notepad._forceClose();' },
+            { type: '', text: lang('取消','cancel'), js: 'closenotice();' }
+        ]
+    },
+    'unsaved-code-editor': {
+        cnt: lang(`<p class="tit">是否保存更改？</p>
+            <p>文件有未保存的修改，关闭前是否保存？</p>`, 'nts.unsaved-changes'),
+        btn: [
+            { type: 'main', text: lang('保存','save'), js: 'closenotice();apps.codeEditor.save().then(()=>{apps.codeEditor._forceClose();})' },
+            { type: '', text: lang('不保存','discard'), js: 'closenotice();apps.codeEditor._forceClose();' },
+            { type: '', text: lang('取消','cancel'), js: 'closenotice();' }
+        ]
+    },
+    'unsaved-notepad': {
+        cnt: lang(`<p class="tit">是否保存更改？</p>
+            <p>文件有未保存的修改，关闭前是否保存？</p>`, 'nts.unsaved-changes'),
+        btn: [
+            { type: 'main', text: lang('保存','save'), js: 'closenotice();apps.notepad.saveMounted().then(()=>{apps.notepad._forceClose();})' },
+            { type: '', text: lang('不保存','discard'), js: 'closenotice();apps.notepad._forceClose();' },
+            { type: '', text: lang('取消','cancel'), js: 'closenotice();' }
+        ]
+    },
+    'unsaved-code-editor': {
+        cnt: lang(`<p class="tit">是否保存更改？</p>
+            <p>文件有未保存的修改，关闭前是否保存？</p>`, 'nts.unsaved-changes'),
+        btn: [
+            { type: 'main', text: lang('保存','save'), js: 'closenotice();apps.codeEditor.save().then(()=>{apps.codeEditor._forceClose();})' },
+            { type: '', text: lang('不保存','discard'), js: 'closenotice();apps.codeEditor._forceClose();' },
+            { type: '', text: lang('取消','cancel'), js: 'closenotice();' }
         ]
     },
 };
@@ -882,24 +977,24 @@ function closenotice() {
 }
 
 function closeVideo() {
-  var video = apps.camera.video
-  if (video) {
-    try {
-      var stream = video.srcObject;
-      var tracks = stream.getTracks();
-      tracks.forEach(function (track) {
-        track.stop();
-      });
-      video.srcObject = null;
-    } catch (error) {}
-  }
+    var video = apps.camera.video
+    if (video) {
+        try {
+            var stream = video.srcObject;
+            var tracks = stream.getTracks();
+            tracks.forEach(function (track) {
+                track.stop();
+            });
+            video.srcObject = null;
+        } catch (error) { }
+    }
 }
 
 var shutdown_task = []; //关机任务，储存在这个数组里
 // 为什么要数组？
 
 // 运行的指令
-function runcmd(cmd, inTerminal=false) {
+function runcmd(cmd, inTerminal = false) {
     if (cmd.slice(0, 3) == 'cmd') {
         run_cmd = cmd;
         if (!inTerminal) {
@@ -916,24 +1011,24 @@ function runcmd(cmd, inTerminal=false) {
     else if (cmd === 'help') {
         if (inTerminal) {
             $('#win-terminal>.text-cmd').append(`
-${lang('有关某个命令的详细信息，请键入 HELP 命令名','terminal.help.title')}
-DIR             ${lang('显示目录中的文件和子目录列表','terminal.help.dir')}
-LS              ${lang('显示目录中的文件和子目录列表 (DIR的别名)','terminal.help.ls')}
-DEL             ${lang('删除一个或多个文件','terminal.help.del')}
-CD              ${lang('显示当前目录的名称或将其更改','terminal.help.cd')}
-CLS             ${lang('清除屏幕','terminal.help.cls')}
-HELP            ${lang('提供 Windows 命令的帮助信息','terminal.help.help')}
-SYSTEMINFO      ${lang('显示系统信息','terminal.help.systeminfo')}
-SHUTDOWN        ${lang('关闭计算机','terminal.help.shutdown')}
-CMD             ${lang('打开新的命令提示符窗口','terminal.help.cmd')}
-EXIT            ${lang('退出命令提示符程序','terminal.help.exit')}
+${lang('有关某个命令的详细信息，请键入 HELP 命令名', 'terminal.help.title')}
+DIR             ${lang('显示目录中的文件和子目录列表', 'terminal.help.dir')}
+LS              ${lang('显示目录中的文件和子目录列表 (DIR的别名)', 'terminal.help.ls')}
+DEL             ${lang('删除一个或多个文件', 'terminal.help.del')}
+CD              ${lang('显示当前目录的名称或将其更改', 'terminal.help.cd')}
+CLS             ${lang('清除屏幕', 'terminal.help.cls')}
+HELP            ${lang('提供 Windows 命令的帮助信息', 'terminal.help.help')}
+SYSTEMINFO      ${lang('显示系统信息', 'terminal.help.systeminfo')}
+SHUTDOWN        ${lang('关闭计算机', 'terminal.help.shutdown')}
+CMD             ${lang('打开新的命令提示符窗口', 'terminal.help.cmd')}
+EXIT            ${lang('退出命令提示符程序', 'terminal.help.exit')}
 
-${lang('彩蛋命令:','terminal.help.easter')}
-HELLO           ${lang('打个招呼','terminal.help.hello')}
-MATRIX          ${lang('黑客帝国特效','terminal.help.matrix')}
-SNOW            ${lang('下雪特效','terminal.help.snow')}
-DANCE           ${lang('让窗口跳舞','terminal.help.dance')}
-STARWARS        ${lang('原力觉醒','terminal.help.starwars')}
+${lang('彩蛋命令:', 'terminal.help.easter')}
+HELLO           ${lang('打个招呼', 'terminal.help.hello')}
+MATRIX          ${lang('黑客帝国特效', 'terminal.help.matrix')}
+SNOW            ${lang('下雪特效', 'terminal.help.snow')}
+DANCE           ${lang('让窗口跳舞', 'terminal.help.dance')}
+STARWARS        ${lang('原力觉醒', 'terminal.help.starwars')}
 `);
         }
         return true;
@@ -999,11 +1094,11 @@ ${new Date().toLocaleDateString()}  ${new Date().toLocaleTimeString()}    <DIR> 
         if (inTerminal) {
             const chars = 'ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝ1234567890'; // 哈？(from stsc)
             let matrix = '';
-            
+
             // 创建一个专门的容器来放置 matrix 效果
             const matrixContainer = $('<div class="matrix-container" style="font-family: monospace; line-height: 1.2;"></div>');
             $('#win-terminal>.text-cmd').append(matrixContainer);
-            
+
             for (let i = 0; i < 15; i++) {
                 let line = '';
                 for (let j = 0; j < 50; j++) {
@@ -1019,10 +1114,10 @@ ${new Date().toLocaleDateString()}  ${new Date().toLocaleTimeString()}    <DIR> 
                 matrix += line + '\n';
             }
             matrixContainer.html(matrix);
-            
+
             // 添加动画效果
             const interval = setInterval(() => {
-                const newLine = Array.from({length: 50}, () => {
+                const newLine = Array.from({ length: 50 }, () => {
                     const rand = Math.random();
                     if (rand < 0.3) {
                         return `<span style="color: #0f0; text-shadow: 0 0 8px #0f0;">${chars[Math.floor(Math.random() * chars.length)]}</span>`;
@@ -1032,7 +1127,7 @@ ${new Date().toLocaleDateString()}  ${new Date().toLocaleTimeString()}    <DIR> 
                         return `<span style="color: #050;">${chars[Math.floor(Math.random() * chars.length)]}</span>`;
                     }
                 }).join('');
-                
+
                 const matrixContent = matrixContainer.html().split('\n');
                 matrixContent.shift();
                 matrixContent.push(newLine);
@@ -1043,7 +1138,7 @@ ${new Date().toLocaleDateString()}  ${new Date().toLocaleTimeString()}    <DIR> 
             setTimeout(() => {
                 clearInterval(interval);
                 setTimeout(() => {
-                    matrixContainer.fadeOut(500, function() {
+                    matrixContainer.fadeOut(500, function () {
                         $(this).remove();
                     });
                 }, 500);
@@ -1061,13 +1156,13 @@ ${new Date().toLocaleDateString()}  ${new Date().toLocaleTimeString()}    <DIR> 
                     </div>
                 `);
             }
-            
+
             const snowflakes = ['❄', '❅', '❆', '✻', '✼', '❉'];
             const pileFlakes = ['❄', '❅', '❆'];
             const colors = ['#fff', '#eef', '#ddf'];
             let pileCount = 0;
             let lastPilePosition = 50; // 用于记录上一个堆积位置
-            
+
             function createSnowflake() {
                 const flake = snowflakes[Math.floor(Math.random() * snowflakes.length)];
                 const color = colors[Math.floor(Math.random() * colors.length)];
@@ -1075,9 +1170,9 @@ ${new Date().toLocaleDateString()}  ${new Date().toLocaleTimeString()}    <DIR> 
                 const left = Math.random() * 100;
                 const fallDuration = 3 + Math.random() * 2;
                 const $snowflake = $(`<span class="snowflake" style="position: absolute; left: ${left}%; top: -10%; font-size: ${size}em; color: ${color}; text-shadow: 0 0 5px ${color}; transition: all ${fallDuration}s linear; opacity: 0.8; transform: rotate(0deg) translateZ(0);">${flake}</span>`);
-                
+
                 $('#snow-container').append($snowflake);
-                
+
                 setTimeout(() => {
                     const rotation = Math.random() * 360;
                     const finalLeft = left + (Math.random() - 0.5) * 20;
@@ -1093,33 +1188,33 @@ ${new Date().toLocaleDateString()}  ${new Date().toLocaleTimeString()}    <DIR> 
                         transition: 'all 0.5s ease-out',
                         opacity: 0
                     });
-                    
+
                     if (pileCount < 200) {
                         const pileFlake = pileFlakes[Math.floor(Math.random() * pileFlakes.length)];
                         const pileSize = Math.random() * 0.4 + 0.3; // 减小堆积雪花的大小
-                        
+
                         // 计算新的堆积位置，使其更自然
                         const deviation = (Math.random() - 0.5) * 30;
                         lastPilePosition = Math.max(10, Math.min(90, lastPilePosition + deviation));
                         const pileLeft = lastPilePosition;
-                        
+
                         // 计算堆积高度，使其形成自然的山形
                         const baseHeight = Math.sin((pileLeft - 50) * Math.PI / 180) * 20;
                         const pileHeight = Math.max(0, 20 - Math.abs(pileLeft - 50) / 2.5 + baseHeight);
-                        
+
                         const $pile = $(`<span style="position: absolute; left: ${pileLeft}%; bottom: ${pileHeight}px; font-size: ${pileSize}em; opacity: 0; transform: scale(0) translateZ(${Math.random() * 50}px); transition: all 0.3s ease-out;">${pileFlake}</span>`);
                         $('#snow-pile').append($pile);
-                        
+
                         setTimeout(() => {
                             $pile.css({
                                 transform: `scale(1) translateZ(${Math.random() * 50}px) rotate(${Math.random() * 30 - 15}deg)`,
                                 opacity: 0.85
                             });
                         }, 50);
-                        
+
                         pileCount++;
                     }
-                    
+
                     setTimeout(() => $snowflake.remove(), 500);
                 }, fallDuration * 1000);
             }
@@ -1135,7 +1230,7 @@ ${new Date().toLocaleDateString()}  ${new Date().toLocaleTimeString()}    <DIR> 
             setTimeout(() => {
                 clearInterval(snowInterval);
                 // 让所有堆积的雪花缓慢消失
-                $('#snow-pile span').each(function(i) {
+                $('#snow-pile span').each(function (i) {
                     const $pile = $(this);
                     setTimeout(() => {
                         $pile.css({
@@ -1146,7 +1241,7 @@ ${new Date().toLocaleDateString()}  ${new Date().toLocaleTimeString()}    <DIR> 
                     }, Math.random() * 2000);
                 });
                 // 让飘落的雪花消失
-                $('#snow-container .snowflake').each(function(i) {
+                $('#snow-container .snowflake').each(function (i) {
                     const $flake = $(this);
                     setTimeout(() => {
                         $flake.css({
@@ -1156,7 +1251,7 @@ ${new Date().toLocaleDateString()}  ${new Date().toLocaleTimeString()}    <DIR> 
                     }, Math.random() * 2000);
                 });
                 setTimeout(() => {
-                    $('#snow-container').fadeOut(1000, function() {
+                    $('#snow-container').fadeOut(1000, function () {
                         $(this).remove();
                     });
                 }, 2500);
@@ -1175,8 +1270,8 @@ ${new Date().toLocaleDateString()}  ${new Date().toLocaleTimeString()}    <DIR> 
                 { transform: 'rotate(-5deg) translateX(-10px)' },
                 { transform: 'rotate(0deg) translate(0, 0)' }
             ];
-            
-            windows.each(function() {
+
+            windows.each(function () {
                 const win = $(this);
                 let danceCount = 0;
                 const danceInterval = setInterval(() => {
@@ -1185,7 +1280,7 @@ ${new Date().toLocaleDateString()}  ${new Date().toLocaleTimeString()}    <DIR> 
                         transition: 'transform 0.3s ease-in-out',
                         transform: danceSteps[danceCount % danceSteps.length].transform
                     });
-                    
+
                     // 跳舞15次后停止
                     if (danceCount >= 15) {
                         clearInterval(danceInterval);
@@ -1258,7 +1353,7 @@ Windows 目录:          C:\\Windows
             // 如果没有参数，显示帮助信息
             if (cmds.length == 1) {
                 // 如果不是在终端中执行，则打开终端
-                if(!inTerminal){
+                if (!inTerminal) {
                     openapp('terminal');
                     $('#win-terminal').html('<pre class="text-cmd"></pre>');
                 }
@@ -1271,14 +1366,14 @@ shutdown [-s] [-r] [-f] [-a] [-t time]
 -a:取消之前的操作
 -t time:指定在 time秒 后操作
 
-其余不多做介绍了` + (inTerminal?'' : `
+其余不多做介绍了` + (inTerminal ? '' : `
 请按任意键继续.&nbsp;.&nbsp;.<input type="text" onkeydown="hidewin('terminal')"></input>`));
                 if (!inTerminal) {
                     $('#win-terminal>pre>input').focus();
                 }
                 return true;
             }
-            
+
             // 初始化参数变量
             let hasTime = false;      // 是否指定了时间
             let timeValue = 0;        // 延迟时间值（秒）
@@ -1324,7 +1419,7 @@ shutdown [-s] [-r] [-f] [-a] [-t time]
                         <p class="tit">注销已取消</p>
                         <p>计划的关闭已取消。</p>`,
                         btn: [
-                            { type: 'main', text: lang('关闭','close'), js: 'closenotice();' },
+                            { type: 'main', text: lang('关闭', 'close'), js: 'closenotice();' },
                         ]
                     };
                     shownotice('shutdown');
@@ -1354,14 +1449,14 @@ shutdown [-s] [-r] [-f] [-a] [-t time]
             // 计算延迟时间和显示文本
             const delay = hasTime ? timeValue * 1000 : 0;  // 将秒转换为毫秒
             const timeString = hasTime ? calcTimeString(timeValue) : '立即';
-            
+
             // 准备通知内容
             nts['shutdown'] = {
                 cnt: `
                 <p class="tit">即将${operation === 'restart' ? '重启' : operation === 'logoff' ? '注销' : '关机'}</p>
                 <p>Windows 将在 ${timeString} 后${operation === 'restart' ? '重启' : operation === 'logoff' ? '注销' : '关机'}。</p>`,
                 btn: [
-                    { type: 'main', text: lang('关闭','close'), js: 'closenotice();' },
+                    { type: 'main', text: lang('关闭', 'close'), js: 'closenotice();' },
                 ]
             };
 
@@ -1379,7 +1474,7 @@ shutdown [-s] [-r] [-f] [-a] [-t time]
 
             // 将任务添加到任务列表
             shutdown_task.push(task);
-            
+
             // 如果不是强制模式，显示通知
             if (!forceMode) {
                 shownotice('shutdown');
@@ -1390,11 +1485,11 @@ shutdown [-s] [-r] [-f] [-a] [-t time]
     else if (cmd.toLowerCase() === 'starwars') {
         if (inTerminal) {
             $('#win-terminal>.text-cmd').append('原力与你同在... ⚔️\n');
-            
+
             // 创建星球大战容器
             const starWarsContainer = $('<div class="starwars-container" style="font-family: monospace; perspective: 400px; color: #ffd700; position: relative; height: 400px; overflow: hidden; background: #000;"></div>');
             $('#win-terminal>.text-cmd').append(starWarsContainer);
-            
+
             // 添加星球大战文本
             const text = `
             Episode XII
@@ -1419,11 +1514,11 @@ shutdown [-s] [-r] [-f] [-a] [-t time]
 
             愿原力与你同在！
             `;
-            
+
             const crawl = $(`<div class="crawl" style="position: relative; top: 400px; transform-origin: 50% 100%; transform: rotateX(60deg); text-align: center; font-size: 24px; line-height: 1.5; white-space: pre-line; text-shadow: 0 0 10px #ffd700;"></div>`);
             crawl.html(text);
             starWarsContainer.append(crawl);
-            
+
             // 添加动态背景星星
             for (let i = 0; i < 200; i++) {
                 const size = Math.random() * 2 + 1;
@@ -1452,10 +1547,10 @@ shutdown [-s] [-r] [-f] [-a] [-t time]
                 }
             </style>`);
             starWarsContainer.append(style);
-            
+
             // 30秒后清理
             setTimeout(() => {
-                starWarsContainer.fadeOut(2000, function() {
+                starWarsContainer.fadeOut(2000, function () {
                     $(this).remove();
                 });
             }, 30000);
@@ -1504,24 +1599,24 @@ function stopDrag() {
 
 function insertTextAtCursor(text) {
     var range, selection;
-    
+
     if (window.getSelection) {
         selection = window.getSelection();
-        
+
         if (selection.rangeCount) {
-        range = selection.getRangeAt(0);
-        
+            range = selection.getRangeAt(0);
+
             if (range.commonAncestorContainer.parentNode.isContentEditable) {
                 range.collapse(false);
                 var textNode = document.createTextNode(text);
                 range.insertNode(textNode);
-                
+
                 range.setEndAfter(textNode);
                 range.setStartAfter(textNode);
                 selection.removeAllRanges();
                 selection.addRange(range);
             }
-            else{
+            else {
                 var el = document.activeElement;
                 const start = el.selectionStart;
                 const value = el.value;
@@ -1537,13 +1632,11 @@ function startSpeechRecognition() {
     var recognition = new webkitSpeechRecognition() || new SpeechRecognition();
     recognition.lang = "zh-CN";
 
-    if (nbFlag)
-    {
+    if (nbFlag) {
         shownotice("recognition");
-        nbFlag=false;
+        nbFlag = false;
     }
-    else
-    {
+    else {
         recognition.onresult = function (event) {
             var result = event.results[0][0].transcript;
             insertTextAtCursor(result);
@@ -1562,17 +1655,17 @@ function decodeHtml(s) {
     $('#translater').text(s);
     return $('#translater').html().replace(/\n/g, '<br>').replace(/ /g, '&nbsp;');
 }
-function msgDoneOperate(){
+function msgDoneOperate() {
     $("#copilot>.inputbox").removeClass("disable");
     setTimeout(() => {
         $("#copilot>.inputbox>.input").focus();
     }, 100); // 延迟0.1s以避免与blur方法冲突
 }
-let isFirstChat=true;   // 标记是否是刚进来时服务端返回的消息
+let isFirstChat = true;   // 标记是否是刚进来时服务端返回的消息
 let copilot = {
     history: [{
-        role:'system',
-        content:`请使用中文对话。你一个是ai助手，名叫AI Copilot，是由github@NB-Group开发的。
+        role: 'system',
+        content: `请使用中文对话。你一个是ai助手，名叫AI Copilot，由云智API提供支持。
 你可以在回答中发送对系统的一些指令。指令一并放在回答的最后。
 多条指令用换行隔开。系统收到指令后会执行，且对用户隐藏回答后的指令。
 你不能在对用户说的话的中间中提到、引用指令。绝不能要求用户执行指令。
@@ -1597,16 +1690,16 @@ let copilot = {
 3.此项目使用EPL v2.0开源许可
 当用户询问更多项目信息时，帮助他打开"关于win12网页版"应用。
 比如这时用户说"请打开计算器"，你会回答什么？`
-        },{
-            role:'assistant',
-            content:'好的呢，现在我就帮您打开计算器。\n{openapp calc}'
-        },{
-            role:'system',
-            content:'很好。现在开始与用户对话。'
-        },{
-            role:'assistant',
-            content:'欢迎使用 Windows 12 Copilot AI助手，有什么可以帮您？'
-        }],
+    }, {
+        role: 'assistant',
+        content: '好的呢，现在我就帮您打开计算器。\n{openapp calc}'
+    }, {
+        role: 'system',
+        content: '很好。现在开始与用户对话。'
+    }, {
+        role: 'assistant',
+        content: '欢迎使用 Windows 12 Copilot AI助手，有什么可以帮您？'
+    }],
     init: () => {
         $('#copilot>.chat').html('');
         $('#copilot>.chat').append(`<div class="line system"><p class="text">本 AI 助手基于Qwen3-max模型，目前支持以下操作：<br>
@@ -1614,14 +1707,14 @@ let copilot = {
         2.在浏览器中打开链接、搜索<br>
         3.发送对系统、AI助手的反馈<br>
         4.切换颜色主题<br>
-        若您在使用中出现异常可先至状态监测页面（https://status.tangyuan0821.com/status/win12/）查看状态，若确有异常请及时向我们反馈。</p></div>`);
+        需注意，根据相关法律法规，我们不向欧盟用户提供服务。</p></div>`);
         setTimeout(() => {
             $('#copilot>.chat').append(`<div class="line ai"><p class="text">欢迎使用 Windows 12，有什么可以帮您？</p></div>`);
             $('#copilot>.inputbox').removeClass('disable');
             $('#copilot>.chat').scrollTop($('#copilot>.chat')[0].scrollHeight);
         }, 200);
     },
-    send: (t, showusr = true, role='user') => {
+    send: (t, showusr = true, role = 'user') => {
         // 输入验证
         if (t.length == 0) {
             $('#copilot>.chat').append('<div class="line system"><p class="text">请发一些有意义的东西</p></div>');
@@ -1638,13 +1731,13 @@ let copilot = {
         }
         copilot.history.push({ role: role, content: t });
         $('#copilot>.chat').scrollTop($('#copilot>.chat')[0].scrollHeight);
-           // 存储uid
-           const uid = localStorage.getItem('copilot_uid') || 
+        // 存储uid
+        const uid = localStorage.getItem('copilot_uid') ||
             (() => {
-              const newUid = Math.floor(100000 + Math.random() * 900000); // 生成 100000-999999 的随机六位数
-              localStorage.setItem('copilot_uid', newUid.toString());
-              return newUid;
-           })();
+                const newUid = Math.floor(100000 + Math.random() * 900000); // 生成 100000-999999 的随机六位数
+                localStorage.setItem('copilot_uid', newUid.toString());
+                return newUid;
+            })();
         // 构建API请求URL
         const encodedQuestion = encodeURIComponent(t);
         const apiUrl = `https://yunzhiapi.cn/vip/win12/qwen3-max/index.php?question=${encodedQuestion}&system=${encodeURIComponent(copilot.history[0].content)}&uid=${uid}`;
@@ -1653,7 +1746,7 @@ let copilot = {
         $.ajax({
             url: apiUrl,
             method: 'GET',
-            success: function(responseText) {
+            success: function (responseText) {
                 msgDoneOperate();
 
                 // 处理特殊命令
@@ -1667,10 +1760,10 @@ let copilot = {
                     for (const i of r) {
                         if (/{openapp .+?}/.test(i)) {
                             let t = i.match(/(?<={openapp ).+(?=})/)[0];
-                            if($('.window.'+t).length){
+                            if ($('.window.' + t).length) {
                                 openapp(t);
                                 rt = rt.replace(i, `<div class="action"><p class="tit">打开应用</p><p class="detail">${$(`.window.${t}>.titbar>p`).text()}</p></div>`);
-                            }else{
+                            } else {
                                 rt = rt.replace(i, `<div class="action"><p class="tit">打开应用</p><p class="detail">${t} <span style="color:red">(AI 理解力较差，见谅)</span></p></div>`);
                             }
                         } else if (/{openurl .+?}/.test(i)) {
@@ -1690,7 +1783,7 @@ let copilot = {
                             if ((t == 'light' && $(':root').hasClass('dark')) || (t == 'dark' && !$(':root').hasClass('dark'))) {
                                 toggletheme();
                             }
-                            if(t!='light' && t!='dark')
+                            if (t != 'light' && t != 'dark')
                                 rt = rt.replace(i, `<div class="action"><p class="tit">切换外观模式</p><p class="detail">${t} 模式 <span style="color:red">(AI 理解力较差，见谅)</span></p></div>`);
                             else
                                 rt = rt.replace(i, `<div class="action"><p class="tit">切换外观模式</p><p class="detail">${t == 'dark' ? '深色' : '浅色'} 模式</p></div>`);
@@ -1705,7 +1798,7 @@ let copilot = {
                 $('#copilot>.chat').scrollTop($('#copilot>.chat')[0].scrollHeight);
                 msgDoneOperate();
             },
-            error: function(error) {
+            error: function (error) {
                 console.log(error);
                 $('#copilot>.chat').append('<div class="line system"><p class="text">发生错误，请查看控制台输出或重试</p></div>');
                 $('#copilot>.chat').scrollTop($('#copilot>.chat')[0].scrollHeight);
@@ -1713,7 +1806,7 @@ let copilot = {
             }
         });
     },
-    ana: (resp)=>{
+    ana: (resp) => {
 
     }
 };
@@ -1721,18 +1814,18 @@ let copilot = {
 let da = new Date();
 
 const date = {
-    'zh-CN':`星期${['日', '一', '二', '三', '四', '五', '六'][da.getDay()]}, ${da.getFullYear()}年${(da.getMonth() + 1).toString().padStart(2, '0')}月${da.getDate().toString().padStart(2, '0')}日`,
-    'zh-TW':`星期${['日', '一', '二', '三', '四', '五', '六'][da.getDay()]}, ${da.getFullYear()}年${(da.getMonth() + 1).toString().padStart(2, '0')}月${da.getDate().toString().padStart(2, '0')}日`,
-    en:`${['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][da.getDay()]}, ${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][da.getMonth()]} ${da.getDate().toString().padStart(2, '0')}, ${da.getFullYear()}`
+    'zh-CN': `星期${['日', '一', '二', '三', '四', '五', '六'][da.getDay()]}, ${da.getFullYear()}年${(da.getMonth() + 1).toString().padStart(2, '0')}月${da.getDate().toString().padStart(2, '0')}日`,
+    'zh-TW': `星期${['日', '一', '二', '三', '四', '五', '六'][da.getDay()]}, ${da.getFullYear()}年${(da.getMonth() + 1).toString().padStart(2, '0')}月${da.getDate().toString().padStart(2, '0')}日`,
+    en: `${['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][da.getDay()]}, ${['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][da.getMonth()]} ${da.getDate().toString().padStart(2, '0')}, ${da.getFullYear()}`
 }[langcode];
 
-$('#s-m-r>.row1>.tool>.date').text(date);
+$('#startmenu-r>.row1>.tool>.date').text(date);
 $('.dock.date>.date').text(`${da.getFullYear()}/${(da.getMonth() + 1).toString().padStart(2, '0')}/${da.getDate().toString().padStart(2, '0')}`);
 $('#datebox>.tit>.date').text(date);
 function loadtime() {
     let d = new Date();
     let time = d.toLocaleTimeString();
-    $('#s-m-r>.row1>.tool>.time').text(time);
+    $('#startmenu-r>.row1>.tool>.time').text(time);
     $('.dock.date>.time').text(time);
     $('#datebox>.tit>.time').text(time);
     $('.settingTime').text(time);
@@ -1757,8 +1850,8 @@ for (let i = 1; i <= daysum; i++) {
     $('#datebox>.cont>.body')[0].innerHTML += `<p>${i}</p>`;
 }
 function pinapp(id, name, command) {
-    if ($('#s-m-r>.pinned>.apps>.a.sm-app.' + id).length) return;
-    $('#s-m-r>.pinned>.apps').append(`<a class='a sm-app enable ${id}' onclick='${command}';hide_startmenu();' oncontextmenu='return showcm(event,\"smapp\",[\"${id}\",\"${name}\"])'><img src='icon/${geticon(id)}'><p>${name}</p></a>`);
+    if ($('#startmenu-r>.pinned>.apps>.a.sm-app.' + id).length) return;
+    $('#startmenu-r>.pinned>.apps').append(`<a class='a sm-app enable ${id}' onclick='${command}';hide_startmenu();' oncontextmenu='return showcm(event,\"smapp\",[\"${id}\",\"${name}\"])'><img src='icon/${geticon(id)}'><p>${name}</p></a>`);
 }
 
 // 应用方法
@@ -1771,7 +1864,11 @@ const icon = {
     winver: 'about.svg',
     // run: 'run.png',
     // whiteboard: 'whiteboard.png',
-    taskmgr: 'taskmgr.png'
+    taskmgr: 'taskmgr.png',
+    imgviewer: 'files/picture.png',
+    'code-editor': 'vscode.png',
+    mediaplayer: 'files/vidio.png',
+    pdfviewer: 'files/pdf.svg'
 };
 function geticon(name) {
     if (icon[name]) return icon[name];
@@ -1824,14 +1921,14 @@ function openapp(name) {
 //打开任务栏按钮对应的widget
 
 // 为啥管这个东西叫 widget?? from stsc
-function openDockWidget(name){
-    if(name=="start-menu"){ //打开开始菜单
-        if($('#start-menu').hasClass('show')){
+function openDockWidget(name) {
+    if (name == "start-menu") { //打开开始菜单
+        if ($('#start-menu').hasClass('show')) {
             hide_startmenu();
         }
-        else{
+        else {
             $('#start-btn').addClass('show');
-            if($('#search-win').hasClass('show')){
+            if ($('#search-win').hasClass('show')) {
                 $('#search-btn').removeClass('show');
                 $('#search-win').removeClass('show');
                 setTimeout(() => {
@@ -1839,13 +1936,13 @@ function openDockWidget(name){
                 }, 200);
                 hide_widgets();
             }
-            if($('#widgets').hasClass('show'))hide_widgets();
+            if ($('#widgets').hasClass('show')) hide_widgets();
             $('#start-menu').addClass('show-begin');
             setTimeout(() => {
                 $('#start-menu').addClass('show');
             }, 0);
         }
-    }else if(name=="search-win"){   //打开搜索框
+    } else if (name == "search-win") {   //打开搜索框
         if ($('#search-win').hasClass('show')) {
             $('#search-btn').removeClass('show');
             $('#search-win').removeClass('show');
@@ -1855,78 +1952,78 @@ function openDockWidget(name){
         }
         else {
             $('#search-btn').addClass('show');
-            if($('#start-menu').hasClass('show'))hide_startmenu();
-            if($('#widgets').hasClass('show'))hide_widgets();
+            if ($('#start-menu').hasClass('show')) hide_startmenu();
+            if ($('#widgets').hasClass('show')) hide_widgets();
             $('#search-win').addClass('show-begin');
             setTimeout(() => {
                 $('#search-win').addClass('show');
             }, 0);
             $('#search-input').focus();
         }
-    }else if(name=="widgets"){  //打开小组件
-        if($('#widgets').hasClass('show')){
+    } else if (name == "widgets") {  //打开小组件
+        if ($('#widgets').hasClass('show')) {
             hide_widgets();
         }
-        else{
+        else {
             $('#widgets-btn').addClass('show');
-            if($('#search-win').hasClass('show')){
+            if ($('#search-win').hasClass('show')) {
                 $('#search-btn').removeClass('show');
                 $('#search-win').removeClass('show');
                 setTimeout(() => {
                     $('#search-win').removeClass('show-begin');
                 }, 200);
             }
-            if($('#start-menu').hasClass('show'))hide_startmenu();
+            if ($('#start-menu').hasClass('show')) hide_startmenu();
             $('#widgets').addClass('show-begin');
             setTimeout(() => {
                 $('#widgets').addClass('show');
             }, 0);
             $('#widgets-input').focus();
         }
-    }else if(name=="control"){  //打开控制
-        if($('#control').hasClass('show')) {
-			$('#control').removeClass('show');
-			setTimeout(() => {
-				$('#control').removeClass('show-begin');
-			}, 200);
-		}
-		else {
-			if ($('#datebox').hasClass('show')) {
-				$('.dock.date').removeClass('show');
-				$('#datebox').removeClass('show');
-				setTimeout(() => {
-					$('#datebox').removeClass('show-begin');
-				}, 200);
-			}
-			$('#control').css('left',$('.a.dock.control').position().left - 123);
-			$('#control').addClass('show-begin');
-			setTimeout(() => {
-				$('#control').addClass('show');
-			}, 0);
-		}
-    }else if(name=="datebox"){  //打开时间框
-        if($('#datebox').hasClass('show')) {
-			$('.dock.date').removeClass('show');
-			$('#datebox').removeClass('show');
-			setTimeout(() => {
-				$('#datebox').removeClass('show-begin');
-			}, 200);
-		}
-		else {
-			if ($('#control').hasClass('show')) {
-				$('#control').removeClass('show');
-				setTimeout(() => {
-					$('#control').removeClass('show-begin');
-				}, 200);
-			}
-			$('.dock.date').addClass('show');
-			$('#datebox').css('left',$('.a.dock.date').position().left-125);
-			$('#datebox').addClass('show-begin');
-			setTimeout(() => {
-				$('#datebox').addClass('show');
-			}, 0);
-		}
-    }else{
+    } else if (name == "control") {  //打开控制
+        if ($('#control').hasClass('show')) {
+            $('#control').removeClass('show');
+            setTimeout(() => {
+                $('#control').removeClass('show-begin');
+            }, 200);
+        }
+        else {
+            if ($('#datebox').hasClass('show')) {
+                $('.dock.date').removeClass('show');
+                $('#datebox').removeClass('show');
+                setTimeout(() => {
+                    $('#datebox').removeClass('show-begin');
+                }, 200);
+            }
+            $('#control').css('left', $('.a.dock.control').position().left - 123);
+            $('#control').addClass('show-begin');
+            setTimeout(() => {
+                $('#control').addClass('show');
+            }, 0);
+        }
+    } else if (name == "datebox") {  //打开时间框
+        if ($('#datebox').hasClass('show')) {
+            $('.dock.date').removeClass('show');
+            $('#datebox').removeClass('show');
+            setTimeout(() => {
+                $('#datebox').removeClass('show-begin');
+            }, 200);
+        }
+        else {
+            if ($('#control').hasClass('show')) {
+                $('#control').removeClass('show');
+                setTimeout(() => {
+                    $('#control').removeClass('show-begin');
+                }, 200);
+            }
+            $('.dock.date').addClass('show');
+            $('#datebox').css('left', $('.a.dock.date').position().left - 125);
+            $('#datebox').addClass('show-begin');
+            setTimeout(() => {
+                $('#datebox').addClass('show');
+            }, 0);
+        }
+    } else {
         console.err("openDockWidget()传递的name不正确!");
     }
 }
@@ -1955,15 +2052,15 @@ function controlStatus(name) {
         if (name == 'fly') {
             flyStatus = false
             if (localStorage.getItem(FLY_HIDDEN_LIST_KEY)) {
-              const flyHiddenData = JSON.parse(localStorage.getItem(FLY_HIDDEN_LIST_KEY))
-              const flyHiddenList = Array.isArray(flyHiddenData) ? flyHiddenData : []
-              flyHiddenList.forEach(item => {
-                const dom = $(`#control .${item} .icon`)
-                if (!dom.hasClass('active')) {
-                  dom.addClass('active')
-                }
-              })
-              localStorage.removeItem(FLY_HIDDEN_LIST_KEY)
+                const flyHiddenData = JSON.parse(localStorage.getItem(FLY_HIDDEN_LIST_KEY))
+                const flyHiddenList = Array.isArray(flyHiddenData) ? flyHiddenData : []
+                flyHiddenList.forEach(item => {
+                    const dom = $(`#control .${item} .icon`)
+                    if (!dom.hasClass('active')) {
+                        dom.addClass('active')
+                    }
+                })
+                localStorage.removeItem(FLY_HIDDEN_LIST_KEY)
             }
         }
     }
@@ -1973,20 +2070,20 @@ function controlStatus(name) {
             wifiStatus = true;
         }
         if (name == 'fly') {
-          flyStatus = true
-          const hiddenList = ['btn1', 'btn2', 'btn5']
-          const hiddenDiffList = []
-          hiddenList.forEach(item => {
-            const dom = $(`#control .${item} .icon`)
-            if (dom.hasClass('active')) {
-              dom.removeClass('active')
-              hiddenDiffList.push(item)
-            }
-          })
-          localStorage.setItem(FLY_HIDDEN_LIST_KEY, JSON.stringify(hiddenDiffList))
+            flyStatus = true
+            const hiddenList = ['btn1', 'btn2', 'btn5']
+            const hiddenDiffList = []
+            hiddenList.forEach(item => {
+                const dom = $(`#control .${item} .icon`)
+                if (dom.hasClass('active')) {
+                    dom.removeClass('active')
+                    hiddenDiffList.push(item)
+                }
+            })
+            localStorage.setItem(FLY_HIDDEN_LIST_KEY, JSON.stringify(hiddenDiffList))
         }
     }
-    if (name == 'dark') { 
+    if (name == 'dark') {
         $('html').toggleClass('night');
         if ($('html').hasClass('night')) {
             setTimeout(() => {
@@ -2016,13 +2113,13 @@ function dragBrightness(e) {
         }
         var _offset = clientX - viewport;
 
-        const limit=2; // 亮度条件限制
+        const limit = 2; // 亮度条件限制
 
         if (_offset < 0) {
             _offset = 0;
         }
-        else if (_offset > limit*width) {
-            _offset = limit*width;
+        else if (_offset > limit * width) {
+            _offset = limit * width;
         }
         slider.style.marginLeft = _offset + 'px';
         after.style.left = _offset + 'px';
@@ -2030,9 +2127,9 @@ function dragBrightness(e) {
         if (_offset / width > 0.3 && _offset / width < limit) {
             page.style.filter = `brightness(${_offset / width})`;
         }
-        else if (_offset / width < limit){
+        else if (_offset / width < limit) {
             page.style.filter = 'brightness(0.3)';
-        }else{
+        } else {
             page.style.filter = `brightness(${limit})`;
         }
     }
@@ -2056,7 +2153,7 @@ if (navigator.getBattery) {
         if (battery && typeof battery.level === 'number' && !isNaN(battery.level)) {
             const batteryLevel = Math.max(0, Math.min(1, battery.level)); // 确保在0-1范围内
             const batteryWidth = 18 * batteryLevel + 5;
-            
+
             const pathElement = $('.a.dock.control>svg>path')[0];
             if (pathElement) {
                 pathElement.outerHTML = `<path
@@ -2066,7 +2163,7 @@ if (navigator.getBattery) {
 
                 // 检查addEventListener是否存在
                 if (battery.addEventListener && typeof battery.addEventListener === 'function') {
-        battery.addEventListener('levelchange', () => {
+                    battery.addEventListener('levelchange', () => {
                         if (battery && typeof battery.level === 'number' && !isNaN(battery.level)) {
                             const updatedLevel = Math.max(0, Math.min(1, battery.level));
                             const updatedWidth = 18 * updatedLevel + 5;
@@ -2078,7 +2175,7 @@ if (navigator.getBattery) {
             />`;
                             }
                         }
-    });
+                    });
                 }
             }
         }
@@ -2104,11 +2201,11 @@ var flyStatus = false;
 // 选择框
 let chstX, chstY;
 function ch(e) {
-    $('#desktop>.choose').css('left', Math.min(chstX, e.clientX));
-    $('#desktop>.choose').css('width', Math.abs(e.clientX - chstX));
-    $('#desktop>.choose').css('display', 'block');
-    $('#desktop>.choose').css('top', Math.min(chstY, e.clientY));
-    $('#desktop>.choose').css('height', Math.abs(e.clientY - chstY));
+    $('#desktop>.selection').css('left', Math.min(chstX, e.clientX));
+    $('#desktop>.selection').css('width', Math.abs(e.clientX - chstX));
+    $('#desktop>.selection').css('display', 'block');
+    $('#desktop>.selection').css('top', Math.min(chstY, e.clientY));
+    $('#desktop>.selection').css('height', Math.abs(e.clientY - chstY));
 }
 $('#desktop')[0].addEventListener('mousedown', e => {
     chstX = e.clientX;
@@ -2117,11 +2214,11 @@ $('#desktop')[0].addEventListener('mousedown', e => {
 });
 window.addEventListener('mouseup', e => {
     this.onmousemove = null;
-    $('#desktop>.choose').css('left', 0);
-    $('#desktop>.choose').css('top', 0);
-    $('#desktop>.choose').css('display', 'none');
-    $('#desktop>.choose').css('width', 0);
-    $('#desktop>.choose').css('height', 0);
+    $('#desktop>.selection').css('left', 0);
+    $('#desktop>.selection').css('top', 0);
+    $('#desktop>.selection').css('display', 'none');
+    $('#desktop>.selection').css('width', 0);
+    $('#desktop>.selection').css('height', 0);
 });
 let isDark = false;
 
@@ -2167,7 +2264,7 @@ function saveDesktop() {
         sys_setting: JSON.stringify(sys_setting),
         root_class: $(':root').attr('class')
     };
-    
+
     Object.entries(data).forEach(([key, value]) => {
         localStorage.setItem(key, value);
     });
@@ -2175,31 +2272,31 @@ function saveDesktop() {
 
 function setIcon() {
     // return;
-    if (!Array.isArray(JSON.parse(localStorage.getItem('desktop')))){
-        setData('desktop','[]')
+    if (!Array.isArray(JSON.parse(localStorage.getItem('desktop')))) {
+        setData('desktop', '[]')
     }
     if (Array.isArray(JSON.parse(localStorage.getItem('desktop')))) {
         $('#desktop')[0].innerHTML = `<div ondblclick="openapp('explorer');" ontouchstart="openapp('explorer');" oncontextmenu="return showcm(event,'desktop.icon',['explorer',-1]);" appname="explorer">
         <img src="apps/icons/explorer/thispc.svg">
-        <p>${lang('此电脑','explorer.thispc')}</p>
+        <p>${lang('此电脑', 'explorer.thispc')}</p>
     </div>
     <div class="b" ondblclick="openapp('setting');" ontouchstart="openapp('setting');" oncontextmenu="return showcm(event,'desktop.icon',['setting',-1]);" appname="setting">
         <img src="icon/setting.svg">
-        <p>${lang('设置','setting.name')}</p>
+        <p>${lang('设置', 'setting.name')}</p>
     </div>
     <div class="b" ondblclick="openapp('about');" ontouchstart="openapp('about');" oncontextmenu="return showcm(event,'desktop.icon',['about',-1]);" appname="about">
         <img src="icon/about.svg">
-        <p>${lang('关于 Win12 网页版','about.name')}</p>
+        <p>${lang('关于 Win12 网页版', 'about.name')}</p>
     </div>
     <div class="b" ondblclick="openapp('edge');" ontouchstart="openapp('edge');" oncontextmenu="return showcm(event,'desktop.icon',['edge',-1]);" appname="edge">
         <img src="icon/edge.svg">
         <p>Microsoft Edge</p>
     </div>
-    <div class="b" ondblclick="shownotice('feedback');" ontouchstart="shownotice('feedback');;">
+    <div class="b" ondblclick="shownotice('feedback');" ontouchstart="shownotice('feedback');">
         <img src="icon/feedback.svg">
-        <p>${lang('反馈中心','feedback.name')}</p>
+        <p>${lang('反馈中心', 'feedback.name')}</p>
     </div>
-    <span class="choose">
+    <span class="selection">
     </span>
     <p style="background-color: rgba(11,45,14,0);z-index:1;position: absolute;top:0px;left:0px;height:100%;width:100%" oncontextmenu="return showcm(event,'desktop');"></p>`;
         desktopItem = JSON.parse(localStorage.getItem('desktop'));
@@ -2231,6 +2328,34 @@ function setIcon() {
     }
     if (localStorage.getItem('root_class')) {
         $(':root')[0].className = localStorage.getItem('root_class') + ' ' + (isDark ? 'dark' : '');
+    }
+
+    const root = $(':root');
+    const cornerSupported = CSS.supports('corner-shape', 'squircle');
+    const $cornerToggle = $('#sys_setting_1');
+    const $cornerHint = $('#toggle-corner-squ>.corner-disabled-hint');
+    if (!cornerSupported) {
+        sys_setting[0] = 0;
+        $cornerToggle.removeClass('checked').addClass('disabled');
+        $cornerToggle.removeAttr('onclick');
+        root.removeClass('corner_squ');
+        const message = lang('浏览器不支持', 'setting.psnl.round-unav');
+        if ($cornerHint.length) {
+            $cornerHint.text(message);
+        }
+        else {
+            $('#toggle-corner-squ').append(`<span class="corner-disabled-hint">${message}</span>`);
+        }
+        saveDesktop();
+    }
+    else {
+        $cornerHint.remove();
+        if (sys_setting[0]) {
+            root.addClass('corner_squ');
+        }
+        else {
+            root.removeClass('corner_squ');
+        }
     }
 }
 
@@ -2295,16 +2420,16 @@ document.getElementsByTagName('body')[0].onload = () => {
             w.insertAdjacentHTML('afterbegin', `<div class="resize-knob ${n}" onmousedown="resizewin(this.parentElement.parentElement, '${n}', this)"></div>`);
         }
     });
-    $.getJSON('https://tjy-gitnub.github.io/win12-theme/def.json').then(j=>{
-        if(j.sp){
-            $(':root').css('--bgul',j.bg);
-            if(j.spth){
-                $(':root').css('--theme-1',j.th1);
-                $(':root').css('--theme-2',j.th2);
+    $.getJSON('https://tjy-gitnub.github.io/win12-theme/def.json').then(j => {
+        if (j.sp) {
+            $(':root').css('--bgul', j.bg);
+            if (j.spth) {
+                $(':root').css('--theme-1', j.th1);
+                $(':root').css('--theme-2', j.th2);
                 $(':root').css('--href', j.href);
             }
-            if(j.death){
-                $('html').css('filter','saturate(0)');
+            if (j.death) {
+                $('html').css('filter', 'saturate(0)');
             }
         }
     });
@@ -2316,7 +2441,7 @@ document.getElementsByTagName('body')[0].onload = () => {
 let autoUpdate = true;
 function checkUpdate() {
     const sha = localStorage.getItem('sha');
-    api('repos/tjy-gitnub/win12/commits').then(res => {
+    api('repos/win12-online/win12/commits').then(res => {
         res.json().then(json => {
             if (sha != json[0].sha && sha) {
                 localStorage.setItem('update', true);
@@ -2337,7 +2462,6 @@ else {
 }
 
 // PWA 应用
-let setData;
 if (!location.href.match(/((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])(?::(?:[0-9]|[1-9][0-9]{1,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5]))/) && !location.href.match('localhost') && !(new URL(location.href)).searchParams.get('develop')) {
     $('#loginback').css('opacity', '1');
     $('#loginback').css('display', 'flex');
@@ -2368,26 +2492,21 @@ if (!location.href.match(/((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d|[1-9]\d|
         checkUpdate();
     }
     if (localStorage.getItem('update') == 'true') {
-        $('.msg.update>.main>.tit').html('<i class="bi bi-stars" style="background-image: linear-gradient(100deg, var(--theme-1), var(--theme-2));-webkit-background-clip: text;-webkit-text-fill-color: transparent;text-shadow:3px 3px 5px var(--sd);filter:saturate(200%) brightness(0.9);"></i> ' + $('#win-about>.cnt.update>div>details:first-child>summary').text());
+        $('.msg.update>.main>.tit').html('<i class="bi bi-stars" style="background-image: linear-gradient(100deg, var(--theme-1), var(--theme-2));-webkit-background-clip: text;-webkit-text-fill-color: transparent;text-shadow:3px 3px 5px var(--shadow);filter:saturate(200%) brightness(0.9);"></i> ' + $('#win-about>.cnt.update>div>details:first-child>summary').text());
         $('.msg.update>.main>.cont').html($('#win-about>.cnt.update>div>details:first-child>p').html());
         $('#loadbackupdate').css('display', 'block');
         localStorage.setItem('update', false);
         $('.msg.update').addClass('show');
     }
-    // });
-    // 使用说明见 desktop.html 开头
-    setData=(k, v)=>{
-        localStorage.setItem(k, v);
-    }
-
-} else {
-    setData=(k, v)=>{
-        console.log('setData 被禁用');
-    }
 }
 function sendToSw(msg) {
     navigator.serviceWorker.controller.postMessage(msg);
 }
+
+// 使用说明见 desktop.html 开头
+const setData = (k, v) => {
+    localStorage.setItem(k, v);
+};
 
 /**
  * 将秒数换算为可读的时间格式
@@ -2416,7 +2535,7 @@ function calcTimeString(second) {
 }
 
 //监听全局按键
-function setupGlobalKey(){
+function setupGlobalKey() {
     $(document).keydown(function (event) {
         if (event.keyCode == 116/*F5被按下(刷新)*/) {
             event.preventDefault();/*取消默认刷新行为*/
@@ -2460,7 +2579,7 @@ let previewTimeout;
 
 function showTaskbarPreview(name, event) {
     clearTimeout(previewTimeout);
-    
+
     const preview = document.getElementById('taskbar-preview');
     if (!preview) {
         const previewEl = document.createElement('div');
@@ -2476,31 +2595,31 @@ function showTaskbarPreview(name, event) {
         `;
         document.body.appendChild(previewEl);
     }
-    
+
     const win = $(`.window.${name}`);
     if (win.length && !win.hasClass('min')) {
         const preview = $('#taskbar-preview');
         const taskbarItem = $(event.currentTarget);
         const itemRect = taskbarItem[0].getBoundingClientRect();
-        
 
-        
+
+
         // Set window title and icon
         const titleImg = win.find('.titbar img.icon').attr('src');
         const title = win.find('.titbar p').text() || win.find('.titbar span').text();
-        
+
         preview.find('.preview-title img').attr('src', titleImg);
         preview.find('.preview-title span').text(title);
-        
+
         // Create simplified window preview
         const previewWindow = preview.find('.preview-content .preview-window');
         previewWindow.empty();
-        
+
         // Clone important window elements for preview
         const content = win.find('.content').clone();
         content.find('script').remove(); // Remove any scripts
         content.find('iframe').remove(); // Remove iframes
-        
+
         // Scale down the content
         content.css({
             transform: 'scale(0.2)',
@@ -2508,14 +2627,14 @@ function showTaskbarPreview(name, event) {
             width: '500%', // 1/0.2 = 5
             height: '500%'
         });
-        
+
         previewWindow.append(content);
         preview.addClass('show');
 
         // Set preview position
-        console.log(content[0].offsetWidth* 0.2);
+        console.log(content[0].offsetWidth * 0.2);
         preview.css({
-            left: itemRect.left - ( content[0].offsetWidth* 0.2 / 2),
+            left: itemRect.left - (content[0].offsetWidth * 0.2 / 2),
             bottom: '60px'
         });
     }
@@ -2528,20 +2647,20 @@ function hideTaskbarPreview() {
 }
 
 // Add hover events to taskbar items
-$(document).on('mouseenter', '#taskbar>a', function(e) {
+$(document).on('mouseenter', '#taskbar>a', function (e) {
     const name = this.className.split(' ')[0];
     showTaskbarPreview(name, e);
 });
 
-$(document).on('mouseleave', '#taskbar>a', function() {
+$(document).on('mouseleave', '#taskbar>a', function () {
     hideTaskbarPreview();
 });
 
 // Add hover events to preview
-$(document).on('mouseenter', '#taskbar-preview', function() {
+$(document).on('mouseenter', '#taskbar-preview', function () {
     clearTimeout(previewTimeout);
 });
 
-$(document).on('mouseleave', '#taskbar-preview', function() {
+$(document).on('mouseleave', '#taskbar-preview', function () {
     hideTaskbarPreview();
 });
