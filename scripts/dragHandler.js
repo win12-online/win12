@@ -1,54 +1,36 @@
 /**
- * Windows 12 Web - dragHandler.js
- * Mission: Fix the "Fake Drag" issue for .dock-box
+ * Windows 12 Web - Drag functionality for the desktop taskbar
  */
 
 (function() {
-    // Wait for the DOM to be fully available due to 'defer'
-    window.addEventListener('load', () => {
-        const dock = document.querySelector('.dock-box');
+    const initDraggableDock = () => {
+        // Updated selector to match desktop.html structure
+        const dock = document.querySelector('.dock-box') || document.querySelector('.dock-bar');
         
-        if (!dock) {
-            console.warn("DragHandler: .dock-box not found. The community still needs help!");
-            return;
-        }
+        if (!dock) return;
 
-        // Apply initial styles to ensure it can actually move
-        dock.style.cursor = 'move';
-        dock.style.position = 'absolute';
-        dock.style.transition = 'none'; // Prevents CSS animations from fighting the mouse
-        dock.style.userSelect = 'none'; // Prevents text highlighting while dragging
+        // Log identification to clarify the element for the maintainers
+        console.log(`[DragHandler] Initialized draggable functionality for <${dock.tagName.toLowerCase()}>.${dock.className}`);
 
-        let isDragging = false;
-        let startX, startY, initialLeft, initialTop;
-
-        dock.addEventListener('mousedown', (e) => {
-            isDragging = true;
-            
-            // Get current mouse position
-            startX = e.clientX;
-            startY = e.clientY;
-
-            // Get current dock position
-            const rect = dock.getBoundingClientRect();
-            initialLeft = rect.left;
-            initialTop = rect.top;
-
-            dock.style.zIndex = "9999";
+        // Maintainers suggested moving static styles to CSS. 
+        // Applying functional overrides here.
+        Object.assign(dock.style, {
+            position: 'absolute',
+            transition: 'none',
+            userSelect: 'none',
+            cursor: 'move'
         });
 
-        document.addEventListener('mousemove', (e) => {
+        let isDragging = false;
+        let offset = { x: 0, y: 0 };
+
+        const onMouseMove = (e) => {
             if (!isDragging) return;
 
-            // Calculate distance moved
-            const dx = e.clientX - startX;
-            const dy = e.clientY - startY;
+            // Calculate position with screen boundaries
+            let newX = e.clientX - offset.x;
+            let newY = e.clientY - offset.y;
 
-            // Update position based on initial location + delta
-            let newX = initialLeft + dx;
-            let newY = initialTop + dy;
-
-            // Optional: Simple Screen Boundary Constraining
             const maxX = window.innerWidth - dock.offsetWidth;
             const maxY = window.innerHeight - dock.offsetHeight;
             
@@ -57,11 +39,32 @@
 
             dock.style.left = `${newX}px`;
             dock.style.top = `${newY}px`;
-            dock.style.bottom = 'auto'; // Important: Overrides the CSS "bottom: 0"
-        });
+            dock.style.bottom = 'auto'; 
+        };
 
-        document.addEventListener('mouseup', () => {
+        const onMouseUp = () => {
             isDragging = false;
+            document.removeEventListener('mousemove', onMouseMove);
+            document.removeEventListener('mouseup', onMouseUp);
+        };
+
+        dock.addEventListener('mousedown', (e) => {
+            // Prevent dragging if clicking buttons/icons inside the dock
+            if (e.target !== dock) return; 
+
+            isDragging = true;
+            const rect = dock.getBoundingClientRect();
+            offset.x = e.clientX - rect.left;
+            offset.y = e.clientY - rect.top;
+
+            document.addEventListener('mousemove', onMouseMove);
+            document.addEventListener('mouseup', onMouseUp);
         });
-    });
+    };
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initDraggableDock);
+    } else {
+        initDraggableDock();
+    }
 })();
