@@ -2890,3 +2890,10 @@ body>.container>.image-container>.svg {
     }
 }
 }
+/* Enable dragging states for the dock */
+.dock-box, .dock-bar {
+    position: absolute !important; /* Required for the top/left JS to work */
+    cursor: move;
+    user-select: none;
+    transition: none !important; /* Prevents lag/stutter while dragging */
+}
