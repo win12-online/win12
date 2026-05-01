@@ -2215,56 +2215,134 @@ Type "help", "copyright", "credits" or "license" for more information.
         }
     },
     terminal: {
-        historyList: [],
-        historypt: 0,
-        historyTemp: '',
-        isViewingHistory: false,
-        init: () => {
-            $('#win-terminal').html(`<pre>
+    historyList: [],
+    historypt: 0,
+    historyTemp: '',
+    isViewingHistory: false,
+    
+    tabs: [],
+    now: null,
+    len: 0,
+    history: [],
+    historypt_tabs: [],
+    
+    init: () => {
+        apps.terminal.tabs = [];
+        apps.terminal.len = 0;
+        apps.terminal.newtab('Terminal');
+    },
+    
+    newtab: (title = 'Terminal') => {
+        const tabId = `terminal-tab-${apps.terminal.len}`;
+        
+        apps.terminal.tabs.push([tabId, title]);
+        apps.terminal.initHistory(tabId);
+        
+        const tabHTML = `
+            <div class="tab ${tabId}" onclick="m_tab.tab('terminal', ${apps.terminal.len})" 
+                 oncontextmenu="showcm(event, 'terminal.tab', ${apps.terminal.len}); stop(event); return false"
+                 onmousedown="m_tab.moving('terminal', this, event, ${apps.terminal.len}); stop(event); disableIframes();"
+                 ontouchstart="m_tab.moving('terminal', this, event, ${apps.terminal.len}); stop(event); disableIframes();">
+                <p>${title}</p>
+                <span class="clbtn bi bi-x" onclick="m_tab.close('terminal', ${apps.terminal.len}); stop(event);"></span>
+            </div>
+        `;
+        
+        const contentHTML = `<div class="terminal-content ${tabId}" style="display: none;">
+            <pre>
 Micrȯsoft Windows [版本 12.0.39035.7324]
 (c) Microṡoft Corporation。保留所有杈利。
-        </pre>
-        <pre class="text-cmd"></pre>
-        <pre style="display: flex"><span class="prompt">C:\\Windows\\System32> </span><input type="text" onkeyup="apps.terminal.handleKeyUp(event)"></pre>`);
-            $('#win-terminal>pre>input').focus();
-        },
-        handleKeyUp: (event) => {
-            const input = $('#win-terminal input');
-            if (event.keyCode === 13) { // Enter
-                apps.terminal.run();
-            } else if (event.keyCode === 38) { // Up arrow
-                apps.terminal.history('up');
-            } else if (event.keyCode === 40) { // Down arrow
-                apps.terminal.history('down');
-            }
-        },
-        run: () => {
-            const elt = $('#win-terminal>pre.text-cmd')[0];
-            const input = $('#win-terminal input');
-            const command = input.val().trim();
-            
-            if (command !== '') {
-                // Add command to history
-                apps.terminal.historyList.push(command);
-                apps.terminal.historypt = apps.terminal.historyList.length;
-                
-                var newD = document.createElement('div');
-                newD.innerText = `C:\\Windows\\System32> ${command}`;
-                elt.appendChild(newD);
-                
-                if (command === 'exit') {
-                    hidewin('terminal');
-                } else if (!runcmd(command, true)) {
-                    var newD = document.createElement('div');
-                    newD.innerText = `"${command}" 不是内部或外部命令,也不是可运行程序或批处理文件`;
-                    elt.appendChild(newD);
-                }
-            }
-            
-            input.val('');
-            input.blur();
-            input.focus();
-        },
+
+            </pre>
+            <pre class="text-cmd"></pre>
+            <pre style="display: flex"><span class="prompt">C:\\Windows\\System32> </span><input type="text" onkeyup="apps.terminal.handleKeyUp(event)"></pre>
+        </div>`;
+        
+        $('#win-terminal>.tab-bar').append(tabHTML);
+        $('#win-terminal>.content').append(contentHTML);
+        
+        apps.terminal.len++;
+        apps.terminal.tab(apps.terminal.len - 1);
+    },
+    
+    tab: (index) => {
+        if (index < 0 || index >= apps.terminal.tabs.length) return;
+        $('#win-terminal>.content>.terminal-content').removeClass('active');
+        const tabId = apps.terminal.tabs[index][0];
+        $('#win-terminal>.content>.' + tabId).addClass('active');
+        $('#win-terminal>.tab-bar>.tab.active').removeClass('active');
+        $('#win-terminal>.tab-bar>.' + tabId).addClass('active');
+        apps.terminal.now = index;
+        $('#win-terminal>.' + tabId + ' input').focus();
+        apps.terminal.checkHistory(tabId);
+    },
+    
+    closetab: (index) => {
+        if (apps.terminal.tabs.length === 1) {
+            hidewin('terminal');
+            return;
+        }
+        
+        const tabId = apps.terminal.tabs[index][0];
+        
+        $('#win-terminal>.tab-bar>.' + tabId).remove();
+        $('#win-terminal>.content>.' + tabId).remove();
+        
+        apps.terminal.tabs.splice(index, 1);
+        apps.terminal.history.splice(index, 1);
+        apps.terminal.historypt_tabs.splice(index, 1);
+        
+        apps.terminal.len--;
+        
+        if (apps.terminal.now >= apps.terminal.len) {
+            apps.terminal.now = apps.terminal.len - 1;
+        }
+        
+        if (apps.terminal.len > 0) {
+            apps.terminal.tab(apps.terminal.now);
+        }
+    },
+    
+    renametab: (index, newTitle) => {
+        if (index < 0 || index >= apps.terminal.tabs.length) return;
+        
+        const tabId = apps.terminal.tabs[index][0];
+        apps.terminal.tabs[index][1] = newTitle;
+        
+        $('#win-terminal>.tab-bar>.' + tabId + '>p').text(newTitle);
+    },
+    
+    handleKeyUp: (event) => {
+        const input = $('#win-terminal input');
+        
+        if (event.ctrlKey && event.keyCode === 9) { // Ctrl+Tab
+            event.preventDefault();
+            const nextIndex = (apps.terminal.now + 1) % apps.terminal.tabs.length;
+            apps.terminal.tab(nextIndex);
+            return;
+        }
+        
+        if (event.ctrlKey && event.shiftKey && event.keyCode === 9) { // Ctrl+Shift+Tab
+            event.preventDefault();
+            const prevIndex = (apps.terminal.now - 1 + apps.terminal.tabs.length) % apps.terminal.tabs.length;
+            apps.terminal.tab(prevIndex);
+            return;
+        }
+        
+        if (event.ctrlKey && event.keyCode === 78) { // Ctrl+N
+            event.preventDefault();
+            apps.terminal.newtab();
+            return;
+        }
+        
+        if (event.keyCode === 13) { // 回车
+            apps.terminal.run();
+        } else if (event.keyCode === 38) { // 上
+            apps.terminal.history('up');
+        } else if (event.keyCode === 40) { // 下
+            apps.terminal.history('down');
+        }
+    },
         history: (direction) => {
             const input = $('#win-terminal input');
             
@@ -2288,6 +2366,7 @@ Micrȯsoft Windows [版本 12.0.39035.7324]
             }
         }
     },
+					   
     search: {
         rand: [{ name: '农夫山泉瓶盖简介.txt', bi: 'text', ty: '文本文档' },
             { name: '瓶盖构造图.png', bi: 'image', ty: 'PNG 文件' },
