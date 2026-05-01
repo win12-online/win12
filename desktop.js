@@ -753,6 +753,7 @@ const nts = {
                 <a class="a" onclick="closenotice(); widgets.widgets.addToDesktop('calc');">计算器</a>
                 <a class="a" onclick="closenotice(); widgets.widgets.addToDesktop('weather');">天气</a>
                 <a class="a" onclick="closenotice(); widgets.widgets.addToDesktop('monitor');">系统性能监视器</a>
+                <a class="a" onclick="closenotice(); widgets.widgets.addToDesktop('music163');">网易云音乐播放器</a>
             </list>`,
         btn: [
             { type: 'cancel', text: lang('取消', 'cancel'), js: 'closenotice();' }

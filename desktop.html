@@ -634,6 +634,25 @@ toggletheme() 切换主题
 							</div>
 						</div>
 					</div>
+					<div class="music163">
+						<div class="wg music163 template">
+							<div class="titbar">
+								<a win12_title="更多" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)" class="a more notip" onclick="$('.wg.music163>.titbar>.menu').toggleClass('show')"><i class="bi bi-three-dots"></i></a>
+								<div class="menu">
+									<a class="a move" win12_title="移动" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)" onclick="hidedescp(event); if (!edit_mode) { editMode() }; "><i class="bi bi-arrows-move"></i></a>
+									<a class="a addtotb" win12_title="添加到任务栏" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)" onclick="hidedescp(event); widgets.widgets.remove('music163'); widgets.widgets.addToToolbar('music163'); "><i class="bi bi-menu-app"></i></a>
+									<a class="a addtodt" win12_title="添加到桌面" onmouseenter="showdescp(event)" onclick="hidedescp(event); widgets.widgets.remove('music163'); widgets.widgets.addToDesktop('music163'); " onmouseleave="hidedescp(event)"><i class="bi bi-box-arrow-in-right"></i></a>
+									<a class="a delete" win12_title="删除" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)" onclick="hidedescp(event); $('.wg.music163>.titbar>.menu').removeClass('show'); widgets.widgets.remove('music163'); "><i class="bi bi-trash"></i></a>
+								</div>
+							</div>
+							<div class="content" onmousedown="widgetsMove(this.parentElement, event);" ontouchstart="widgetsMove(this.parentElement, event);">
+								<p class="text">网易云音乐插件使用步骤</p>
+								<p class="text">1. 打开网易云音乐，找到你喜欢的歌曲</p>
+								<p class="text">2. 通过<a onclick="openUrl('https://yunzhiapi.cn/?action=doc&id=52')">云智API</a>获取音乐ID</a>
+								<input type="text" id="music163-input" placeholder="3.粘贴音乐ID，回车确认" onkeydown="goMusic(event)">
+							</div>
+						</div>
+					</div>
 					<div class="monitor">
 						<div class="wg monitor template">
 							<div class="titbar">
