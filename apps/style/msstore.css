@@ -149,29 +149,29 @@
 
                                 &.card1>.left {
                                     background-color: #1f1f1f;
-                                    background-image: url("../../icon/vscode.png");
+                                    background-image: url("https://code.visualstudio.com/assets/favicon.ico");
                                     background-size: 58px 58px;
                                 }
 
                                 &.card2>.left {
-                                    background-image: url("../../icon/yuanshen.png");
+                                    background-image: url("https://ys.mihoyo.com/main/favicon.ico");
                                 }
 
                                 &.card3>.left {
-                                    background-image: url("../../icon/mc.png");
+                                    background-image: url("https://www.minecraft.net/etc.clientlibs/minecraftnet/clientlibs/clientlib-site/resources/favicon.ico");
                                 }
 
                                 &.card4>.left {
-                                   background-image: url("../../icon/Krita.png");
+                                   background-image: url("https://krita.org/images/favicon.ico");
                                 }
 
                                 &.card5>.left {
-                                    background-image: url("../../icon/VirtualBox.png");
+                                    background-image: url("https://www.virtualbox.org/favicon.ico");
                                 }
 
                                 &.card6>.left {
                                     background-color: #fff;
-                                    background-image: url("../../icon/LibreOffice.png");
+                                    background-image: url("https://wiki.documentfoundation.org/images/4/48/LibreOffice_7.5_Main_Icon.svg");
                                     background-size: 58px 58px;
                                 }
 
