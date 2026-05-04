@@ -166,12 +166,7 @@
                                 }
 
                                 &.card5>.left {
-                                    background: linear-gradient(135deg, #183a8f, #42a5f5);
-                                }
-
-                                &.card5>.left::before {
-                                    content: "VB";
-                                    font-size: 18px;
+                                    background-image: url("../../icon/VirtualBox.png");
                                 }
 
                                 &.card6>.left {
