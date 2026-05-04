@@ -2553,6 +2553,15 @@ function setupGlobalKey() {
             return;
         }
 
+        //按下徽标键 + I，打开设置
+        if (event.metaKey && !event.ctrlKey && !event.altKey && (event.key || '').toLowerCase() == 'i') {
+            event.preventDefault();
+            if (!event.repeat) {
+                openapp('setting');
+            }
+            return;
+        }
+
         //按下徽标键
         if (event.metaKey && event.ctrlKey) {
             //打开或关闭开始菜单
