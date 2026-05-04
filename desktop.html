@@ -360,27 +360,57 @@ toggletheme() 切换主题
 			</list>
 		</div>
 		<div id="startmenu-r">
+			<!-- 磁贴区域 -->
+			<a class="a tile medium setting" onclick="openapp('setting');hide_startmenu();" oncontextmenu="return showcm(event,'smapp',['setting','设置'])">
+				<img src="icon/setting.svg">
+				<p data-i18n="setting.name">设置</p>
+			</a>
+			<a class="a tile medium explorer" onclick="openapp('explorer');hide_startmenu();" oncontextmenu="return showcm(event,'smapp',['explorer','文件资源管理器'])">
+				<img src="icon/explorer.svg">
+				<p data-i18n="explorer.name">文件资源管理器</p>
+			</a>
+			<a class="a tile medium edge" onclick="openapp('edge');hide_startmenu();" oncontextmenu="return showcm(event,'smapp',['edge','Microsoft Edge'])">
+				<img src="icon/edge.svg">
+				<p data-i18n="edge.name">Microsoft Edge</p>
+			</a>
+			<a class="a tile medium msstore" onclick="openapp('msstore');hide_startmenu();" oncontextmenu="return showcm(event, 'smapp', ['msstore', 'Microsoft Store'])">
+				<img src="icon/msstore.svg">
+				<p>Microsoft Store</p>
+			</a>
+			<a class="a tile wide calc" onclick="openapp('calc');hide_startmenu();" oncontextmenu="return showcm(event,'smapp',['calc','计算器'])">
+				<img src="icon/calc.svg">
+				<p data-i18n="calc.name">计算器</p>
+			</a>
+			<a class="a tile medium notepad" onclick="openapp('notepad');hide_startmenu();" oncontextmenu="return showcm(event,'smapp',['notepad','记事本'])">
+				<img src="icon/notepad.svg">
+				<p data-i18n="notepad.name">记事本</p>
+			</a>
+			<a class="a tile medium terminal" onclick="openapp('terminal');hide_startmenu();" oncontextmenu="return showcm(event,'smapp',['terminal','终端'])">
+				<img src="icon/terminal.svg">
+				<p data-i18n="terminal.name">终端</p>
+			</a>
+			<a class="a tile wide defender" onclick="openapp('defender');hide_startmenu();" oncontextmenu="return showcm(event,'smapp',['defender','Windows 安全中心'])">
+				<img src="icon/defender.svg">
+				<p data-i18n="defender.name">Windows 安全中心</p>
+			</a>
+			<a class="a tile medium camera" onclick="apps.camera.notice();hide_startmenu();" oncontextmenu="return showcm(event,'smapp',['camera', '相机'])">
+				<img src="icon/camera.svg">
+				<p data-i18n="camera.name">相机</p>
+			</a>
+			<a class="a tile medium about" onclick="openapp('about');hide_startmenu();" oncontextmenu="return showcm(event,'smapp',['about','关于 Win12 网页版'])">
+				<img src="icon/about.svg">
+				<p data-i18n="about.name">关于 Win12 网页版</p>
+			</a>
+			<a class="a tile wide windows12" onclick="openapp('windows12');hide_startmenu();" oncontextmenu="return showcm(event,'smapp',['windows12','Windows 12'])">
+				<img src="icon/logo.svg">
+				<p>Windows 12</p>
+			</a>
+			<a class="a tile medium" onclick="shownotice('feedback');">
+				<img src="icon/feedback.svg">
+				<p data-i18n="feedback.name">反馈中心</p>
+			</a>
 			<div class="row1">
-				<div class="folder">
-					<a class="a sm-app enable"
-						onclick="openapp('explorer');apps.explorer.goto('C:/用户/Administrator/文档');hide_startmenu();">
-						<img src="icon/folder/docs.svg">
-						<p data-i18n="folder.doc">文档</p>
-					</a>
-					<a class="a sm-app enable"
-						onclick="openapp('explorer');apps.explorer.goto('C:/用户/Administrator/图片');hide_startmenu();">
-						<img src="icon/folder/pics.svg">
-						<p data-i18n="folder.pic">图片</p>
-					</a>
-					<a class="a sm-app enable"
-						onclick="openapp('explorer');apps.explorer.goto('C:/用户/Administrator/音乐');hide_startmenu();">
-						<img src="icon/folder/music.svg">
-						<p data-i18n="folder.mus">音乐</p>
-					</a>
-				</div>
 				<div class="tool">
-					<p style="font-size: 30px;margin: 12px 5px 2px 0;line-height:1;" class="time">12:00</p>
-					<p class="date" style="opacity: 0.5;">星期一, 2368年13月34日</p>
 					<div class="pw">
 						<a class="a btn btn-icon big" win12_title="切换全屏" onclick="
 							if($('#start-menu').hasClass('max')){
@@ -403,80 +433,6 @@ toggletheme() 切换主题
 						</a>
 						
 					</div>
-				</div>
-			</div>
-			<div class="pinned">
-				<!-- 已固定 卡片 -->
-				<div class="title">
-					<p data-i18n="stmenu-pinned">已固定</p>
-					<div>
-						<a class="a more-btn"><span data-i18n="stmenu-allapp">所有应用</span> <i class="bi bi-chevron-right"></i></a>
-					</div>
-				</div>
-				<div class="apps">
-					<a class="a sm-app enable calc" onclick="openapp('calc');hide_startmenu();" oncontextmenu="return showcm(event,'smapp',['calc','计算器'])">
-						<img src="icon/calc.svg">
-						<p data-i18n="calc.name">计算器</p>
-					</a>
-					<a class="a sm-app enable camera" onclick="apps.camera.notice();hide_startmenu();" oncontextmenu="return showcm(event,'smapp',['camera', '相机'])">
-						<img src="icon/camera.svg">
-						<p data-i18n="camera.name">相机</p>
-					</a>
-					<a class="a sm-app enable" onclick="shownotice('feedback');">
-						<img src="icon/feedback.svg">
-						<p data-i18n="feedback.name">反馈中心</p>
-					</a>
-					<a class="a sm-app enable about" onclick="openapp('about');hide_startmenu();" oncontextmenu="return showcm(event,'smapp',['about','关于 Win12 网页版'])">
-						<img src="icon/about.svg">
-						<p data-i18n="about.name">关于 Win12 网页版</p>
-					</a>
-					<a class="a sm-app enable explorer" onclick="openapp('explorer');hide_startmenu();" oncontextmenu="return showcm(event,'smapp',['explorer','文件资源管理器'])">
-						<img src="icon/explorer.svg">
-						<p data-i18n="explorer.name">文件资源管理器</p>
-					</a>
-					<a class="a sm-app enable notepad" onclick="openapp('notepad');hide_startmenu();" oncontextmenu="return showcm(event,'smapp',['notepad','记事本'])">
-						<img src="icon/notepad.svg">
-						<p data-i18n="notepad.name">记事本</p>
-					</a>
-					<a class="a sm-app enable setting" onclick="openapp('setting');hide_startmenu();" oncontextmenu="return showcm(event,'smapp',['setting','设置'])">
-						<img src="icon/setting.svg">
-						<p data-i18n="setting.name">设置 </p>
-					</a>
-					<a class="a sm-app enable defender" onclick="openapp('defender');hide_startmenu();" oncontextmenu="return showcm(event,'smapp',['defender','Windows 安全中心'])">
-						<img src="icon/defender.svg">
-						<p data-i18n="defender.name">Windows 安全中心</p>
-					</a>
-					<a class="a sm-app enable msstore" onclick="openapp('msstore');hide_startmenu();" oncontextmenu="return showcm(event, 'smapp', ['msstore', 'Microsoft Store'])">
-						<img src="icon/msstore.svg">
-						<p>Microsoft Store</p>
-					</a>
-					<a class="a sm-app enable edge" onclick="openapp('edge');hide_startmenu();" oncontextmenu="return showcm(event,'smapp',['edge','Microsoft Edge'])">
-						<img src="icon/edge.svg">
-						<p data-i18n="edge.name">Microsoft Edge</p>
-					</a>
-					<a class="a sm-app enable windows12" onclick="openapp('windows12');hide_startmenu();" oncontextmenu="return showcm(event,'smapp',['windows12','Windows 12'])">
-						<img src="icon/logo.svg">
-						<p>Windows 12</p>
-					</a>
-					<a class="a sm-app enable terminal" onclick="openapp('terminal');hide_startmenu();" oncontextmenu="return showcm(event,'smapp',['terminal','终端'])">
-						<img src="icon/terminal.svg">
-						<p data-i18n="terminal.name">终端</p>
-					</a>
-				</div>
-			</div>
-			<div class="tuijian">
-				<div class="title">
-					<p data-i18n="stmenu-tj">推荐的项目</p>
-					<div>
-						<a class="a more-btn" onclick="openapp('explorer');apps.explorer.goto('C:/用户/Administrator/推荐的项目');hide_startmenu();"><span data-i18n="more">更多</span> <i class="bi bi-chevron-right"></i></a>
-					</div>
-				</div>
-				<div class="apps">
-					<a class="a tj-obj act"><img src="icon/files/ppt.png"><div><p data-i18n="stmenu-tj-f1">科学地使用瓶盖.pptx</p><p data-i18n="stmenu-tj-t1">5 分钟前</p></div></a>
-					<a class="a tj-obj act"><img src="icon/files/img.png"><div><p data-i18n="stmenu-tj-f2">可口可乐瓶盖.jpg</p><p data-i18n="stmenu-tj-t2">7 分钟前</p></div></a>
-					<a class="a tj-obj act"><img src="icon/files/img.png"><div><p data-i18n="stmenu-tj-f3">瓶盖构造图.jpg</p><p data-i18n="stmenu-tj-t3">16 分钟前</p></div></a>
-					<a class="a tj-obj act" onclick="openapp('word');apps.word.edit();hide_startmenu();"><img src="icon/files/word.png"><div><p data-i18n="stmenu-tj-f4">瓶盖的构造及作用.docx</p><p data-i18n="stmenu-tj-t4">24 分钟前</p></div></a>
-					<a class="a tj-obj act"><img src="icon/files/excel.png"><div><p data-i18n="stmenu-tj-f5">可口可乐瓶盖厚度.xlsx</p><p data-i18n="stmenu-tj-t5">35 分钟前</p></div></a>
 				</div>
 			</div>
 		</div>
@@ -793,27 +749,6 @@ toggletheme() 切换主题
 		<!-- Dock(任务)栏 -->
 		<div class="dock dock-start">
 			<a class="dock-btn" id="start-btn" win12_title="开始 (Ctrl+Win)" onclick="openDockWidget('start-menu')" oncontextmenu="return showcm(event,'winx',null)">
-				<!-- 开始按钮 -->
-				<svg class="menu" viewBox="0,0,440,439" xmlns="http://www.w3.org/2000/svg"
-					xmlns:xlink="http://www.w3.org/1999/xlink" overflow="hidden">
-					<defs>
-						<clipPath id="clip-start1">
-							<rect x="134" y="59" width="440" height="439" />
-						</clipPath>
-					</defs>
-					<g clip-path="url(#clip-start1)" transform="translate(-134 -59)">
-						<path
-							d="M233.479 67.5001 475.521 67.5001C525.767 67.5001 566.5 108.233 566.5 158.479L566.5 490.5 142.5 490.5 142.5 158.479C142.5 108.233 183.233 67.5001 233.479 67.5001Z"
-							stroke="#7F7F7F" stroke-width="14.6667" stroke-linecap="round" stroke-miterlimit="8"
-							fill="#A6A6A6" fill-rule="evenodd" style="fill: var(--bg70);" />
-						<path d="M208.5 132.5 334.716 132.5" stroke="#888" stroke-width="14.6667" stroke-linecap="round"
-							stroke-miterlimit="8" fill="none" fill-rule="evenodd" />
-						<path d="M208.5 175.5 386.34 175.5" stroke="#888" stroke-width="14.6667" stroke-linecap="round"
-							stroke-miterlimit="8" fill="none" fill-rule="evenodd" />
-						<path d="M208.5 221.5 271.608 221.5" stroke="#888" stroke-width="14.6667" stroke-linecap="round"
-							stroke-miterlimit="8" fill="none" fill-rule="evenodd" />
-					</g>
-				</svg>
 				<img src="icon/logo.svg" class="ico">
 			</a>
 			<a class="dock-btn" id="search-btn" win12_title="搜索" onclick="openDockWidget('search-win')">

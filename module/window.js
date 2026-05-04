@@ -15,12 +15,7 @@ function showwin(name) {
     orderwin();
     $('.window.' + name).addClass('foc');
     if (!$('#start-menu.show')[0] && !$('#search-win.show')[0] && !$('#widgets.show')[0] && !$('#control.show')[0] && !$('#datebox.show')[0]) {
-        if ($('.window.max:not(.left):not(.right)')[0]) {
-            $('#dock-box').addClass('hide');
-        }
-        else {
-            $('#dock-box').removeClass('hide');
-        }
+        $('#dock-box').removeClass('hide');
     }
     else {
         $('#dock-box').removeClass('hide');
@@ -58,12 +53,7 @@ function hidewin(name, arg = 'window') {
     focwin(wo[wo.length - 1]);
     // orderwindow();
     if (!$('#start-menu.show')[0] && !$('#search-win.show')[0] && !$('#widgets.show')[0] && !$('#control.show')[0] && !$('#datebox.show')[0]) {
-        if ($('.window.max:not(.left):not(.right)')[0]) {
-            $('#dock-box').addClass('hide');
-        }
-        else {
-            $('#dock-box').removeClass('hide');
-        }
+        $('#dock-box').removeClass('hide');
     }
     else {
         $('#dock-box').removeClass('hide');
@@ -102,46 +92,81 @@ function maxwin(name, trigger = true) {
         $('.window.' + name).addClass('max');
         $('.window.' + name + '>.titbar>div>.wbtg.max').html('<svg version="1.1" width="12" height="12" viewBox="0,0,37.65105,35.84556" style="margin-top:4px;"><g transform="translate(-221.17804,-161.33903)"><g style="stroke:var(--text);" data-paper-data="{&quot;isPaintingLayer&quot;:true}" fill="none" fill-rule="nonzero" stroke-width="2" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" style="mix-blend-mode: normal"><path d="M224.68734,195.6846c-2.07955,-2.10903 -2.00902,-6.3576 -2.00902,-6.3576l0,-13.72831c0,0 -0.23986,-1.64534 2.00902,-4.69202c1.97975,-2.68208 4.91067,-2.00902 4.91067,-2.00902h14.06315c0,0 3.77086,-0.23314 5.80411,1.67418c2.03325,1.90732 1.33935,5.02685 1.33935,5.02685v13.39347c0,0 0.74377,4.01543 -1.33935,6.3576c-2.08312,2.34217 -5.80411,1.67418 -5.80411,1.67418h-13.39347c0,0 -3.50079,0.76968 -5.58035,-1.33935z"/><path d="M229.7952,162.85325h16.06111c0,0 5.96092,-0.36854 9.17505,2.64653c3.21412,3.01506 2.11723,7.94638 2.11723,7.94638v18.55642"/></g></g></svg>');
     }
-    if (!$('#start-menu.show')[0] && !$('#search-win.show')[0] && !$('#widgets.show')[0] && !$('#control.show')[0] && !$('#datebox.show')[0]) {
-        if ($('.window.max:not(.left):not(.right)')[0]) {
-            $('#dock-box').addClass('hide');
-        }
-        else {
-            $('#dock-box').removeClass('hide');
-        }
-    }
-    else {
-        $('#dock-box').removeClass('hide');
-    }
+    $('#dock-box').removeClass('hide');
 }
 function minwin(name) {
     if ($('.window.' + name).hasClass('min')) {
-        $('.window.' + name).addClass('show-begin');
-        focwin(name);
+        const win = $('.window.' + name);
+        const origLeft = win.attr('data-pos-x');
+        const origTop = win.attr('data-pos-y');
+        
+        // Remove min class first
+        win.removeClass('min');
+        $('#taskbar>.' + name).removeClass('min');
+        
+        // Restore transform and position with animation
         setTimeout(() => {
-            $('#taskbar>.' + name).removeClass('min');
-            $('.window.' + name).removeClass('min');
-            if ($('.window.' + name).hasClass('min-max')) {
-                $('.window.' + name).addClass('max');
+            win.css('transition', 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)');
+            win.css('transform', 'translate(0, 0) scale(1)');
+            win.css('opacity', '1');
+            
+            if (origLeft && origTop && !win.hasClass('max') && origLeft !== 'auto' && origTop !== 'auto') {
+                win.css('left', origLeft);
+                win.css('top', origTop);
             }
-            $('.window.' + name).removeClass('min-max');
-        }, 0);
+            
+            if (win.hasClass('min-max')) {
+                win.addClass('max');
+                win.removeClass('min-max');
+            }
+        }, 20);
+        
+        // Clean up after animation - don't clear left/top
         setTimeout(() => {
-            if (!$('.window.' + name).hasClass('max')) {
-                $('.window.' + name).addClass('notrans');
+            win.css('transition', '');
+            win.css('transform', '');
+            win.css('opacity', '');
+            if (!win.hasClass('max')) {
+                win.addClass('notrans');
             }
-        }, 200);
+            win.addClass('foc');
+        }, 220);
     } else {
-        focwin(null);
-        if ($('.window.' + name).hasClass('max')) {
-            $('.window.' + name).addClass('min-max');
+        const taskbarItem = $('#taskbar>.' + name);
+        if (taskbarItem.length) {
+            const rect = taskbarItem[0].getBoundingClientRect();
+            const win = $('.window.' + name);
+            
+            if (!win.attr('data-pos-x')) {
+                win.attr('data-pos-x', win.css('left'));
+            }
+            if (!win.attr('data-pos-y')) {
+                win.attr('data-pos-y', win.css('top'));
+            }
+            
+            const winRect = win[0].getBoundingClientRect();
+            const deltaX = (rect.left + rect.width / 2) - (winRect.left + winRect.width / 2);
+            const deltaY = (rect.top + rect.height / 2) - (winRect.top + winRect.height / 2);
+            
+            win.css('left', winRect.left + 'px');
+            win.css('top', winRect.top + 'px');
+            win[0].offsetHeight;
+            win.css('transition', 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)');
+            
+            setTimeout(() => {
+                focwin(null);
+                if (win.hasClass('max')) {
+                    win.addClass('min-max');
+                }
+                win.removeClass('foc');
+                win.removeClass('max');
+                $('#taskbar>.' + name).addClass('min');
+                win.addClass('min');
+                win.removeClass('notrans');
+                win.css('transform', `translate(${deltaX}px, ${deltaY}px) scale(0.2)`);
+                win.css('opacity', '0');
+            }, 20);
         }
-        $('.window.' + name).removeClass('foc');
-        $('.window.' + name).removeClass('max');
-        $('#taskbar>.' + name).addClass('min');
-        $('.window.' + name).addClass('min');
-        $('.window.' + name).removeClass('notrans');
-        setTimeout(() => { $('.window.' + name).removeClass('show-begin'); }, 200);
     }
 }
 
@@ -458,17 +483,7 @@ page.addEventListener('mousemove', (e) => {
         $('#dock-box').removeClass('hide');
     }
     else {
-        if (!$('#start-menu.show')[0] && !$('#search-win.show')[0] && !$('#widgets.show')[0] && !$('#control.show')[0] && !$('#datebox.show')[0]) {
-            if ($('.window.max:not(.left):not(.right)')[0]) {
-                $('#dock-box').addClass('hide');
-            }
-            else {
-                $('#dock-box').removeClass('hide');
-            }
-        }
-        else {
-            $('#dock-box').removeClass('hide');
-        }
+        $('#dock-box').removeClass('hide');
     }
 });
 

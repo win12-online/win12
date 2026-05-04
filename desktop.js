@@ -188,13 +188,451 @@ $('input,textarea,*[contenteditable=true]').on('contextmenu', (e) => {
     stop(e);
     return true;
 });
-// 给桌面上的图标加右键菜单
+var desktopIconPositions = {};
+var selectedIcons = new Set();
+var lastSelectedIcon = null;
+
+const GRID_SIZE = 85;
+
+function selectIcon($icon, append = false) {
+    const appname = $icon.attr('appname');
+    
+    if (!append) {
+        clearSelection();
+    }
+    
+    selectedIcons.add(appname);
+    $icon.addClass('selected');
+    lastSelectedIcon = appname;
+}
+
+function deselectIcon($icon) {
+    const appname = $icon.attr('appname');
+    selectedIcons.delete(appname);
+    $icon.removeClass('selected');
+}
+
+function clearSelection() {
+    selectedIcons.forEach(appname => {
+        $(`#desktop>div[appname="${appname}"]`).removeClass('selected');
+    });
+    selectedIcons.clear();
+    lastSelectedIcon = null;
+}
+
+function selectRange(startAppname, endAppname) {
+    const icons = $('#desktop>div[appname]').toArray();
+    const startIndex = icons.findIndex(el => $(el).attr('appname') === startAppname);
+    const endIndex = icons.findIndex(el => $(el).attr('appname') === endAppname);
+    
+    if (startIndex === -1 || endIndex === -1) return;
+    
+    const minIndex = Math.min(startIndex, endIndex);
+    const maxIndex = Math.max(startIndex, endIndex);
+    
+    for (let i = minIndex; i <= maxIndex; i++) {
+        const $icon = $(icons[i]);
+        const appname = $icon.attr('appname');
+        selectedIcons.add(appname);
+        $icon.addClass('selected');
+    }
+}
+
+function getSelectedIcons() {
+    return Array.from(selectedIcons).map(appname => $(`#desktop>div[appname="${appname}"]`));
+}
+
+function findEmptyGridPosition() {
+    const $desktop = $('#desktop');
+    const desktopRect = $desktop[0].getBoundingClientRect();
+    const maxCols = Math.floor(desktopRect.width / GRID_SIZE);
+    const maxRows = Math.floor(desktopRect.height / GRID_SIZE);
+    
+    // 获取所有已占用的网格位置
+    const occupied = new Set();
+    $('#desktop>div[appname]').each(function() {
+        const $icon = $(this);
+        let left = parseFloat($icon.css('left'));
+        let top = parseFloat($icon.css('top'));
+        
+        // 如果图标没有绝对定位，计算它在flex布局中的位置
+        if (isNaN(left) || isNaN(top) || $icon.css('position') !== 'absolute') {
+            const rect = this.getBoundingClientRect();
+            left = rect.left - desktopRect.left;
+            top = rect.top - desktopRect.top;
+        }
+        
+        const pos = getIconGridPosition(left, top);
+        occupied.add(`${pos.col},${pos.row}`);
+    });
+    
+    // 按列优先顺序查找空位，从第2列开始（第0列留给系统图标）
+    for (let col = 1; col < maxCols; col++) {
+        for (let row = 0; row < maxRows; row++) {
+            if (!occupied.has(`${col},${row}`)) {
+                return { col, row };
+            }
+        }
+    }
+    
+    // 如果没有空位，返回第2列第1行
+    return { col: 1, row: 0 };
+}
+
+function createDesktopLink(appId, appName) {
+    const pos = findEmptyGridPosition();
+    const left = pos.col * GRID_SIZE;
+    const top = pos.row * GRID_SIZE;
+    
+    const html = `<div class='b' ondblclick="openapp('${appId}');" ontouchstart="openapp('${appId}');" oncontextmenu="return showcm(event,'desktop.icon',['${appId}',-1]);" appname="${appId}" style="position: absolute; left: ${left}px; top: ${top}px;">
+        <img src='icon/${geticon(appId)}'>
+        <p>${appName}</p>
+    </div>`;
+    
+    $('#desktop').append(html);
+    desktopItem.push(html);
+    addMenu();
+    saveDesktop();
+    initDesktopIconDrag();
+}
+
+function snapToGrid(value, gridSize) {
+    return Math.round(value / gridSize) * gridSize;
+}
+
+function getIconGridPosition(left, top) {
+    return {
+        col: Math.round(left / GRID_SIZE),
+        row: Math.round(top / GRID_SIZE)
+    };
+}
+
+function isPositionOccupied(col, row, excludeElement) {
+    let occupied = false;
+    $('#desktop>div[appname]').each(function() {
+        if (this === excludeElement) return;
+        
+        const $icon = $(this);
+        let left = parseFloat($icon.css('left'));
+        let top = parseFloat($icon.css('top'));
+        
+        // 如果图标没有绝对定位，计算它在flex布局中的位置
+        if (isNaN(left) || isNaN(top) || $icon.css('position') !== 'absolute') {
+            const desktopRect = $('#desktop')[0].getBoundingClientRect();
+            const rect = this.getBoundingClientRect();
+            left = rect.left - desktopRect.left;
+            top = rect.top - desktopRect.top;
+        }
+        
+        const pos = getIconGridPosition(left, top);
+        if (pos.col === col && pos.row === row) {
+            occupied = true;
+            return false;
+        }
+    });
+    return occupied;
+}
+
+function findNearestEmptyGrid(col, row, excludeElement, maxCols, maxRows) {
+    if (!isPositionOccupied(col, row, excludeElement)) {
+        return { col, row };
+    }
+    
+    for (let radius = 1; radius < Math.max(maxCols, maxRows); radius++) {
+        for (let dx = -radius; dx <= radius; dx++) {
+            for (let dy = -radius; dy <= radius; dy++) {
+                if (Math.abs(dx) !== radius && Math.abs(dy) !== radius) continue;
+                
+                const newCol = col + dx;
+                const newRow = row + dy;
+                
+                if (newCol < 0 || newRow < 0 || newCol >= maxCols || newRow >= maxRows) continue;
+                
+                if (!isPositionOccupied(newCol, newRow, excludeElement)) {
+                    return { col: newCol, row: newRow };
+                }
+            }
+        }
+    }
+    
+    return { col, row };
+}
+
+function snapAllIconsToGrid() {
+    const $desktop = $('#desktop');
+    const desktopRect = $desktop[0].getBoundingClientRect();
+    const maxX = desktopRect.width - 85;
+    const maxY = desktopRect.height - 84;
+    
+    $('#desktop>div[appname]').each(function() {
+        const $icon = $(this);
+        
+        let currentLeft = parseFloat($icon.css('left'));
+        let currentTop = parseFloat($icon.css('top'));
+        
+        if (isNaN(currentLeft) || $icon.css('position') !== 'absolute') {
+            const rect = this.getBoundingClientRect();
+            currentLeft = rect.left - desktopRect.left;
+            currentTop = rect.top - desktopRect.top;
+        }
+        
+        const snappedLeft = snapToGrid(currentLeft, GRID_SIZE);
+        const snappedTop = snapToGrid(currentTop, GRID_SIZE);
+        
+        $icon.css({
+            position: 'absolute',
+            left: Math.max(0, Math.min(snappedLeft, maxX)) + 'px',
+            top: Math.max(0, Math.min(snappedTop, maxY)) + 'px'
+        });
+    });
+    
+    saveIconPositions();
+}
+
+function initDesktopIconDrag() {
+    $('#desktop').off('mousedown.desktopdrag touchstart.desktopdrag dragstart.desktopdrag');
+    
+    $('#desktop').on('dragstart.desktopdrag', '>div[appname], >div[appname] img', function(e) {
+        e.preventDefault();
+        return false;
+    });
+    
+    $('#desktop').on('mousedown.desktopdrag touchstart.desktopdrag', '>div[appname]', function(e) {
+        if (e.button === 2) return;
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable) {
+            return;
+        }
+        
+        const $icon = $(this);
+        const appname = $icon.attr('appname');
+        
+        // 处理多选逻辑
+        if (e.ctrlKey || e.metaKey) {
+            if (selectedIcons.has(appname)) {
+                deselectIcon($icon);
+            } else {
+                selectIcon($icon, true);
+            }
+            return;
+        } else if (e.shiftKey && lastSelectedIcon) {
+            selectRange(lastSelectedIcon, appname);
+            return;
+        } else if (!selectedIcons.has(appname)) {
+            selectIcon($icon, false);
+        }
+        
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const startEvent = e.type === 'touchstart' ? e.originalEvent.touches[0] : e;
+        const startX = startEvent.clientX;
+        const startY = startEvent.clientY;
+        
+        let isDragging = false;
+        let offsetLeft, offsetTop;
+        
+        const $desktop = $('#desktop');
+        const desktopRect = $desktop[0].getBoundingClientRect();
+        
+        const currentLeft = parseFloat($icon.css('left'));
+        const currentTop = parseFloat($icon.css('top'));
+        
+        if (isNaN(currentLeft) || $icon.css('position') !== 'absolute') {
+            const rect = this.getBoundingClientRect();
+            offsetLeft = rect.left - desktopRect.left;
+            offsetTop = rect.top - desktopRect.top;
+        } else {
+            offsetLeft = currentLeft;
+            offsetTop = currentTop;
+        }
+        
+        function onMove(moveEvent) {
+            moveEvent.preventDefault();
+            moveEvent.stopPropagation();
+            
+            const moveData = moveEvent.type === 'touchmove' ? moveEvent.originalEvent.touches[0] : moveEvent;
+            const deltaX = moveData.clientX - startX;
+            const deltaY = moveData.clientY - startY;
+            
+            if (Math.abs(deltaX) < 5 && Math.abs(deltaY) < 5) {
+                return;
+            }
+            
+            if (!isDragging) {
+                isDragging = true;
+                isIconDragging = true;
+                
+                // 多选拖拽时，记录所有选中图标的初始位置
+                const selectedIconsList = getSelectedIcons();
+                if (selectedIconsList.length > 1 && selectedIcons.has(appname)) {
+                    $icon.data('multi-drag', {
+                        icons: selectedIconsList.map($el => ({
+                            $el: $el,
+                            origLeft: parseFloat($el.css('left')) || $el[0].getBoundingClientRect().left - desktopRect.left,
+                            origTop: parseFloat($el.css('top')) || $el[0].getBoundingClientRect().top - desktopRect.top
+                        }))
+                    });
+                }
+                
+                $icon.addClass('dragging');
+                $icon.css({
+                    position: 'absolute',
+                    left: offsetLeft + 'px',
+                    top: offsetTop + 'px'
+                });
+            }
+            
+            const newLeft = offsetLeft + deltaX;
+            const newTop = offsetTop + deltaY;
+            
+            const maxX = desktopRect.width - 85;
+            const maxY = desktopRect.height - 84;
+            
+            $icon.css({
+                left: Math.max(0, Math.min(newLeft, maxX)) + 'px',
+                top: Math.max(0, Math.min(newTop, maxY)) + 'px'
+            });
+            
+            // 多选拖拽时，同步移动其他选中的图标
+            const multiDrag = $icon.data('multi-drag');
+            if (multiDrag) {
+                multiDrag.icons.forEach(icon => {
+                    if (icon.$el[0] !== $icon[0]) {
+                        const iconNewLeft = icon.origLeft + deltaX;
+                        const iconNewTop = icon.origTop + deltaY;
+                        icon.$el.css({
+                            position: 'absolute',
+                            left: Math.max(0, Math.min(iconNewLeft, maxX)) + 'px',
+                            top: Math.max(0, Math.min(iconNewTop, maxY)) + 'px'
+                        });
+                    }
+                });
+            }
+        }
+        
+        function onEnd(endEvent) {
+            endEvent.stopPropagation();
+            
+            $(document).off('mousemove.desktopdrag mouseup.desktopdrag');
+            $(document).off('touchmove.desktopdrag touchend.desktopdrag touchcancel.desktopdrag');
+            
+            if (isDragging) {
+                isIconDragging = false;
+                $icon.removeClass('dragging');
+                
+                const maxX = desktopRect.width - 85;
+                const maxY = desktopRect.height - 84;
+                const maxCols = Math.floor(desktopRect.width / GRID_SIZE);
+                const maxRows = Math.floor(desktopRect.height / GRID_SIZE);
+                
+                // 处理多选图标的最终位置
+                const multiDrag = $icon.data('multi-drag');
+                if (multiDrag) {
+                    multiDrag.icons.forEach(icon => {
+                        const iconLeft = parseFloat(icon.$el.css('left'));
+                        const iconTop = parseFloat(icon.$el.css('top'));
+                        const iconSnappedLeft = snapToGrid(iconLeft, GRID_SIZE);
+                        const iconSnappedTop = snapToGrid(iconTop, GRID_SIZE);
+                        const iconGridPos = getIconGridPosition(iconSnappedLeft, iconSnappedTop);
+                        const iconEmptyGrid = findNearestEmptyGrid(
+                            iconGridPos.col,
+                            iconGridPos.row,
+                            icon.$el[0],
+                            maxCols,
+                            maxRows
+                        );
+                        
+                        icon.$el.css({
+                            left: Math.max(0, Math.min(iconEmptyGrid.col * GRID_SIZE, maxX)) + 'px',
+                            top: Math.max(0, Math.min(iconEmptyGrid.row * GRID_SIZE, maxY)) + 'px'
+                        });
+                    });
+                    $icon.removeData('multi-drag');
+                } else {
+                    // 单图标处理
+                    const currentLeft = parseFloat($icon.css('left'));
+                    const currentTop = parseFloat($icon.css('top'));
+                    
+                    const snappedLeft = snapToGrid(currentLeft, GRID_SIZE);
+                    const snappedTop = snapToGrid(currentTop, GRID_SIZE);
+                    
+                    const currentGridPos = getIconGridPosition(snappedLeft, snappedTop);
+                    const emptyGrid = findNearestEmptyGrid(
+                        currentGridPos.col, 
+                        currentGridPos.row, 
+                        $icon[0], 
+                        maxCols, 
+                        maxRows
+                    );
+                    
+                    const finalLeft = emptyGrid.col * GRID_SIZE;
+                    const finalTop = emptyGrid.row * GRID_SIZE;
+                    
+                    $icon.css({
+                        left: Math.max(0, Math.min(finalLeft, maxX)) + 'px',
+                        top: Math.max(0, Math.min(finalTop, maxY)) + 'px'
+                    });
+                }
+                
+                saveIconPositions();
+            }
+        }
+        
+        if (e.type === 'touchstart') {
+            $(document).on('touchmove.desktopdrag', onMove);
+            $(document).on('touchend.desktopdrag touchcancel.desktopdrag', onEnd);
+        } else {
+            $(document).on('mousemove.desktopdrag', onMove);
+            $(document).on('mouseup.desktopdrag', onEnd);
+        }
+    });
+}
+
+function saveIconPositions() {
+    const positions = {};
+    $('#desktop>div[appname]').each(function(index) {
+        const appname = $(this).attr('appname');
+        const left = parseFloat($(this).css('left'));
+        const top = parseFloat($(this).css('top'));
+        if (!isNaN(left) && !isNaN(top)) {
+            // 使用索引+appname作为唯一key，避免同名图标冲突
+            positions[`${index}_${appname}`] = { left, top };
+        }
+    });
+    localStorage.setItem('desktopIconPositions', JSON.stringify(positions));
+}
+
+function restoreIconPositions() {
+    const saved = localStorage.getItem('desktopIconPositions');
+    if (!saved) return;
+    
+    try {
+        const positions = JSON.parse(saved);
+        if (!positions || typeof positions !== 'object') return;
+        
+        $('#desktop>div[appname]').each(function(index) {
+            const appname = $(this).attr('appname');
+            const key = `${index}_${appname}`;
+            if (positions[key]) {
+                const pos = positions[key];
+                $(this).css({
+                    position: 'absolute',
+                    left: pos.left + 'px',
+                    top: pos.top + 'px'
+                });
+            }
+        });
+    } catch (e) {
+        console.error('Failed to restore icon positions:', e);
+    }
+}
+
 function addMenu() {
     var parentDiv = $('#desktop')[0];
     var childDivs = parentDiv.$$('#div');
 
     for (var i = 0; i < childDivs.length; i++) {
-        if (i <= 4) {//win12内置的5个图标不添加
+        if (i <= 4) {
             continue;
         }
         let div = childDivs[i];
@@ -279,6 +717,7 @@ const cms = {
                 return ['<i class="bi bi-pencil"></i> ' + lang('进入编辑模式', 'desktop.enteredit'), 'editMode();'];
             }
         },
+        ['<i class="bi bi-grid-3x3-gap"></i> ' + lang('对齐到网格', 'desktop.snapgrid'), 'snapAllIconsToGrid();'],
         ['<i class="bi bi-info-circle"></i> ' + lang('关于 Win12 网页版', 'about.name'), '$(\'#win-about>.about\').addClass(\'show\');$(\'#win-about>.update\').removeClass(\'show\');openapp(\'about\');if($(\'.window.about\').hasClass(\'min\'))minwin(\'about\');'],
         ['<i class="bi bi-brush"></i> ' + lang('个性化', 'psnl'), 'openapp(\'setting\');$(\'#win-setting > div.menu > list > a.enable.appearance\')[0].click()']
     ],
@@ -323,10 +762,10 @@ const cms = {
             return ['<i class="bi bi-window"></i> ' + lang('打开', 'open'), `openapp('${arg[0]}');hide_startmenu();`];
         },
         arg => {
-            return ['<i class="bi bi-link-45deg"></i> 在桌面创建链接', 'var s=`<div class=\'b\' ondblclick=openapp(\'' + arg[0] + '\')  ontouchstart=openapp(\'' + arg[0] + '\') appname=\'' + arg[0] + '\'><img src=\'icon/' + geticon(arg[0]) + '\'><p>' + arg[1] + '</p></div>`;$(\'#desktop\').append(s);desktopItem[desktopItem.length]=s;addMenu();saveDesktop();'];
+            return ['<i class="bi bi-link-45deg"></i> 在桌面创建链接', `createDesktopLink('${arg[0]}', '${arg[1]}')`];
         },
         arg => {
-            return ['<i class="bi bi-x"></i> 取消固定', `$('#startmenu-r>.pinned>.apps>.sm-app.${arg[0]}').remove()`];
+            return ['<i class="bi bi-x"></i> 取消固定', `$('#startmenu-r>.tile.${arg[0]}').remove()`];
         }
     ],
     'smlapp': [
@@ -334,7 +773,7 @@ const cms = {
             return ['<i class="bi bi-window"></i> ' + lang('打开', 'open'), `openapp('${arg[0]}');hide_startmenu();`];
         },
         arg => {
-            return ['<i class="bi bi-link-45deg"></i> 在桌面创建链接', 'var s=`<div class=\'b\' ondblclick=openapp(\'' + arg[0] + '\')  ontouchstart=openapp(\'' + arg[0] + '\') appname=\'' + arg[0] + '\'><img src=\'icon/' + geticon(arg[0]) + '\'><p>' + arg[1] + '</p></div>`;$(\'#desktop\').append(s);desktopItem[desktopItem.length]=s;addMenu();saveDesktop();'];
+            return ['<i class="bi bi-link-45deg"></i> 在桌面创建链接', `createDesktopLink('${arg[0]}', '${arg[1]}')`];
         },
         arg => {
             return ['<i class="bi bi-pin-angle"></i> 固定到开始菜单', 'pinapp(\'' + arg[0] + '\', \'' + arg[1] + '\', \'openapp(&quot;' + arg[0] + '&quot;);hide_startmenu();\')'];
@@ -1850,8 +2289,8 @@ for (let i = 1; i <= daysum; i++) {
     $('#datebox>.cont>.body')[0].innerHTML += `<p>${i}</p>`;
 }
 function pinapp(id, name, command) {
-    if ($('#startmenu-r>.pinned>.apps>.a.sm-app.' + id).length) return;
-    $('#startmenu-r>.pinned>.apps').append(`<a class='a sm-app enable ${id}' onclick='${command}';hide_startmenu();' oncontextmenu='return showcm(event,\"smapp\",[\"${id}\",\"${name}\"])'><img src='icon/${geticon(id)}'><p>${name}</p></a>`);
+    if ($('#startmenu-r>.tile.' + id).length) return;
+    $('#startmenu-r').append(`<a class='a tile medium ${id}' onclick='${command}';hide_startmenu();' oncontextmenu='return showcm(event,\"smapp\",[\"${id}\",\"${name}\"])'><img src='icon/${geticon(id)}'><p>${name}</p></a>`);
 }
 
 // 应用方法
@@ -2003,7 +2442,6 @@ function openDockWidget(name) {
         }
     } else if (name == "datebox") {  //打开时间框
         if ($('#datebox').hasClass('show')) {
-            $('.dock.date').removeClass('show');
             $('#datebox').removeClass('show');
             setTimeout(() => {
                 $('#datebox').removeClass('show-begin');
@@ -2016,8 +2454,18 @@ function openDockWidget(name) {
                     $('#control').removeClass('show-begin');
                 }, 200);
             }
-            $('.dock.date').addClass('show');
-            $('#datebox').css('left', $('.a.dock.date').position().left - 125);
+            const dateDock = $('.a.dock.date');
+            const dateDockRect = dateDock[0].getBoundingClientRect();
+            const dateboxWidth = 350;
+            let leftPos = dateDockRect.left + dateDockRect.width / 2 - dateboxWidth / 2;
+            // Ensure datebox stays within screen bounds
+            if (leftPos + dateboxWidth > window.innerWidth) {
+                leftPos = window.innerWidth - dateboxWidth - 10;
+            }
+            if (leftPos < 10) {
+                leftPos = 10;
+            }
+            $('#datebox').css('left', leftPos + 'px');
             $('#datebox').addClass('show-begin');
             setTimeout(() => {
                 $('#datebox').addClass('show');
@@ -2200,25 +2648,86 @@ var flyStatus = false;
 
 // 选择框
 let chstX, chstY;
-function ch(e) {
-    $('#desktop>.selection').css('left', Math.min(chstX, e.clientX));
-    $('#desktop>.selection').css('width', Math.abs(e.clientX - chstX));
-    $('#desktop>.selection').css('display', 'block');
-    $('#desktop>.selection').css('top', Math.min(chstY, e.clientY));
-    $('#desktop>.selection').css('height', Math.abs(e.clientY - chstY));
+let isIconDragging = false;
+let isBoxSelecting = false;
+
+function updateSelectionBox(e) {
+    if (isIconDragging) return;
+    
+    const left = Math.min(chstX, e.clientX);
+    const top = Math.min(chstY, e.clientY);
+    const width = Math.abs(e.clientX - chstX);
+    const height = Math.abs(e.clientY - chstY);
+    
+    $('#desktop>.selection').css({
+        left: left,
+        top: top,
+        width: width,
+        height: height,
+        display: 'block'
+    });
+    
+    // 框选多选逻辑
+    if (!e.ctrlKey && !e.shiftKey) {
+        clearSelection();
+    }
+    
+    const selectionRect = {
+        left: left,
+        top: top,
+        right: left + width,
+        bottom: top + height
+    };
+    
+    $('#desktop>div[appname]').each(function() {
+        const $icon = $(this);
+        const rect = this.getBoundingClientRect();
+        const desktopRect = $('#desktop')[0].getBoundingClientRect();
+        
+        const iconRect = {
+            left: rect.left - desktopRect.left,
+            top: rect.top - desktopRect.top,
+            right: rect.right - desktopRect.left,
+            bottom: rect.bottom - desktopRect.top
+        };
+        
+        // 检查图标是否与选择框相交
+        if (iconRect.left < selectionRect.right &&
+            iconRect.right > selectionRect.left &&
+            iconRect.top < selectionRect.bottom &&
+            iconRect.bottom > selectionRect.top) {
+            const appname = $icon.attr('appname');
+            selectedIcons.add(appname);
+            $icon.addClass('selected');
+        }
+    });
 }
+
 $('#desktop')[0].addEventListener('mousedown', e => {
+    if (isIconDragging) return;
+    if ($(e.target).closest('div[appname]').length) return;
+    
+    // 点击空白处清除选择（不按Ctrl时）
+    if (!e.ctrlKey && !e.shiftKey) {
+        clearSelection();
+    }
+    
+    isBoxSelecting = true;
     chstX = e.clientX;
     chstY = e.clientY;
-    this.onmousemove = ch;
+    this.onmousemove = updateSelectionBox;
 });
+
 window.addEventListener('mouseup', e => {
     this.onmousemove = null;
-    $('#desktop>.selection').css('left', 0);
-    $('#desktop>.selection').css('top', 0);
-    $('#desktop>.selection').css('display', 'none');
-    $('#desktop>.selection').css('width', 0);
-    $('#desktop>.selection').css('height', 0);
+    $('#desktop>.selection').css({
+        left: 0,
+        top: 0,
+        width: 0,
+        height: 0,
+        display: 'none'
+    });
+    isBoxSelecting = false;
 });
 let isDark = false;
 
@@ -2292,7 +2801,7 @@ function setIcon() {
         <img src="icon/edge.svg">
         <p>Microsoft Edge</p>
     </div>
-    <div class="b" ondblclick="shownotice('feedback');" ontouchstart="shownotice('feedback');">
+    <div class="b" ondblclick="shownotice('feedback');" ontouchstart="shownotice('feedback');" oncontextmenu="return showcm(event,'desktop.icon',['feedback',-1]);" appname="feedback">
         <img src="icon/feedback.svg">
         <p>${lang('反馈中心', 'feedback.name')}</p>
     </div>
@@ -2304,6 +2813,10 @@ function setIcon() {
             $('#desktop')[0].innerHTML += item;
         });
         addMenu();
+        initDesktopIconDrag();
+        setTimeout(() => {
+            restoreIconPositions();
+        }, 50);
     }
     if (Array.isArray(JSON.parse(localStorage.getItem('topmost')))) {
         topmost = JSON.parse(localStorage.getItem('topmost'));
@@ -2580,64 +3093,77 @@ let previewTimeout;
 function showTaskbarPreview(name, event) {
     clearTimeout(previewTimeout);
 
-    const preview = document.getElementById('taskbar-preview');
-    if (!preview) {
-        const previewEl = document.createElement('div');
-        previewEl.id = 'taskbar-preview';
-        previewEl.innerHTML = `
-            <div class="preview-title">
-                <img src="" alt="">
-                <span></span>
-            </div>
-            <div class="preview-content">
-                <div class="preview-window"></div>
-            </div>
-        `;
-        document.body.appendChild(previewEl);
-    }
+    previewTimeout = setTimeout(() => {
+        const preview = document.getElementById('taskbar-preview');
+        if (!preview) {
+            const previewEl = document.createElement('div');
+            previewEl.id = 'taskbar-preview';
+            previewEl.innerHTML = `
+                <div class="preview-title">
+                    <img src="" alt="">
+                    <span></span>
+                </div>
+                <div class="preview-content">
+                    <div class="preview-window"></div>
+                </div>
+            `;
+            document.body.appendChild(previewEl);
+        }
 
-    const win = $(`.window.${name}`);
-    if (win.length && !win.hasClass('min')) {
-        const preview = $('#taskbar-preview');
-        const taskbarItem = $(event.currentTarget);
-        const itemRect = taskbarItem[0].getBoundingClientRect();
+        const win = $(`.window.${name}`);
+        if (win.length && !win.hasClass('min')) {
+            const preview = $('#taskbar-preview');
+            const taskbarItem = $(event.currentTarget);
+            const itemRect = taskbarItem[0].getBoundingClientRect();
 
+            // Reset animation for content switch
+            preview.removeClass('show');
+            preview.css('transition', 'none');
+            
+            // Force reflow
+            preview[0].offsetHeight;
+            
+            // Restore transition
+            preview.css('transition', '');
 
+            // Set window title and icon
+            const titleImg = win.find('.titbar img.icon').attr('src');
+            const title = win.find('.titbar p').text() || win.find('.titbar span').text();
 
-        // Set window title and icon
-        const titleImg = win.find('.titbar img.icon').attr('src');
-        const title = win.find('.titbar p').text() || win.find('.titbar span').text();
+            preview.find('.preview-title img').attr('src', titleImg);
+            preview.find('.preview-title span').text(title);
 
-        preview.find('.preview-title img').attr('src', titleImg);
-        preview.find('.preview-title span').text(title);
+            // Create simplified window preview
+            const previewWindow = preview.find('.preview-content .preview-window');
+            previewWindow.empty();
 
-        // Create simplified window preview
-        const previewWindow = preview.find('.preview-content .preview-window');
-        previewWindow.empty();
+            // Clone important window elements for preview
+            const content = win.find('.content').clone();
+            content.find('script').remove();
+            content.find('iframe').remove();
 
-        // Clone important window elements for preview
-        const content = win.find('.content').clone();
-        content.find('script').remove(); // Remove any scripts
-        content.find('iframe').remove(); // Remove iframes
+            // Scale down the content
+            content.css({
+                transform: 'scale(0.2)',
+                transformOrigin: 'top left',
+                width: '500%',
+                height: '500%'
+            });
 
-        // Scale down the content
-        content.css({
-            transform: 'scale(0.2)',
-            transformOrigin: 'top left',
-            width: '500%', // 1/0.2 = 5
-            height: '500%'
-        });
-
-        previewWindow.append(content);
-        preview.addClass('show');
-
-        // Set preview position
-        console.log(content[0].offsetWidth * 0.2);
-        preview.css({
-            left: itemRect.left - (content[0].offsetWidth * 0.2 / 2),
-            bottom: '60px'
-        });
-    }
+            previewWindow.append(content);
+            
+            // Set preview position
+            preview.css({
+                left: itemRect.left - (content[0].offsetWidth * 0.2 / 2),
+                bottom: '60px'
+            });
+            
+            // Trigger animation
+            requestAnimationFrame(() => {
+                preview.addClass('show');
+            });
+        }
+    }, 500);
 }
 
 function hideTaskbarPreview() {
