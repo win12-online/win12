@@ -162,11 +162,7 @@
                                 }
 
                                 &.card4>.left {
-                                    background: linear-gradient(135deg, #3f7f55, #5eaad4 55%, #f7b34a);
-                                }
-
-                                &.card4>.left::before {
-                                    content: "K";
+                                   background-image: url("../../icon/Krita.png");
                                 }
 
                                 &.card5>.left {
