@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="page.title">Windows 12 网页版</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <base target="_blank">
+</head>
+
+<body>
+  <div id="bg">
+    <div class="bubble" style="
+    background: radial-gradient(circle at 20% 20%,#5680f2 10%, #2438b8);
+    --d: 10vh;top: 20%; left: 25%;"></div>
+    <div class="bubble" style="
+    background: radial-gradient(circle at 20% 20%,#e3b2ff 10%, #b875b8);
+    --d: 12vh;top: 65%; left: 65%;"></div>
+    <div class="bubble" style="
+    background: radial-gradient(circle at 20% 20%,#ed79fc 10%, rgb(193, 86, 193));
+    --d: 20vh;top: 65%; left: 25%;"></div>
+    <div class="bubble" style="
+    background: radial-gradient(circle at 20% 20%,#79d5fc 10%, rgb(39, 64, 203));
+    --d: 23vh;top: 45%; left: 80%;"></div>
+    <div class="bubble" style="
+    background: radial-gradient(circle at 20% 20%,#6eddff 10%, rgb(8, 101, 177));
+    --d: 18vh;top: 30%; left: 10%;"></div>
+  </div>
+  <div id="page-settings" data-value="system">
+    <a class="tgbtn" onclick="$('#page-settings').toggleClass('show')">&#xE973;</a>
+    <span data-i18n="theme.label">主题</span>
+    <div class="switch-track">
+      <div class="switch-handle"></div>
+    </div>
+    <span data-i18n="lang.label">语言</span>
+    <div id="lang-picker">
+      <select id="lang-select" aria-label="Language" style="background-color: var(--surface);border-radius: 10px;transition: 100ms;border: 2px solid var(--border);color: var(--text);outline: none;padding: 5px;">
+        <option value="zh_CN">简体中文</option>
+        <option value="zh_TW">繁體中文</option>
+        <option value="en">English</option>
+        <option value="fr">Français</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="page" id="intro">
+    <img src="/static/logo.svg" class="logo">
+    <div class="name" data-i18n="brand.name">Windows 12 <span>online</span></div>
+    <div id="mainbtn" class="btn" onclick="go();window.location.href='https://win12-online.github.io/win12/boot.html';" data-i18n="btn.experience">
+      立即体验 <icon>&#xE72A;</icon>
+    </div>
+  </div>
+  <div class="page" id="view-container">
+    <div id="view">
+      <img src="/static/view.png" alt="界面预览">
+    </div>
+  </div>
+  <div id="achievements" class="page">
+    <div class="grid">
+      <div class="item">
+        <img src="/static/trophy.png">
+        <div class="body">
+          <span class="title detail" data-i18n="ach.trending.title">Github Trending 榜</span>
+          <span class="title" data-i18n="ach.trending.rank">第 3 名</span>
+          <p data-i18n="ach.trending.desc">本项目在 Github Trending 榜上最高排名第 3 名，中文榜最高排名第 1 名！</p>
+        </div>
+      </div>
+      <div class="item">
+        <img src="/static/star.png">
+        <div class="body">
+          <span class="title detail" data-i18n="ach.stars.title">Github 开源仓库获得</span>
+          <span class="title" data-i18n="ach.stars.count">7k+ stars</span>
+          <p data-i18n="ach.stars.desc">至今，本项目在 Github 上获得了 7000 多个星标！</p>
+        </div>
+      </div>
+      <div class="item">
+        <img src="/static/love.png">
+        <div class="body">
+          <span class="title detail" data-i18n="ach.love.title1">以及</span>
+          <span class="title" data-i18n="ach.love.title2">你们的支持</span>
+          <p data-i18n="ach.love.desc">我们有 30 多名贡献者，有用户们的提议和大家的厚爱。是你们支持着本项目不断前进！</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="members" class="page">
+    <div class="core">
+      <span class="title" data-i18n="members.core">开发团队</span>
+      <div class="mbs">
+        <div onclick="window.open('https://github.com/tjy-gitnub','_blank')">
+          <img src="/static/contributors/1.png">
+          <span>Starry Source</span>
+          <span class="detail">@tjy-gitnub</span>
+        </div>
+        <div onclick="window.open('https://github.com/User782Tec','_blank')">
+          <img src="/static/contributors/2.png">
+          <span>User782Tec</span>
+        </div>
+        <div onclick="window.open('https://github.com/tangyuan0821','_blank')">
+          <img src="/static/contributors/3.jpg">
+          <span>Paper Moon</span>
+          <span class="detail">@tangyuan0821</span>
+        </div>
+        <div onclick="window.open('https://github.com/NB-Group','_blank')">
+          <img src="/static/contributors/4.png">
+          <span>Lianghaowen</span>
+          <span class="detail">@NB-Group</span>
+        </div>
+        <div onclick="window.open('https://github.com/fzlzjerry','_blank')">
+          <img src="/static/contributors/5.jpg">
+          <span>Morax</span>
+          <span class="detail">@fzlzjerry</span>
+        </div>
+      </div>
+    </div>
+    <div class="contributors">
+      <span class="title" data-i18n="members.contributors">贡献者们</span>
+      <div class="mbs">
+        <div onclick="window.open('https://github.com/HHCL233','_blank')" title="HHCL233"><img src="/static/contributors/6.png"></div>
+        <div onclick="window.open('https://github.com/lh11117','_blank')" title="lh11117"><img src="/static/contributors/7.png"></div>
+        <div onclick="window.open('https://github.com/Jimmy-Effe','_blank')" title="Jimmy-Effe"><img src="/static/contributors/8.png"></div>
+        <div onclick="window.open('https://github.com/lingbopro','_blank')" title="lingbopro"><img src="/static/contributors/9.png"></div>
+        <div onclick="window.open('https://github.com/kjmjh','_blank')" title="kjmjh"><img src="/static/contributors/10.png"></div>
+        <div onclick="window.open('https://github.com/jobsofferings','_blank')" title="jobsofferings"><img src="/static/contributors/11.png"></div>
+        <div onclick="window.open('https://github.com/apps/copilot-swe-agent','_blank')" title="Copilot"><img src="/static/contributors/12.png"></div>
+        <div onclick="window.open('https://github.com/YangFong','_blank')" title="YangFong"><img src="/static/contributors/13.png"></div>
+        <div onclick="window.open('https://github.com/freedom-323','_blank')" title="freedom-323"><img src="/static/contributors/14.png"></div>
+        <div onclick="window.open('https://github.com/stxttkx','_blank')" title="stxttkx"><img src="/static/contributors/15.png"></div>
+        <div onclick="window.open('https://github.com/starry-source','_blank')" title="starry-source"><img src="/static/contributors/16.png"></div>
+        <div onclick="window.open('https://github.com/keyork','_blank')" title="keyork"><img src="/static/contributors/17.png"></div>
+        <div onclick="window.open('https://github.com/XueJourney','_blank')" title="XueJourney"><img src="/static/contributors/18.png"></div>
+        <div onclick="window.open('https://github.com/AZCodingAccount','_blank')" title="AZCodingAccount"><img src="/static/contributors/19.png"></div>
+        <div onclick="window.open('https://github.com/ProgramCX','_blank')" title="ProgramCX"><img src="/static/contributors/20.png"></div>
+        <div onclick="window.open('https://github.com/Tsingkai','_blank')" title="Tsingkai"><img src="/static/contributors/21.png"></div>
+        <div onclick="window.open('https://github.com/skyclouds2001','_blank')" title="skyclouds2001"><img src="/static/contributors/22.png"></div>
+        <div onclick="window.open('https://github.com/sml2','_blank')" title="sml2"><img src="/static/contributors/23.png"></div>
+        <div onclick="window.open('https://github.com/ryan1114-carer','_blank')" title="ryan1114-carer"><img src="/static/contributors/24.png"></div>
+        <div onclick="window.open('https://github.com/lu-ph','_blank')" title="lu-ph"><img src="/static/contributors/25.png"></div>
+        <div onclick="window.open('https://github.com/Creeper9480','_blank')" title="Creeper9480"><img src="/static/contributors/26.png"></div>
+        <div onclick="window.open('https://github.com/fyzhu','_blank')" title="fyzhu"><img src="/static/contributors/27.png"></div>
+        <div onclick="window.open('https://github.com/dddddgz','_blank')" title="dddddgz"><img src="/static/contributors/28.png"></div>
+        <div onclick="window.open('https://github.com/0xbe37e','_blank')" title="0xbe37e"><img src="/static/contributors/29.png"></div>
+        <div onclick="window.open('https://github.com/alaricholt677','_blank')" title="alaricholt677"><img src="/static/contributors/30.png"></div>
+        <a class="more" href="https://github.com/win12-online/win12/graphs/contributors" data-i18n="link.more">更多 <icon>&#xE72A;</icon>
+        </a>
+      </div>
+    </div>
+  </div>
+  <div class="page" >
+  <div id="ots">
+    <div id="bili">
+      <div class="title">
+        <img src="/static/ico-bili.svg" alt="bilibili">
+        <span>Bilibili</span>
+      </div>
+      <div class="card">
+        <a class="main" href="https://www.bilibili.com/video/BV1zBfnYyE8P/">
+          <div class="img">
+            <img src="/static/video.jpg" alt="Windows 12 online 宣传片">
+            <div class="playico">
+              <icon>&#xE768;</icon>
+            </div>
+          </div>
+          <div class="meta">
+            <span class="name" data-i18n="bili.card.name">[开源] <nobr>Windows 12 online</nobr> <nobr>最新</nobr><nobr>宣传片</nobr></span>
+          </div>
+        </a>
+        <div class="acct">
+          <div class="title" data-i18n="bili.accounts">成员账号</div>
+          <div class="list">
+            <a class="item" href="https://space.bilibili.com/2010692096">
+              <img src="/static/contributors/1.png">
+              <div>
+                <span>Starry-Source</span>
+                <span class="detail">Github <nobr>@tjy-gitnub</nobr></span>
+              </div>
+            </a>
+            <a class="item" href="https://space.bilibili.com/1046361194">
+              <img src="/static/bli-782.webp">
+              <div>
+                <span>782_</span>
+                <span class="detail">Github @User782Tec</span>
+              </div>
+            </a>
+            <a class="item" href="https://space.bilibili.com/1570243738">
+              <img src="/static/bli-nbg.webp">
+              <div>
+                <span>征服这星辰大海</span>
+                <span class="detail">Github <nobr>@NB-Group</nobr></span>
+              </div>
+            </a>
+            <a class="item" href="https://space.bilibili.com/1779461371">
+              <img src="/static/bli-t.webp">
+              <div>
+                <span>不锈钢后槽牙</span>
+                <span class="detail">Github <nobr>@tangyuan0821</nobr></span>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="gh">
+      <div class="title">
+        <img src="/static/ico-gh.svg" alt="github" class="d-invert">
+        <span>Github</span>
+      </div>
+      <div class="card">
+        <div class="list">
+          <a class="item main" href="https://github.com/win12-online">
+            <img src="/static/gh-org.svg">
+            <span>Windows12 Online</span>
+            <span class="detail">@win12-online</span>
+          </a>
+          <a class="item" href="https://github.com/win12-online/win12">
+            <span>win12-online/win12</span>
+            <span class="detail" data-i18n="gh.repo.detail">项目主仓库</span>
+          </a>
+          <a class="item" href="https://github.com/win12-online/win12-online.github.io">
+            <span>win12-online/win12-oline.github.io</span>
+            <span class="detail" data-i18n="gh.site.detail">项目介绍页（此页）</span>
+          </a>
+          <a class="item" href="https://github.com/tjy-gitnub/win12-theme">
+            <span>tjy-gitnub/win12-theme</span>
+            <span class="detail" data-i18n="gh.theme.detail">个性化主题仓库</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="footer">
+    <div>
+      <a href="https://win12-online.github.io/win12/boot.html" target="_self" onclick="go()" data-i18n="footer.experience">
+        <icon>&#xE72A;</icon> 立即体验
+      </a>
+      <a href="https://github.com/win12-online/win12">
+        <img src="/static/ico-gh.svg" class="d-invert">
+        <span>win12-online/win12</span>
+      </a>
+    </div>
+  </div>
+  <script src="/static/jq.min.js"></script>
+  <script src="/static/jquery.i18n.properties.js"></script>
+  <script src="/test/cursor.js"></script>
+  <script src="/test/module.js"></script>
+  <script src="/static/script.js"></script>
+</body>
+
+</html>

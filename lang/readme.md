@@ -11,13 +11,16 @@ Before you start translating, **you must [contact](https://teams.live.com/l/invi
 鑑於「兩岸四地」在中文語言使用上存在顯著差異，語言變體繁多，需注意在翻譯時請以繁體中文（中國臺灣）（zh‑TW）為基準標準，另請特別留意兩岸間在詞彙、表達方式及用語習慣上的差異。
 
 ## 方法 / Method
-项目使用 i18n 库实现多语言，可上网查阅，或自行研究已有翻译的部分
+项目使用 i18n 库实现多语言，可上网查阅，或自行研究已有翻译的部分。
 
-The project uses an i18n library for multi-language support. You can refer to online resources or study existing translated sections.
+建议使用 [win12-i18n](https://github.com/win12-online/win12-i18n) 工具进行翻译，具体使用说明请参阅[此链接](https://github.com/win12-online/win12-i18n#%E4%BD%BF%E7%94%A8)。
+
+The project uses an i18n library for multi-language support. You can refer to online resources or study existing translated sections. 
+
+It is recommended to use the [win12-i18n](https://github.com/win12-online/win12-i18n) tool for translation. For detailed usage instructions, please refer to [this link](https://github.com/win12-online/win12-i18n#%E4%BD%BF%E7%94%A8).
 ### 已有成果 / Existing Resources
 0. 务必理解 `desktop.js` 开头语言处理部分，熟悉原理<br>Make sure you understand the language handling logic at the beginning of desktop.js and are familiar with the mechanism.
-1. 此目录下 `trans.py`的使用说明见[此](README_trans.md)<br>See [this](README_trans.md) for the usage instructions of trans.py in this directory.
-2. `desktop.js` 中有 `lang(txt,id)`，详见注释<br>desktop.js includes the lang(txt, id) function — see the comments for details.
+1. `desktop.js` 中有 `lang(txt,id)`，详见注释<br>desktop.js includes the lang(txt, id) function — see the comments for details.
 
 ### 注意 / Notes
 部分代码形如 Some code like:
