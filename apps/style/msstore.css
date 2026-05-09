@@ -126,11 +126,58 @@
                                 &>.left {
                                     width: 70px;
                                     height: 70px;
-                                    background: initial;
+                                    flex: 0 0 70px;
+                                    margin-right: 16px;
+                                    border-radius: 12px;
+                                    background-color: var(--fill);
+                                    background-position: center;
+                                    background-repeat: no-repeat;
+                                    background-size: cover;
+                                    box-shadow: 0 2px 8px var(--s3d);
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                    overflow: hidden;
+                                }
+
+                                &>.left::before {
+                                    color: #fff;
+                                    font-size: 22px;
+                                    font-weight: 600;
+                                    line-height: 1;
+                                }
+
+                                &.card1>.left {
+                                    background-color: #1f1f1f;
+                                    background-image: url("https://code.visualstudio.com/assets/favicon.ico");
+                                    background-size: 58px 58px;
+                                }
+
+                                &.card2>.left {
+                                    background-image: url("https://ys.mihoyo.com/main/favicon.ico");
+                                }
+
+                                &.card3>.left {
+                                    background-image: url("https://www.minecraft.net/etc.clientlibs/minecraftnet/clientlibs/clientlib-site/resources/favicon.ico");
+                                }
+
+                                &.card4>.left {
+                                   background-image: url("https://krita.org/images/favicon.ico");
+                                }
+
+                                &.card5>.left {
+                                    background-image: url("https://www.virtualbox.org/favicon.ico");
+                                }
+
+                                &.card6>.left {
+                                    background-color: #fff;
+                                    background-image: url("https://wiki.documentfoundation.org/images/4/48/LibreOffice_7.5_Main_Icon.svg");
+                                    background-size: 58px 58px;
                                 }
 
                                 &>.right {
-                                    width: 100%;
+                                    flex: 1;
+                                    min-width: 0;
 
                                     &>.tit {
                                         width: 100%;
@@ -147,6 +194,7 @@
                                                 border-radius: 5px;
                                                 background-color: var(--fill);
                                                 color: var(--text2);
+                                                flex-shrink: 0;
                                             }
                                         }
                                     }
