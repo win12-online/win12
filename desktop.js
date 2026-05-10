@@ -2543,8 +2543,8 @@ function setupGlobalKey() {
             return;
         }
 
-        //按下徽标键 + E / 徽标键 + Ctrl + E，打开文件资源管理器（此电脑）
-        if (event.metaKey && !event.altKey && (event.key || '').toLowerCase() == 'e') {
+        //按下徽标键 + E / 徽标键 + Ctrl + E / Alt + E，打开文件资源管理器（此电脑）
+        if (((event.metaKey && !event.altKey) || (!event.metaKey && event.altKey)) && (event.key || '').toLowerCase() == 'e') {
             event.preventDefault();
             if (!event.repeat) {
                 openapp('explorer');
@@ -2553,8 +2553,8 @@ function setupGlobalKey() {
             return;
         }
 
-        //按下徽标键 + I / 徽标键 + Ctrl + I，打开设置
-        if (event.metaKey && !event.altKey && (event.key || '').toLowerCase() == 'i') {
+        //按下徽标键 + I / 徽标键 + Ctrl + I / Alt + I，打开设置
+        if (((event.metaKey && !event.altKey) || (!event.metaKey && event.altKey)) && (event.key || '').toLowerCase() == 'i') {
             event.preventDefault();
             if (!event.repeat) {
                 openapp('setting');
