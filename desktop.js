@@ -2543,23 +2543,25 @@ function setupGlobalKey() {
             return;
         }
 
-        //按下徽标键 + E / 徽标键 + Ctrl + E / Alt + E，打开文件资源管理器（此电脑）
-        if (((event.metaKey && !event.altKey) || (!event.metaKey && event.altKey)) && (event.key || '').toLowerCase() == 'e') {
-            event.preventDefault();
-            if (!event.repeat) {
-                openapp('explorer');
-                apps.explorer.reset();
+        // 激活键：Meta / Meta + Ctrl / Alt
+        if ((event.metaKey && !event.altKey) || (!event.metaKey && event.altKey)) {
+        //按下激活键 + E，打开文件资源管理器（此电脑）
+            if ((event.key || '').toLowerCase() == 'e') {
+                event.preventDefault();
+                if (!event.repeat) {
+                    openapp('explorer');
+                    apps.explorer.reset();
+                }
+                return;
             }
-            return;
-        }
-
-        //按下徽标键 + I / 徽标键 + Ctrl + I / Alt + I，打开设置
-        if (((event.metaKey && !event.altKey) || (!event.metaKey && event.altKey)) && (event.key || '').toLowerCase() == 'i') {
-            event.preventDefault();
-            if (!event.repeat) {
-                openapp('setting');
+            //按下激活键 + I，打开设置
+            if ((event.key || '').toLowerCase() == 'i') {
+                event.preventDefault();
+                if (!event.repeat) {
+                    openapp('setting');
+                }
+                return;
             }
-            return;
         }
 
         //按下徽标键
