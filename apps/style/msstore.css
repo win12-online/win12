@@ -149,7 +149,7 @@
 
                                 &.card1>.left {
                                     background-color: #1f1f1f;
-                                    background-image: url("https://code.visualstudio.com/assets/favicon.ico");
+                                    background-image: url("../../icon/vscode.png");
                                     background-size: 58px 58px;
                                 }
 
