@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title id="title">404 Not Found - Windows 12 Web Version</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+    :root {
+      background-color: #111111;
+      color: #eeeeee;
+      font-family: -apple-system, BlinkMacSystemFont, 'Noto Sans SC', 'Noto Sans', 'Microsoft YaHei UI', 'Segoe UI', sans-serif;
+      user-select: none;
+    }
+    :root, body {
+      height: 100%;
+      overflow: hidden;
+    }
+    .content-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+      padding: 10px;
+    }
+    .content {
+      text-align: center;
+    }
+    h1 {
+      font-size: 2.5rem;
+    }
+    h2 {
+      font-size: 2rem;
+    }
+    .info {
+      margin-top: 10px;
+      color: #bbbbbb;
+    }
+    a {
+      text-decoration: none;
+      color: #2983cc;
+    }
+    a:hover {
+      color: #49a3ec;
+    }
+    .btn {
+      color: #3b91d8;
+      border: solid #3b91d8 1px;
+      border-radius: 67px;
+      padding: 8px 12px;
+      margin: 5px;
+    }
+    .btn:hover {
+      color: #a9c3ff;
+      border-color: #a9c3ff;
+    }
+    .blank {
+      height: 25px;
+    }
+  </style>
+</head>
+<body class="dark">
+  <div class="content-wrapper">
+    <div class="content">
+      <h1>404</h1>
+      <h2>Not Found</h2>
+      <p class="info" id="info">We could not find the resource you requested.</p>
+      <div class="blank"></div>
+      <a class="btn" id="home" href="/">Back to homepage</a>
+    </div>
+  </div>
+  <script>
+    // 非常简单的i18n...
+    // 既然是404页面，就没必要引入那么多库了
+    const lang = navigator.language || navigator.userLanguage;
+    const i18n = {
+      'zh-CN': {
+        title: '404 Not Found - Windows 12 网页版',
+        info: '我们找不到您所请求的资源。',
+        home: '返回主页',
+      },
+    };
+    if (lang && i18n[lang]) {
+      for (const k in i18n[lang]) {
+        document.getElementById(k).innerText = i18n[lang][k];
+      }
+    }
+  </script>
+</body>
+</html>
