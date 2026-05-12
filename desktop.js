@@ -146,8 +146,13 @@ page.addEventListener('click', (event) => {
         hide_startmenu();
     }
 });
-//开始菜单收回
-
+// 开始菜单收回
+page.addEventListener('click', (event) => {
+    if ($('#search-win').hasClass('show') && !$(event.target).closest('#search-win').length) {
+        hide_search();
+    }
+});
+// 搜索收回
 
 // 上古代码，列表前的小竖线
 document.querySelectorAll('list.focs').forEach(li => {
@@ -2036,6 +2041,11 @@ function hide_startmenu() {
     $('#start-menu').removeClass('show');
     $('#start-btn').removeClass('show');
     setTimeout(() => { $('#start-menu').removeClass('show-begin'); }, 200);
+}
+function hide_search() {
+    $('#search-win').removeClass('show');
+    $('#search-btn').removeClass('show');
+    setTimeout(() => { $('#search-win').removeClass('show-begin'); }, 200);
 }
 function hide_widgets() {
     $('#widgets').removeClass('show');
