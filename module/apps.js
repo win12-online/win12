@@ -1625,7 +1625,7 @@ let apps = {
                 setTimeout(() => {
                     $('#contri').html('');
                     cs.forEach(c => {
-                        $('#contri').append(`<a class="a" onclick="window.open('${c['html_url']}','_blank');"><p class="name">${c['login']}</p><p class="cbs">贡献：<span class="num">${c['contributions']}</span></p></a>`);
+                        $('#contri').append(`<a class="a" title="${c['login']}" onclick="window.open('${c['html_url']}','_blank');"><img class="avatar" src="${c['avatar_url']}" alt="${c['login']}"><span class="info"><p class="name">${c['login']}</p><p class="cbs">贡献 <span class="num">${c['contributions']}</span></p></span></a>`);
                     });
                     $('#contri').append('<a class="button" onclick="apps.about.get()"><i class="bi bi-arrow-clockwise"></i> 刷新</a>');
                 }, 200);
