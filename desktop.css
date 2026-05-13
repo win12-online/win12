@@ -849,7 +849,7 @@ list>span.focs.cl {
     border: 1.5px solid #99999950;
     z-index: 91;
     box-shadow: 3px 3px 20px 1px var(--shadow);
-    transition: 0ms, transform 400ms cubic-bezier(0.05, 0.96, 0.11, 1), opacity 300ms;
+    transition: 300ms, transform 400ms cubic-bezier(0.05, 0.96, 0.11, 1), opacity 300ms;
     bottom: 60px;
 }
 
@@ -892,7 +892,7 @@ list>span.focs.cl {
     width: 100%;
     max-height: 100%;
     height: 100%;
-    border-radius: 0;
+    border-radius: 0 !important;
     transition: 200ms cubic-bezier(0.9, 0, 0.1, 1);
 }
 
