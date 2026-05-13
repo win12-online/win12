@@ -122,48 +122,89 @@
 }
 
 #contri {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 10px;
+    align-items: stretch;
+    margin-top: 12px;
 }
 
 #contri>.a {
-    margin: 3px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    min-height: 62px;
+    padding: 10px;
     background: var(--card);
-    box-shadow: 0 1px 2px var(--shadow);
-    border-radius: 10px;
-    width: 110px;
-    height: 70px;
-    text-align: center;
-    padding-top: 10px;
+    border: 1px solid var(--hover-b);
+    box-shadow: 0 1px 2px #00000016;
+    border-radius: 8px;
     font-size: 13px;
-    transition: 50ms;
+    color: inherit;
+    text-decoration: none;
+    transition: 120ms;
 }
 
 #contri>.a:hover {
     background: var(--hover);
+    border-color: #00000020;
+    box-shadow: 0 2px 4px #00000020, 0 0 0 1px #ffffff40 inset;
 }
 
 #contri>.a:active {
     opacity: 0.6;
+    box-shadow: 0 1px 2px #00000014 inset;
+}
+
+#contri>.a>.avatar {
+    width: 42px;
+    height: 42px;
+    flex: 0 0 42px;
+    border-radius: 50%;
+    background: var(--hover);
+    box-shadow: 0 0 0 1px var(--hover-b);
+    object-fit: cover;
+}
+
+#contri>.a>.info {
+    min-width: 0;
 }
 
 #contri>.a>.name {
-    font-size: 17px;
-    margin: 0px 6px;
-    /* border: 6px; */
+    font-size: 14px;
+    font-weight: 650;
+    margin: 0 0 5px;
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
 }
 
+#contri>.a>.cbs {
+    margin: 0;
+    color: var(--text2);
+}
+
 #contri>.a>.cbs>.num {
-    font-size: 15px;
-    font-weight: 550;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 22px;
+    height: 20px;
+    padding: 0 6px;
+    margin-left: 3px;
+    border-radius: 10px;
+    background: #2983cc20;
+    color: #2983cc;
+    font-size: 13px;
+    font-weight: 700;
 }
 
 #contri>.button {
-    height: max-content;
-    margin: 10px 0 0 10px;
+    width: fit-content;
+    align-self: center;
+    justify-self: start;
+    margin: 2px 0 0;
 }
 
 .window.winver{
