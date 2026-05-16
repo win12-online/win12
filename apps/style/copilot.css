@@ -1,145 +1,145 @@
-#copilot{
-    position: fixed;
-    right: -410px;
-    background-color: var(--bg70);
-    /* box-shadow: 1px 2px 25px var(--shadow); */
-    border: 2px solid #6f6f6f30;
-    width: 400px;
-    height: calc(100% - 70px);
-    top: 10px;
-    border-radius: 14px;
-    overflow: hidden;
-    transition: 300ms cubic-bezier(0.9, 0, 0.1, 1);
-    z-index: 92;
-    display: flex;
-    flex-direction: column;
-    padding-top: 5px;
+#copilot {
+  position: fixed;
+  right: -410px;
+  background-color: var(--bg70);
+  /* box-shadow: 1px 2px 25px var(--shadow); */
+  border: 2px solid #6f6f6f30;
+  width: 400px;
+  height: calc(100% - 70px);
+  top: 10px;
+  border-radius: 14px;
+  overflow: hidden;
+  transition: 300ms cubic-bezier(0.9, 0, 0.1, 1);
+  z-index: 92;
+  display: flex;
+  flex-direction: column;
+  padding-top: 5px;
 }
 
-#copilot.show{
-    right: 10px;
-    box-shadow: 1px 2px 25px var(--shadow);
-    backdrop-filter: blur(60px) saturate(3) contrast(0.6);
-    /* backdrop-filter: blur(80px) saturate(1.3); */
-    -webkit-backdrop-filter: blur(60px) saturate(3) contrast(0.6);
+#copilot.show {
+  right: 10px;
+  box-shadow: 1px 2px 25px var(--shadow);
+  backdrop-filter: blur(60px) saturate(3) contrast(0.6);
+  /* backdrop-filter: blur(80px) saturate(1.3); */
+  -webkit-backdrop-filter: blur(60px) saturate(3) contrast(0.6);
 }
 
-#copilot>.titbar{
-    height: 40px;
-    display: flex;
-    align-items: center;
-    padding: 0 10px;
-    min-height: 40px;
+#copilot > .titbar {
+  height: 40px;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  min-height: 40px;
 }
 
-#copilot>.titbar>.text{
-    font-size: 20px;
+#copilot > .titbar > .text {
+  font-size: 20px;
 }
 
-#copilot>.titbar>.alr{
-    flex-grow: 1;
-    display: flex;
-    justify-content: flex-end;
+#copilot > .titbar > .alr {
+  flex-grow: 1;
+  display: flex;
+  justify-content: flex-end;
 }
 
-#copilot>.titbar>.alr>.btn{
-    width: 35px;
-    height: 35px;
-    text-align: center;
-    padding: 6px 0;
-    display: block;
+#copilot > .titbar > .alr > .btn {
+  width: 35px;
+  height: 35px;
+  text-align: center;
+  padding: 6px 0;
+  display: block;
 }
 
-#copilot>.chat{
-    flex-grow: 1;
-    padding: 10px 15px;
-    overflow-y: auto;
-    overflow-x:hidden !important;
-    scroll-behavior: smooth;
+#copilot > .chat {
+  flex-grow: 1;
+  padding: 10px 15px;
+  overflow-y: auto;
+  overflow-x: hidden !important;
+  scroll-behavior: smooth;
 }
 
-#copilot>.chat>.line{
-    width: 100%;
-    display: flex;
-    margin-top: 15px;
+#copilot > .chat > .line {
+  width: 100%;
+  display: flex;
+  margin-top: 15px;
 }
-#copilot>.chat>.line.user{
-    width: 100%;
-    flex-direction: row-reverse;
+#copilot > .chat > .line.user {
+  width: 100%;
+  flex-direction: row-reverse;
 }
-@keyframes msg{
-    0%{
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    100%{
-        opacity: 1;
-        transform: none;
-    }
-}
-
-#copilot>.chat>.line>.text{
-    width: max-content;
-    padding: 10px 15px;
-    border-radius: 10px;
-    box-shadow: 0 1px 6px var(--shadow);
-    max-width: calc(100% - 40px);
-    word-break:break-word;
-    animation: msg 400ms cubic-bezier(0,0,0,1);
-    user-select:text;
-}
-:root.corner_squ #copilot>.chat>.line>.text {
-    corner-shape: squircle;
-    border-radius: 20px;
-}
-#copilot>.chat>.line.ai>.text{
-    background-color: var(--msg);
-}
-#copilot>.chat>.line.user>.text{
-    background: linear-gradient(100deg,#3397e9c0,#1b5dbad6);
-    color: #fff;
-}
-#copilot>.chat>.line.system>.text{
-    background: linear-gradient(100deg,#ca3ee0b0,#7e26c2be);
-    color: #fff;
-}
-#copilot>.chat>.line.ai>.text>.action{
-    background-color: var(--hover-b);
-    padding: 10px 15px;
-    border-radius: 9px;
-    box-shadow: 0 1px 2px var(--s3d);
-    margin: 10px 5px;
-}
-:root.corner_squ #copilot>.chat>.line.ai>.text>.action {
-    corner-shape: squircle;
-    border-radius: 20px;
-}
-#copilot>.chat>.line.ai>.text>.action>.tit{
-    font-size: 20px;
+@keyframes msg {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
 }
 
-#copilot>.inputbox{
-    height: 60px;
-    display: flex;
-    align-items: center;
-    min-height: 60px;
+#copilot > .chat > .line > .text {
+  width: max-content;
+  padding: 10px 15px;
+  border-radius: 10px;
+  box-shadow: 0 1px 6px var(--shadow);
+  max-width: calc(100% - 40px);
+  word-break: break-word;
+  animation: msg 400ms cubic-bezier(0, 0, 0, 1);
+  user-select: text;
+}
+:root.corner_squ #copilot > .chat > .line > .text {
+  corner-shape: squircle;
+  border-radius: 20px;
+}
+#copilot > .chat > .line.ai > .text {
+  background-color: var(--msg);
+}
+#copilot > .chat > .line.user > .text {
+  background: linear-gradient(100deg, #3397e9c0, #1b5dbad6);
+  color: #fff;
+}
+#copilot > .chat > .line.system > .text {
+  background: linear-gradient(100deg, var(--theme-1), var(--theme-2));
+  color: #fff;
+}
+#copilot > .chat > .line.ai > .text > .action {
+  background-color: var(--hover-b);
+  padding: 10px 15px;
+  border-radius: 9px;
+  box-shadow: 0 1px 2px var(--s3d);
+  margin: 10px 5px;
+}
+:root.corner_squ #copilot > .chat > .line.ai > .text > .action {
+  corner-shape: squircle;
+  border-radius: 20px;
+}
+#copilot > .chat > .line.ai > .text > .action > .tit {
+  font-size: 20px;
 }
 
-#copilot>.inputbox.disable{
-    pointer-events:none;
-    filter: saturate(0.8) brightness(0.9);
+#copilot > .inputbox {
+  height: 60px;
+  display: flex;
+  align-items: center;
+  min-height: 60px;
 }
 
-#copilot>.inputbox>.input{
-    margin: 0 10px;
-    flex-grow: 1;
-    height: 40px;
+#copilot > .inputbox.disable {
+  pointer-events: none;
+  filter: saturate(0.8) brightness(0.9);
 }
 
-#copilot>.inputbox>.send{
-    width: 80px;
-    color: #fff;
-    text-align: center;
-    margin-right: 10px;
-    background: linear-gradient(120deg,var(--theme-1),var(--theme-2));
+#copilot > .inputbox > .input {
+  margin: 0 10px;
+  flex-grow: 1;
+  height: 40px;
+}
+
+#copilot > .inputbox > .send {
+  width: 80px;
+  color: #fff;
+  text-align: center;
+  margin-right: 10px;
+  background: linear-gradient(120deg, var(--theme-1), var(--theme-2));
 }

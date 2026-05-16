@@ -1,113 +1,113 @@
 @keyframes shine {
-    0% {
-        border-color: #111;
-    }
-    49% {
-        border-color: #111;
-    }
-    51% {
-        border-color: transparent;
-    }
-    98% {
-        border-color: transparent;
-    }
-    100% {
-        border-color: #111;
-    }
+  0% {
+    border-color: #111;
+  }
+  49% {
+    border-color: #111;
+  }
+  51% {
+    border-color: transparent;
+  }
+  98% {
+    border-color: transparent;
+  }
+  100% {
+    border-color: #111;
+  }
 }
 
 #win-calc {
-    display: flex;
-    flex-direction: column;
-    padding: 5px;
+  display: flex;
+  flex-direction: column;
+  padding: 5px;
 }
 
 #calc-input {
-    /* height: 90px; */
-    border: none;
-    border-right: 2px solid transparent;
-    outline: none;
-    background-color: #00000000;
-    font-size: 35px;
-    text-align: end;
-    color: var(--text);
-    width: 100%;
+  /* height: 90px; */
+  border: none;
+  border-right: 2px solid transparent;
+  outline: none;
+  background-color: #00000000;
+  font-size: 35px;
+  text-align: end;
+  color: var(--text);
+  width: 100%;
 }
 
-#win-calc>.container {
-    height: 90px;
-    display: flex;
-    align-items: center;
+#win-calc > .container {
+  height: 90px;
+  display: flex;
+  align-items: center;
 }
 
 #calc-input:focus {
-    border-color: #111;
-    animation-name: shine;
-    animation-duration: 1s;
-    animation-iteration-count: infinite;
+  border-color: #111;
+  animation-name: shine;
+  animation-duration: 1s;
+  animation-iteration-count: infinite;
 }
 
-#win-calc>.keyb {
-    flex-grow: 1;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    grid-template-rows: repeat(5, 50px);
-    gap: 4px;
+#win-calc > .keyb {
+  flex-grow: 1;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(5, 50px);
+  gap: 4px;
 }
 
-#win-calc>.keyb>.b {
-    /* width: 60px; */
-    height: 50px;
-    font-size: 25px;
-    text-align: center;
-    transition: 40ms;
-    border-radius: 7px;
-    /* border: 1.5px solid #63636330; */
-    box-shadow: 0px 1px 1px 1px var(--s3d);
-    background: var(--card);
-    padding-top: 5px;
-    /* border: 1.5px solid var(--bd);
+#win-calc > .keyb > .b {
+  /* width: 60px; */
+  height: 50px;
+  font-size: 25px;
+  text-align: center;
+  transition: 40ms ease-in-out;
+  border-radius: 7px;
+  /* border: 1.5px solid #63636330; */
+  box-shadow: 0px 1px 1px 1px var(--s3d);
+  background: var(--card);
+  padding-top: 5px;
+  /* border: 1.5px solid var(--bd);
     border-top: 2px solid var(--bd);
     border-bottom: 1px solid var(--bd); */
-    /* border-color: var(--bd); */
-    transform-origin: bottom;
+  /* border-color: var(--bd); */
+  transform-origin: center;
 }
 
-:root.corner_squ #win-calc>.keyb>.b {
-    corner-shape: squircle;
-    border-radius: 15px;
+:root.corner_squ #win-calc > .keyb > .b {
+  corner-shape: squircle;
+  border-radius: 15px;
 }
 
-#win-calc>.keyb>.checked {
-    background-color: var(--mm) !important;
+#win-calc > .keyb > .checked {
+  background-color: var(--mm) !important;
 }
 
-#win-calc>.keyb>.b.u {
-    padding-top: 5px;
+#win-calc > .keyb > .b.u {
+  padding-top: 5px;
 }
 
-#win-calc>.keyb>.b.ans {
-    background-image: linear-gradient(120deg, var(--theme-1), var(--theme-2));
-    border: none;
-    color: #ddd;
+#win-calc > .keyb > .b.ans {
+  background-image: linear-gradient(120deg, var(--theme-1), var(--theme-2));
+  border: none;
+  color: #ddd;
 }
 
-#win-calc>.keyb>.b.ans:hover {
-    backdrop-filter: brightness(0.8);
+#win-calc > .keyb > .b.ans:hover {
+  backdrop-filter: brightness(0.8);
 }
 
-#win-calc>.keyb>span {
-    width: 71px;
-    margin: 5px 5px;
-    height: 71px;
+#win-calc > .keyb > span {
+  width: 71px;
+  margin: 5px 5px;
+  height: 71px;
 }
 
-#win-calc>.keyb>.b:hover {
-    background-color: var(--hover);
+#win-calc > .keyb > .b:hover {
+  background-color: var(--hover);
 }
 
-#win-calc>.keyb>.b:active {
-    opacity: 0.8;
-    transform: scale(0.96);
-    box-shadow: 0px 1px 1px var(--bd);
+#win-calc > .keyb > .b:active {
+  opacity: 0.8;
+  transform: scale(0.9);
+  box-shadow: 0px 1px 1px var(--bd);
 }
