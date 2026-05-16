@@ -142,6 +142,17 @@ function minwin(name) {
         $('.window.' + name).addClass('min');
         $('.window.' + name).removeClass('notrans');
         setTimeout(() => { $('.window.' + name).removeClass('show-begin'); }, 200);
+        if (!$('#start-menu.show')[0] && !$('#search-win.show')[0] && !$('#widgets.show')[0] && !$('#control.show')[0] && !$('#datebox.show')[0]) {
+            if ($('.window.max:not(.left):not(.right)')[0]) {
+                $('#dock-box').addClass('hide');
+            }
+            else {
+                $('#dock-box').removeClass('hide');
+            }
+        }
+        else {
+            $('#dock-box').removeClass('hide');
+        }
     }
 }
 
