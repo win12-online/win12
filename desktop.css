@@ -443,6 +443,54 @@ list>span.focs.cl {
     bottom: -60px;
 }
 
+#open-dock {
+    animation: none;
+    opacity: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    position: fixed;
+    height: 32px;
+    aspect-ratio: 1/1;
+    background-color: var(--contextmeu);
+    backdrop-filter: blur(20px) saturate(2);
+    text-align: center;
+    z-index: 91;
+    line-height:32px;
+    border-radius: 10px;
+    -webkit-backdrop-filter: blur(20px) saturate(2);
+    box-shadow: 0 1px 2px #44444460, 0px 3px 25px 1px var(--shadow);
+    outline: 1px solid #99999950;
+    transition: 200ms, transform 300ms cubic-bezier(0.14, 1.02, 0.17, 0.03), backdrop-filter, -webkit-backdrop-filter 0ms;
+}
+
+#dock-box.hide ~ #open-dock {
+    animation: open-dock-bounce 2s ease infinite alternate;
+    transition: 200ms;
+    opacity: 1;
+}
+
+@keyframes open-dock-bounce {
+    0% {
+        bottom: 10px;
+    }
+    50% {
+        bottom: 20px;
+    }
+    100% {
+        bottom: 10px;
+    }
+}
+
+:root.corner_squ #open-dock {
+    corner-shape: squircle;
+    border-radius: 20px;
+}
+
+#open-dock>* {
+    font-family: SettingsIcons;
+    font-size: 20px;
+}
+
 .dock {
     border-radius: 10px;
     height: 100%;
@@ -849,7 +897,7 @@ list>span.focs.cl {
     border: 1.5px solid #99999950;
     z-index: 91;
     box-shadow: 3px 3px 20px 1px var(--shadow);
-    transition: 0ms, transform 400ms cubic-bezier(0.05, 0.96, 0.11, 1), opacity 300ms;
+    transition: 300ms, transform 400ms cubic-bezier(0.05, 0.96, 0.11, 1), opacity 300ms;
     bottom: 60px;
 }
 
@@ -892,7 +940,7 @@ list>span.focs.cl {
     width: 100%;
     max-height: 100%;
     height: 100%;
-    border-radius: 0;
+    border-radius: 0 !important;
     transition: 200ms cubic-bezier(0.9, 0, 0.1, 1);
 }
 
@@ -2049,7 +2097,7 @@ input-before {
 #cm>list {
     transform: translate(0, -50%);
     opacity: 0;
-    transition: transform 200ms ease-in-out, opacity 150ms 50ms;
+    transition: transform 200ms cubic-bezier(0.2, 0.05, 0.2, 1), opacity 150ms 50ms;
 }
 
 #cm.show>list {
@@ -2100,14 +2148,13 @@ input-before {
     backdrop-filter: blur(20px) saturate(2);
     min-width: 200px;
     overflow: hidden;
-    transition: max-height 200ms ease-in-out;
+    transition: 110ms, max-height 200ms ease-in-out, top 100ms, left 100ms, padding 200ms ease-in-out, box-shadow 500ms;
     padding: 4px;
     max-height: 0;
 }
 
 #dp.show-begin {
     display: block;
-    transition: max-height 200ms ease-in-out;
 }
 
 #dp.show {
@@ -2261,11 +2308,15 @@ input-before {
     z-index: 99;
     justify-content: center;
     align-items: center;
-    display: none;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 150ms;
 }
 
 #notice-back.show {
     display: flex;
+    opacity: 1;
+    pointer-events: all;
 }
 
 #notice {
@@ -2366,7 +2417,7 @@ input-before {
     border: 1.5px solid #6f6f6f30;
     display: none;
     opacity: 0;
-    transition: cubic-bezier(0.9, 0, 0.1, 1) 200ms;
+    transition: cubic-bezier(0.1, 0.9, 0.2, 1) 200ms;
     overflow: hidden;
     box-shadow: 2px 2px 5px var(--shadow);
     z-index: 90;
@@ -2375,6 +2426,10 @@ input-before {
 :root.corner_squ .window {
     corner-shape: squircle;
     border-radius: 20px;
+}
+
+:root.corner_squ .window.max {
+    border-radius: 0px;
 }
 
 .window.foc>.titbar {
@@ -2599,7 +2654,7 @@ github-red2026 */
 }
 
 .window.max .wbtg.red {
-    border-top-right-radius: 3px;
+    border-top-right-radius: 0px;
 }
 
 #window-fill {
@@ -2607,7 +2662,7 @@ github-red2026 */
     backdrop-filter: blur(25px);
     display: none;
     position: fixed;
-    transition: all 200ms;
+    transition: all 300ms ease-in-out;
     margin: 10px;
     border-radius: 10px;
     box-shadow: 0 0 10px 1px var(--shadow);
@@ -2739,15 +2794,6 @@ github-red2026 */
 
 /** 一些奇怪的东西 **/
 
-.window.whiteboard>.titbar>p {
-    color: #000 !important;
-    ;
-}
-
-:root.dark .window.whiteboard>.titbar>p {
-    text-shadow: 0 0 5px #fff, 0 0 5px #fff;
-}
-
 .save-item {
     white-space: nowrap;
     padding: 5px;
@@ -2813,6 +2859,22 @@ body>.container>.image-container>.svg {
     to {
         transform: rotate(-90deg);
     }
+}
+
+.orientation-close-btn {
+    margin-top: 10px;
+    padding: 8px 24px;
+    border: 1px solid var(--text);
+    border-radius: 4px;
+    background: transparent;
+    color: var(--text);
+    font-size: 14px;
+    cursor: pointer;
+    transition: background .2s;
+}
+
+.orientation-close-btn:hover {
+    background: rgba(128, 128, 128, 0.2);
 }
 
 #taskbar-preview {
@@ -2888,5 +2950,4 @@ body>.container>.image-container>.svg {
     html {
       scrollbar-width: thin; 
     }
-}
 }

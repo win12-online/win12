@@ -146,8 +146,13 @@ page.addEventListener('click', (event) => {
         hide_startmenu();
     }
 });
-//开始菜单收回
-
+// 开始菜单收回
+page.addEventListener('click', (event) => {
+    if ($('#search-win').hasClass('show') && !$(event.target).closest('#search-win').length) {
+        hide_search();
+    }
+});
+// 搜索收回
 
 // 上古代码，列表前的小竖线
 document.querySelectorAll('list.focs').forEach(li => {
@@ -2037,6 +2042,11 @@ function hide_startmenu() {
     $('#start-btn').removeClass('show');
     setTimeout(() => { $('#start-menu').removeClass('show-begin'); }, 200);
 }
+function hide_search() {
+    $('#search-win').removeClass('show');
+    $('#search-btn').removeClass('show');
+    setTimeout(() => { $('#search-win').removeClass('show-begin'); }, 200);
+}
 function hide_widgets() {
     $('#widgets').removeClass('show');
     $('#widgets-btn').removeClass('show');
@@ -2558,14 +2568,22 @@ function isMobileDevice() {
     return /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 }
 
+let orientationDismissed = false;
+
 function checkOrientation() {
+    if (orientationDismissed) return;
     const container = document.getElementById('orientation-warning');
     const isPortrait = window.matchMedia("(orientation: portrait)").matches;
     if (isMobileDevice() && isPortrait) {
-        container.style.display = "flex"; // 显示提示
+        container.style.display = "flex";
     } else {
-        container.style.display = "none"; // 隐藏提示
+        container.style.display = "none";
     }
+}
+
+function dismissOrientation() {
+    orientationDismissed = true;
+    document.getElementById('orientation-warning').style.display = 'none';
 }
 
 // 监听屏幕方向变化
