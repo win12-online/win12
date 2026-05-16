@@ -2558,14 +2558,22 @@ function isMobileDevice() {
     return /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 }
 
+let orientationDismissed = false;
+
 function checkOrientation() {
+    if (orientationDismissed) return;
     const container = document.getElementById('orientation-warning');
     const isPortrait = window.matchMedia("(orientation: portrait)").matches;
     if (isMobileDevice() && isPortrait) {
-        container.style.display = "flex"; // 显示提示
+        container.style.display = "flex";
     } else {
-        container.style.display = "none"; // 隐藏提示
+        container.style.display = "none";
     }
+}
+
+function dismissOrientation() {
+    orientationDismissed = true;
+    document.getElementById('orientation-warning').style.display = 'none';
 }
 
 // 监听屏幕方向变化
