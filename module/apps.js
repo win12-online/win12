@@ -2353,12 +2353,12 @@ Micrȯsoft Windows [版本 12.0.39035.7324]
             $('#win-edge>.tool>input.url').focus();
             $('#win-edge>iframe')[apps.edge.tabs.length - 1].onload = function () {
                 this.contentDocument.querySelector('input').onkeyup = function (e) {
-                    if (e.keyCode == 13 && $(this).val() != '') {
+                    if (e.keyCode == 13 && $(this).val().trim() != '') {
                         apps.edge.goto($(this).val());
                     }
                 };
                 this.contentDocument.querySelector('svg').onclick = () => {
-                    if ($(this.contentDocument.querySelector('input')).val() != '') {
+                    if ($(this.contentDocument.querySelector('input')).val().trim() != '') {
                         apps.edge.goto($(this.contentDocument.querySelector('input')).val());
                     }
                 };
@@ -2455,6 +2455,8 @@ Micrȯsoft Windows [版本 12.0.39035.7324]
             }
         },
         goto: (u, clear = true) => {
+            u = u.trim();
+            if (!u) return;
             if (wifiStatus == false) {
                 m_tab.rename('edge', u);
                 $('#win-edge>iframe.show').attr('src', '.data/disconnected' + (isDark ? '_dark' : '') + '.html');
