@@ -2163,11 +2163,14 @@ toggletheme() 切换主题
 				<a class="a" onclick="apps.edge.reload()">
 					<i class="bi bi-arrow-clockwise"></i>
 				</a>
-				<input type="text" onkeyup="if(event.keyCode==13&&$(this).val().trim().length()!=0){apps.edge.goto($(this).val())}"
+
+				<!--@stxttkx的进一步优化-->
+				<input type="text" onkeyup="if(event.keyCode==13&&$(this).val().trim()!=''){apps.edge.goto($(this).val())}"
 					placeholder="在必应中搜索，或输入一个网址" class="url" spellcheck="false" id="edge-path" data-i18n-attr="placeholder" data-i18n-key="edge.schbing">
-				<input type="text" onkeyup="if(event.keyCode==13&&$(this).val().trim().length()!=0){m_tab.rename('edge',$(this).val());}"
+				<input type="text" onkeyup="if(event.keyCode==13&&$(this).val().trim()!=''){m_tab.rename('edge',$(this).val());}"
 					placeholder="为标签页命名" class="rename" spellcheck="false"  data-i18n-attr="placeholder" data-i18n-key="edge.rename">
-				<a class="a">
+				
+					<a class="a">
 					<i class="bi bi-info-circle" win12_title="浏览器只能访问允许嵌套的网站。由于规则限制无法获取网页标题，请右键标签页手动命名"></i>
 				</a>
 				<script>

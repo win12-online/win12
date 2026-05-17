@@ -1937,6 +1937,11 @@ Micrȯsoft Windows [版本 12.0.39035.7324]
             }
         },
         goto: (u, clear = true) => {
+
+            //@stxttkx按照@txcxgzs的建议进行的优化
+            path = path.trim();
+            if(path == '')return;
+
             if (wifiStatus == false) {
                 m_tab.rename('edge', u);
                 $('#win-edge>iframe.show').attr('src', '.data/disconnected' + (isDark ? '_dark' : '') + '.html');

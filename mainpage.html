@@ -84,7 +84,8 @@
             if (event.keyCode === 13) {
                 // 获取输入框的值
                 var inputValue = event.target.value;
-                const isInvalid = (inputValue == null) || (inputValue.trim().length === 0);
+                //空内容检查优化 by @stxttkx
+                const isInvalid = (inputValue == null) || (inputValue.trim() == '');
                 //空内容检查by@stxttkx 2026-03-02
                 if (!isInvalid) {
                     if (isSearchQuery(inputValue)) {
