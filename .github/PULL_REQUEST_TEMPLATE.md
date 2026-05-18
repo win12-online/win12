@@ -4,18 +4,11 @@
 
 # PR 标题
 
-应采用以下格式：
-
-```
-gh-NNNNNN: 所做更改的摘要
-```
-
-其中：gh-NNNNNN 指的是 GitHub Issue编号。
-
-若您的贡献是修复某个Issue，则您的拉取请求需要一个Issue编号。像修复拼写错误这种微小更改则不需要。
+您的 PR 标题应当准确概括您的更改内容。
+如果您的 PR 是对某个 issue 的实现，请附上 issue 编号（例如 #114514）。
 
 # 关于PR预览
-因基于Cloudflare pages的PR预览功能时常抽风。因此，建议您通过 GitHub Pages，在自己 fork 的仓库中直接部署页面，已提供预览。
+因基于 Cloudflare Pages 的PR预览功能尚不稳定，因此建议您通过 GitHub Pages 在您的 fork 仓库中直接部署页面，以提供预览。
 
 该功能的开关通常位于：
 
@@ -24,4 +17,8 @@ https://github.com/username/win12/settings/pages
 
 ```
 
+如果您已阅读以上内容，则可以删除本注释。
+
+If you are not a native Chinese speaker, you can view the English version of these instructions [here](https://github.com/win12-online/win12/blob/main/.github/pr-template-en.md).
 -->
+

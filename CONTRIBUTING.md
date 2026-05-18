@@ -6,17 +6,17 @@
 
 若您想贡献本仓库，那您必须仔细阅读本指南的所有内容。您还应当注意本指南中**加粗的文字**和[开发规范](#开发规范)章节的内容。
 
-本仓库仍有很多问题待解决，Issue列表长期处于积压状态。您可以先试着解决[Issue列表](https://github.com/win12-online/win12/issues)中的已知问题和功能请求。
+本仓库仍有很多问题待解决，Issue列表长期处于积压状态。您可以先试着解决[Issue 列表](https://github.com/win12-online/win12/issues)中的已知问题和功能请求。
 
 ## 基本流程
 
-下面是贡献 pull request（下文中简称“PR”）所需的基本步骤。
+下面是贡献 Pull Request（下文中简称“PR”）所需的基本步骤。
 
 1. 您可以寻找可改善的任何东西，代码逻辑、格式规范或是页面内容等进行改进。
 
 2. 然后Fork本仓库,将其Clone到本地。
 
-3. 在本地进行修改，完成后Commit。（请尽量一次Commit提交全部内容。可以追加Commits，但尽量不要超过5个Commits。）
+3. 在本地进行修改，完成后 Commit。（请尽量一次 Commit 提交全部内容。可以追加 Commits，但尽量不要频繁提交内容较少的 Commits。）
 
 4. 将修改推送到您的仓库
 
@@ -24,7 +24,7 @@
 
 6. 然后`坐和放宽`，等待其他人对你的代码进行审查。
 >[!TIP]
->在此过程中请尽量使用Git命令行、Github Desktop、[https://github.dev](https://github.dev/win12-online/win12)等方式进行提交。
+>在此过程中请尽量使用Git命令行、代码编辑器（例如 Visual Studio Code）内置的Git功能、Github Desktop、[https://github.dev](https://github.dev/win12-online/win12)等方式进行提交。
 
 ## 重要提醒
 * 若您的修改具有一定重要性或量级时，请按照以下格式阐述更新内容：
@@ -48,7 +48,7 @@
 >  1. **请不要**任意选取版本号。若您不清楚，可以通过[我们的交流群](https://teams.live.com/l/invite/FEA0yrNkE_bAn-ddwI)与我们取得联系并分配到版本号。
 >  2. 在更新时，**记住**要在“关于 Windows 12 网页版”应用的更新记录中，添加关于该更新的相关内容。
 
-* **请善用`Update branch`按钮**。点击`Update branch`按钮可将`main`分支的最新更改合并到当前PR中。但无充分理由请勿操作——会误通知关注者“有新变更”，且会消耗[预览机器人](https://github.com/Bedevere-win12-bot)的 GitHub Action 资源。
+* **请善用`Update branch`按钮**。点击`Update branch`按钮可将`main`分支的最新更改合并到当前PR中。但请勿频繁操作——会误通知关注者“有新变更”。
 
 * 根据中华人民共和国有关法律的规定您**不可以**通过本项目传播违法和违规内容，否则我们将会采取锁定+视情况封禁的处理（温馨提示：时事新闻也不行），同时我们保留在任何时间以一切方式采取法律行动、追究法律责任的权利。
 
@@ -87,3 +87,8 @@
    4. 对于代码规范的规定：
 
       对于那些不需要展开的代码，尽量压成一行
+
+### 写作风格
+请参考 [中文文案排版指北](https://github.com/sparanoid/chinese-copywriting-guidelines) 中推荐的写作风格。
+
+我们也使用 [autocorrect](https://github.com/huacnlee/autocorrect) 进行自动检查。**未通过的 PR 将不会被合并**。
