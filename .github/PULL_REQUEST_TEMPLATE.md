@@ -18,5 +18,7 @@ https://github.com/username/win12/settings/pages
 ```
 
 如果您已阅读以上内容，则可以删除本注释。
+
+If you are not a native Chinese speaker, you can view the English version of these instructions [here](https://github.com/win12-online/win12/blob/main/.github/pr-template-en.md).
 -->
 

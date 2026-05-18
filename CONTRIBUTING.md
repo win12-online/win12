@@ -87,3 +87,8 @@
    4. 对于代码规范的规定：
 
       对于那些不需要展开的代码，尽量压成一行
+
+### 写作风格
+请参考 [中文文案排版指北](https://github.com/sparanoid/chinese-copywriting-guidelines) 中推荐的写作风格。
+
+我们也使用 [autocorrect](https://github.com/huacnlee/autocorrect) 进行自动检查。**未通过的 PR 将不会被合并**。

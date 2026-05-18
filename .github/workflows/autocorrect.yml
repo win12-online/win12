@@ -1,0 +1,22 @@
+name: Autocorrect
+
+on:
+  pull_request:
+    branches: [master, main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  autocorrect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: AutoCorrect
+        uses: huacnlee/autocorrect-action@v2
+        with:
+          args: --lint
