@@ -3,177 +3,193 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>win12扫雷</title>
+    <title>Windows 12 扫雷</title>
     <style>
+        :root {
+            --win-bg: #e3e9f3;
+            --panel-bg: rgba(255, 255, 255, 0.75);
+            --accent: #0078d4;
+            --cell-unrevealed: #ffffff;
+            --cell-revealed: rgba(0, 0, 0, 0.05);
+            --border-color: rgba(0, 0, 0, 0.1);
+        }
+
         body {
-            font-family: sans-serif;
-            background-color: #f0f0f0;
+            font-family: "Microsoft YaHei", "Segoe UI", sans-serif;
+            background: linear-gradient(135deg, #cfd9df 0%, #e2ebf0 100%);
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             margin: 0;
-            background: linear-gradient(to bottom, #c0c0c0, #d0d0d0);
+            color: #333;
         }
 
+        /* 游戏主容器 */
         .container {
-            background-color: #c0c0c0;
-            border: 2px solid #808080;
-            padding: 10px;
-            box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3);
-            background: linear-gradient(to bottom, #c0c0c0, #d0d0d0);
+            background: var(--panel-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            display: inline-block;
         }
 
+        /* 状态栏 */
         .game-info {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 10px;
-            padding: 5px;
-            background-color: #c0c0c0;
-            border: 1px solid #808080;
-            background: linear-gradient(to bottom, #c0c0c0, #d0d0d0);
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 12px 18px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 10px;
+            border: 1px solid rgba(0,0,0,0.05);
         }
 
         #timer, #mines-left {
-            font-size: 1.2em;
-            padding: 5px;
-            background-color: black;
-            color: red;
-            width: 50px;
+            font-family: 'Consolas', monospace;
+            font-size: 1.4em;
+            background: #202020;
+            color: #00ff41;
+            padding: 4px 12px;
+            border-radius: 6px;
+            min-width: 50px;
             text-align: center;
-            border: 2px inset #808080;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
         }
 
         .face-button {
-            font-size: 1.5em;
-            background-color: #c0c0c0;
-            border: 2px solid #808080;
+            font-size: 1.6em;
+            background: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: 50%;
             cursor: pointer;
-            padding: 5px 10px;
-            border-style: outset;
-            background: linear-gradient(to bottom, #c0c0c0, #d0d0d0);
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
         }
 
-        .face-button:active {
-            border-style: inset;
-        }
+        .face-button:hover { transform: scale(1.1); background: #fdfdfd; }
+        .face-button:active { transform: scale(0.9); }
 
+        /* 棋盘网格 */
         .grid {
             display: grid;
-            border: 2px solid #808080;
-            background-color: #c0c0c0;
-            border-style: inset;
+            gap: 2px;
+            background: rgba(0, 0, 0, 0.08);
+            padding: 4px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            margin: 0 auto;
         }
 
         .cell {
-            width: 25px;
-            height: 25px;
-            border: 2px solid #808080;
-            box-sizing: border-box;
-            text-align: center;
-            font-size: 1.1em;
+            width: 30px;
+            height: 30px;
+            background: var(--cell-unrevealed);
+            border-radius: 4px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 800;
+            font-size: 1.1rem;
             cursor: pointer;
-            border-style: outset;
             user-select: none;
-            background: linear-gradient(to bottom, #c0c0c0, #d0d0d0);
+            transition: all 0.1s;
+            box-shadow: inset 0 -2px 0 rgba(0,0,0,0.1);
             position: relative;
         }
 
-        .cell:active {
-            border-style: inset;
+        .cell:hover:not(.revealed) {
+            background: #f0f7ff;
+            outline: 2px solid var(--accent);
+            z-index: 1;
+            transform: translateY(-1px);
         }
 
         .cell.revealed {
-            border-style: none;
-            background-color: #d0d0d0;
-            background: linear-gradient(to bottom, #d0d0d0, #e0e0e0);
+            background: var(--cell-revealed);
+            box-shadow: none;
+            cursor: default;
         }
 
-        .cell.mine {
-            background-color: red;
-            color: white;
+        /* 数字颜色映射 */
+        .cell[data-val="1"] { color: #0078d4; }
+        .cell[data-val="2"] { color: #107c10; }
+        .cell[data-val="3"] { color: #d13438; }
+        .cell[data-val="4"] { color: #002050; }
+        .cell[data-val="5"] { color: #841111; }
+
+        .cell.mine { background: #ff5f57 !important; }
+        .cell.flagged::before { content: "🚩"; font-size: 0.9em; }
+
+        /* 控制区 */
+        .difficulty-selector {
+            margin-top: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
         }
 
-        .cell.flagged::before { /* 这里写完才知道忘加了 */
-            content: "🚩";
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 1.2em;
-        }
-
+        .btn-group { display: flex; gap: 8px; justify-content: center; }
 
         .win12-button {
-            background-color: #c0c0c0;
-            border: 2px solid #808080;
-            border-style: outset;
-            padding: 5px 10px;
+            background: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 8px 16px;
             cursor: pointer;
-            background: linear-gradient(to bottom, #c0c0c0, #d0d0d0);
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
 
-        .win12-button:active {
-            border-style: inset;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal-content {
-            background-color: #fefefe;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
-            max-width: 500px;
-            background: linear-gradient(to bottom, #f0f0f0, #f8f8f8);
-        }
-
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .close:hover,
-        .close:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-        .difficulty-selector {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 10px;
+        .win12-button:hover {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+            transform: translateY(-1px);
         }
 
         .custom-difficulty {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr) auto;
+            gap: 10px;
+            align-items: flex-end;
+            background: rgba(0, 0, 0, 0.03);
+            padding: 15px;
+            border-radius: 10px;
         }
 
-        .custom-difficulty label {
-            font-size: 14px;
-        }
-
+        .custom-difficulty label { font-size: 12px; color: #666; margin-bottom: 4px; display: block; }
         .custom-difficulty input {
-            padding: 5px;
-            border: 1px solid #ccc;
-            border-radius: 3px;
+            width: 100%;
+            padding: 6px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
         }
+
+        /* 弹窗 */
+        .modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.4); backdrop-filter: blur(4px);
+            justify-content: center; align-items: center; z-index: 100;
+        }
+        .modal-content {
+            background: white; padding: 30px; border-radius: 16px; text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2); max-width: 300px;
+        }
+        .modal-content h2 { margin-top: 0; color: #111; }
+        .close { display: none; } /* 简化UI，不需要小叉叉 */
     </style>
 </head>
 <body>
@@ -186,32 +202,26 @@
     </div>
     <div class="grid" id="grid"></div>
 
-    <!-- Modal -->
-    <div id="modal" class="modal">
-        <div class="modal-content">
-            <span class="close" id="close-modal">&times;</span>
-            <h2>游戏结束！</h2>
-            <p id="modal-message"></p>
-            <button class="win12-button" id="restart-button">重新开始</button>
-        </div>
-    </div>
-
-    <!-- 模式-->
     <div class="difficulty-selector">
-        <button class="win12-button" data-difficulty="easy">简单 (9x9, 10雷)</button>
-        <button class="win12-button" data-difficulty="medium">中等 (16x16, 40雷)</button>
-        <button class="win12-button" data-difficulty="hard">困难 (16x30, 99雷)</button>
+        <div class="btn-group">
+            <button class="win12-button" data-difficulty="easy">简单 (9x9, 10雷)</button>
+            <button class="win12-button" data-difficulty="medium">中等 (16x16, 40雷)</button>
+            <button class="win12-button" data-difficulty="hard">困难 (16x30, 99雷)</button>
+        </div>
         <div class="custom-difficulty">
-            <label for="custom-rows">行数:</label>
-            <input type="number" id="custom-rows" value="16" min="5" max="30">
-            <label for="custom-cols">列数:</label>
-            <input type="number" id="custom-cols" value="16" min="5" max="30">
-            <label for="custom-mines">雷数:</label>
-            <input type="number" id="custom-mines" value="40" min="1" max="899">
-            <button class="win12-button" id="custom-button">自定义</button>
+            <div><label>行数</label><input type="number" id="custom-rows" value="16" min="5" max="30"></div>
+            <div><label>列数</label><input type="number" id="custom-cols" value="16" min="5" max="30"></div>
+            <div><label>雷数</label><input type="number" id="custom-mines" value="40" min="1" max="899"></div>
+            <button class="win12-button" id="custom-button">应用</button>
         </div>
     </div>
+</div>
 
+<div id="modal" class="modal">
+    <div class="modal-content">
+        <h2 id="modal-message">游戏结束</h2>
+        <button class="win12-button" id="restart-button" style="width: 100%; background: var(--accent); color: white;">重新开始</button>
+    </div>
 </div>
 
 <script>
@@ -220,16 +230,10 @@
     const resetButton = document.getElementById('reset-button');
     const timerElement = document.getElementById('timer');
     const modal = document.getElementById('modal');
-    const closeModalButton = document.getElementById('close-modal');
     const restartButton = document.getElementById('restart-button');
     const modalMessage = document.getElementById('modal-message');
     const difficultyButtons = document.querySelectorAll('.difficulty-selector button[data-difficulty]');
     const customButton = document.getElementById('custom-button');
-    const customRowsInput = document.getElementById('custom-rows');
-    const customColsInput = document.getElementById('custom-cols');
-    const customMinesInput = document.getElementById('custom-mines');
-    //好丑啊这里
-
 
     let grid = [];
     let rows = 9;
@@ -241,7 +245,6 @@
     let seconds = 0;
     let firstClick = true;
 
-
     function createGrid() {
         grid = [];
         for (let i = 0; i < rows; i++) {
@@ -249,21 +252,18 @@
         }
     }
 
-
     function placeMines(initialRow, initialCol) {
         let minesPlaced = 0;
         while (minesPlaced < mines) {
             const row = Math.floor(Math.random() * rows);
             const col = Math.floor(Math.random() * cols);
-
+            // 确保不落在第一次点击的位置上
             if (grid[row][col] !== 'mine' && (row !== initialRow || col !== initialCol)) {
                 grid[row][col] = 'mine';
                 minesPlaced++;
             }
         }
     }
-
-
 
     function calculateNumbers() {
         for (let i = 0; i < rows; i++) {
@@ -283,31 +283,25 @@
         }
     }
 
-
     function renderGrid() {
         gridElement.innerHTML = '';
-        gridElement.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
-
+        gridElement.style.gridTemplateColumns = `repeat(${cols}, 30px)`;
         for (let i = 0; i < rows; i++) {
             for (let j = 0; j < cols; j++) {
                 const cell = document.createElement('div');
                 cell.classList.add('cell');
                 cell.dataset.row = i;
                 cell.dataset.col = j;
-
                 cell.addEventListener('click', handleCellClick);
                 cell.addEventListener('contextmenu', handleCellRightClick);
-
                 gridElement.appendChild(cell);
             }
         }
     }
 
-
     function handleCellClick(event) {
         if (isGameOver) return;
-
-        const cell = event.target;
+        const cell = event.currentTarget;
         const row = parseInt(cell.dataset.row);
         const col = parseInt(cell.dataset.col);
 
@@ -318,26 +312,21 @@
             startTimer();
         }
 
-
-        if (cell.classList.contains('flagged')) return; // Ignore clicks on flagged cells
-
+        if (cell.classList.contains('flagged')) return;
         revealCell(row, col);
     }
 
     function handleCellRightClick(event) {
-        event.preventDefault(); // Prevent default context menu
+        event.preventDefault();
         if (isGameOver) return;
-
-        const cell = event.target;
+        const cell = event.currentTarget;
         const row = parseInt(cell.dataset.row);
         const col = parseInt(cell.dataset.col);
-
         toggleFlag(row, col, cell);
     }
 
     function toggleFlag(row, col, cell) {
-        if (grid[row][col] === 'revealed') return;
-
+        if (cell.classList.contains('revealed')) return;
         if (cell.classList.contains('flagged')) {
             cell.classList.remove('flagged');
             minesLeft++;
@@ -346,31 +335,29 @@
                 cell.classList.add('flagged');
                 minesLeft--;
             }
-
         }
         minesLeftElement.textContent = minesLeft;
     }
 
-
     function revealCell(row, col) {
-        if (row < 0 || row >= rows || col < 0 || col >= cols || grid[row][col] === 'revealed') return;
-
+        if (row < 0 || row >= rows || col < 0 || col >= cols) return;
+        
         const cell = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
-        if (!cell || cell.classList.contains('flagged')) return;
-
+        if (!cell || cell.classList.contains('revealed') || cell.classList.contains('flagged')) return;
 
         if (grid[row][col] === 'mine') {
             cell.classList.add('mine', 'revealed');
+            cell.textContent = "💣";
             gameOver(false);
             return;
         }
 
         const value = grid[row][col];
-        grid[row][col] = 'revealed';
         cell.classList.add('revealed');
+        cell.dataset.val = value; // CSS 颜色渲染
         cell.textContent = value === 0 ? '' : value;
 
-
+        // 这里不再修改 grid[row][col] 的原始数值，而是用类名判断，保证逻辑稳定性
         if (value === 0) {
             for (let x = -1; x <= 1; x++) {
                 for (let y = -1; y <= 1; y++) {
@@ -378,7 +365,6 @@
                 }
             }
         }
-
         checkWin();
     }
 
@@ -386,36 +372,29 @@
         isGameOver = true;
         stopTimer();
         resetButton.textContent = win ? "😎" : "🤯";
-
-        // Reveal all mines
+        
+        // 揭晓所有雷
         for (let i = 0; i < rows; i++) {
             for (let j = 0; j < cols; j++) {
-                const cell = document.querySelector(`[data-row="${i}"][data-col="${j}"]`);
-                if (grid[i][j] === 'mine' && cell) {
-                    cell.classList.add('mine', 'revealed');
+                if (grid[i][j] === 'mine') {
+                    const cell = document.querySelector(`[data-row="${i}"][data-col="${j}"]`);
+                    if (cell && !cell.classList.contains('flagged')) {
+                        cell.classList.add('mine', 'revealed');
+                        cell.textContent = "💣";
+                    }
                 }
             }
         }
-
-        modalMessage.textContent = win ? "恭喜，你赢了！" : "游戏结束，你输了！";
-        modal.style.display = "flex";
+        modalMessage.textContent = win ? "恭喜，你赢了！" : "哎呀，你输了，再接再厉！";
+        setTimeout(() => { modal.style.display = "flex"; }, 500);
     }
 
-
     function checkWin() {
-        let revealedCount = 0;
-        for (let i = 0; i < rows; i++) {
-            for (let j = 0; j < cols; j++) {
-                if (grid[i][j] === 'revealed') {
-                    revealedCount++;
-                }
-            }
-        }
+        const revealedCount = document.querySelectorAll('.cell.revealed').length;
         if (revealedCount === rows * cols - mines) {
             gameOver(true);
         }
     }
-
 
     function resetGame() {
         isGameOver = false;
@@ -428,9 +407,11 @@
         minesLeftElement.textContent = minesLeft;
         createGrid();
         renderGrid();
+        modal.style.display = "none";
     }
 
     function startTimer() {
+        clearInterval(timerInterval);
         timerInterval = setInterval(() => {
             seconds++;
             timerElement.textContent = seconds;
@@ -438,60 +419,40 @@
     }
 
     function stopTimer() {
-        clearInterval(timerInterval);
+     // 写不到写啥，欢迎各位补充
     }
 
-
-    // Event listeners
+    // 事件绑定
     resetButton.addEventListener('click', resetGame);
-
-    closeModalButton.addEventListener('click', () => {
-        modal.style.display = "none";
-    });
-
-    restartButton.addEventListener('click', () => {
-        modal.style.display = "none";
-        resetGame();
-    });
+    restartButton.addEventListener('click', resetGame);
 
     difficultyButtons.forEach(button => {
         button.addEventListener('click', () => {
             const difficulty = button.dataset.difficulty;
-            if (difficulty === 'easy') {
-                rows = 9;
-                cols = 9;
-                mines = 10;
-            } else if (difficulty === 'medium') {
-                rows = 16;
-                cols = 16;
-                mines = 40;
-            } else if (difficulty === 'hard') {
-                rows = 16;
-                cols = 30;
-                mines = 99;
-            }
+            if (difficulty === 'easy') { rows = 9; cols = 9; mines = 10; }
+            else if (difficulty === 'medium') { rows = 16; cols = 16; mines = 40; }
+            else if (difficulty === 'hard') { rows = 16; cols = 30; mines = 99; }
             resetGame();
         });
     });
 
     customButton.addEventListener('click', () => {
-        const customRows = parseInt(customRowsInput.value);
-        const customCols = parseInt(customColsInput.value);
-        const customMines = parseInt(customMinesInput.value);
-
+        const customRows = parseInt(document.getElementById('custom-rows').value);
+        const customCols = parseInt(document.getElementById('custom-cols').value);
+        const customMines = parseInt(document.getElementById('custom-mines').value);
+    
         if (customRows >= 5 && customRows <= 30 && customCols >= 5 && customCols <= 30 && customMines >= 1 && customMines < customRows * customCols) {
-            rows = customRows;
-            cols = customCols;
+            rows = customRows; 
+            cols = customCols; 
             mines = customMines;
             resetGame();
         } else {
-            alert("自定义参数不合法，请重新设置。");
+            shownotice("设置无效（行/列范围5-30）");
         }
     });
 
-
-    // Initialize game
-    resetGame(); // Start with default settings
+    // 初始化
+    resetGame();
 </script>
 
 </body>
