@@ -18,47 +18,54 @@ let apps = {
             <circle cx="8px" cy="8px" r="7px" style="stroke:#7f7f7f50;fill:none;stroke-width:3px;"></circle>
             <circle cx="8px" cy="8px" r="7px" style="stroke:#2983cc;stroke-width:3px;"></circle></svg></loading>`);
             // 实时获取主题
-            api('repos/tjy-gitnub/win12-theme/contents').then(res => {res.json().then(cs => {
-                console.log(cs);
-                cs.forEach(c => {
-                    if (c.type == 'dir') {
-                        api(c.url,true).then(res => {res.json().then(cnt => {
-                            $('#set-theme').html('');
-                            cnt.forEach(cn => {
-                                if (cn.name == 'theme.json') {
-                                    $.getJSON('https://tjy-gitnub.github.io/win12-theme/' + cn.path).then(inf => {
-                                        $('#set-theme>loading').remove();
-                                        $('#set-theme').append(`<a class="a act" onclick="apps.setting.theme_set('${c.name}')" style="background-image:url('https://tjy-gitnub.github.io/win12-theme/${c.name}/view.jpg')">${c.name}</a>`);
+            api('repos/tjy-gitnub/win12-theme/contents').then(res => {
+                res.json().then(cs => {
+                    console.log(cs);
+                    cs.forEach(c => {
+                        if (c.type == 'dir') {
+                            api(c.url, true).then(res => {
+                                res.json().then(cnt => {
+                                    $('#set-theme').html('');
+                                    cnt.forEach(cn => {
+                                        if (cn.name == 'theme.json') {
+                                            $.getJSON('https://tjy-gitnub.github.io/win12-theme/' + cn.path).then(inf => {
+                                                // let infjs = inf;
+                                                if ($('#set-theme>loading').length)
+                                                    $('#set-theme').html('');
+                                                $('#set-theme').append(`<a class="a act" onclick="apps.setting.theme_set('${c.name}')" style="background-image:url('https://tjy-gitnub.github.io/win12-theme/${c.name}/view.jpg')">${c.name}</a>`);
+                                            });
+                                        }
                                     });
-                                }
+                                })
                             });
-                        })});
-                    }
-                });
-            })});
-            $('#set-theme').append(`<a class="a btn" onclick="$(':root').removeAttr('style');" style="background: #555;">默认主题</a>`);
+                        }
+                    });
+                })
+            });
         },
         theme_set: (infp) => {
-            api('repos/tjy-gitnub/win12-theme/contents/' + infp).then(res => {res.json().then(cnt => {
-                // console.log('https://api.github.com/repos/tjy-gitnub/win12-theme/contents/' + infp);
-                cnt.forEach(cn => {
-                    if (cn.name == 'theme.json') {
-                        $.getJSON('https://tjy-gitnub.github.io/win12-theme/' + cn.path).then(inf => {
-                            let infjs = inf;
-                            cnt.forEach(fbg => {
-                                console.log(fbg, infjs);
-                                if (fbg.name == infjs.bg) {
-                                    $(':root').css('--bgul', `url('https://tjy-gitnub.github.io/win12-theme/${fbg.path}')`);
-                                    $(':root').css('--theme-1', infjs.color1);
-                                    $(':root').css('--theme-2', infjs.color2);
-                                    $(':root').css('--href', infjs.href);
-                                    // $('#set-theme').append(`<a class="a act" onclick="apps.setting.theme_set(\`(${inf})\`)" style="background-image:url('https://tjy-gitnub.github.io/win12-theme/${fbg.path}')">${c.name}</a>`);
-                                }
+            api('repos/tjy-gitnub/win12-theme/contents/' + infp).then(res => {
+                res.json().then(cnt => {
+                    // console.log('https://api.github.com/repos/tjy-gitnub/win12-theme/contents/' + infp);
+                    cnt.forEach(cn => {
+                        if (cn.name == 'theme.json') {
+                            $.getJSON('https://tjy-gitnub.github.io/win12-theme/' + cn.path).then(inf => {
+                                let infjs = inf;
+                                cnt.forEach(fbg => {
+                                    console.log(fbg, infjs);
+                                    if (fbg.name == infjs.bg) {
+                                        $(':root').css('--bgul', `url('https://tjy-gitnub.github.io/win12-theme/${fbg.path}')`);
+                                        $(':root').css('--theme-1', infjs.color1);
+                                        $(':root').css('--theme-2', infjs.color2);
+                                        $(':root').css('--href', infjs.href);
+                                        // $('#set-theme').append(`<a class="a act" onclick="apps.setting.theme_set(\`(${inf})\`)" style="background-image:url('https://tjy-gitnub.github.io/win12-theme/${fbg.path}')">${c.name}</a>`);
+                                    }
+                                });
                             });
-                        });
-                    }
-                });
-            })});
+                        }
+                    });
+                })
+            });
         },
         // 无法正常运行，待调试
         checkUpdate: () => {
@@ -104,7 +111,7 @@ let apps = {
                     try {
                         cmd = cmd.replace(/\/$/, '');
                         var pathl = cmd.split('/');
-                        let tmp = apps.explorer.path;
+                        let tmp = apps.explorer.getPath();
                         let valid = true;
                         pathl.forEach(name => {
                             if (Object.prototype.hasOwnProperty.call(tmp['folder'], name)) {
@@ -263,16 +270,16 @@ let apps = {
                 apps.taskmgr.gpu3Chart.innerHTML = '<path d="M 6000 1000" stroke="#2983cc" stroke-width="3px" fill="#2983cc22" />';
 
                 for (var i = 1; i <= 4; i++) {
-                    apps.taskmgr.gpuChart[i-1] = performance.$$('.graph-gpu>.graphs>.graph' + i + '>.chart>.chart')[0];
-                    apps.taskmgr.gpuChart[i-1].innerHTML = '<path d="M 6000 1000" stroke-width="3px" stroke="#2983cc" fill="#2983cc22" />';
-                    apps.taskmgr.gpuBg[i-1] = performance.$$('.graph-gpu>.graphs>.graph' + i + '>.chart>.bg')[0];
-                    apps.taskmgr.gpuBg[i-1].innerHTML = '<g class="col"></g><g class="row"></g>';
+                    apps.taskmgr.gpuChart[i - 1] = performance.$$('.graph-gpu>.graphs>.graph' + i + '>.chart>.chart')[0];
+                    apps.taskmgr.gpuChart[i - 1].innerHTML = '<path d="M 6000 1000" stroke-width="3px" stroke="#2983cc" fill="#2983cc22" />';
+                    apps.taskmgr.gpuBg[i - 1] = performance.$$('.graph-gpu>.graphs>.graph' + i + '>.chart>.bg')[0];
+                    apps.taskmgr.gpuBg[i - 1].innerHTML = '<g class="col"></g><g class="row"></g>';
                 }
                 for (var i = 1; i <= 2; i++) {
-                    apps.taskmgr.gpu2Chart[i-1] = performance.$$('.graph-gpu>.gpu2-' + i + '>.chart')[0];
-                    apps.taskmgr.gpu2Bg[i-1] = performance.$$('.graph-gpu>.gpu2-' + i + '>.bg')[0];
-                    apps.taskmgr.gpu2Bg[i-1].innerHTML = '<g class="col"></g><g class="row"></g>';
-                    apps.taskmgr.gpu2Chart[i-1].innerHTML = '<path d="M 6000 1000" stroke-width="3px" stroke="#2983cc" fill="#2983cc22" />';
+                    apps.taskmgr.gpu2Chart[i - 1] = performance.$$('.graph-gpu>.gpu2-' + i + '>.chart')[0];
+                    apps.taskmgr.gpu2Bg[i - 1] = performance.$$('.graph-gpu>.gpu2-' + i + '>.bg')[0];
+                    apps.taskmgr.gpu2Bg[i - 1].innerHTML = '<g class="col"></g><g class="row"></g>';
+                    apps.taskmgr.gpu2Chart[i - 1].innerHTML = '<path d="M 6000 1000" stroke-width="3px" stroke="#2983cc" fill="#2983cc22" />';
                 }
             }
 
@@ -593,12 +600,12 @@ let apps = {
                 let path = $(elt).attr('d').split(' ');
                 for (var i = 0; i < path.length; i++) {
                     if (path[i] == 'M' || path[i] == 'L') {
-                        var cur = Number(path[i+1]);
+                        var cur = Number(path[i + 1]);
                         cur -= 100;
                         if (cur < 0) {
                             cur = (300 - (-cur)) + 6000;
                         }
-                        path[i+1] = String(cur);
+                        path[i + 1] = String(cur);
                     }
                 }
                 $(elt).attr('d', '');
@@ -712,9 +719,9 @@ let apps = {
         },
         doSaveAs: () => {
             // Execute the actual save with the filename from the notice input
-            const fileName = document.getElementById('whiteboard-filename').value.trim() || 
-                           `Whiteboard_${new Date().toISOString().slice(0,10)}`;
-            
+            const fileName = document.getElementById('whiteboard-filename').value.trim() ||
+                `Whiteboard_${new Date().toISOString().slice(0, 10)}`;
+
             const url = apps.whiteboard.canvas.toDataURL();
             const link = document.createElement('a');
             link.href = url;
@@ -722,7 +729,7 @@ let apps = {
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-            
+
             closenotice();
         },
         delete: () => {
@@ -731,7 +738,7 @@ let apps = {
     },
     // webapp 即将网页嵌套作为应用内容，格式参考 desktop.html 中 vscode, bilibili
     webapps: {
-        apps: ['vscode', 'bilibili','copilot','minesweeper'],
+        apps: ['vscode', 'bilibili', 'copilot', 'minesweeper'],
         init: () => {
             for (const app of apps.webapps.apps) {
                 apps[app].load();
@@ -764,8 +771,8 @@ let apps = {
         }
     },
     'minesweeper': {
-      init: () => {
-          return null;
+        init: () => {
+            return null;
         },
         load: () => {
             $('#win-minesweeper')[0].insertAdjacentHTML('afterbegin', '<iframe src="https://win12-online.github.io/win12/games/minesweeper.html" frameborder="0" style="width: 100%; height: 100%;" loading="lazy"></iframe>');
@@ -1132,9 +1139,14 @@ let apps = {
             var pathl = path.split('/');
             var name = pathl[pathl.length - 1];
             pathl.pop();
-            let tmp = apps.explorer.path;
+            let files = apps.explorer.getPath();
+            let tmp = null;
             pathl.forEach(name => {
-                tmp = tmp['folder'][name];
+                if (tmp !== null) {
+                    tmp = tmp['folder'][name];
+                } else {
+                    tmp = files['folder'][name];
+                }
             });
 
             if (Object.keys(tmp['folder']).includes(name)) {
@@ -1154,29 +1166,45 @@ let apps = {
                     }
                 }
             }
-            apps.explorer.goto($('#win-explorer>.path>.tit')[0].dataset.path, false);
+            apps.explorer.pushLocalStoragePath(files, true)
         },
         paste: (path) => {
             if (!apps.explorer.clipboard) {
                 return;
             }
             var pathl = path.split('/');
-            let tmp = apps.explorer.path;
+            let files = apps.explorer.getPath();
+            let tmp = null;
             pathl.forEach(name => {
-                if (!tmp['folder'][name]) {
-                    return;
+                if (tmp !== null) {
+                    tmp = tmp['folder'][name];
+                } else {
+                    tmp = files['folder'][name];
                 }
-                tmp = tmp['folder'][name];
             });
 
             var clipboard = apps.explorer.clipboard;
             if (clipboard[0] == 'file') {
                 // Check for duplicate file name
-                if (tmp['file'].some(file => file.name === clipboard[1].name)) {
-                    shownotice('duplication file name');
-                    return;
-                }
-                tmp['file'].push({...clipboard[1]}); // Create a copy of the file object
+                if (tmp['file'] != null && tmp['folder'] != null) {
+                    if (tmp['file'].some(file => file.name === clipboard[1].name) && (tmp['folder'][clipboard[1][0]])) {
+                        shownotice('duplication file name');
+                        return;
+                    }
+                } else if (tmp['file'] == null && tmp['folder'] != null) {
+                    if (tmp['folder'][clipboard[1][0]]) {
+                        shownotice('duplication file name');
+                        return;
+                    } else {
+                        tmp['file'] = []
+                    }
+                } else if (tmp['file'] != null && tmp['folder'] == null) {
+                    if (tmp['file'].some(file => file.name === clipboard[1].name)) {
+                        shownotice('duplication file name');
+                        return;
+                    };
+                };
+                tmp['file'].push({ ...clipboard[1] }); // Create a copy of the file object
             } else {
                 // Check for duplicate folder name
                 if (tmp['folder'][clipboard[1][0]]) {
@@ -1186,6 +1214,7 @@ let apps = {
                 tmp['folder'][clipboard[1][0]] = JSON.parse(JSON.stringify(clipboard[2])); // Deep copy the folder
             }
             apps.explorer.goto(path);
+            apps.explorer.pushLocalStoragePath(files, true)
         },
         del_select: () => {
             if (apps.explorer.is_use >= 1 && apps.explorer.is_use2 != apps.explorer.is_use) {
@@ -1201,9 +1230,14 @@ let apps = {
                 var on = apps.explorer.old_name;
                 let inputTag = aTag.querySelector('#new_name');
                 var pathl = $('#win-explorer>.path>.tit')[0].dataset.path.split('/');
-                let tmp = apps.explorer.path;
+                let files = apps.explorer.getPath();
+                let tmp = files;
                 pathl.forEach(name => {
-                    tmp = tmp['folder'][name];
+                    if (tmp !== null) {
+                        tmp = tmp['folder'][name];
+                    } else {
+                        tmp = files['folder'][name];
+                    }
                 });
                 if (inputTag.value == '' || apps.explorer.traverseDirectory(tmp, inputTag.value) || on == inputTag.value) {
                     if (apps.explorer.traverseDirectory(tmp, inputTag.value) && on != inputTag.value) {
@@ -1262,8 +1296,7 @@ let apps = {
                 }
                 element = document.getElementById('new_name');
                 element.parentNode.removeChild(element);
-                apps.explorer.goto($('#win-explorer>.path>.tit')[0].dataset.path, false);
-
+                apps.explorer.pushLocalStoragePath(files, true)
             }
             apps.explorer.is_use2 = apps.explorer.is_use;
             elements = document.querySelectorAll('#win-explorer>.page>.main>.content>.view>.select');
@@ -1304,7 +1337,11 @@ let apps = {
             var pathl = path.split('/');
             var pathqwq = '';
             var index_ = 0;
-            let tmp = apps.explorer.path;
+            let tmp = apps.explorer.getPath();
+            if (path == '此电脑') {
+                apps.explorer.reset(clear);
+                return null;
+            }
             $('#win-explorer>.path>.tit')[0].dataset.path = path;
             $('#win-explorer>.path>.tit>.path')[0].innerHTML = '<div class="text" onclick="apps.explorer.reset()">此电脑</div><div class="arrow">&gt;</div>';
             $('#win-explorer>.path>.tit>.icon')[0].style.marginTop = '0px';
@@ -1373,11 +1410,14 @@ let apps = {
         add: (path, name_, type = 'file', command = '', icon = '') => { //type为文件类型，只有文件夹files和文件file
             var pathl = path.split('/');
             var icon_ = '';
-            var isMounted = !!apps.explorer.mounts[pathl[0]];
-            let tmp = apps.explorer.path;
-			
+            let files = apps.explorer.getPath();
+            let tmp = files;
             pathl.forEach(name => {
-                tmp = tmp['folder'][name];
+                if (tmp !== null) {
+                    tmp = tmp['folder'][name];
+                } else {
+                    tmp = files['folder'][name];
+                }
             });
             if (tmp == null) {
                 tmp = { folder: {}, file: [] };
@@ -1398,11 +1438,9 @@ let apps = {
               finalName = `${baseName} (${counter})${extension}`;
               counter++; 
             }
-    
-            name_ = finalName; // Now this is safely back inside the function
-            //fix: resolved boot crash (syntax error on line 1403 and scope issue)
+
             // 检查是否是文件夹
-            if (type === 'folder') {
+            if (type === 'files') {
                 if (icon !== '') {
                     icon_ = icon;
                 } else {
@@ -1421,6 +1459,9 @@ let apps = {
                     tmp = { folder: {}, file: [] };
                     tmp.folder[name_] = { folder: {}, file: [] };
                 }
+                apps.explorer.pushLocalStoragePath(files, true);
+                apps.explorer.goto(path);
+                apps.explorer.rename(path + '/' + name_);
                 return;
             }
 
@@ -1461,6 +1502,7 @@ let apps = {
                 tmp = { folder: {}, file: [] };
                 tmp.file = [{ name: name_, ico: icon_, command: command }];
             }
+            apps.explorer.pushLocalStoragePath(files, true);
             apps.explorer.goto(path);
             apps.explorer.rename(path + '/' + name_);
         },
@@ -1469,11 +1511,19 @@ let apps = {
             var name = pathl[pathl.length - 1];
             apps.explorer.old_name = name;
             pathl.pop();
-            let tmp = apps.explorer.path;
+            let files = apps.explorer.getPath();
+            let tmp = files;
             pathl.forEach(name => {
-                tmp = tmp['folder'][name];
+                if (tmp !== null) {
+                    tmp = tmp['folder'][name];
+                } else {
+                    tmp = files['folder'][name];
+                }
             });
             let element = document.querySelector('#' + apps.explorer.get_file_id(name));
+            console.log(element)
+            console.log(apps.explorer.get_file_id(name))
+            console.log(name)
             let img = element.querySelector('img').outerHTML;
             element.innerHTML = img;
             let input = document.createElement('input');
@@ -1492,6 +1542,7 @@ let apps = {
                     apps.explorer.del_select();
                 }
             });
+            apps.explorer.pushLocalStoragePath(files, false)
         },
         get_file_id: (name) => {  //只能找到已经打开了的文件夹的元素id
             var elements = document.getElementsByClassName('item');
@@ -1507,11 +1558,18 @@ let apps = {
             var name = pathl[pathl.length - 1];
             var isMounted = !!apps.explorer.mounts[pathl[0]];
             pathl.pop();
-            let tmp = apps.explorer.path;
+            let files = apps.explorer.getPath();
+            let tmp = files;
             pathl.forEach(name => {
-                tmp = tmp['folder'][name];
+                if (tmp !== null) {
+                    tmp = tmp['folder'][name];
+                } else {
+                    tmp = files['folder'][name];
+                }
             });
             let tmp_file = tmp['file'];
+            console.log(tmp_file)
+            console.log(tmp)
             for (var i = 0; i < tmp_file.length; i++) {
                 if (tmp_file[i]['name'] == name) {
                     tmp_file.splice(i, 1);
@@ -1528,10 +1586,28 @@ let apps = {
                     item.splice(item.findIndex(elt => { return elt == path; }), 1);
                 }
             });
+            apps.explorer.pushLocalStoragePath(files, true)
+        },
+        pushLocalStoragePath: (path, isRefresh = false) => {
+            const pathStr = JSON.stringify(path);
+            localStorage.setItem("files_path", pathStr);
+            if ((isRefresh ?? false) == true) {
+                apps.explorer.goto($('#win-explorer>.path>.tit')[0].dataset.path, false);
+            }
+        },
+        getPath: () => {
+            const filesPath = localStorage.getItem("files_path");
+            if (filesPath !== null) {
+                return JSON.parse(filesPath);
+            } else {
+                apps.explorer.pushLocalStoragePath(apps.explorer.path);
+                return apps.explorer.path;
+            };
         },
         traverseDirectory(dir, name) {
-            if (dir['file'] == null && dir['folder'] == null)
+            if (dir['file'] == null || dir['folder'] == null)
                 return false;
+            console.log(name)
             for (var i = 0; i < dir['file'].length; i++) {
                 if (dir['file'][i]['name'] == name) {
                     return true;
@@ -1546,8 +1622,8 @@ let apps = {
             return false;
         },
         // 禁止奇奇怪怪的缩进！尽量压行，不要毫无意义地全部格式化和展开！ 
-        // 给我看蒙了这东西，写的是啥？
-        path: {folder:{'C:':{folder:{'Program Files':{folder:{'WindowsApps':{folder:{},file:[]},'Microsoft':{folder:{},file:[]}},file:[{name:'about.exe',ico:'icon/about.svg',command:'openapp(\'about\')'},{name:'setting.exe',ico:'icon/setting.svg',command:'openapp(\'setting\')'},]},'Program Files (x86)':{folder:{'Microsoft':{folder:{'Edge':{folder:{'Application':{folder:{'SetupMetrics':{folder:{},file:[]}},file:[{name:'msedge.exe',ico:'icon/edge.svg',command:'openapp(\'edge\')'}]}}}}}}},'Windows':{folder:{'Boot':{folder:{},file:[]},'System':{folder:{},file:[]},'SysWOW64':{folder:{},file:[]},'System32':{folder:{},file:[{name:'calc.exe',ico:'icon/calc.svg',command:'openapp(\'calc\')'},{name:'cmd.exe',ico:'icon/terminal.svg',command:'openapp(\'terminal\')'},{name:'notepad.exe',ico:'icon/notepad.svg',command:'openapp(\'notepad\')'},{name:'taskmgr.exe',ico:'icon/taskmgr.png',command:'openapp(\'taskmgr\')'},{name:'winver.exe',ico:'icon/about.svg',command:'openapp(\'winver\')'},]}},file:[{name:'explorer.exe',ico:'icon/explorer.svg',command:'apps.explorer.newtab()'},{name:'notepad.exe',ico:'icon/notepad.svg',command:'openapp(\'notepad\')'},{name:'py.exe',ico:'icon/python.svg',command:'openapp(\'python\')'},]},'用户':{folder:{'Administrator':{folder:{'推荐的项目':{folder:{},file:[{name:'瓶盖介绍.doc',ico:'icon/files/word.png',command:'openapp(\'word\');apps.word.edit()'},{name:'瓶盖质量统计分析.xlsx',ico:'icon/files/excel.png',command:''},]},'文档':{folder:{'IISExpress':{folder:{},file:[]},'PowerToys':{folder:{},file:[]}},file:[{name:'瓶盖介绍.doc',ico:'icon/files/word.png',command:''},{name:'瓶盖质量统计分析.xlsx',ico:'icon/files/excel.png',command:''},]},'图片':{folder:{'本机照片':{folder:{},file:[]},'屏幕截图':{folder:{},file:[]}},file:[{name:'瓶盖构造图.png',ico:'icon/files/img.png',command:''},{name:'可口可乐瓶盖.jpg',ico:'icon/files/img.png',command:''},]},'AppData':{folder:{'Local':{folder:{'Microsoft':{folder:{'Windows':{folder:{'Fonts':{},'TaskManager':{},'Themes':{},'Shell':{},'应用程序快捷方式':{},}},}},'Programs':{folder:{'Python':{folder:{'Python310':{folder:{'DLLs':{},'Doc':{},'include':{},'Lib':{folder:{'site-packages':{},'tkinter':{},}},'libs':{},'Script':{},'share':{},'tcl':{},'Tools':{}},file:[{name:'python.exe',ico:'icon/python.png',command:'openapp(\'python\')'}]}},}}},'Temp':{folder:{}},}},'LocalLow':{folder:{'Microsoft':{folder:{'Windows':{},}},}},'Roaming':{folder:{'Microsoft':{folder:{'Windows':{folder:{'「开始」菜单':{folder:{'程序':{folder:{}},}},}},}},}},},file:[]},'音乐':{folder:{'录音机':{folder:{},file:[]}}}}},'公用':{folder:{'公用文档':{folder:{'IISExpress':{folder:{},file:[]},'PowerToys':{folder:{},file:[]}},file:[]},'公用图片':{folder:{'本机照片':{folder:{},file:[]},'屏幕截图':{folder:{},file:[]}},file:[]},'公用音乐':{folder:{'录音机':{folder:{},file:[]}}}}}}}},file:[]},'D:':{folder:{'Microsoft':{folder:{},file:[]}},file:[{name:'瓶盖结构说明.docx',ico:'icon/files/word.png',command:''},{name:'可口可乐瓶盖历史.pptx',ico:'icon/files/ppt.png',command:''},]}}},
+        // 给我看蒙了这东西，写的是啥
+        path: { folder: { 'C:': { folder: { 'Program Files': { folder: { 'WindowsApps': { folder: {}, file: [] }, 'Microsoft': { folder: {}, file: [] } }, file: [{ name: 'about.exe', ico: 'icon/about.svg', command: 'openapp(\'about\')' }, { name: 'setting.exe', ico: 'icon/setting.svg', command: 'openapp(\'setting\')' },] }, 'Program Files (x86)': { folder: { 'Microsoft': { folder: { 'Edge': { folder: { 'Application': { folder: { 'SetupMetrics': { folder: {}, file: [] } }, file: [{ name: 'msedge.exe', ico: 'icon/edge.svg', command: 'openapp(\'edge\')' }] } } } } } } }, 'Windows': { folder: { 'Boot': { folder: {}, file: [] }, 'System': { folder: {}, file: [] }, 'SysWOW64': { folder: {}, file: [] }, 'System32': { folder: {}, file: [{ name: 'calc.exe', ico: 'icon/calc.svg', command: 'openapp(\'calc\')' }, { name: 'cmd.exe', ico: 'icon/terminal.svg', command: 'openapp(\'terminal\')' }, { name: 'notepad.exe', ico: 'icon/notepad.svg', command: 'openapp(\'notepad\')' }, { name: 'taskmgr.exe', ico: 'icon/taskmgr.png', command: 'openapp(\'taskmgr\')' }, { name: 'winver.exe', ico: 'icon/about.svg', command: 'openapp(\'winver\')' },] } }, file: [{ name: 'explorer.exe', ico: 'icon/explorer.svg', command: 'apps.explorer.newtab()' }, { name: 'notepad.exe', ico: 'icon/notepad.svg', command: 'openapp(\'notepad\')' }, { name: 'py.exe', ico: 'icon/python.svg', command: 'openapp(\'python\')' },] }, '用户': { folder: { 'Administrator': { folder: { '推荐的项目': { folder: {}, file: [{ name: '瓶盖介绍.doc', ico: 'icon/files/word.png', command: 'openapp(\'word\');apps.word.edit()' }, { name: '瓶盖质量统计分析.xlsx', ico: 'icon/files/excel.png', command: '' },] }, '文档': { folder: { 'IISExpress': { folder: {}, file: [] }, 'PowerToys': { folder: {}, file: [] } }, file: [{ name: '瓶盖介绍.doc', ico: 'icon/files/word.png', command: '' }, { name: '瓶盖质量统计分析.xlsx', ico: 'icon/files/excel.png', command: '' },] }, '图片': { folder: { '本机照片': { folder: {}, file: [] }, '屏幕截图': { folder: {}, file: [] } }, file: [{ name: '瓶盖构造图.png', ico: 'icon/files/img.png', command: '' }, { name: '可口可乐瓶盖.jpg', ico: 'icon/files/img.png', command: '' },] }, 'AppData': { folder: { 'Local': { folder: { 'Microsoft': { folder: { 'Windows': { folder: { 'Fonts': {}, 'TaskManager': {}, 'Themes': {}, 'Shell': {}, '应用程序快捷方式': {}, } }, } }, 'Programs': { folder: { 'Python': { folder: { 'Python310': { folder: { 'DLLs': {}, 'Doc': {}, 'include': {}, 'Lib': { folder: { 'site-packages': {}, 'tkinter': {}, } }, 'libs': {}, 'Script': {}, 'share': {}, 'tcl': {}, 'Tools': {} }, file: [{ name: 'python.exe', ico: 'icon/python.png', command: 'openapp(\'python\')' }] } }, } } }, 'Temp': { folder: {} }, } }, 'LocalLow': { folder: { 'Microsoft': { folder: { 'Windows': {}, } }, } }, 'Roaming': { folder: { 'Microsoft': { folder: { 'Windows': { folder: { '「开始」菜单': { folder: { '程序': { folder: {} }, } }, } }, } }, } }, }, file: [] }, '音乐': { folder: { '录音机': { folder: {}, file: [] } } } } }, '公用': { folder: { '公用文档': { folder: { 'IISExpress': { folder: {}, file: [] }, 'PowerToys': { folder: {}, file: [] } }, file: [] }, '公用图片': { folder: { '本机照片': { folder: {}, file: [] }, '屏幕截图': { folder: {}, file: [] } }, file: [] }, '公用音乐': { folder: { '录音机': { folder: {}, file: [] } } } } } } } }, file: [] }, 'D:': { folder: { 'Microsoft': { folder: {}, file: [] } }, file: [{ name: '瓶盖结构说明.docx', ico: 'icon/files/word.png', command: '' }, { name: '可口可乐瓶盖历史.pptx', ico: 'icon/files/ppt.png', command: '' },] } } },
         history: [],
         historypt: [],
         initHistory: (tab) => {
@@ -2242,16 +2318,16 @@ Micrȯsoft Windows [版本 12.0.39035.7324]
             const elt = $('#win-terminal>pre.text-cmd')[0];
             const input = $('#win-terminal input');
             const command = input.val().trim();
-            
+
             if (command !== '') {
                 // Add command to history
                 apps.terminal.historyList.push(command);
                 apps.terminal.historypt = apps.terminal.historyList.length;
-                
+
                 var newD = document.createElement('div');
                 newD.innerText = `C:\\Windows\\System32> ${command}`;
                 elt.appendChild(newD);
-                
+
                 if (command === 'exit') {
                     hidewin('terminal');
                 } else if (!runcmd(command, true)) {
@@ -2260,19 +2336,19 @@ Micrȯsoft Windows [版本 12.0.39035.7324]
                     elt.appendChild(newD);
                 }
             }
-            
+
             input.val('');
             input.blur();
             input.focus();
         },
         history: (direction) => {
             const input = $('#win-terminal input');
-            
+
             if (!apps.terminal.isViewingHistory) {
                 apps.terminal.isViewingHistory = true;
                 apps.terminal.historyTemp = input.val();
             }
-            
+
             if (direction === 'up' && apps.terminal.historypt > 0) {
                 apps.terminal.historypt--;
                 input.val(apps.terminal.historyList[apps.terminal.historypt]);
@@ -2290,13 +2366,13 @@ Micrȯsoft Windows [版本 12.0.39035.7324]
     },
     search: {
         rand: [{ name: '农夫山泉瓶盖简介.txt', bi: 'text', ty: '文本文档' },
-            { name: '瓶盖构造图.png', bi: 'image', ty: 'PNG 文件' },
-            { name: '瓶盖结构说明.docx', bi: 'richtext', ty: 'Microsoft Word 文档' },
-            { name: '可口可乐瓶盖.jpg', bi: 'image', ty: 'JPG 文件' },
-            { name: '可口可乐瓶盖历史.pptx', bi: 'slides', ty: 'Microsoft Powerpoint 演示文稿' },
-            { name: '瓶盖质量统计分析.xlsx', bi: 'ruled', ty: 'Microsoft Excel 工作表' },
-            { name: '农夫山泉瓶盖.svg', bi: 'image', ty: 'SVG 文件' },
-            { name: '瓶盖介绍.doc', bi: 'richtext', ty: 'Microsoft Word 文档' }],
+        { name: '瓶盖构造图.png', bi: 'image', ty: 'PNG 文件' },
+        { name: '瓶盖结构说明.docx', bi: 'richtext', ty: 'Microsoft Word 文档' },
+        { name: '可口可乐瓶盖.jpg', bi: 'image', ty: 'JPG 文件' },
+        { name: '可口可乐瓶盖历史.pptx', bi: 'slides', ty: 'Microsoft Powerpoint 演示文稿' },
+        { name: '瓶盖质量统计分析.xlsx', bi: 'ruled', ty: 'Microsoft Excel 工作表' },
+        { name: '农夫山泉瓶盖.svg', bi: 'image', ty: 'SVG 文件' },
+        { name: '瓶盖介绍.doc', bi: 'richtext', ty: 'Microsoft Word 文档' }],
         search: le => {
             if (le > 0) {
                 $('#search-win>.ans>.list>list').html(
@@ -2391,7 +2467,7 @@ Micrȯsoft Windows [版本 12.0.39035.7324]
             $('.edge>.content>.tool').show();
             apps.edge.fuls = !apps.edge.fuls;
         },
-        in_div(id,event) {
+        in_div(id, event) {
             var div = document.getElementById(id);
             var x = event.clientX;
             var y = event.clientY;
