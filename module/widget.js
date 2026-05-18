@@ -45,6 +45,23 @@ let widgets = {
             $('#calc-input-widgets').val('0');
         }
     },
+    music163: {
+        init: () => {
+            widgetMusic163 = new Musiclator('.wg.music163:not(.template)>.content>.container>#music163-input-widgets', '.wg.music163:not(.template)>.content');
+        },
+        remove: () => {
+            $('#music163-input-widgets').val('0');
+        },
+        update: () => {
+            $('.wg.music163>.content').html(
+                `<p class="text">网易云音乐插件使用步骤</p>
+                <p class="text">1. 打开网易云音乐，找到你喜欢的歌曲</p>
+                <p class="text">2.通过<a onclick="window.open('https://yunzhiapi.cn/?action=doc&id=52','_blank');“win12_title="获取音乐ID API - 云智API"class="jump">云智api</a>获取音乐ID</p>
+                <input type="text" id="music163-input" placeholder="3.在这里粘贴音乐ID，回车确认" onkeydown="goMusic(event)">`
+            )
+            
+        }
+    },
     weather: {
         init: () => {
             widgets.weather.update();
@@ -187,6 +204,18 @@ let widgets = {
         }
     }
 };
+
+//网易云音乐播放组件必需的函数（因为需要切换界面）
+function goMusic(event){
+    if(event.keyCode == 13)//如果按下回车键
+    {
+        var musicId = $('.wg.music163>.content>.music163-input').val();
+        $('.wg.music163>.content').html(
+            `<iframe frameborder="no" marginwidth="0" marginheight="0" src="https://music.163.com/outchain/player?type=2&id=${musicId}&auto=1&height=66"></iframe>
+            <button onclick='widgets.music163.update'>返回上一步</button>`);
+    }
+}
+
 let edit_mode = false,gridnow;
 function editMode() {
     if (edit_mode) {
