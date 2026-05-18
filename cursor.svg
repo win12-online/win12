@@ -1,0 +1,14 @@
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="coolGradient" x1="4.5" y1="3.5" x2="14.5" y2="13.5" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#00EEFF" />
+      <stop offset="100%" stop-color="#FF00BB" />
+    </linearGradient>
+  </defs>
+
+  <g>
+    <path d="M5 4L15 14H10L5 19V4Z" fill="url(#coolGradient)"/>
+    
+    <path d="M5 4L15 14H10L5 19V4Z" stroke="white" stroke-width="0.5" stroke-linejoin="round"/>
+  </g>
+</svg>
