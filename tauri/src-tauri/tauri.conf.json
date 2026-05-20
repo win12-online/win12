@@ -1,0 +1,22 @@
+{
+  "productName": "Win12",
+  "version": "0.1.0",
+  "build": {
+    "frontendDist": "../..",
+    "devUrl": null
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "Win12",
+        "url": "boot.html",
+        "width": 1280,
+        "height": 720,
+        "minWidth": 900,
+        "minHeight": 600,
+        "resizable": true,
+        "fullscreen": false
+      }
+    ]
+  }
+}
