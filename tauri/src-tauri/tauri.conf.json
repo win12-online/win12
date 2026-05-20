@@ -1,6 +1,8 @@
 {
+  "$schema": "https://schema.tauri.app/config/2",
   "productName": "Win12",
   "version": "0.1.0",
+  "identifier": "com.oliver.win12",
   "build": {
     "frontendDist": "../..",
     "devUrl": null
@@ -18,5 +20,9 @@
         "fullscreen": false
       }
     ]
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all"
   }
 }
