@@ -2157,42 +2157,38 @@ function dragBrightness(e) {
 }
 
 // 控制面板 电量监测
-if (navigator.getBattery) {
-    navigator.getBattery().then((battery) => {
-        // 检查battery对象和level属性是否存在且有效
-        if (battery && typeof battery.level === 'number' && !isNaN(battery.level)) {
-            const batteryLevel = Math.max(0, Math.min(1, battery.level)); // 确保在0-1范围内
-            const batteryWidth = 18 * batteryLevel + 5;
+function updateDockBatteryIcon(level) {
+    if (typeof level !== 'number' || isNaN(level)) return;
 
-            const pathElement = $('.a.dock.control>svg>path')[0];
-            if (pathElement) {
-                pathElement.outerHTML = `<path
-                    d="M 4 7 C 2.3550302 7 1 8.3550302 1 10 L 1 19 C 1 20.64497 2.3550302 22 4 22 L 24 22 C 25.64497 22 27 20.64497 27 19 L 27 10 C 27 8.3550302 25.64497 7 24 7 L 4 7 z M 4 9 L 24 9 C 24.56503 9 25 9.4349698 25 10 L 25 19 C 25 19.56503 24.56503 20 24 20 L 4 20 C 3.4349698 20 3 19.56503 3 19 L 3 10 C 3 9.4349698 3.4349698 9 4 9 z M 5 11 L 5 18 L ${batteryWidth} 18 L ${batteryWidth} 11 L 5 11 z M 28 12 L 28 17 L 29 17 C 29.552 17 30 16.552 30 16 L 30 13 C 30 12.448 29.552 12 29 12 L 28 12 z"
+    const batteryLevel = Math.max(0, Math.min(1, level));
+    const batteryWidth = 18 * batteryLevel + 5;
+    const pathElement = $('.a.dock.control>svg>path')[0];
+
+    if (pathElement) {
+        pathElement.outerHTML = `<path
+            d="M 4 7 C 2.3550302 7 1 8.3550302 1 10 L 1 19 C 1 20.64497 2.3550302 22 4 22 L 24 22 C 25.64497 22 27 20.64497 27 19 L 27 10 C 27 8.3550302 25.64497 7 24 7 L 4 7 z M 4 9 L 24 9 C 24.56503 9 25 9.4349698 25 10 L 25 19 C 25 19.56503 24.56503 20 24 20 L 4 20 C 3.4349698 20 3 19.56503 3 19 L 3 10 C 3 9.4349698 3.4349698 9 4 9 z M 5 11 L 5 18 L ${batteryWidth} 18 L ${batteryWidth} 11 L 5 11 z M 28 12 L 28 17 L 29 17 C 29.552 17 30 16.552 30 16 L 30 13 C 30 12.448 29.552 12 29 12 L 28 12 z"
             id="path2" fill="#000000"
         />`;
+    }
+}
 
-                // 检查addEventListener是否存在
-                if (battery.addEventListener && typeof battery.addEventListener === 'function') {
-                    battery.addEventListener('levelchange', () => {
-                        if (battery && typeof battery.level === 'number' && !isNaN(battery.level)) {
-                            const updatedLevel = Math.max(0, Math.min(1, battery.level));
-                            const updatedWidth = 18 * updatedLevel + 5;
-                            const updatedPathElement = $('.a.dock.control>svg>path')[0];
-                            if (updatedPathElement) {
-                                updatedPathElement.outerHTML = `<path
-                                    d="M 4 7 C 2.3550302 7 1 8.3550302 1 10 L 1 19 C 1 20.64497 2.3550302 22 4 22 L 24 22 C 25.64497 22 27 20.64497 27 19 L 27 10 C 27 8.3550302 25.64497 7 24 7 L 4 7 z M 4 9 L 24 9 C 24.56503 9 25 9.4349698 25 10 L 25 19 C 25 19.56503 24.56503 20 24 20 L 4 20 C 3.4349698 20 3 19.56503 3 19 L 3 10 C 3 9.4349698 3.4349698 9 4 9 z M 5 11 L 5 18 L ${updatedWidth} 18 L ${updatedWidth} 11 L 5 11 z M 28 12 L 28 17 L 29 17 C 29.552 17 30 16.552 30 16 L 30 13 C 30 12.448 29.552 12 29 12 L 28 12 z"
-                id="path2" fill="#000000"
-            />`;
-                            }
-                        }
-                    });
-                }
-            }
-        }
-    }).catch((error) => {
-        // 静默处理错误，电池API在某些浏览器中不可用是正常的
-        console.log('电池API不可用:', error);
-    });
+async function updateDockBatteryFromNative() {
+    if (!window.win12Native || !window.win12Native.isTauri || !window.win12Native.isTauri() || typeof window.win12Native.getBatteryInfo !== 'function') return;
+
+    try {
+        const battery = await window.win12Native.getBatteryInfo();
+        if (!battery || typeof battery.percent !== 'number' || isNaN(battery.percent)) return;
+
+        updateDockBatteryIcon(battery.percent > 1 ? battery.percent / 100 : battery.percent);
+    } catch (error) {
+        // 非 Tauri 或无电池设备时保持 HTML 中的默认电量。
+        console.log('Tauri 电池信息不可用:', error);
+    }
+}
+
+updateDockBatteryFromNative();
+if (window.win12Native && window.win12Native.isTauri && window.win12Native.isTauri()) {
+    window.setInterval(updateDockBatteryFromNative, 60000);
 }
 
 // 任务管理器 记录硬件运行时间
