@@ -3,3 +3,4 @@ web.config
 .idea
 
 .DS_Store
+.vite/
