@@ -3,7 +3,25 @@ Win12的tauri框架目录
 
 ## 关于调试
 
+### 安装依赖
+1.在`win12`项目根目录中安装依赖
+```bash
+npm install
+```
+
+2.在`tarui`目录中安装依赖
+```bash
+cd tarui && npm install
+```
+
+- 两个目录的依赖均需安装
+
 ### 启动调试
+以下命令均在`win12/tarui`目录下执行
+```bash
+cd tarui
+```
+
 调试需要2个终端
 在第一个终端中使用此命令启动Vite
 ```bash
