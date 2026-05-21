@@ -4,8 +4,8 @@
   "version": "0.1.0",
   "identifier": "com.oliver.win12",
   "build": {
-    "frontendDist": "../..",
-    "devUrl": null
+    "frontendDist": "../dist",
+    "devUrl": "http://localhost:5173"
   },
   "app": {
     "withGlobalTauri": true,
