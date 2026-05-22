@@ -1568,38 +1568,38 @@ shutdown [-s] [-r] [-f] [-a] [-t time]
 
 // 语音球
 
-var voiceBall = document.getElementById("voiceBall");
-var nbFlag = true;
-var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-var isDragging = false;
+var voiceBall = document.getElementById("voiceBall"); 
+var nbFlag = true; 
+var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0; 
+var isDragging = false; 
 
-voiceBall.addEventListener("mousedown", dragMouseDown);
-voiceBall.addEventListener("mouseup", stopDrag);
+voiceBall.addEventListener("pointerdown", dragMouseDown); 
+voiceBall.addEventListener("pointerup", stopDrag); 
 
-function dragMouseDown(e) {
-    e.preventDefault();
-    pos3 = e.clientX;
-    pos4 = e.clientY;
-    document.addEventListener("mousemove", elementDrag);
-    isDragging = false;
-}
+function dragMouseDown(e) { 
+  e.preventDefault(); 
+  pos3 = e.clientX; 
+  pos4 = e.clientY; 
+  document.addEventListener("pointermove", elementDrag); 
+  isDragging = false; 
+} 
 
-function elementDrag(e) {
-    e.preventDefault();
-    pos1 = pos3 - e.clientX;
-    pos2 = pos4 - e.clientY;
-    pos3 = e.clientX;
-    pos4 = e.clientY;
-    voiceBall.style.top = (voiceBall.offsetTop - pos2) + "px";
-    voiceBall.style.left = (voiceBall.offsetLeft - pos1) + "px";
-    isDragging = true;
-}
+function elementDrag(e) { 
+  e.preventDefault(); 
+  pos1 = pos3 - e.clientX; 
+  pos2 = pos4 - e.clientY; 
+  pos3 = e.clientX; 
+  pos4 = e.clientY; 
+  voiceBall.style.top = (voiceBall.offsetTop - pos2) + "px"; 
+  voiceBall.style.left = (voiceBall.offsetLeft - pos1) + "px"; 
+  isDragging = true; 
+} 
 
-function stopDrag() {
-    document.removeEventListener("mousemove", elementDrag);
-    if (!isDragging) {
-        startSpeechRecognition();
-    }
+function stopDrag() { 
+  document.removeEventListener("pointermove", elementDrag); 
+  if (!isDragging) { 
+    startSpeechRecognition(); 
+  } 
 }
 
 function insertTextAtCursor(text) {
