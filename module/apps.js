@@ -776,7 +776,7 @@ let apps = {
           return null;
         },
         load: () => {
-            $('#win-regedit')[0].insertAdjacentHTML('afterbegin', '<iframe src="/apps/page/regedit.html" frameborder="0" style="width: 100%; height: 100%;" loading="lazy"></iframe>');
+            $('#win-regedit')[0].insertAdjacentHTML('afterbegin', '<iframe src="https://biaogexiong.github.io/apps/page/regedit.html" frameborder="0" style="width: 100%; height: 100%;" loading="lazy"></iframe>');
         }
     },
     defender: {
