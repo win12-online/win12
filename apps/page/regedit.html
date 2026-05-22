@@ -13,27 +13,28 @@
 }
 
 body{
-    background:#cfcfcf;
+    background:#f5f3fa;
     overflow:hidden;
 }
 
 .window{
     width:100vw;
     height:100vh;
-    background:#d9d9d9;
+    background:#f5f3fa;
     display:flex;
     flex-direction:column;
 }
 
 .menu{
     height:30px;
-    background:#efefef;
-    border-bottom:1px solid #b5b5b5;
+    background:#efefefcc;
     display:flex;
     align-items:center;
     gap:18px;
     padding:0 10px;
     font-size:14px;
+    backdrop-filter: blur(10px);
+    border-radius: 10px;
 }
 
 .main{
@@ -43,9 +44,10 @@ body{
 
 .sidebar{
     width:270px;
-    background:#f4f4f4;
-    border-right:1px solid #b5b5b5;
+    background:#f4f4f4cc;
     overflow:auto;
+    backdrop-filter: blur(10px);
+    border-radius: 10px;
 }
 
 .tree{
@@ -65,6 +67,8 @@ body{
     cursor:pointer;
     user-select:none;
     padding:2px 0;
+    backdrop-filter: blur(10px);
+    border-radius: 10px;
 }
 
 .tree-item:hover{
@@ -83,6 +87,12 @@ body{
 .sub-item{
     padding-left:28px;
     line-height:26px;
+    backdrop-filter: blur(10px);
+    border-radius: 10px;
+}
+  
+.sub-item:hover{
+    background:#dbe9ff;
 }
 
 .arrow{
@@ -101,12 +111,13 @@ body{
 .table-header{
     height:28px;
     background:#f8f8f8;
-    border-bottom:1px solid #b5b5b5;
     display:grid;
     grid-template-columns:220px 120px 1fr;
     align-items:center;
     padding:0 10px;
     font-size:14px;
+    backdrop-filter: blur(10px);
+    border-radius: 10px;
 }
 
 .row{
@@ -116,6 +127,8 @@ body{
     font-size:14px;
     align-items:center;
     height:42px;
+    backdrop-filter: blur(10px);
+    border-radius: 10px;
 }
 
 .row:hover{
@@ -141,12 +154,13 @@ body{
     position:absolute;
     display:none;
     min-width:180px;
-    background:#f2f2f2;
-    border:1px solid #7a7a7a;
-    box-shadow:2px 2px 8px rgba(0,0,0,0.25);
+    background:#f2f2f2cc;
+    box-shadow:2px 2px 8px rgba(0,0,0,0.15);
     padding:4px 0;
     z-index:9999;
     font-size:14px;
+    backdrop-filter: blur(10px);
+    border-radius: 10px;
 }
 
 .context-item{
@@ -155,8 +169,10 @@ body{
 }
 
 .context-item:hover{
-    background:#0a64d8;
+    background:#6a1b9a22;
     color:white;
+    backdrop-filter: blur(10px);
+    border-radius: 10px;
 }
 </style>
 </head>
@@ -407,6 +423,9 @@ function toggleFolder(el){
 document.addEventListener("contextmenu",(e)=>{
     e.preventDefault();
 
+    const treeItem = e.target.closest(".tree-item");
+    const subItem = e.target.closest(".sub-item");
+
     // 點到 REG_SZ
     if(row.contains(e.target)){
 
@@ -416,6 +435,18 @@ document.addEventListener("contextmenu",(e)=>{
         `;
     }
 
+    // 點到左側資料夾
+    else if(treeItem || subItem){
+
+        menu.innerHTML = `
+            <div class="context-item">展開(E)</div>
+            <div class="context-item">新增(N)</div>
+            <div class="context-item">重新命名(M)</div>
+            <div class="context-item">刪除(D)</div>
+        `;
+    }
+
+    // 點到右側空白
     else if(content.contains(e.target)){
 
         menu.innerHTML = `
@@ -430,10 +461,6 @@ document.addEventListener("contextmenu",(e)=>{
     menu.style.display = "block";
     menu.style.left = e.pageX + "px";
     menu.style.top = e.pageY + "px";
-});
-
-document.addEventListener("click",()=>{
-    menu.style.display = "none";
 });
 </script>
 
