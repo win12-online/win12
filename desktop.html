@@ -1,31 +1,31 @@
-<!-- Windows 12 网页版是一个开放源项目,
+<!-- Windows 12 网页版是一个开放源项目，
 	希望让用户在网络上预先体验 Windows 12,
 	内容可能与 Windows 12 正式版本不一致。
 	使用标准网络技术，例如 HTML、CSS 和 JavaScript，
 	此项目绝不附属于微软，且不应与微软操作系统或产品混淆，
 	这也不是 Windows365 cloud PC
 	本项目中微软、Windows 和其他示范产品是微软公司的商标 -->
-<!--------禁止格式化本文档!  -------->
+<!--------禁止格式化本文档！ -------->
 <!-----No Formatting the Code! ---->
-<!-- 编辑前务必认真阅读，有不合规范之pr，视情况或要求整改或不予合并 -->
+<!-- 编辑前务必认真阅读，有不合规范之 pr，视情况或要求整改或不予合并 -->
 <!-- 开发须知：
 
 旨为统一代码风格，增加其可读性，也为他人开发便利，以下内容所有开发者、贡献者务必严格遵守，感谢配合！
 
-对于HTML文件的规定
+对于 HTML 文件的规定
 1. 绝对严格禁止格式化本 html 文档，否则坚决拒绝合并
-2. 对于id属性，除必须外一般不使用id属性，尽量以class替代。若必须使用，切记：
+2. 对于 id 属性，除必须外一般不使用 id 属性，尽量以 class 替代。若必须使用，切记：
 	1. 若非 body 下直接的子元素，原则上不设置 id。若确需，参见下方条目 3
 	2. 所取 id 必须有意义，且不可有与其他 id 重复者
-	3. 对于非 body>* 元素，坚决不得以单个单词作为 id。请按照 “父元素标志词-(...)-id名称” 进行命名。如：taskmgr-search, setting-search等
+	3. 对于非 body>* 元素，坚决不得以单个单词作为 id。请按照“父元素标志词-(...)-id 名称”进行命名。如：taskmgr-search, setting-search 等
 3. 对于 class 属性：
 	1. 仅对必要的元素分配 class
 	2. 所取的名字必须要有意义
-	3. 使用css选择器时，确保所选元素准确定位且无其他匹配，以 id 选择器开头来选择为佳
+	3. 使用 css 选择器时，确保所选元素准确定位且无其他匹配，以 id 选择器开头来选择为佳
 4. 对于压行，可在保证可读性前提下自由处置，参考规范：
 	1. 对于文件中的 svg 图像，压为一行
-	2. 对于连续3个以上的连续结束标签，视情况压为一行
-	3. 对于较短的多个并列雷同的项，每项视情况压为一行，如list中的内容
+	2. 对于连续 3 个以上的连续结束标签，视情况压为一行
+	3. 对于较短的多个并列雷同的项，每项视情况压为一行，如 list 中的内容
 	4. 对于不更改、无具体意义的内容，可视情况处置
 
 一些全局性可用的内容，供使用和统一风格：
@@ -33,11 +33,11 @@
 	与 .jump 合用于设置了 href 属性的 <a> 链接
 .button 经典按钮，常与 .a 合用
 list 列表>
-	<a> 列表项，常与.a合用
+	<a> 列表项，常与.a 合用
 	.text 文本内容，不可点击
 .buttons 按钮组>
-	.submit 确认，常与.a合用
-	.cancel 取消，常与.a合用
+	.submit 确认，常与.a 合用
+	.cancel 取消，常与.a 合用
 .act 经典点击动画
 .input 输入框
 其他自行研究
@@ -46,23 +46,23 @@ list 列表>
 setData(key, value) 本地存储信息。注意管理，谨慎使用
 localStorage.getItem(key) 与前者配合使用，以读取存储信息
 
-stop(event) 停止事件向父级传递事件（停止冒泡），event变量照抄。可使祖先元素接受不到发生的对应事件。
+stop(event) 停止事件向父级传递事件（停止冒泡），event 变量照抄。可使祖先元素接受不到发生的对应事件。
 
 showcm(event, id, arg) 显示右键菜单，使用方法：oncontextmenu="return showcm(event,'标识',arg);"，
 	参考 desktop.js 中 cms 中的写法，需提前在 cms 中定义提示内容及其标识符。showcm 带有 stop(event), 无需另加
 openapp(name) 打开窗口，用法：openapp('程序（窗口）名称')，
-	程序（窗口）名称就是想要显示的窗口.window的另一个类名，须设置 apps[程序（窗口）名称]对象和init方法
+	程序（窗口）名称就是想要显示的窗口.window 的另一个类名，须设置 apps[程序（窗口）名称] 对象和 init 方法
 shownotice(name) 打开提示窗口，用法：shownotice('提示内容标识符')，
 	参考 desktop.js 中 nts 中的写法，需提前在 nts 对象中定义提示内容及其标识符
 closenotice() 与前者配合，关闭提示窗口
-showwin(name) 显示窗口，除特殊用途外不建议使用，用法：showwin('窗口名称')，注意：窗口名称就是想要显示的窗口.window的另一个类名
-hidewin(name) 关闭窗口，用法：hidewin('程序（窗口）名称')，注意：程序（窗口）名称就是想要显示的窗口.window的另一个类名
+showwin(name) 显示窗口，除特殊用途外不建议使用，用法：showwin('窗口名称')，注意：窗口名称就是想要显示的窗口.window 的另一个类名
+hidewin(name) 关闭窗口，用法：hidewin('程序（窗口）名称')，注意：程序（窗口）名称就是想要显示的窗口.window 的另一个类名
 toggletheme() 切换主题
 
 关于 App 添加：
 
 壹 常规 app
-	1. 界面与(伪)后端的开发，js 在 module/apps.js 中，css 和资源文件在 apps/style 和 apps/icons 中
+	1. 界面与 (伪) 后端的开发，js 在 module/apps.js 中，css 和资源文件在 apps/style 和 apps/icons 中
 	2. 绘制图标，存储于 icon 中，注意后缀名，参考 desktop.js 中 @icon 的说明
 	3. 在开始菜单 (@#startmenu-l>list) 中添加你的应用
 
@@ -385,7 +385,7 @@ toggletheme() 切换主题
 				</div>
 				<div class="tool">
 					<p style="font-size: 30px;margin: 12px 5px 2px 0;line-height:1;" class="time">12:00</p>
-					<p class="date" style="opacity: 0.5;">星期一, 2368年13月34日</p>
+					<p class="date" style="opacity: 0.5;">星期一，2368 年 13 月 34 日</p>
 					<div class="pw">
 						<a class="a btn btn-icon big" win12_title="切换全屏" onclick="
 							if($('#start-menu').hasClass('max')){
@@ -782,7 +782,7 @@ toggletheme() 切换主题
 	<div id="datebox">
 		<div class="tit">
 			<p class="time">12:29:19</p>
-			<p class="date">星期一, 2022年09月22日</p>
+			<p class="date">星期一，2022 年 09 月 22 日</p>
 			<p id="lunar"></p>
 			<hr>
 		</div>
@@ -795,7 +795,7 @@ toggletheme() 切换主题
 		</div>
 	</div>
 	<div id="dock-box">
-		<!-- Dock(任务)栏 -->
+		<!-- Dock(任务) 栏 -->
 		<div class="dock dock-start">
 			<a class="dock-btn" id="start-btn" win12_title="开始 (Ctrl+Win)" onclick="openDockWidget('start-menu')" oncontextmenu="return showcm(event,'winx',null)">
 				<!-- 开始按钮 -->
@@ -834,7 +834,7 @@ toggletheme() 切换主题
 				<svg viewBox="0,0,141,113" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" overflow="hidden" class="wid4"><defs><filter id="fx0" x="-10%" y="-10%" width="120%" height="120%" filterUnits="userSpaceOnUse" primitiveUnits="userSpaceOnUse"><feComponentTransfer color-interpolation-filters="sRGB"><feFuncR type="discrete" tableValues="0 0"/><feFuncG type="discrete" tableValues="0 0"/><feFuncB type="discrete" tableValues="0 0"/><feFuncA type="linear" slope="0.4" intercept="0"/></feComponentTransfer><feGaussianBlur stdDeviation="5.77778 5.77778"/></filter><filter id="fx1" x="-10%" y="-10%" width="120%" height="120%" filterUnits="userSpaceOnUse" primitiveUnits="userSpaceOnUse"><feComponentTransfer color-interpolation-filters="sRGB"><feFuncR type="discrete" tableValues="0 0"/><feFuncG type="discrete" tableValues="0 0"/><feFuncB type="discrete" tableValues="0 0"/><feFuncA type="linear" slope="0.4" intercept="0"/></feComponentTransfer><feGaussianBlur stdDeviation="4 4"/></filter><clipPath id="clip-wid4-2"><rect x="629" y="380" width="141" height="113"/></clipPath><clipPath id="clip-wid4-3"><rect x="-6" y="-3" width="154" height="121"/></clipPath><clipPath id="clip-wid4-4"><rect x="0" y="0" width="143" height="115"/></clipPath><linearGradient x1="670.387" y1="386.075" x2="728.613" y2="486.925" gradientUnits="userSpaceOnUse" spreadMethod="reflect" id="fill-wid4-5"><stop offset="0" stop-color="#D854CB"/><stop offset="0.13" stop-color="#D854CB"/><stop offset="1" stop-color="#A266E4"/></linearGradient><clipPath id="clip-wid4-6"><rect x="-5" y="-5" width="105" height="69"/></clipPath><clipPath id="clip-wid4-7"><rect x="0" y="0" width="98" height="63"/></clipPath></defs><g clip-path="url(#clip-wid4-2)" transform="translate(-629 -380)"><g clip-path="url(#clip-wid4-3)" filter="url(#fx0)" transform="translate(628 379)"><g clip-path="url(#clip-wid4-4)"><path d="M18.97 46.5177C18.97 31.4582 31.1781 19.25 46.2377 19.25L96.7623 19.25C111.822 19.25 124.03 31.4582 124.03 46.5177L124.03 68.4823C124.03 83.5418 111.822 95.75 96.7623 95.75L46.2377 95.75C31.1781 95.75 18.97 83.5418 18.97 68.4823Z" fill="#FF0000" fill-rule="evenodd"/></g></g><path d="M648 425.733C648 410.969 659.969 399 674.733 399L724.267 399C739.031 399 751 410.969 751 425.733L751 447.267C751 462.031 739.031 474 724.267 474L674.733 474C659.969 474 648 462.031 648 447.267Z" fill="url(#fill-wid4-5)" fill-rule="evenodd"/><g clip-path="url(#clip-wid4-6)" filter="url(#fx1)" transform="translate(653 407)"><g clip-path="url(#clip-wid4-7)"><path d="M17.3857 45.3857C24.6516 31.6825 31.9177 17.9794 39.5617 17.3963 47.2057 16.8131 56.4457 40.5542 63.2497 41.887 70.0537 43.2198 79.3357 31.3285 80.3857 25.3933" stroke="#FFFFFF" stroke-width="9" stroke-linecap="round" stroke-miterlimit="8" fill="none" fill-rule="evenodd"/></g></g><path d="M668.5 450.5C675.766 436.797 683.032 423.094 690.676 422.511 698.32 421.928 707.56 445.669 714.364 447.001 721.168 448.334 730.45 436.443 731.5 430.508" stroke="#FFFFFF" stroke-width="8.66667" stroke-linecap="round" stroke-miterlimit="8" fill="none" fill-rule="evenodd"/></g></svg>
 			</a>
 			<a class="dock-btn" onclick="$('#copilot').toggleClass('show');$(this).toggleClass('show')" id="copilot-btn">
-				<!--copilot按钮-->
+				<!--copilot 按钮-->
 			<img src="icon/copilot.svg"></a>
 		</div>
 		<div class="dock" id="taskbar" style="display: none;" count="0">
@@ -1102,7 +1102,7 @@ toggletheme() 切换主题
 						<div class="chart-container applicants">
 							<div class="chart-container-header">
 								<h2 data-i18n="defender.recreq">请求记录</h2>
-								<span>今天 仅展示最近5次请求</span>
+								<span>今天 仅展示最近 5 次请求</span>
 							</div>
 							<div class="applicant-line">
 								<div class="applicant-info">
@@ -1422,8 +1422,8 @@ toggletheme() 切换主题
 						<a><icon></icon><div><p>打印机和扫描仪</p><p>设置打印机、排除故障</p></div><i class="bi bi-chevron-right"></i></a>
 						<a><icon></icon><div><p>移动设备</p><p>立即从电脑访问移动设备</p></div><i class="bi bi-chevron-right"></i></a>
 						<a><icon></icon><div><p>触摸板</p><p>点击、滚动、缩放、手势</p></div><i class="bi bi-chevron-right"></i></a>
-						<a><icon></icon><div><p>笔和Windows Ink</p><p>设置触控笔、设置触控屏幕</p></div><i class="bi bi-chevron-right"></i></a>
-						<a><icon></icon><div><p>USB</p><p>通知、USB节电模式</p></div><i class="bi bi-chevron-right"></i></a>
+						<a><icon></icon><div><p>笔和 Windows Ink</p><p>设置触控笔、设置触控屏幕</p></div><i class="bi bi-chevron-right"></i></a>
+						<a><icon></icon><div><p>USB</p><p>通知、USB 节电模式</p></div><i class="bi bi-chevron-right"></i></a>
 					</div>
 				</div>
 				<!-- 蓝牙与设备 end -->
@@ -1442,10 +1442,10 @@ toggletheme() 切换主题
 						<a><icon></icon><div><p>WLAN</p><p>连接、管理已连接网络</p></div><i class="bi bi-chevron-right"></i></a>
 						<a><icon></icon><div><p>移动网络 未连接</p><p>通过移动网络访问互联网</p></div><i class="bi bi-chevron-right"></i></a>
 						<a><icon></icon><div><p>VPN</p><p>添加、连接、管理</p></div><i class="bi bi-chevron-right"></i></a>
-						<a><icon></icon><div><p>移动热点</p><p>共享Internet连接</p></div><i class="bi bi-chevron-right"></i></a>
+						<a><icon></icon><div><p>移动热点</p><p>共享 Internet 连接</p></div><i class="bi bi-chevron-right"></i></a>
 						<a><icon></icon><div><p>飞行模式</p><p>停止无线通信</p></div><i class="bi bi-chevron-right"></i></a>
 						<a><icon></icon><div><p>代理</p><p>用于 WI-Fi 和以太网的代理服务器</p></div><i class="bi bi-chevron-right"></i></a>
-						<a><icon></icon><div><p>拨号</p><p>设置拨号 Internet连接</p></div><i class="bi bi-chevron-right"></i></a>
+						<a><icon></icon><div><p>拨号</p><p>设置拨号 Internet 连接</p></div><i class="bi bi-chevron-right"></i></a>
 						<a><icon></icon><div><p>高级网络设置</p><p>查看所有网络适配器、网络重置</p></div><i class="bi bi-chevron-right"></i></a>
 					</div>
 				</div>
@@ -1621,7 +1621,7 @@ toggletheme() 切换主题
 								<div class="button" onclick="localStorage.setItem('token', '');">清除 Token</div>
 								<div class="button" onclick="$('.dp.access-token>input.token').val(localStorage.getItem('token'));">查看 Token</div>
 							</div>
-							<div class="detail" style="font-size: 0.8em; color: var(--text2);">您可以在这里填入您的Github Access Token来提高Github API限制访问次数，即可以更好地使用 Windows 更新、主题等功能。您的 Token 仅会存放在本地浏览器中，该数据不会传输至服务端，也更不会外泄，但请您妥善保管好自己的 Token。</div>
+							<div class="detail" style="font-size: 0.8em; color: var(--text2);">您可以在这里填入您的 Github Access Token 来提高 Github API 限制访问次数，即可以更好地使用 Windows 更新、主题等功能。您的 Token 仅会存放在本地浏览器中，该数据不会传输至服务端，也更不会外泄，但请您妥善保管好自己的 Token。</div>
 						</div>
 					</div>
 				</div>
@@ -1645,7 +1645,7 @@ toggletheme() 切换主题
 								<a class="checkbox checked a" onclick="$(this).toggleClass('checked'); autoUpdate = !autoUpdate; localStorage.setItem('autoUpdate', autoUpdate)"></a>
 							</div>
 						</div>
-						<a><icon></icon><div><p>Windows预览体验计划</p><p>获取Windows的预览版本，以分享有关新功能的更新和反馈</p></div><i class="bi bi-chevron-right"></i></a>
+						<a><icon></icon><div><p>Windows 预览体验计划</p><p>获取 Windows 的预览版本，以分享有关新功能的更新和反馈</p></div><i class="bi bi-chevron-right"></i></a>
 					</div>
 				</div>
 			</div>
@@ -1841,7 +1841,7 @@ toggletheme() 切换主题
 					<p data-i18n="about.intro.intro.p3">&emsp;&emsp;若您对于该项目有任何意见或建议，请在 GitHub 上<a onclick="window.open('https://github.com/win12-online/win12/issues','_blank');" win12_title="https://github.com/win12-online/win12/issues" class="jump">提交 issues</a>，您的问题会被尽可能快地解决。</p>
 					<p data-i18n="about.intro.intro.p4">&emsp;&emsp;原创作者星源，点击以<a onclick="window.open('https://tjy-gitnub.github.io/','_blank');" win12_title="https://tjy-gitnub.github.io/" class="jump">了解详细</a>。</p>
 					<h2 class="tit" data-i18n="about.intro.os"><span></span>开源说明</h2>
-					<p data-i18n="about.intro.os.p1">&emsp;&emsp;此项目是一个开源项目，采用Eclipse基金会发行的Eclipse Public License 2.0许可证（网址:https://www.eclipse.org/legal/epl-2.0/）进行许可。在遵守该许可证的前提下，您可以自由使用本项目的源代码。</p>
+					<p data-i18n="about.intro.os.p1">&emsp;&emsp;此项目是一个开源项目，采用 Eclipse 基金会发行的 Eclipse Public License 2.0 许可证（网址:https://www.eclipse.org/legal/epl-2.0/）进行许可。在遵守该许可证的前提下，您可以自由使用本项目的源代码。</p>
 					<p data-i18n="about.intro.os.p2">&emsp;&emsp;根据许可，你可以对该项目进行传播、分发、修改以及二次发布，包括个人和商业用途。</p>
 					<p data-i18n="about.intro.os.p3">&emsp;&emsp;但您必须给出源码来源，<strong>包括作者，项目链接等</strong>，必须使用相同的协议开源。</p>
 					<p data-i18n="about.intro.os.p4">&emsp;&emsp;不是在该项目基础上进行增加、修改的，仅参考源码的，不需要开源，但也仅供学习用途。</p>
@@ -1873,7 +1873,7 @@ toggletheme() 切换主题
 					<p data-i18n="about.intro.others.p1">&emsp;&emsp;此项目基于目前 Windows 版本创造，与微软的 Windows 12 正式版本不一致。</p>
 					<p data-i18n="about.intro.others.p2">&emsp;&emsp;此项目绝不附属于微软，且不应与微软操作系统或产品混淆，这也不是 Windows365 cloud PC。</p>
 					<p data-i18n="about.intro.others.p3">&emsp;&emsp;本项目中微软、Windows 和其他示范产品是微软公司的商标。本项目中 Android 是谷歌公司的商标。</p>
-					<p data-i18n="about.intro.others.p4">&emsp;&emsp;若您在本项目（网址为win12-online.github.io/win12/）之外的网站看到此页面，那么您可能正在浏览一个镜像网站。若欲造访原始页面，请点击<a onclick="window.open('https://win12-online.github.io/win12/desktop.html','_blank');" win12_title="https://win12-online.github.io/win12/desktop.html" class="jump">这里</a>。</p>
+					<p data-i18n="about.intro.others.p4">&emsp;&emsp;若您在本项目（网址为 win12-online.github.io/win12/）之外的网站看到此页面，那么您可能正在浏览一个镜像网站。若欲造访原始页面，请点击<a onclick="window.open('https://win12-online.github.io/win12/desktop.html','_blank');" win12_title="https://win12-online.github.io/win12/desktop.html" class="jump">这里</a>。</p>
 				</div>
 			</div>
 			<div class="cnt update">
@@ -1887,14 +1887,14 @@ toggletheme() 切换主题
 					<details><summary><span>v10.2.2</span> 修改部分动效和UI细节</summary><p>
 						&emsp;&emsp;-(更新来自 @HHCL233)<br>
 						&emsp;&emsp;- 在任务栏自动隐藏时显示隐藏状态图标 (#669)<br>
-						&emsp;&emsp;- 删除Blackboard特殊标题效果<br>
+						&emsp;&emsp;- 删除 Blackboard 特殊标题效果<br>
 						&emsp;&emsp;- 全屏时窗口不再是圆角<br>
-						&emsp;&emsp;- 不允许Prettier自动格式化html,css,js文件<br>
+						&emsp;&emsp;- 不允许 Prettier 自动格式化 html,css,js 文件<br>
 						&emsp;&emsp;- 开始菜单全屏时不再是圆角<br>
 						&emsp;&emsp;- 开始菜单取消全屏时动画变为正确<br>
-						&emsp;&emsp;- 贡献者显示框更符合Win12<br>
+						&emsp;&emsp;- 贡献者显示框更符合 Win12<br>
 						&emsp;&emsp;- 修改计算器按下按钮动效<br>
-						&emsp;&emsp;- Copilot消息卡片支持跟随系统主题色<br>
+						&emsp;&emsp;- Copilot 消息卡片支持跟随系统主题色<br>
 						&emsp;&emsp;- 修改打开窗口与右键菜单动效<br>
 						&emsp;&emsp;- 打开弹窗时背景遮罩改为渐显渐隐<br>
 					</p></details>
@@ -1920,22 +1920,22 @@ toggletheme() 切换主题
 						&emsp;&emsp;-(更新来自 @tangyuan0821)<br>
 						&emsp;&emsp;-修复了一些已知问题。<br>
 					</p></details>
-					<details><summary><span>v10.0.8</span> 添加Word</summary><p>
+					<details><summary><span>v10.0.8</span> 添加 Word</summary><p>
 						&emsp;&emsp;-(更新来自 @HHCL233)<br>
-						&emsp;&emsp;-添加Word应用<br>
+						&emsp;&emsp;-添加 Word 应用<br>
 					</p></details>
-					<details><summary><span>v10.0.7</span> 优化关机后行为和设置的部分UI</summary><p>
+					<details><summary><span>v10.0.7</span> 优化关机后行为和设置的部分 UI</summary><p>
 						&emsp;&emsp;-(更新来自 @HHCL233)<br>
-						&emsp;&emsp;-删除设置中Windows更新页的重复元素<br>
+						&emsp;&emsp;-删除设置中 Windows 更新页的重复元素<br>
 						&emsp;&emsp;-设置中系统页的重命名支持打开重命名窗口<br>
-						&emsp;&emsp;-关于Windows12应用的侧边栏更改为类似设置侧边栏的样式<br>
+						&emsp;&emsp;-关于 Windows12 应用的侧边栏更改为类似设置侧边栏的样式<br>
 						&emsp;&emsp;-支持在关机后按下回车重新开机<br>
 					</p></details>
 					<details><summary><span>v10.0.6</span> 优化部分应用</summary><p>
 						&emsp;&emsp;-(更新来自 @HHCL233)<br>
 						&emsp;&emsp;-添加一个没用的重命名电脑窗口<br>
-						&emsp;&emsp;-更改“扫雷”名称并重新分类至Web应用下<br>
-						&emsp;&emsp;-将“开始菜单”的“Copilot”点击行为和任务栏“Copilot”点击行为一致(不会再打开窗口化Copilot)<br>
+						&emsp;&emsp;-更改“扫雷”名称并重新分类至 Web 应用下<br>
+						&emsp;&emsp;-将“开始菜单”的“Copilot”点击行为和任务栏“Copilot”点击行为一致 (不会再打开窗口化 Copilot)<br>
 						&emsp;&emsp;-支持通过“开始菜单”的“更多”查看推荐项目<br>
 						&emsp;&emsp;-“任务管理器”的进程占用颜色现在会跟随主题色<br>
 						&emsp;&emsp;-“文件资源管理器”中不可打开的侧边栏项现在打开会显示“你没有权限打开此文件”<br>
@@ -1946,8 +1946,8 @@ toggletheme() 切换主题
 					</p></details>
 					<details><summary><span>v10.0.5</span> 设置优化</summary><p>
 						&emsp;&emsp;-(更新来自 @tangyuan0821)<br>
-				        &emsp;&emsp;- 对 “设置” 应用中的部分表述进行了优化，使其更契合微软的风格<br>
-						&emsp;&emsp;- 在“设置”中增加了“Windows预览体验计划”<br>
+				        &emsp;&emsp;- 对“设置”应用中的部分表述进行了优化，使其更契合微软的风格<br>
+						&emsp;&emsp;- 在“设置”中增加了“Windows 预览体验计划”<br>
 						&emsp;&emsp;- 其他细微之处的更新<br>
 				    </p></details>
 					<details><summary><span>v10.0.4</span> 扫雷</summary><p>
@@ -1973,7 +1973,7 @@ toggletheme() 切换主题
 					</p></details>
 					<details><summary><span>v10.0.0</span> AI Copilot 回归，走向国际化</summary><p>
 						&emsp;&emsp;-(更新来自 @NB-Group)<br>
-						&emsp;&emsp;重启AI Copilot！<br>
+						&emsp;&emsp;重启 AI Copilot！<br>
 						&emsp;&emsp;-(更新来自 @tjy-gitnub)<br>
 						&emsp;&emsp;-部分英语翻译<br>
 						&emsp;&emsp;-细节优化和修复<br>
@@ -2011,8 +2011,8 @@ toggletheme() 切换主题
 					</p></details>
 					<details><summary><span>v9.0.0</span> 窗口背景材质超级大升级！</summary><p>
 						&emsp;&emsp;-(更新来自@NB-Group)<br>
-						&emsp;&emsp;- 新材质(仿win11 Mica)非常高级！ <br>
-						&emsp;&emsp;- 将设置的UI更新了</p>
+						&emsp;&emsp;- 新材质 (仿 win11 Mica) 非常高级！ <br>
+						&emsp;&emsp;- 将设置的 UI 更新了</p>
 					</p></details>
 					<details><summary><span>v8.1.0</span> 整理</summary><p>
 						&emsp;&emsp;-(更新来自@tjy-gitnub)<br>
@@ -2021,8 +2021,8 @@ toggletheme() 切换主题
 					</p></details>
 					<details><summary><span>v8.0.0</span> Microsoft Store</summary><p>
 						&emsp;&emsp;-(更新来自@User782Tec)<br>
-						&emsp;&emsp;-使用svg矢量图优化了任务管理器性能图表的绘制<br>
-						&emsp;&emsp;-加入了半成品的Microsoft Store<br>
+						&emsp;&emsp;-使用 svg 矢量图优化了任务管理器性能图表的绘制<br>
+						&emsp;&emsp;-加入了半成品的 Microsoft Store<br>
 						&emsp;&emsp;-其他一些细微之处的更新</p>
 					</p></details>
 					<!-- 全部列出来那这个更多意义何在？ -->
@@ -2353,7 +2353,7 @@ toggletheme() 切换主题
 		<div class="resize-bar"></div>
 		<div class="titbar">
 			<img src="icon/wsa.png" class="icon">
-			<p data-i18n="wsa.name">手机连接(适用于 Android™️ 的 Windows 子系统)</p>
+			<p data-i18n="wsa.name">手机连接 (适用于 Android™️ 的 Windows 子系统)</p>
 			<div>
 				<a class="a wbtg red" onclick="hidewin('wsa')"><i class="bi bi-x-lg"></i></a>
 				<a class="a wbtg max" style="pointer-events: none;color: #777;"><i class="bi bi-app"></i></a>
@@ -2470,7 +2470,7 @@ toggletheme() 切换主题
 				</div>
 			</div>
 			<p data-i18n="camera.notice.txt">
-				&emsp;&emsp;欢迎使用“相机”应用！本应用由 User782Tec 开发， tjy-gitnub 维护。<br />
+				&emsp;&emsp;欢迎使用“相机”应用！本应用由 User782Tec 开发，tjy-gitnub 维护。<br />
 				&emsp;&emsp;在使用中，本应用将会获取访问您摄像头的权限（用于进行拍摄照片等操作）。本应用不会收集、上传或分享您的任何个人信息与拍摄内容，所有照片仅保存在您设备本地。<br />
 				&emsp;&emsp;若您不同意上述协议，将无法使用本应用。
 			</p>
@@ -2498,7 +2498,7 @@ toggletheme() 切换主题
 				<div class="text" data-i18n="run.txt">Windows 将根据你所输入的名称，为你打开相应的程序、文件夹、文档或 Internet 资源。</div>
 			</div>
 			<div class="open">
-				<div class="prompt" data-i18n="run.open">打开: </div>
+				<div class="prompt" data-i18n="run.open">打开：</div>
 				<input class="input" type="text"
 					onkeyup="if (event.keyCode == 13) { hidewin('run');apps.run.run($('#win-run>.open>input').val()); }">
 			</div>
@@ -2624,10 +2624,10 @@ toggletheme() 切换主题
 			<p data-i18n="winver.p2">© Microsoft Corporation。保留所有权利。</p>
 			<p style="margin-top: 20px" data-i18n="winver.p3">Windows12 专业版操作系统及其用户界面受美国和其他国家/地区的商标法和其他待颁布或已颁布的知识产权法保护。</p>
 			<div class="bottom">
-				<p data-i18n="winver.p4">根据Microsoft软件许可条款，许可如下用户使用本产品</p>
+				<p data-i18n="winver.p4">根据 Microsoft 软件许可条款，许可如下用户使用本产品</p>
 				<p style="margin:20px 0 0 90px">Administrator</p>
 			</div>
-			<p ondblclick="$(this).hide()" class="a mesg" data-i18n="winver.p5">上面都是胡扯，切勿当真(双击隐藏此消息)</p>
+			<p ondblclick="$(this).hide()" class="a mesg" data-i18n="winver.p5">上面都是胡扯，切勿当真 (双击隐藏此消息)</p>
 			<div class="buttons">
 				<a class="a submit act" onclick="hidewin('winver');" data-i18n="ok">确定</a>
 			</div>
@@ -2679,7 +2679,7 @@ toggletheme() 切换主题
 			<div class="code-statusbar">
 				<span id="code-status-cursor">行 1, 列 1</span>
 				<span id="code-status-lang">Text</span>
-				<span id="code-status-tab">空格: 4</span>
+				<span id="code-status-tab">空格：4</span>
 				<span id="code-status-encoding">UTF-8</span>
 			</div>
 		</div>
@@ -2851,7 +2851,7 @@ toggletheme() 切换主题
 									<div class="tit" data-i18n="taskmgr.performance.wifi">Wi-Fi</div>
 									<div class="data">
 										<div class="tit">WLAN</div>
-										<div class="value2"><span data-i18n="taskmgr.performance.wifi-speed">发送: 1145 接收: 1145 Mbps</span></div>
+										<div class="value2"><span data-i18n="taskmgr.performance.wifi-speed">发送：1145 接收：1145 Mbps</span></div>
 									</div>
 								</div>
 							</div>
@@ -2898,14 +2898,14 @@ toggletheme() 切换主题
 									<div class="right">
 										<table>
 											<tbody>
-												<tr><td>基准速度: </td><td>10.0 GHz</td></tr>
-												<tr><td>插槽: </td><td>1</td></tr>
-												<tr><td>内核: </td><td>32</td></tr>
-												<tr><td>逻辑处理器: </td><td>32</td></tr>
-												<tr><td>虚拟化: </td><td>已启用</td></tr>
-												<tr><td>L1缓存: </td><td>512 MB</td></tr>
-												<tr><td>L2缓存: </td><td>2.1 GB</td></tr>
-												<tr><td>L3缓存: </td><td>5.5 GB</td></tr>
+												<tr><td>基准速度：</td><td>10.0 GHz</td></tr>
+												<tr><td>插槽：</td><td>1</td></tr>
+												<tr><td>内核：</td><td>32</td></tr>
+												<tr><td>逻辑处理器：</td><td>32</td></tr>
+												<tr><td>虚拟化：</td><td>已启用</td></tr>
+												<tr><td>L1 缓存：</td><td>512 MB</td></tr>
+												<tr><td>L2 缓存：</td><td>2.1 GB</td></tr>
+												<tr><td>L3 缓存：</td><td>5.5 GB</td></tr>
 											</tbody>
 										</table>
 									</div>
@@ -2936,7 +2936,7 @@ toggletheme() 切换主题
 								</div>
 								<div class="information">
 									<div class="left">
-										<div><div class="top">使用中(已压缩)</div><div class="value">11.4 GB</div></div>
+										<div><div class="top">使用中 (已压缩)</div><div class="value">11.4 GB</div></div>
 										<div><div class="top">可用</div><div class="value">88.6 GB</div></div>
 										<div><div class="top">已提交</div><div class="value">12 / 100 GB</div></div>
 										<div><div class="top">已缓存</div><div class="value">5.5 GB</div></div>
@@ -2946,9 +2946,9 @@ toggletheme() 切换主题
 									<div class="right">
 										<table>
 											<tbody>
-												<tr><td>速度: </td><td>4514MHz</td></tr>
-												<tr><td>已使用插槽: </td><td>2 / 2</td></tr>
-												<tr><td>外形规格: </td><td>Row of chips</td></tr>
+												<tr><td>速度：</td><td>4514MHz</td></tr>
+												<tr><td>已使用插槽：</td><td>2 / 2</td></tr>
+												<tr><td>外形规格：</td><td>Row of chips</td></tr>
 												<tr><td>为硬件保留的内存：</td><td>200MB</td></tr>
 											</tbody>
 										</table>
@@ -2990,11 +2990,11 @@ toggletheme() 切换主题
 									<div class="right">
 										<table>
 											<tbody>
-												<tr><td>容量: </td><td>359 GB</td></tr>
-												<tr><td>已格式化: </td><td>359 GB</td></tr>
-												<tr><td>系统磁盘: </td><td>是</td></tr>
-												<tr><td>页面文件: </td><td>是</td></tr>
-												<tr><td>类型: </td><td>SSD</td></tr>
+												<tr><td>容量：</td><td>359 GB</td></tr>
+												<tr><td>已格式化：</td><td>359 GB</td></tr>
+												<tr><td>系统磁盘：</td><td>是</td></tr>
+												<tr><td>页面文件：</td><td>是</td></tr>
+												<tr><td>类型：</td><td>SSD</td></tr>
 											</tbody>
 										</table>
 									</div>
@@ -3026,7 +3026,7 @@ toggletheme() 切换主题
 										<table>
 											<tbody>
 												<tr>
-													<td>适配器名称: </td>
+													<td>适配器名称：</td>
 													<td>WLAN</td>
 												</tr>
 												<tr>
@@ -3034,19 +3034,19 @@ toggletheme() 切换主题
 													<td>NB Network</td>
 												</tr>
 												<tr>
-													<td>连接类型: </td>
+													<td>连接类型：</td>
 													<td>802.11ac</td>
 												</tr>
 												<tr>
-													<td>IPv4地址: </td>
+													<td>IPv4 地址：</td>
 													<td>114.514.19.81</td>
 												</tr>
 												<tr>
-													<td>IPv6地址: </td>
+													<td>IPv6 地址：</td>
 													<td>2CBB::2CBB:2CBB:2CBB:2CBB</td>
 												</tr>
 												<tr>
-													<td>信号强度: </td>
+													<td>信号强度：</td>
 													<td>
 														<svg xmlns="http://www.w3.org/2000/svg" viewBox="4.4 4.4 26.2 31.2" width="1.45em" height="1.4em">
 															<path d="M 5 25 L 5 35 L 10 35 L 10 25 L 5 25 M 10 20 L 10 35 L 15 35 L 15 20 L 10 20 M 15 15 L 20 15 L 20 35 L 15 35 L 15 15 M 20 10 L 25 10 L 25 35 L 20 35 L 20 10 M 25 5 L 25 35 L 30 35 L 30 5 L 25 5" stroke="#8e5829" stroke-width="0.6" fill="#8e582988"/>
@@ -3121,11 +3121,11 @@ toggletheme() 切换主题
 										<table>
 											<tbody>
 												<tr>
-													<td>驱动程序版本: </td>
+													<td>驱动程序版本：</td>
 													<td>11.45.14.19</td>
 												</tr>
 												<tr>
-													<td>驱动程序日期: </td>
+													<td>驱动程序日期：</td>
 													<td>2025 / 1 / 5</td>
 												</tr>
 												<tr>
@@ -3133,8 +3133,8 @@ toggletheme() 切换主题
 													<td>12 (FL 12.1)</td>
 												</tr>
 												<tr>
-													<td>物理位置: </td>
-													<td>PCI 总线 0、设备 14 、功能 0</td>
+													<td>物理位置：</td>
+													<td>PCI 总线 0、设备 14、功能 0</td>
 												</tr>
 											</tbody>
 										</table>

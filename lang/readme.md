@@ -41,7 +41,7 @@ It is recommended to use the [win12-i18n](https://github.com/win12-online/win12-
 顺便把 `lang_zh_cn` 文件一同完善，感激不尽。<br>Please also help improve the lang_zh_cn file — we would greatly appreciate it.
 
 ### 加分项 / Bonus Points
-1. 与 Windows 11 一致的部分，应符合(尽量)最新版的原生语言内容<br>For parts that match Windows 11, try to use the latest official native wording.
+1. 与 Windows 11 一致的部分，应符合 (尽量) 最新版的原生语言内容<br>For parts that match Windows 11, try to use the latest official native wording.
 2. 不一致的，应避免机器翻译<br>For non‑matching parts, avoid machine translation.
 
 ## 酬劳 / Rewards

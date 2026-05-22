@@ -92,7 +92,7 @@ let apps = {
     },
     run: {
         init: () => {
-            $('#win-run>.open>input').val(run_cmd);   //在windows中，运行输入的内容会被保留
+            $('#win-run>.open>input').val(run_cmd);   //在 windows 中，运行输入的内容会被保留
             window.setTimeout(() => {
                 $('#win-run>.open>input').focus();
                 $('#win-run>.open>input').select();
@@ -456,7 +456,7 @@ let apps = {
             apps.taskmgr.wifi.send = Number((Math.random() * 100).toFixed(2));
             $('#win-taskmgr>.main>.cnt.performance>.content>.performance-graph>.graph-wifi>.information>.left>div:nth-child(1)>.value')[0].innerText = `${apps.taskmgr.wifi.send.toFixed(2)} Mbps`;
             $('#win-taskmgr>.main>.cnt.performance>.content>.performance-graph>.graph-wifi>.information>.left>div:nth-child(2)>.value')[0].innerText = `${apps.taskmgr.wifi.receive.toFixed(2)} Mbps`;
-            $('#win-taskmgr>.main>.cnt.performance>.content>.select-menu>.graph-wifi>.right>.data>.value2')[0].innerText = `发送: ${apps.taskmgr.wifi.send} 接收: ${apps.taskmgr.wifi.receive} Mbps`;
+            $('#win-taskmgr>.main>.cnt.performance>.content>.select-menu>.graph-wifi>.right>.data>.value2')[0].innerText = `发送： ${apps.taskmgr.wifi.send} 接收： ${apps.taskmgr.wifi.receive} Mbps`;
         },
         drawGraph: (chart, data, nth = 0) => {
             var path = $(chart.querySelectorAll('path')[nth]).attr('d');
@@ -938,8 +938,8 @@ let apps = {
             apps.explorer.newtab();
             // apps.explorer.reset();
             apps.explorer.Process_Of_Select = '';
-            apps.explorer.is_use = 0;//千万不要删除它，它依托bug运行
-            apps.explorer.is_use2 = 0;//千万不要删除它，它依托bug运行
+            apps.explorer.is_use = 0;//千万不要删除它，它依托 bug 运行
+            apps.explorer.is_use2 = 0;//千万不要删除它，它依托 bug 运行
             apps.explorer.old_name = '';
             apps.explorer.clipboard = null;
             if (!apps.explorer.fsApiSupported) $('#explorer-mount-btn').hide();
@@ -1103,10 +1103,10 @@ let apps = {
             <a class="a item act" ondblclick="apps.explorer.goto('C:')" ontouchend="apps.explorer.goto('C:')" oncontextmenu="showcm(event,'explorer.folder','C:');return stop(event);">
             <img src="apps/icons/explorer/diskwin.svg"><div><p class="name">本地磁盘 (C:)</p>
             <div class="bar"><div class="content" style="width: 88%;"></div>
-            </div><p class="info">32.6 GB 可用, 共 143 GB</p></div></a><a class="a item act" ondblclick="apps.explorer.goto('D:')" ontouchend="apps.explorer.goto('D:')"
+            </div><p class="info">32.6 GB 可用，共 143 GB</p></div></a><a class="a item act" ondblclick="apps.explorer.goto('D:')" ontouchend="apps.explorer.goto('D:')"
             oncontextmenu="showcm(event,'explorer.folder','D:');return stop(event);">
             <img src="apps/icons/explorer/disk.svg"><div><p class="name">本地磁盘 (D:)</p><div class="bar"><div class="content" style="width: 15%;"></div>
-            </div><p class="info">185.3 GB 可用, 共 216 GB</p></div></a>`;
+            </div><p class="info">185.3 GB 可用，共 216 GB</p></div></a>`;
             for (let letter in apps.explorer.mounts) {
                 const handle = apps.explorer.mounts[letter];
                 resetHtml += `<a class="a item act" ondblclick="apps.explorer.goto('${letter}')" ontouchend="apps.explorer.goto('${letter}')" oncontextmenu="showcm(event,'explorer.mounted','${letter}');return stop(event);">
@@ -1136,7 +1136,7 @@ let apps = {
             element.classList.add('select');
             apps.explorer.is_use += 1;
         },
-        copy_or_cut: (path, operate) => { //operate只能为copy或cut
+        copy_or_cut: (path, operate) => { //operate 只能为 copy 或 cut
             var pathl = path.split('/');
             var name = pathl[pathl.length - 1];
             pathl.pop();
@@ -1223,7 +1223,7 @@ let apps = {
                     continue;
                 }
                 name_1 = inputTag.value.split('.');
-                if (name_1[0].indexOf('/') > -1) alert('恭喜你发现了这个bug,但是太懒了不想修qwq');
+                if (name_1[0].indexOf('/') > -1) alert('恭喜你发现了这个 bug,但是太懒了不想修 qwq');
                 console.log(name_1);
                 if (name_1[1] == 'txt') {
                     icon_ = 'icon/files/txt.png';
@@ -1378,7 +1378,7 @@ let apps = {
             }
             apps.explorer.checkHistory(apps.explorer.tabs[apps.explorer.now][0]);
         },
-        add: (path, name_, type = 'file', command = '', icon = '') => { //type为文件类型，只有文件夹files和文件file
+        add: (path, name_, type = 'file', command = '', icon = '') => { //type 为文件类型，只有文件夹 files 和文件 file
             var pathl = path.split('/');
             var icon_ = '';
             var isMounted = !!apps.explorer.mounts[pathl[0]];
@@ -1501,7 +1501,7 @@ let apps = {
                 }
             });
         },
-        get_file_id: (name) => {  //只能找到已经打开了的文件夹的元素id
+        get_file_id: (name) => {  //只能找到已经打开了的文件夹的元素 id
             var elements = document.getElementsByClassName('item');
             for (var i = 0; i < elements.length; i++) {
                 var element = elements[i];
@@ -1651,7 +1651,7 @@ let apps = {
                     }, 200);
                 })
                 .catch(error => {
-                    console.error('获取star数量时出错：', error);
+                    console.error('获取 star 数量时出错：', error);
                     $('#StarShow').html('<div style="display: flex;"><p>&emsp;&emsp;哎呀！出错了！</p>&emsp;<a class="button" onclick="apps.about.get_star()"><i class="bi bi-arrow-clockwise"></i> 重试</a></div>');
                 });
         }
@@ -1897,7 +1897,7 @@ let apps = {
             ed.commands.addCommand({
                 name: 'gotoline', bindKey: { win: 'Ctrl-G', mac: 'Command-G' },
                 exec: () => {
-                    var line = prompt('跳转到行:');
+                    var line = prompt('跳转到行：');
                     if (line) ed.gotoLine(parseInt(line), 0, true);
                 }
             });
@@ -2264,7 +2264,7 @@ Micrȯsoft Windows [版本 12.0.39035.7324]
                     hidewin('terminal');
                 } else if (!runcmd(command, true)) {
                     var newD = document.createElement('div');
-                    newD.innerText = `"${command}" 不是内部或外部命令,也不是可运行程序或批处理文件`;
+                    newD.innerText = `"${command}" 不是内部或外部命令，也不是可运行程序或批处理文件`;
                     elt.appendChild(newD);
                 }
             }
@@ -2325,7 +2325,7 @@ Micrȯsoft Windows [版本 12.0.39035.7324]
 					setTimeout(() => {
 						$('#search-win').removeClass('show-begin');
 					}, 200);">
-						<img src="icon/about.svg"><p>关于Win12网页版</p></a>`);
+						<img src="icon/about.svg"><p>关于 Win12 网页版</p></a>`);
                 $('#search-win>.ans>.view').removeClass('show');
             }
         },
@@ -2475,7 +2475,7 @@ Micrȯsoft Windows [版本 12.0.39035.7324]
                     $('#win-edge>iframe.show').attr('src', 'https://bing.com/search?q=' + encodeURIComponent(u));
                     m_tab.rename('edge', u);
                 }
-                // 检测网址是否带有http头
+                // 检测网址是否带有 http 头
                 else if (!/^https?:\/\//.test(u) && !u.match(/^mainpage.html$/)) {
                     $('#win-edge>iframe.show').attr('src', 'http://' + u);
                     m_tab.rename('edge', 'http://' + u);
