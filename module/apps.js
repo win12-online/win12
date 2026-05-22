@@ -771,6 +771,14 @@ let apps = {
             $('#win-minesweeper')[0].insertAdjacentHTML('afterbegin', '<iframe src="https://win12-online.github.io/win12/games/minesweeper.html" frameborder="0" style="width: 100%; height: 100%;" loading="lazy"></iframe>');
         }
     },
+	'regedit': {
+      init: () => {
+          return null;
+        },
+        load: () => {
+            $('#win-regedit')[0].insertAdjacentHTML('afterbegin', '<iframe src="/apps/page/regedit.html" frameborder="0" style="width: 100%; height: 100%;" loading="lazy"></iframe>');
+        }
+    },
     defender: {
         init: () => {
             return null;
