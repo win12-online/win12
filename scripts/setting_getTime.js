@@ -3,7 +3,7 @@
 // 抱歉，但这确实是多余的 qwq from stsc
 
 
-// // 获取具有class="settingTime"的元素
+// // 获取具有 class="settingTime"的元素
 // const settingTimeElement = document.querySelector('.settingTime');
 
 // // 更新时间函数
@@ -23,7 +23,7 @@
 //         timeOfDay = '晚上';
 //     }
 
-//     // 将时间注入到HTML元素内
+//     // 将时间注入到 HTML 元素内
 //     settingTimeElement.textContent = `${timeOfDay} ${hours}:${minutes}:${seconds}`;
 // }
 
