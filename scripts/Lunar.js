@@ -23,12 +23,12 @@ async function getLunar() {
                 if (!response.ok) {
                     // 你是怎么想出来往开发控制台打印这种东西的。。。
                     // throw new Error('网络不给力');
-                    throw new Error('HTTP 状态码不符合预期: ' + response.status);
+                    throw new Error('HTTP 状态码不符合预期：' + response.status);
                 }
                 const jsonContent = await response.json();
-                //新的api根本没有code这个参数。。。
+                //新的 api 根本没有 code 这个参数。。。
                 //if (jsonContent.code !== 1) {
-                //    throw new Error(`服务器异常，错误码: ${jsonContent.code}`);
+                //    throw new Error(`服务器异常，错误码：${jsonContent.code}`);
                 //}
                 if (typeof jsonContent?.['农历'] !== 'string') {
                     throw new Error('服务器返回数据格式异常');
@@ -37,7 +37,7 @@ async function getLunar() {
                 return lunarCache;
             } catch (error) {
                 lunarDisplay.textContent = '';
-                console.error('获取农历信息失败: ', error);
+                console.error('获取农历信息失败：', error);
                 throw error;
             } finally {
                 // 请求结束后，无论成功与否，都清除进行中的 Promise 标记
