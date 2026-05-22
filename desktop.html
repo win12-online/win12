@@ -293,6 +293,10 @@ toggletheme() 切换主题
 					<img src="icon/taskmgr.png">
 					<p data-i18n="taskmgr.name">任务管理器</p>
 				</a>
+				<a oncontextmenu="return showcm(event, 'smlapp', ['regedit', '注册表编辑器'])" onclick="openapp('regedit');hide_startmenu();">
+					<img src="icon/regedit.png">
+					<p data-i18n="regedit.name">注册表编辑器</p>
+				</a>
 				<a oncontextmenu="return showcm(event, 'smlapp', ['notepad', '记事本'])" onclick="openapp('notepad');hide_startmenu();">
 					<img src="icon/notepad.svg">
 					<p data-i18n="notepad.name">记事本</p>
@@ -336,10 +340,6 @@ toggletheme() 切换主题
 				<a oncontextmenu="return showcm(event, 'smlapp', ['word', 'Word Preview'])" onclick="openapp('word');hide_startmenu();">
 					<img src="icon/word.svg">
 					<p data-i18n="word.name">Word Preview</p>
-				</a>
-				<a oncontextmenu="return showcm(event, 'smlapp', ['regedit', '注册表编辑器'])" onclick="openapp('regedit');hide_startmenu();">
-					<img src="icon/regedit.png">
-					<p data-i18n="regedit.name">注册表编辑器</p>
 				</a>
 				<p class="text" data-i18n="stmenu-webapp">Web 应用</p>
 				<a oncontextmenu="return showcm(event, 'smlapp', ['minesweeper', 'Windows 12 minesweeper'])" onclick="openapp('minesweeper');hide_startmenu()">
