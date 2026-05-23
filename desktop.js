@@ -2157,83 +2157,67 @@ function dragBrightness(e) {
 }
 
 // 控制面板 电量监测
-function normalizeDockBatteryLevel(level) {
-    if (typeof level !== 'number' || isNaN(level)) return null;
-    return Math.max(0, Math.min(1, level > 1 ? level / 100 : level));
+function setBatteryTooltip(title) {
+    const el = $('.a.dock.control')[0];
+    if (el) {
+        el.setAttribute('win12_title', title);
+        el.setAttribute('title', title);
+    }
 }
 
-function updateDockBatteryIcon(level, charging) {
-    const batteryLevel = normalizeDockBatteryLevel(level);
-    if (batteryLevel === null) return;
+function setBatteryUnavailableTooltip() {
+    setBatteryTooltip('无法获取电量');
+}
 
-    const batteryWidth = 18 * batteryLevel + 5;
-    const batteryPercent = Math.round(batteryLevel * 100);
-    const chargingText = charging ? lang('，正在充电', 'battery.charging') : '';
-    const title = `${lang('电量：', 'battery.percent')}${batteryPercent}%${chargingText}`;
-    const batteryElement = $('#battery')[0];
-    const pathElement = $('.a.dock.control>svg>path')[0];
+if (navigator.getBattery) {
+    navigator.getBattery().then((battery) => {
+        // 检查 battery 对象和 level 属性是否存在且有效
+        if (battery && typeof battery.level === 'number' && !isNaN(battery.level)) {
+            const batteryLevel = Math.max(0, Math.min(1, battery.level)); // 确保在 0-1 范围内
+            const batteryWidth = 18 * batteryLevel + 5;
+            const chargingText = battery.charging ? '，正在充电' : '';
 
-    if (batteryElement) {
-        batteryElement.setAttribute('win12_title', title);
-        batteryElement.setAttribute('title', title);
-    }
+            setBatteryTooltip(`电量：${Math.round(batteryLevel * 100)}%${chargingText}`);
 
-    if (pathElement) {
-        pathElement.outerHTML = `<path
-            d="M 4 7 C 2.3550302 7 1 8.3550302 1 10 L 1 19 C 1 20.64497 2.3550302 22 4 22 L 24 22 C 25.64497 22 27 20.64497 27 19 L 27 10 C 27 8.3550302 25.64497 7 24 7 L 4 7 z M 4 9 L 24 9 C 24.56503 9 25 9.4349698 25 10 L 25 19 C 25 19.56503 24.56503 20 24 20 L 4 20 C 3.4349698 20 3 19.56503 3 19 L 3 10 C 3 9.4349698 3.4349698 9 4 9 z M 5 11 L 5 18 L ${batteryWidth} 18 L ${batteryWidth} 11 L 5 11 z M 28 12 L 28 17 L 29 17 C 29.552 17 30 16.552 30 16 L 30 13 C 30 12.448 29.552 12 29 12 L 28 12 z"
+            const pathElement = $('.a.dock.control>svg>path')[0];
+            if (pathElement) {
+                pathElement.outerHTML = `<path
+                    d="M 4 7 C 2.3550302 7 1 8.3550302 1 10 L 1 19 C 1 20.64497 2.3550302 22 4 22 L 24 22 C 25.64497 22 27 20.64497 27 19 L 27 10 C 27 8.3550302 25.64497 7 24 7 L 4 7 z M 4 9 L 24 9 C 24.56503 9 25 9.4349698 25 10 L 25 19 C 25 19.56503 24.56503 20 24 20 L 4 20 C 3.4349698 20 3 19.56503 3 19 L 3 10 C 3 9.4349698 3.4349698 9 4 9 z M 5 11 L 5 18 L ${batteryWidth} 18 L ${batteryWidth} 11 L 5 11 z M 28 12 L 28 17 L 29 17 C 29.552 17 30 16.552 30 16 L 30 13 C 30 12.448 29.552 12 29 12 L 28 12 z"
             id="path2" fill="#000000"
         />`;
-    }
-}
 
-async function updateDockBatteryFromNative() {
-    if (!window.win12Native || !window.win12Native.isTauri || !window.win12Native.isTauri() || typeof window.win12Native.getBatteryInfo !== 'function') return false;
+                // 检查 addEventListener 是否存在
+                if (battery.addEventListener && typeof battery.addEventListener === 'function') {
+                    battery.addEventListener('levelchange', () => {
+                        if (battery && typeof battery.level === 'number' && !isNaN(battery.level)) {
+                            const updatedLevel = Math.max(0, Math.min(1, battery.level));
+                            const updatedWidth = 18 * updatedLevel + 5;
+                            const updatedChargingText = battery.charging ? '，正在充电' : '';
 
-    try {
-        const battery = await window.win12Native.getBatteryInfo();
-        if (!battery || typeof battery.percent !== 'number' || isNaN(battery.percent)) return false;
+                            setBatteryTooltip(`电量：${Math.round(updatedLevel * 100)}%${updatedChargingText}`);
 
-        updateDockBatteryIcon(battery.percent, battery.charging);
-        return true;
-    } catch (error) {
-        console.log('Tauri battery information is unavailable:', error);
-        return false;
-    }
-}
-
-async function updateDockBatteryFromBrowser() {
-    if (!navigator.getBattery || typeof navigator.getBattery !== 'function') return false;
-
-    try {
-        const battery = await navigator.getBattery();
-        if (!battery || typeof battery.level !== 'number' || isNaN(battery.level)) return false;
-
-        const updateBattery = () => {
-            if (battery && typeof battery.level === 'number' && !isNaN(battery.level)) {
-                updateDockBatteryIcon(battery.level, battery.charging);
+                            const updatedPathElement = $('.a.dock.control>svg>path')[0];
+                            if (updatedPathElement) {
+                                updatedPathElement.outerHTML = `<path
+                                    d="M 4 7 C 2.3550302 7 1 8.3550302 1 10 L 1 19 C 1 20.64497 2.3550302 22 4 22 L 24 22 C 25.64497 22 27 20.64497 27 19 L 27 10 C 27 8.3550302 25.64497 7 24 7 L 4 7 z M 4 9 L 24 9 C 24.56503 9 25 9.4349698 25 10 L 25 19 C 25 19.56503 24.56503 20 24 20 L 4 20 C 3.4349698 20 3 19.56503 3 19 L 3 10 C 3 9.4349698 3.4349698 9 4 9 z M 5 11 L 5 18 L ${updatedWidth} 18 L ${updatedWidth} 11 L 5 11 z M 28 12 L 28 17 L 29 17 C 29.552 17 30 16.552 30 16 L 30 13 C 30 12.448 29.552 12 29 12 L 28 12 z"
+                id="path2" fill="#000000"
+            />`;
+                            }
+                        }
+                    });
+                }
             }
-        };
-
-        updateBattery();
-        if (battery.addEventListener && typeof battery.addEventListener === 'function') {
-            battery.addEventListener('levelchange', updateBattery);
-            battery.addEventListener('chargingchange', updateBattery);
+        } else {
+            setBatteryUnavailableTooltip();
         }
-
-        return true;
-    } catch (error) {
-        console.log('Browser battery API is unavailable:', error);
-        return false;
-    }
+    }).catch((error) => {
+        // 静默处理错误，电池 API 在某些浏览器中不可用是正常的
+        console.log('电池 API 不可用：', error);
+        setBatteryUnavailableTooltip();
+    });
+} else {
+    setBatteryUnavailableTooltip();
 }
-
-window.addEventListener('DOMContentLoaded', async () => {
-    if (await updateDockBatteryFromNative()) {
-        window.setInterval(updateDockBatteryFromNative, 60000);
-    } else {
-        updateDockBatteryFromBrowser();
-    }
-});
 
 // 任务管理器 记录硬件运行时间
 if (localStorage.getItem('cpuRunningTime')) {
