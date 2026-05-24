@@ -7,8 +7,8 @@
 您的 PR 标题应当准确概括您的更改内容。
 如果您的 PR 是对某个 issue 的实现，请附上 issue 编号（例如 #114514）。
 
-# 关于PR预览
-因基于 Cloudflare Pages 的PR预览功能尚不稳定，因此建议您通过 GitHub Pages 在您的 fork 仓库中直接部署页面，以提供预览。
+# 关于 PR 预览
+因基于 Cloudflare Pages 的 PR 预览功能尚不稳定，因此建议您通过 GitHub Pages 在您的 fork 仓库中直接部署页面，以提供预览。
 
 该功能的开关通常位于：
 
