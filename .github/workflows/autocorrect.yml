@@ -15,11 +15,17 @@ jobs:
       - uses: actions/checkout@v5
         with:
           persist-credentials: false
+          fetch-depth: 0
       - name: Setup Nix
         uses: nixbuild/nix-quick-install-action@1f095fee853b33114486cfdeae62fa099cda35a9 # v33
       - name: AutoCorrect check
         run: |
+          files=$(git diff --diff-filter=AM --name-only ${{ github.event.pull_request.base.sha }})
+          if [ -z "$files" ]; then
+            echo "No files to check."
+            exit 0
+          fi
           nix run nixpkgs#autocorrect -- \
           --lint \
           --no-diff-bg-color \
-          $(git diff --diff-filter=AM --name-only ${{ github.event.pull_request.base.sha }})
+          $files

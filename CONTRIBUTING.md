@@ -1,6 +1,4 @@
 # 贡献指南
->[!NOTE]
-> 当前本项目的 PR 列表严重积压，而负责审查的人数极为有限。您提交 PR 后请耐心等待。<br>若提交 3 天后仍无人审查，可联系我们。
 
 我们鼓励每个人为 Windows 12 网页版贡献内容。
 
@@ -90,3 +88,5 @@
 
 ### 写作风格
 请参考 [中文文案排版指北](https://github.com/sparanoid/chinese-copywriting-guidelines) 中推荐的写作风格。
+
+另外请注意，我们使用 [autocorrect](https://github.com/huacnlee/autocorrect) 进行自动检查。未通过检查的 PR 将不会被合并。

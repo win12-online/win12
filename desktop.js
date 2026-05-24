@@ -2157,12 +2157,32 @@ function dragBrightness(e) {
 }
 
 // 控制面板 电量监测
+function setBatteryTooltip(title) {
+    const el = $('.a.dock.control')[0];
+    if (el) {
+        el.setAttribute('win12_title', title);
+        el.setAttribute('title', title);
+    }
+}
+
+function getBatteryTooltip(level, charging) {
+    const percent = Math.round(level * 100);
+    const chargingText = charging ? lang('，正在充电', 'battery.charging') : '';
+    return `${lang('电量：', 'battery.level')}${percent}%${chargingText}`;
+}
+
+function setBatteryUnavailableTooltip() {
+    setBatteryTooltip(lang('无法获取电量', 'battery.unavailable'));
+}
+
 if (navigator.getBattery) {
     navigator.getBattery().then((battery) => {
         // 检查 battery 对象和 level 属性是否存在且有效
         if (battery && typeof battery.level === 'number' && !isNaN(battery.level)) {
             const batteryLevel = Math.max(0, Math.min(1, battery.level)); // 确保在 0-1 范围内
             const batteryWidth = 18 * batteryLevel + 5;
+
+            setBatteryTooltip(getBatteryTooltip(batteryLevel, battery.charging));
 
             const pathElement = $('.a.dock.control>svg>path')[0];
             if (pathElement) {
@@ -2177,6 +2197,9 @@ if (navigator.getBattery) {
                         if (battery && typeof battery.level === 'number' && !isNaN(battery.level)) {
                             const updatedLevel = Math.max(0, Math.min(1, battery.level));
                             const updatedWidth = 18 * updatedLevel + 5;
+
+                            setBatteryTooltip(getBatteryTooltip(updatedLevel, battery.charging));
+
                             const updatedPathElement = $('.a.dock.control>svg>path')[0];
                             if (updatedPathElement) {
                                 updatedPathElement.outerHTML = `<path
@@ -2188,11 +2211,16 @@ if (navigator.getBattery) {
                     });
                 }
             }
+        } else {
+            setBatteryUnavailableTooltip();
         }
     }).catch((error) => {
         // 静默处理错误，电池 API 在某些浏览器中不可用是正常的
         console.log('电池 API 不可用：', error);
+        setBatteryUnavailableTooltip();
     });
+} else {
+    setBatteryUnavailableTooltip();
 }
 
 // 任务管理器 记录硬件运行时间

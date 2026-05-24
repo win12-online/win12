@@ -6,7 +6,7 @@ let taskmgrTasks = [
     },
     {
         name: 'Whiteboard',
-        icon: 'icon/whiteboard.png',
+        icon: 'icon/whiteboard.svg',
         link: 'whiteboard'
     },
     {
