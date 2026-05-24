@@ -14,7 +14,7 @@ body:
       label: 先决条件 (Prerequisites)
       options:
         - label: |
-            我已确认这个问题没有在[其他 issues](https://github.com/win12-online/win12/issues)中提出过。
+            我已确认这个问题没有在[其他 issues](https://github.com/win12-online/win12/issues) 中提出过。
             I am sure that this problem has NEVER been discussed in [other issues](https://github.com/win12-online/win12/issues).
           required: true
         - label: |
