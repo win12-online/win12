@@ -73,6 +73,11 @@ let taskmgrTasks = [
         link: 'vscode'
     },
     {
+        name: '注册表编辑器',
+        icon: 'icon/regedit.png',
+        link: 'regedit'
+    },
+    {
         name: 'System'
     },
     {
