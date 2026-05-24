@@ -2165,8 +2165,14 @@ function setBatteryTooltip(title) {
     }
 }
 
+function getBatteryTooltip(level, charging) {
+    const percent = Math.round(level * 100);
+    const chargingText = charging ? lang('，正在充电', 'battery.charging') : '';
+    return `${lang('电量：', 'battery.level')}${percent}%${chargingText}`;
+}
+
 function setBatteryUnavailableTooltip() {
-    setBatteryTooltip('无法获取电量');
+    setBatteryTooltip(lang('无法获取电量', 'battery.unavailable'));
 }
 
 if (navigator.getBattery) {
@@ -2175,9 +2181,8 @@ if (navigator.getBattery) {
         if (battery && typeof battery.level === 'number' && !isNaN(battery.level)) {
             const batteryLevel = Math.max(0, Math.min(1, battery.level)); // 确保在 0-1 范围内
             const batteryWidth = 18 * batteryLevel + 5;
-            const chargingText = battery.charging ? '，正在充电' : '';
 
-            setBatteryTooltip(`电量：${Math.round(batteryLevel * 100)}%${chargingText}`);
+            setBatteryTooltip(getBatteryTooltip(batteryLevel, battery.charging));
 
             const pathElement = $('.a.dock.control>svg>path')[0];
             if (pathElement) {
@@ -2192,9 +2197,8 @@ if (navigator.getBattery) {
                         if (battery && typeof battery.level === 'number' && !isNaN(battery.level)) {
                             const updatedLevel = Math.max(0, Math.min(1, battery.level));
                             const updatedWidth = 18 * updatedLevel + 5;
-                            const updatedChargingText = battery.charging ? '，正在充电' : '';
 
-                            setBatteryTooltip(`电量：${Math.round(updatedLevel * 100)}%${updatedChargingText}`);
+                            setBatteryTooltip(getBatteryTooltip(updatedLevel, battery.charging));
 
                             const updatedPathElement = $('.a.dock.control>svg>path')[0];
                             if (updatedPathElement) {

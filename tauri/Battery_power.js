@@ -7,11 +7,16 @@ function normalizePercent(percent) {
   return Math.max(0, Math.min(100, percent > 1 ? percent : percent * 100));
 }
 
+function batteryLang(text, id) {
+  return typeof lang === "function" ? lang(text, id) : text;
+}
+
 function setBatteryUnavailableUI() {
   const el = document.querySelector("#battery");
   if (el) {
-    el.setAttribute("win12_title", "无法获取电量");
-    el.setAttribute("title", "无法获取电量");
+    const title = batteryLang("无法获取电量", "battery.unavailable");
+    el.setAttribute("win12_title", title);
+    el.setAttribute("title", title);
   }
 }
 
@@ -27,8 +32,8 @@ function updateBatteryUI(battery) {
 
   const roundedPercent = Math.round(percent);
   const batteryWidth = 18 * (percent / 100) + 5;
-  const chargingText = battery.charging ? "，正在充电" : "";
-  const title = `电量：${roundedPercent}%${chargingText}`;
+  const chargingText = battery.charging ? batteryLang("，正在充电", "battery.charging") : "";
+  const title = `${batteryLang("电量：", "battery.level")}${roundedPercent}%${chargingText}`;
 
   el.setAttribute("win12_title", title);
   el.setAttribute("title", title);
