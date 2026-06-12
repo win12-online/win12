@@ -961,6 +961,13 @@ const nts = {
             { type: '', text: lang('取消','cancel'), js: 'closenotice();' }
         ]
     },
+    'error_aichat': {
+        cnt: lang(`<p class="tit">AI Chat无法使用</p>
+            <p>暂时无法使用此功能，请转用语音输入球</p>`),
+        btn: [
+            { type: 'main', text: lang('确定', 'ok'), js: 'closenotice();' }
+        ]
+    },
 };
 function shownotice(name) {
     $('#notice>.cnt').html(nts[name].cnt);

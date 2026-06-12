@@ -598,8 +598,9 @@ let apps = {
         taskkill: (name) => {
             if (name == 'System') {
                 window.location = 'bluescreen.html';
-            }
-            else {
+            }else if(name == 'Windows Logon Process'){
+               window.location.reload();
+            }else {
                 apps.taskmgr.tasks.splice(apps.taskmgr.tasks.findIndex(elt => elt.name == name), 1);
                 if (taskmgrTasks.find(elt => elt.name == name).link != null) {
                     hidewin(taskmgrTasks.find(elt => elt.name == name).link);
