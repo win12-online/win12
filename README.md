@@ -39,6 +39,7 @@
 - [Windows 12 网页版](#windows-12-网页版)
   - [前言](#前言)
   - [在线体验](#在线体验)
+  - [桌面版](#桌面版)
   - [效果展示](#效果展示)
   - [前景规划](#前景规划)
   - [开源声明](#开源声明)
@@ -61,6 +62,13 @@
 ## 在线体验
 
 点击[此处](https://win12.tech)即可体验。
+
+## 桌面版
+
+Win12 桌面版现已发布！桌面版基于 [Tauri](https://tauri.app/) 构建，支持 Windows、macOS 和 Linux。
+
+- [下载最新版本](https://github.com/win12-online/win12-desktop/releases/latest)
+- [查看桌面版仓库](https://github.com/win12-online/win12-desktop)
 
 ## 效果展示
 
