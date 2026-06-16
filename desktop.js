@@ -1887,6 +1887,12 @@ function geticon(name) {
     else return name + '.svg';
 }
 
+function syncTaskbarLayout() {
+    const count = $('#taskbar>a').length;
+    $('#taskbar').attr('count', count);
+    $('#taskbar').css('display', count == 0 ? 'none' : 'flex');
+    $('#taskbar').css('width', 4 + count * (34 + 4));
+}
 
 function openapp(name) {
     if (taskmgrTasks.findIndex(elt => elt.link == name) > -1 && apps.taskmgr.tasks.findIndex(elt => elt.link == name) == -1) {
@@ -1901,14 +1907,11 @@ function openapp(name) {
     }
     $('.window.' + name).addClass('load');
     showwin(name);
-    $('#taskbar').attr('count', Number($('#taskbar').attr('count')) + 1);
     $('#taskbar').append(`<a class="${name}" onclick="taskbarclick('${name}\')" win12_title="${$(`.window.${name}>.titbar>p`).text()}" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)" oncontextmenu="return showcm(event, 'taskbar', '${name}')"><img src="icon/${icon[name] || (name + '.svg')}"></a>`);
-    if ($('#taskbar').attr('count') == '1') {
-        $('#taskbar').css('display', 'flex');
-    }
+    syncTaskbarLayout();
     $('#taskbar>.' + name).addClass('foc');
     setTimeout(() => {
-        $('#taskbar').css('width', 4 + $('#taskbar').attr('count') * (34 + 4));
+        syncTaskbarLayout();
     }, 0);
     let tmp = name.replace(/\-(\w)/g, function (all, letter) {
         return letter.toUpperCase();
