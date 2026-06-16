@@ -290,6 +290,7 @@ async function win12RefreshPasswordSettingStatus() {
         $('#setting-password-current')[loginPasswordHasPassword ? 'show' : 'hide']();
         $('#setting-password-current').val('');
         $('#setting-password-new').val('').prop('disabled', false);
+        $('#setting-password-new').attr('placeholder', loginPasswordHasPassword ? '新密码（留空清除密码）' : '新密码');
         $('#setting-password-submit').removeClass('disabled');
     }
     catch (e) {
@@ -305,7 +306,7 @@ async function win12SetLoginPassword() {
 
     const currentPassword = $('#setting-password-current').val();
     const newPassword = $('#setting-password-new').val();
-    if (!newPassword) {
+    if (!loginPasswordHasPassword && !newPassword) {
         $('#setting-password-status').text('请输入新密码');
         $('#setting-password-new').focus();
         return;
@@ -317,12 +318,13 @@ async function win12SetLoginPassword() {
     }
 
     $('#setting-password-submit').addClass('disabled');
-    $('#setting-password-status').text('正在保存');
+    const clearingPassword = loginPasswordHasPassword && !newPassword;
+    $('#setting-password-status').text(clearingPassword ? '正在清除' : '正在保存');
 
     try {
         await window.win12Native.setLoginPassword(loginPasswordHasPassword ? currentPassword : null, newPassword);
-        $('#setting-password-status').text('密码已保存');
         await win12RefreshPasswordSettingStatus();
+        $('#setting-password-status').text(clearingPassword ? '密码已清空' : '密码已保存');
     }
     catch (e) {
         $('#setting-password-status').text(String(e));
