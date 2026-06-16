@@ -283,6 +283,29 @@
     box-shadow: 0 1px 2px 1px var(--s3d);
 }
 
+.setting-password {
+    display: grid;
+    gap: 10px;
+}
+
+.setting-password>div>p:first-child {
+    font-size: 18px;
+}
+
+.setting-password>div>p:last-child {
+    color: var(--text2);
+}
+
+.setting-password>.button {
+    width: max-content;
+    padding: 5px 18px;
+}
+
+.setting-password>.button.disabled {
+    pointer-events: none;
+    opacity: 0.6;
+}
+
 .checkbox {
     width: 40px;
     height: 20px;

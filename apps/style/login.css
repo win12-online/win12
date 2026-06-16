@@ -45,6 +45,37 @@
     transition: 80ms;
 }
 
+#login-password {
+    display: none;
+    width: 220px;
+    margin-bottom: 10px;
+    padding: 7px 10px;
+    color: #fff;
+    background-color: #eeeeee40;
+    border: 2px solid #ffffff50;
+    border-radius: 6px;
+    outline: none;
+    text-align: center;
+}
+
+#login-password::placeholder {
+    color: #ffffffaa;
+}
+
+#login-error {
+    display: none;
+    min-height: 18px;
+    margin-bottom: 8px;
+    color: #fff;
+    font-size: 14px;
+    text-shadow: 0 1px 3px #000;
+}
+
+#loginback.tauri-password #login-password,
+#loginback.tauri-password #login-error {
+    display: block;
+}
+
 :root.corner_squ #login {
     corner-shape: squircle;
     border-radius: 15px;

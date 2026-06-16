@@ -188,19 +188,9 @@ toggletheme() 切换主题
 		<div class="user"></div>
 		<div class="name">Administrator</div>
 		
-		<div id="login" onclick="$(this).css('opacity','0');$('#login-welc').css('opacity','1');
-			setTimeout(() => {
-				$('#loginback').addClass('close');
-				setTimeout(() => {
-					$('#loginback').css('opacity', '0');
-				}, 500);
-				setTimeout(() => {
-					$('#loginback').css('display', 'none');
-				}, 2000);
-				if(use_music){
-					document.querySelector('audio#startup-music').play();
-				}
-			}, 2000);" data-i18n="login">
+		<input id="login-password" type="password" autocomplete="current-password" placeholder="密码" onkeydown="if(event.keyCode==13){win12LoginSubmit();}">
+		<div id="login-error"></div>
+		<div id="login" onclick="win12LoginSubmit();" data-i18n="login">
 			登录
 		</div>
 		<div id="login-welc" style="opacity: 0;">
@@ -1558,7 +1548,18 @@ toggletheme() 切换主题
 					<div class="setting-list">
 						<a><icon></icon><div><p>您的微软账户</p><p>订阅、账单等</p></div><i class="bi bi-chevron-right"></i></a>
 						<a><icon></icon><div><p>您的账户信息</p><p>电子邮件、日历和联系人使用的帐户</p></div><i class="bi bi-chevron-right"></i></a>
-						<a><icon></icon><div><p>登录选项</p><p>Windows Hello、安全密钥、密码、动态锁</p></div><i class="bi bi-chevron-right"></i></a>
+						<a class="dp sign-in-options" onclick="$('.dp.sign-in-options').toggleClass('show');win12RefreshPasswordSettingStatus();"><icon></icon><div><p>登录选项</p><p>Windows Hello、安全密钥、密码、动态锁</p></div><i class="bi bi-chevron-down"></i></a>
+						<div class="dp sign-in-options">
+							<div class="setting-password">
+								<div>
+									<p>密码</p>
+									<p id="setting-password-status">加载中</p>
+								</div>
+								<input id="setting-password-current" class="input" type="password" autocomplete="current-password" placeholder="当前密码">
+								<input id="setting-password-new" class="input" type="password" autocomplete="new-password" placeholder="新密码" onkeydown="if(event.keyCode==13){win12SetLoginPassword();}">
+								<a id="setting-password-submit" class="a button" onclick="win12SetLoginPassword();">保存</a>
+							</div>
+						</div>
 						<a><icon></icon><div><p>电子邮件和账户</p><p>电子邮件、日历和联系人使用的帐户</p></div><i class="bi bi-chevron-right"></i></a>
 						<a><icon></icon><div><p>家庭</p><p>管理您的家庭群组、编辑帐户类型和设备权限</p></div><i class="bi bi-chevron-right"></i></a>
 						<a><icon></icon><div><p>Windows 备份</p><p>备份您的文件、应用程序、首选项以跨设备恢复它们</p></div><i class="bi bi-chevron-right"></i></a>

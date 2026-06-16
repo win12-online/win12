@@ -189,6 +189,149 @@ function stop(e) {
     e.stopPropagation();
     return false;
 }
+
+let loginPasswordHasPassword = false;
+
+function win12FinishLogin() {
+    $('#login').css('opacity', '0');
+    $('#login-password').css('opacity', '0');
+    $('#login-error').css('opacity', '0');
+    $('#login-welc').css('opacity', '1');
+    setTimeout(() => {
+        $('#loginback').addClass('close');
+        setTimeout(() => {
+            $('#loginback').css('opacity', '0');
+        }, 500);
+        setTimeout(() => {
+            $('#loginback').css('display', 'none');
+        }, 2000);
+        if (use_music) {
+            document.querySelector('audio#startup-music').play();
+        }
+    }, 2000);
+}
+
+function setLoginError(text) {
+    $('#login-error').text(text);
+}
+
+async function initLoginPassword() {
+    if (window.win12Native && window.win12Native.isTauri() && (new URL(location.href)).searchParams.get('skip_login') !== '1') {
+        try {
+            const status = await window.win12Native.getLoginPasswordStatus();
+            loginPasswordHasPassword = !!(status && status.has_password);
+            if (loginPasswordHasPassword) {
+                $('#loginback').addClass('tauri-password');
+                $('#login-password').attr('placeholder', '密码');
+                $('#login-password').focus();
+            }
+            else {
+                $('#loginback').removeClass('tauri-password');
+            }
+        }
+        catch (e) {
+            setLoginError('无法读取本地密码状态');
+        }
+    }
+}
+
+async function win12LoginSubmit() {
+    if (!(window.win12Native && window.win12Native.isTauri())) {
+        win12FinishLogin();
+        return;
+    }
+
+    if (!loginPasswordHasPassword) {
+        win12FinishLogin();
+        return;
+    }
+
+    const password = $('#login-password').val();
+    if (!password) {
+        setLoginError('请输入密码');
+        $('#login-password').focus();
+        return;
+    }
+
+    $('#login').css('pointer-events', 'none');
+    setLoginError('正在验证');
+
+    try {
+        const result = await window.win12Native.verifyLoginPassword(password);
+        if (result && result.ok) {
+            $('#login-password').val('');
+            win12FinishLogin();
+            return;
+        }
+        setLoginError('密码错误');
+        $('#login-password').val('').focus();
+    }
+    catch (e) {
+        setLoginError(String(e));
+    }
+    finally {
+        $('#login').css('pointer-events', 'auto');
+    }
+}
+
+async function win12RefreshPasswordSettingStatus() {
+    if (!(window.win12Native && window.win12Native.isTauri())) {
+        $('#setting-password-status').text('仅 Tauri App 可用');
+        $('#setting-password-current').hide();
+        $('#setting-password-new').prop('disabled', true);
+        $('#setting-password-submit').addClass('disabled');
+        return;
+    }
+
+    try {
+        const status = await window.win12Native.getLoginPasswordStatus();
+        loginPasswordHasPassword = !!(status && status.has_password);
+        $('#setting-password-status').text(loginPasswordHasPassword ? '已设置密码' : '未设置密码');
+        $('#setting-password-current')[loginPasswordHasPassword ? 'show' : 'hide']();
+        $('#setting-password-current').val('');
+        $('#setting-password-new').val('').prop('disabled', false);
+        $('#setting-password-submit').removeClass('disabled');
+    }
+    catch (e) {
+        $('#setting-password-status').text(String(e));
+    }
+}
+
+async function win12SetLoginPassword() {
+    if (!(window.win12Native && window.win12Native.isTauri())) {
+        $('#setting-password-status').text('仅 Tauri App 可用');
+        return;
+    }
+
+    const currentPassword = $('#setting-password-current').val();
+    const newPassword = $('#setting-password-new').val();
+    if (!newPassword) {
+        $('#setting-password-status').text('请输入新密码');
+        $('#setting-password-new').focus();
+        return;
+    }
+    if (loginPasswordHasPassword && !currentPassword) {
+        $('#setting-password-status').text('请输入当前密码');
+        $('#setting-password-current').focus();
+        return;
+    }
+
+    $('#setting-password-submit').addClass('disabled');
+    $('#setting-password-status').text('正在保存');
+
+    try {
+        await window.win12Native.setLoginPassword(loginPasswordHasPassword ? currentPassword : null, newPassword);
+        $('#setting-password-status').text('密码已保存');
+        await win12RefreshPasswordSettingStatus();
+    }
+    catch (e) {
+        $('#setting-password-status').text(String(e));
+    }
+    finally {
+        $('#setting-password-submit').removeClass('disabled');
+    }
+}
+
 $('input,textarea,*[contenteditable=true]').on('contextmenu', (e) => {
     stop(e);
     return true;
@@ -2413,6 +2556,7 @@ document.getElementsByTagName('body')[0].onload = () => {
         $('#loadback').css('display', 'none');
     }, 1000);
     apps.webapps.init();
+    initLoginPassword();
     //getdata
     if (localStorage.getItem('theme') == 'dark') {
         $(':root').addClass('dark');
