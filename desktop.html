@@ -275,9 +275,9 @@ toggletheme() 切换主题
 					<img src="icon/run.svg">
 					<p data-i18n="run.name">运行</p>
 				</a>
-				<a oncontextmenu="return showcm(event, 'smlapp', ['about', '关于 Win12 网页版'])" onclick="openapp('about');hide_startmenu();">
+				<a oncontextmenu="return showcm(event, 'smlapp', getAboutAppContextArg())" onclick="openAboutApp();hide_startmenu();">
 					<img src="icon/about.svg">
-					<p data-i18n="about.name">关于 Win12 网页版</p>
+					<p class="about-app-title" data-i18n="about.name">关于 Win12 网页版</p>
 				</a>
 				<a oncontextmenu="return showcm(event, 'smlapp', ['taskmgr', '任务管理器'])" onclick="openapp('taskmgr');hide_startmenu();">
 					<img src="icon/taskmgr.png">
@@ -417,9 +417,9 @@ toggletheme() 切换主题
 						<img src="icon/feedback.svg">
 						<p data-i18n="feedback.name">反馈中心</p>
 					</a>
-					<a class="a sm-app enable about" onclick="openapp('about');hide_startmenu();" oncontextmenu="return showcm(event,'smapp',['about','关于 Win12 网页版'])">
+					<a class="a sm-app enable about about-desktop" onclick="openAboutApp();hide_startmenu();" oncontextmenu="return showcm(event,'smapp',getAboutAppContextArg())">
 						<img src="icon/about.svg">
-						<p data-i18n="about.name">关于 Win12 网页版</p>
+						<p class="about-app-title" data-i18n="about.name">关于 Win12 网页版</p>
 					</a>
 					<a class="a sm-app enable explorer" onclick="openapp('explorer');hide_startmenu();" oncontextmenu="return showcm(event,'smapp',['explorer','文件资源管理器'])">
 						<img src="icon/explorer.svg">
@@ -494,13 +494,13 @@ toggletheme() 切换主题
 						<img src="icon/setting.svg">
 						<p data-i18n="setting.name">设置</p>
 					</a>
-					<a onclick="openapp('about');$('#search-btn').removeClass('show');
+					<a onclick="openAboutApp();$('#search-btn').removeClass('show');
 					$('#search-win').removeClass('show');
 					setTimeout(() => {
 						$('#search-win').removeClass('show-begin');
 					}, 200);">
 						<img src="icon/about.svg">
-						<p data-i18n="about.name">关于 Win12 网页版</p>
+						<p class="about-app-title" data-i18n="about.name">关于 Win12 网页版</p>
 					</a>
 				</list>
 			</div>
@@ -2019,6 +2019,66 @@ toggletheme() 切换主题
 					</p></details>
 					<!-- 全部列出来那这个更多意义何在？ -->
 					<a onclick="window.open('changelog.md','_blank');" win12_title="changelog.md" class="a jump" style="text-align: center;">更多</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="window about-desktop">
+		<div class="resize-bar"></div>
+		<div class="titbar">
+			<img src="icon/about.svg" class="icon">
+			<p class="about-desktop-title">关于Win12-desktop</p>
+			<div>
+				<a class="a wbtg red" onclick="hidewin('about-desktop')"><i class="bi bi-x-lg"></i></a>
+				<a class="a wbtg max" onclick="maxwin('about-desktop')"><i class="bi bi-app"></i></a>
+				<a class="a wbtg" onclick="minwin('about-desktop')"><i class="bi bi-dash-lg"></i></a>
+			</div>
+		</div>
+		<div class="loadback">
+			<img src="icon/about.svg" class="icon">
+		</div>
+		<div class="content" id="win-about-desktop">
+			<div class="menu">
+				<list class="about-menu-desktop">
+					<a class="enable check about avlb">
+						<span>简介</span></a>
+				</list>
+			</div>
+			<div class="cnt about show">
+				<h1 class="tit"><span></span>Win12-desktop</h1>
+				<div style="margin-left: 20px;">
+					<h2 class="tit"><span></span>简介</h2>
+					<p>&emsp;&emsp;Win12-desktop 是 Windows 12 网页版的桌面应用版本，基于 Tauri 构建，支持 Windows、macOS 和 Linux。</p>
+					<p>&emsp;&emsp;此项目已发布至 GitHub，<a onclick="window.open('https://github.com/win12-online/win12-desktop','_blank');" win12_title="https://github.com/win12-online/win12-desktop" class="jump">点击此处查看</a>。</p>
+					<p>&emsp;&emsp;若您对于桌面版有任何意见或建议，请在 GitHub 上<a onclick="window.open('https://github.com/win12-online/win12-desktop/issues','_blank');" win12_title="https://github.com/win12-online/win12-desktop/issues" class="jump">提交 issues</a>，您的问题会被尽可能快地解决。</p>
+					<h2 class="tit"><span></span>开源说明</h2>
+					<p>&emsp;&emsp;此项目是一个开源项目。请在遵守项目许可证的前提下使用、传播、分发、修改以及二次发布。</p>
+					<p>&emsp;&emsp;您必须给出源码来源，<strong>包括作者，项目链接等</strong>，并按许可证要求开源。</p>
+					<h2 class="tit"><span></span>贡献者</h2>
+					<p>&emsp;&emsp;感谢 Win12-desktop 项目的贡献者（实时数据，计算方法：即为 Commits 次数）</p>
+					<div id="contri-desktop">
+						<loading>
+							<svg width="30px" height="30px" viewBox="0 0 16 16">
+								<circle cx="8px" cy="8px" r="7px" style="stroke:#7f7f7f50;fill:none;stroke-width:3px;">
+								</circle>
+								<circle cx="8px" cy="8px" r="7px" style="stroke:#2983cc;stroke-width:3px;"></circle>
+							</svg>
+						</loading>
+					</div>
+					<h2 class="tit"><span></span>Star</h2>
+					<p>&emsp;&emsp;感谢<a class="jump" win12_title="给个 Star 好不好？(即将跳转到：https://github.com/win12-online/win12-desktop/stargazers)" onclick="window.open('https://github.com/win12-online/win12-desktop/stargazers','_blank')">所有支持桌面版的人</a>。</p>
+					<div id="StarShowDesktop">
+						<loading>
+							<svg width="30px" height="30px" viewBox="0 0 16 16">
+								<circle cx="8px" cy="8px" r="7px" style="stroke:#7f7f7f50;fill:none;stroke-width:3px;">
+								</circle>
+								<circle cx="8px" cy="8px" r="7px" style="stroke:#2983cc;stroke-width:3px;"></circle>
+							</svg>
+						</loading>
+					</div>
+					<h2 class="tit"><span></span>其它</h2>
+					<p>&emsp;&emsp;此项目基于目前 Windows 版本创造，与微软的 Windows 12 正式版本不一致。</p>
+					<p>&emsp;&emsp;此项目绝不附属于微软，且不应与微软操作系统或产品混淆。</p>
 				</div>
 			</div>
 		</div>

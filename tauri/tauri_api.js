@@ -19,3 +19,7 @@ window.win12Native = {
     return await window.__TAURI__.core.invoke("set_login_password", { currentPassword, newPassword });
   },
 };
+
+if (typeof updateAboutAppEntrypoints === "function") {
+  updateAboutAppEntrypoints();
+}

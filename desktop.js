@@ -34,6 +34,7 @@ function loadlang(code) {
                 // if($.i18n.prop($(this).data("i18n-key"))!=$(this).attr($(this).data("i18n-attr")))console.log($(this).data("i18n-key"),$(this).attr($(this).data("i18n-attr")));
                 $(this).attr($(this).data("i18n-attr"), $.i18n.prop($(this).data("i18n-key")));
             });
+            updateAboutAppEntrypoints();
         }
     });
 }
@@ -101,6 +102,36 @@ console.log('?')
 /// 用例：lang('设置','setting.name')
 // 
 // 为开发方便，故不将简体中文纳入语言考虑
+
+function isTauriApp() {
+    return !!((window.win12Native && window.win12Native.isTauri && window.win12Native.isTauri()) || (window.__TAURI__ && window.__TAURI__.core));
+}
+
+function getAboutAppId() {
+    return isTauriApp() ? 'about-desktop' : 'about';
+}
+
+function getAboutAppTitle() {
+    if (!isTauriApp()) return lang('关于 Win12 网页版', 'about.name');
+    if (langcode == 'en') return 'About Win12-desktop';
+    if (langcode == 'zh-TW') return '關於 Win12-desktop';
+    return '关于Win12-desktop';
+}
+
+function openAboutApp() {
+    openapp(getAboutAppId());
+}
+
+function getAboutAppContextArg() {
+    return [getAboutAppId(), getAboutAppTitle()];
+}
+
+function updateAboutAppEntrypoints() {
+    $('.about-app-title').text(getAboutAppTitle());
+    $('.about-desktop-title').text(getAboutAppTitle());
+}
+
+updateAboutAppEntrypoints();
 
 
 // 后端服务器
@@ -429,7 +460,7 @@ const cms = {
                 return ['<i class="bi bi-pencil"></i> ' + lang('进入编辑模式', 'desktop.enteredit'), 'editMode();'];
             }
         },
-        ['<i class="bi bi-info-circle"></i> ' + lang('关于 Win12 网页版', 'about.name'), '$(\'#win-about>.about\').addClass(\'show\');$(\'#win-about>.update\').removeClass(\'show\');openapp(\'about\');if($(\'.window.about\').hasClass(\'min\'))minwin(\'about\');'],
+        ['<i class="bi bi-info-circle"></i> ' + getAboutAppTitle(), 'openAboutApp();'],
         ['<i class="bi bi-brush"></i> ' + lang('个性化', 'psnl'), 'openapp(\'setting\');$(\'#win-setting > div.menu > list > a.enable.appearance\')[0].click()']
     ],
     'desktop.icon': [
@@ -2017,6 +2048,7 @@ function pinapp(id, name, command) {
 const icon = {
     bilibili: 'bilibili.png',
     vscode: 'vscode.png',
+    'about-desktop': 'about.svg',
     // python: 'python.png',
     winver: 'about.svg',
     // run: 'run.png',
@@ -2477,9 +2509,9 @@ function setIcon() {
         <img src="icon/setting.svg">
         <p>${lang('设置', 'setting.name')}</p>
     </div>
-    <div class="b" ondblclick="openapp('about');" ontouchstart="openapp('about');" oncontextmenu="return showcm(event,'desktop.icon',['about',-1]);" appname="about">
+    <div class="b" ondblclick="openAboutApp();" ontouchstart="openAboutApp();" oncontextmenu="return showcm(event,'desktop.icon',[getAboutAppId(),-1]);" appname="${getAboutAppId()}">
         <img src="icon/about.svg">
-        <p>${lang('关于 Win12 网页版', 'about.name')}</p>
+        <p>${getAboutAppTitle()}</p>
     </div>
     <div class="b" ondblclick="openapp('edge');" ontouchstart="openapp('edge');" oncontextmenu="return showcm(event,'desktop.icon',['edge',-1]);" appname="edge">
         <img src="icon/edge.svg">
