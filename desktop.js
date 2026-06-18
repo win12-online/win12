@@ -1202,26 +1202,28 @@ STARWARS        ${lang('原力觉醒', 'terminal.help.starwars')}
         }
         return true;
     }
-    else if (/^ping(?:\s+(.+))?$/i.test(cmd)) {
+    else if (/^(ping6?|ping)(?:\s+(.+))?$/i.test(cmd)) {
         if (!inTerminal) {
             openapp('terminal');
         }
 
-        const pingMatch = cmd.match(/^ping(?:\s+(.+))?$/i);
-        const host = pingMatch && pingMatch[1] ? pingMatch[1].trim() : '';
+        const pingMatch = cmd.match(/^(ping6?|ping)(?:\s+(.+))?$/i);
+        const pingCommand = pingMatch ? pingMatch[1].toLowerCase() : 'ping';
+        const host = pingMatch && pingMatch[2] ? pingMatch[2].trim() : '';
+        const ipv6 = pingCommand === 'ping6';
 
         if (!window.win12Native || !window.win12Native.isTauri()) {
-            appendTerminalText('ping 仅在桌面版本中支持使用');
+            appendTerminalText(`${pingCommand} 仅在桌面版本中支持使用`);
             return true;
         }
 
         if (!host) {
-            appendTerminalText('用法: ping <host>');
+            appendTerminalText(`用法: ${pingCommand} <host>`);
             return true;
         }
 
         appendTerminalText(`正在 Ping ${host}，请稍候...`);
-        window.win12Native.pingHost(host)
+        window.win12Native.pingHost(host, ipv6)
             .then((output) => {
                 appendTerminalText(output);
             })
