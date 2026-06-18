@@ -115,7 +115,7 @@ function getAboutAppTitle() {
     if (!isTauriApp()) return lang('关于 Win12 网页版', 'about.name');
     if (langcode == 'en') return 'About Win12-desktop';
     if (langcode == 'zh-TW') return '關於 Win12-desktop';
-    return '关于Win12-desktop';
+    return '关于 Win12-desktop';
 }
 
 function openAboutApp() {
