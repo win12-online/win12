@@ -1150,6 +1150,18 @@ function closeVideo() {
 var shutdown_task = []; //关机任务，储存在这个数组里
 // 为什么要数组？
 
+function appendTerminalText(text) {
+    const elt = $('#win-terminal>.text-cmd')[0];
+    if (!elt) {
+        return;
+    }
+
+    const newD = document.createElement('div');
+    newD.innerText = text;
+    elt.appendChild(newD);
+    elt.scrollTop = elt.scrollHeight;
+}
+
 // 运行的指令
 function runcmd(cmd, inTerminal = false) {
     if (cmd.slice(0, 3) == 'cmd') {
@@ -1188,6 +1200,34 @@ DANCE           ${lang('让窗口跳舞', 'terminal.help.dance')}
 STARWARS        ${lang('原力觉醒', 'terminal.help.starwars')}
 `);
         }
+        return true;
+    }
+    else if (/^ping(?:\s+(.+))?$/i.test(cmd)) {
+        if (!inTerminal) {
+            openapp('terminal');
+        }
+
+        const pingMatch = cmd.match(/^ping(?:\s+(.+))?$/i);
+        const host = pingMatch && pingMatch[1] ? pingMatch[1].trim() : '';
+
+        if (!window.win12Native || !window.win12Native.isTauri()) {
+            appendTerminalText('ping 仅在桌面版本中支持使用');
+            return true;
+        }
+
+        if (!host) {
+            appendTerminalText('用法: ping <host>');
+            return true;
+        }
+
+        appendTerminalText(`正在 Ping ${host}，请稍候...`);
+        window.win12Native.pingHost(host)
+            .then((output) => {
+                appendTerminalText(output);
+            })
+            .catch((error) => {
+                appendTerminalText(error && error.message ? error.message : String(error));
+            });
         return true;
     }
     else if (cmd === 'dir' || cmd === 'ls') {

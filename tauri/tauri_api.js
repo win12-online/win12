@@ -18,4 +18,10 @@ window.win12Native = {
     if (!this.isTauri()) return null;
     return await window.__TAURI__.core.invoke("set_login_password", { currentPassword, newPassword });
   },
+  async pingHost(host) {
+    if (!this.isTauri()) {
+      throw new Error("ping 仅在桌面版本中支持使用");
+    }
+    return await window.__TAURI__.core.invoke("ping_host", { host });
+  },
 };
