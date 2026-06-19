@@ -2040,8 +2040,10 @@ toggletheme() 切换主题
 		<div class="content" id="win-about-desktop">
 			<div class="menu">
 				<list class="about-menu-desktop">
-					<a class="enable check about avlb">
+					<a class="enable check about avlb" onclick="$('#win-about-desktop>.about').addClass('show');$('.about-menu-desktop>.about').addClass('check');$('.about-menu-desktop>.update').removeClass('check');$('#win-about-desktop>.update').removeClass('show');">
 						<span>简介</span></a>
+					<a class="enable update avlb" onclick="$('#win-about-desktop>.update').addClass('show');$('.about-menu-desktop>.update').addClass('check');$('.about-menu-desktop>.about').removeClass('check');$('#win-about-desktop>.about').removeClass('show');">
+						<span>更新记录</span></a>
 				</list>
 			</div>
 			<div class="cnt about show">
@@ -2079,6 +2081,17 @@ toggletheme() 切换主题
 					<h2 class="tit"><span></span>其它</h2>
 					<p>&emsp;&emsp;此项目基于目前 Windows 版本创造，与微软的 Windows 12 正式版本不一致。</p>
 					<p>&emsp;&emsp;此项目绝不附属于微软，且不应与微软操作系统或产品混淆。</p>
+				</div>
+			</div>
+			<div class="cnt update">
+				<h1 class="tit"><span></span>更新记录</h1>
+				<div style="margin-left: 20px;">
+					<details open><summary><span>Win12-desktop</span> 桌面版</summary><p>
+						&emsp;&emsp;- 基于 Tauri 构建 Windows 12 网页版桌面应用。<br>
+						&emsp;&emsp;- 支持桌面版专属的本地能力和应用体验。<br>
+						&emsp;&emsp;- 项目源码与问题反馈请查看 <a onclick="window.open('https://github.com/win12-online/win12-desktop','_blank');" win12_title="https://github.com/win12-online/win12-desktop" class="jump">win12-online/win12-desktop</a>。
+					</p></details>
+					<a onclick="window.open('https://github.com/win12-online/win12-desktop','_blank');" win12_title="https://github.com/win12-online/win12-desktop" class="a jump" style="text-align: center;">更多</a>
 				</div>
 			</div>
 		</div>

@@ -92,7 +92,8 @@
   transform: none;
 }
 
-#win-about > .update > div > details {
+#win-about > .update > div > details,
+#win-about-desktop > .update > div > details {
   background-color: var(--card);
   padding: 10px 10px 0 15px;
   border-radius: 8px;
@@ -106,34 +107,41 @@
   height: 45px;
 }
 
-:root.corner_squ #win-about > .update > div > details {
+:root.corner_squ #win-about > .update > div > details,
+:root.corner_squ #win-about-desktop > .update > div > details {
   corner-shape: squircle;
   border-radius: 20px;
 }
 
-#win-about > .update > div > details[open] {
+#win-about > .update > div > details[open],
+#win-about-desktop > .update > div > details[open] {
   padding-bottom: 10px;
   height: 100%;
 }
 
-#win-about > .update > div > details:not([open]):hover {
+#win-about > .update > div > details:not([open]):hover,
+#win-about-desktop > .update > div > details:not([open]):hover {
   filter: brightness(1.2);
 }
 
-#win-about > .update > div > details:active {
+#win-about > .update > div > details:active,
+#win-about-desktop > .update > div > details:active {
   opacity: 0.6;
 }
 
-#win-about > .update > div > details > summary {
+#win-about > .update > div > details > summary,
+#win-about-desktop > .update > div > details > summary {
   font-size: 17px;
   transition: 200ms;
 }
 
-#win-about > .update > div > details > summary > span {
+#win-about > .update > div > details > summary > span,
+#win-about-desktop > .update > div > details > summary > span {
   font-weight: 900;
 }
 
-#win-about > .update > div > details > p {
+#win-about > .update > div > details > p,
+#win-about-desktop > .update > div > details > p {
   margin-left: 10px;
 }
 

@@ -1761,6 +1761,10 @@ let apps = {
     },
     aboutDesktop: {
         init: () => {
+            $('#win-about-desktop>.about').addClass('show');
+            $('#win-about-desktop>.update').removeClass('show');
+            $('.about-menu-desktop>.about').addClass('check');
+            $('.about-menu-desktop>.update').removeClass('check');
             if (!$('#contri-desktop>.a').length) apps.aboutDesktop.get();
             if (!($('#StarShowDesktop').html().includes('刷新'))) apps.aboutDesktop.get_star();
         },
