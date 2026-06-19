@@ -27,32 +27,29 @@ window.win12Native = {
     }
 
     const requestId = `ping-${Date.now()}-${Math.random().toString(16).slice(2)}`;
-    let unlisten = null;
+    let resolveFinished;
+    const finished = new Promise((resolve) => {
+      resolveFinished = resolve;
+    });
+
+    const unlisten = await window.__TAURI__.event.listen("win12://ping-output", (event) => {
+      const payload = event.payload || {};
+      if (payload.request_id !== requestId) return;
+
+      if (payload.text && onOutput) {
+        onOutput(payload.text);
+      }
+
+      if (payload.done) {
+        resolveFinished(payload);
+      }
+    });
 
     try {
-      await new Promise((resolve, reject) => {
-        window.__TAURI__.event.listen("win12://ping-output", (event) => {
-          const payload = event.payload || {};
-          if (payload.request_id !== requestId) return;
-
-          if (payload.text && onOutput) {
-            onOutput(payload.text);
-          }
-
-          if (payload.done) {
-            resolve(payload);
-          }
-        })
-          .then((unlistenFn) => {
-            unlisten = unlistenFn;
-            return window.__TAURI__.core.invoke("ping_host", { host, ipv6, requestId });
-          })
-          .catch(reject);
-      });
+      await window.__TAURI__.core.invoke("ping_host", { host, ipv6, requestId });
+      await finished;
     } finally {
-      if (unlisten) {
-        unlisten();
-      }
+      unlisten();
     }
   },
 };
