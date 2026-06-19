@@ -1767,11 +1767,49 @@ let apps = {
             $('.about-menu-desktop>.update').removeClass('check');
             if (!$('#contri-desktop>.a').length) apps.aboutDesktop.get();
             if (!($('#StarShowDesktop').html().includes('刷新'))) apps.aboutDesktop.get_star();
+            if (!$('#ReleaseShowDesktop>details').length) apps.aboutDesktop.get_releases();
         },
         run_loading: (expr) => {
             $(expr).html(`<loading><svg width="30px" height="30px" viewBox="0 0 16 16">
             <circle cx="8px" cy="8px" r="7px" style="stroke:#7f7f7f50;fill:none;stroke-width:3px;"></circle>
             <circle cx="8px" cy="8px" r="7px" style="stroke:#2983cc;stroke-width:3px;"></circle></svg></loading>`);
+        },
+        escape_html: (text) => {
+            return String(text || '').replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+        },
+        render_release_body: (body) => {
+            const text = body || '此发行版没有填写发行日志。';
+            if (typeof marked !== 'undefined' && typeof DOMPurify !== 'undefined') {
+                const html = marked.parse(text);
+                return DOMPurify.sanitize(html);
+            }
+            return apps.aboutDesktop.escape_html(text).replace(/\n/g, '<br>');
+        },
+        get_releases: () => {
+            apps.aboutDesktop.run_loading('#ReleaseShowDesktop');
+            fetch('https://api.github.com/repos/win12-online/win12-desktop/releases')
+                .then(response => response.json())
+                .then(releases => {
+                    setTimeout(() => {
+                        $('#ReleaseShowDesktop').html('');
+                        if (!Array.isArray(releases) || releases.length == 0) {
+                            $('#ReleaseShowDesktop').html('<p>&emsp;&emsp;暂无发行版发行日志。</p><a class="button" onclick="apps.aboutDesktop.get_releases()"><i class="bi bi-arrow-clockwise"></i> 刷新</a>');
+                            return;
+                        }
+                        releases.forEach((release, index) => {
+                            const title = apps.aboutDesktop.escape_html(release.name || release.tag_name || '未命名发行版');
+                            const tag = release.tag_name ? `<span>${apps.aboutDesktop.escape_html(release.tag_name)}</span> ` : '';
+                            const date = release.published_at ? ` ${apps.aboutDesktop.escape_html(new Date(release.published_at).toLocaleDateString())}` : '';
+                            const body = apps.aboutDesktop.render_release_body(release.body);
+                            $('#ReleaseShowDesktop').append(`<details ${index == 0 ? 'open' : ''}><summary>${tag}${title}${date}</summary><div class="release-body">${body}</div></details>`);
+                        });
+                        $('#ReleaseShowDesktop').append('<a onclick="window.open(\'https://github.com/win12-online/win12-desktop/releases\',\'_blank\');" win12_title="https://github.com/win12-online/win12-desktop/releases" class="a jump" style="text-align: center;">更多</a>');
+                    }, 200);
+                })
+                .catch(error => {
+                    console.error('获取发行版发行日志时出错：', error);
+                    $('#ReleaseShowDesktop').html('<div style="display: flex;"><p>&emsp;&emsp;哎呀！出错了！</p>&emsp;<a class="button" onclick="apps.aboutDesktop.get_releases()"><i class="bi bi-arrow-clockwise"></i> 重试</a></div>');
+                });
         },
         get: () => {
             apps.aboutDesktop.run_loading('#contri-desktop');

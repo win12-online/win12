@@ -141,7 +141,8 @@
 }
 
 #win-about > .update > div > details > p,
-#win-about-desktop > .update > div > details > p {
+#win-about-desktop > .update > div > details > p,
+#win-about-desktop > .update > div > details > .release-body {
   margin-left: 10px;
 }
 
