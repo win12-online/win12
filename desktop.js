@@ -1198,9 +1198,8 @@ STARWARS        ${lang('原力觉醒', 'terminal.help.starwars')}
             openapp('terminal');
         }
 
-        const pingCommand = commandName;
         const host = cmds.slice(1).join(' ').trim();
-        const ipv6 = pingCommand === 'ping6';
+        const ipv6 = commandName === 'ping6';
         const terminalOutput = $('#win-terminal>.text-cmd');
 
         if (!window.win12Native || !window.win12Native.isTauri()) {
@@ -1209,11 +1208,10 @@ STARWARS        ${lang('原力觉醒', 'terminal.help.starwars')}
         }
 
         if (!host) {
-            terminalOutput.append(`用法: ${pingCommand} <host>\n`);
+            terminalOutput.append(`用法: ${commandName} <host>\n`);
             return true;
         }
 
-        terminalOutput.append(`正在 Ping ${host}，请稍候...\n`);
         window.win12Native.pingHost(host, ipv6)
             .then((output) => {
                 terminalOutput.append(output + (output.endsWith('\n') ? '' : '\n'));
