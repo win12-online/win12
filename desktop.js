@@ -1203,7 +1203,7 @@ STARWARS        ${lang('原力觉醒', 'terminal.help.starwars')}
         const terminalOutput = $('#win-terminal>.text-cmd');
 
         if (!window.win12Native || !window.win12Native.isTauri()) {
-            terminalOutput.append(`${commandName} 仅在 App 中支持使用\n`);
+            terminalOutput.append(`${commandName} 仅在 桌面版 中支持使用\n`);
             return true;
         }
 
