@@ -1150,20 +1150,11 @@ function closeVideo() {
 var shutdown_task = []; //关机任务，储存在这个数组里
 // 为什么要数组？
 
-function appendTerminalText(text) {
-    const elt = $('#win-terminal>.text-cmd')[0];
-    if (!elt) {
-        return;
-    }
-
-    const newD = document.createElement('div');
-    newD.innerText = text;
-    elt.appendChild(newD);
-    elt.scrollTop = elt.scrollHeight;
-}
-
 // 运行的指令
 function runcmd(cmd, inTerminal = false) {
+    var cmds = cmd.split(' ');
+    var commandName = cmds[0].toLowerCase();
+
     if (cmd.slice(0, 3) == 'cmd') {
         run_cmd = cmd;
         if (!inTerminal) {
@@ -1202,33 +1193,33 @@ STARWARS        ${lang('原力觉醒', 'terminal.help.starwars')}
         }
         return true;
     }
-    else if (/^(ping6?|ping)(?:\s+(.+))?$/i.test(cmd)) {
+    else if (commandName === 'ping' || commandName === 'ping6') {
         if (!inTerminal) {
             openapp('terminal');
         }
 
-        const pingMatch = cmd.match(/^(ping6?|ping)(?:\s+(.+))?$/i);
-        const pingCommand = pingMatch ? pingMatch[1].toLowerCase() : 'ping';
-        const host = pingMatch && pingMatch[2] ? pingMatch[2].trim() : '';
+        const pingCommand = commandName;
+        const host = cmds.slice(1).join(' ').trim();
         const ipv6 = pingCommand === 'ping6';
+        const terminalOutput = $('#win-terminal>.text-cmd');
 
         if (!window.win12Native || !window.win12Native.isTauri()) {
-            appendTerminalText(`${pingCommand} 仅在桌面版本中支持使用`);
+            terminalOutput.append(`${pingCommand} 仅在 App 中支持使用\n`);
             return true;
         }
 
         if (!host) {
-            appendTerminalText(`用法: ${pingCommand} <host>`);
+            terminalOutput.append(`用法: ${pingCommand} <host>\n`);
             return true;
         }
 
-        appendTerminalText(`正在 Ping ${host}，请稍候...`);
+        terminalOutput.append(`正在 Ping ${host}，请稍候...\n`);
         window.win12Native.pingHost(host, ipv6)
             .then((output) => {
-                appendTerminalText(output);
+                terminalOutput.append(output + (output.endsWith('\n') ? '' : '\n'));
             })
             .catch((error) => {
-                appendTerminalText(error && error.message ? error.message : String(error));
+                terminalOutput.append((error && error.message ? error.message : String(error)) + '\n');
             });
         return true;
     }
