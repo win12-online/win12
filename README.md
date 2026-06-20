@@ -109,7 +109,7 @@ _AI Copilot([相关信息](./scripts/AI%20Copilot%20service/README.md))_
 
 - [x] 建立文件系统
 - [ ] 建立自己的可执行文件机制
-- [ ] 将 .exe 文件转化并执行
+- [x] 将 .exe 文件转化并执行
 - [ ] 提供更多 api 供应用调用
 - [x] 内置浏览器内核，成为应用
 - [ ] 将项目更名为 "Windows 12"
