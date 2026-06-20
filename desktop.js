@@ -1201,6 +1201,7 @@ STARWARS        ${lang('原力觉醒', 'terminal.help.starwars')}
         const host = cmds.slice(1).join(' ').trim();
         const ipv6 = commandName === 'ping6';
         const terminalOutput = $('#win-terminal>.text-cmd');
+        const terminalInput = $('#win-terminal input');
 
         if (!window.win12Native || !window.win12Native.isTauri()) {
             terminalOutput.append(`${commandName} 仅在 桌面版 中支持使用\n`);
@@ -1212,10 +1213,14 @@ STARWARS        ${lang('原力觉醒', 'terminal.help.starwars')}
             return true;
         }
 
+        terminalInput.prop('disabled', true);
         window.win12Native.pingHost(host, ipv6, (output) => {
             terminalOutput[0].appendChild(document.createTextNode(output));
         }).catch((error) => {
             terminalOutput.append((error && error.message ? error.message : String(error)) + '\n');
+        }).finally(() => {
+            terminalInput.prop('disabled', false);
+            terminalInput.focus();
         });
         return true;
     }
