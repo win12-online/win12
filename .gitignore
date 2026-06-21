@@ -3,3 +3,8 @@ web.config
 .idea
 
 .DS_Store
+
+# Temporary setup files
+SETUP_LOCAL_ENGLISH.md
+module/asw-*
+readme/asw-*
