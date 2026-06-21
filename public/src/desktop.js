@@ -591,6 +591,7 @@ function win12FinishLogin() {
     $('#login-password').css('opacity', '0');
     $('#login-error').css('opacity', '0');
     $('#login-welc').css('opacity', '1');
+
     // Show desktop elements
     console.log('Showing desktop: #page, #taskbar, .window');
     $('#page').css('display', 'grid');
@@ -598,7 +599,12 @@ function win12FinishLogin() {
     $('.window').css('display', 'grid');
     $('#orient-hint').css('display', 'block');
     $('#notice-board').css('display', 'flex');
-    console.log('Desktop elements shown. Page display:', $('#page').css('display'));
+
+    // CRITICAL: Initialize desktop icons and menus (same as normal startup)
+    setIcon();
+    addMenu();
+
+    console.log('Desktop elements shown and initialized');
     setTimeout(() => {
         $('#loginback').addClass('close');
         setTimeout(() => {
