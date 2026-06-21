@@ -178,8 +178,8 @@ toggletheme() 切换主题
 	</div>
 	<div class="container" id="orientation-warning">
         <div class="image-container">
-            <img src="icon/ls.svg" alt="半透明图标" class="svg translucent">
-            <img src="icon/ls.svg" alt="旋转图标" class="svg rotating">
+            <img src="icon/ls.svg" alt="Semi-transparent icon" class="svg translucent">
+            <img src="icon/ls.svg" alt="Rotating icon" class="svg rotating">
         </div>
         <div data-i18n="cover-hp">Landscape for the best experience</div>
         <button class="orientation-close-btn" onclick="dismissOrientation();" data-i18n="cover-hp-close">Continue using portrait mode</button>
@@ -459,15 +459,15 @@ toggletheme() 切换主题
 				<div class="title">
 					<p data-i18n="stmenu-tj">Recommended</p>
 					<div>
-						<a class="a more-btn" onclick="openapp('explorer');apps.explorer.goto('C:/用户/Administrator/推荐的项目');hide_startmenu();"><span data-i18n="more">More</span> <i class="bi bi-chevron-right"></i></a>
+						<a class="a more-btn" onclick="openapp('explorer');apps.explorer.goto('C:/Users/Administrator/Recommended');hide_startmenu();"><span data-i18n="more">More</span> <i class="bi bi-chevron-right"></i></a>
 					</div>
 				</div>
 				<div class="apps">
-					<a class="a tj-obj act"><img src="icon/files/ppt.png"><div><p data-i18n="stmenu-tj-f1">How to Use Caps Scientifically.pptx</p><p data-i18n="stmenu-tj-t1">5 分钟前</p></div></a>
-					<a class="a tj-obj act"><img src="icon/files/img.png"><div><p data-i18n="stmenu-tj-f2">Coca Cola Bottle Cap.jpg</p><p data-i18n="stmenu-tj-t2">7 分钟前</p></div></a>
-					<a class="a tj-obj act"><img src="icon/files/img.png"><div><p data-i18n="stmenu-tj-f3">Bottle Cap Structure.jpg</p><p data-i18n="stmenu-tj-t3">16 分钟前</p></div></a>
-					<a class="a tj-obj act" onclick="openapp('word');apps.word.edit();hide_startmenu();"><img src="icon/files/word.png"><div><p data-i18n="stmenu-tj-f4">Cap Structure and Function.docx</p><p data-i18n="stmenu-tj-t4">24 分钟前</p></div></a>
-					<a class="a tj-obj act"><img src="icon/files/excel.png"><div><p data-i18n="stmenu-tj-f5">Coca Cola Cap Thickness.xlsx</p><p data-i18n="stmenu-tj-t5">35 分钟前</p></div></a>
+					<a class="a tj-obj act"><img src="icon/files/ppt.png"><div><p data-i18n="stmenu-tj-f1">How to Use Caps Scientifically.pptx</p><p data-i18n="stmenu-tj-t1">5 minutes ago</p></div></a>
+					<a class="a tj-obj act"><img src="icon/files/img.png"><div><p data-i18n="stmenu-tj-f2">Coca Cola Bottle Cap.jpg</p><p data-i18n="stmenu-tj-t2">7 minutes ago</p></div></a>
+					<a class="a tj-obj act"><img src="icon/files/img.png"><div><p data-i18n="stmenu-tj-f3">Bottle Cap Structure.jpg</p><p data-i18n="stmenu-tj-t3">16 minutes ago</p></div></a>
+					<a class="a tj-obj act" onclick="openapp('word');apps.word.edit();hide_startmenu();"><img src="icon/files/word.png"><div><p data-i18n="stmenu-tj-f4">Cap Structure and Function.docx</p><p data-i18n="stmenu-tj-t4">24 minutes ago</p></div></a>
+					<a class="a tj-obj act"><img src="icon/files/excel.png"><div><p data-i18n="stmenu-tj-f5">Coca Cola Cap Thickness.xlsx</p><p data-i18n="stmenu-tj-t5">35 minutes ago</p></div></a>
 				</div>
 			</div>
 		</div>
@@ -666,9 +666,9 @@ toggletheme() 切换主题
 		<span class="hr"></span>
 		<div class="news">
 			<div class="bar">
-				<p class="tit" data-i18n="widget-news">新闻</p>
+				<p class="tit" data-i18n="widget-news">News</p>
 				<div>
-					<span style="color: #7f7f7f;margin-right: 5px;margin-top: 2px;" data-i18n="widget-news-res">我们不对新闻内容负责</span>
+					<span style="color: #7f7f7f;margin-right: 5px;margin-top: 2px;" data-i18n="widget-news-res">我们不对News内容负责</span>
 					<button onclick="shownotice('widgets.news.source')" class="a act btn btn-icon big"
 						style="background: linear-gradient(100deg, var(--theme-1), var(--theme-2));color:#fff;"
 						win12_title="Switch News Source"><i class="bi bi-arrow-repeat"></i></button>
@@ -704,12 +704,12 @@ toggletheme() 切换主题
 			</div>
 		</div>
 		<div class="chat">
-			<a class="a btn button" onclick="copilot.init()" style="display: inline-block;margin-top: 10px;" data-i18n="copilot.start">开始对话</a>
-			<p style="margin-top: 10px;" data-i18n="copilot.p">使用前请先点击右上 "<i class="bi bi-info-circle"></i>" 查看使用注意事项</p>
+			<a class="a btn button" onclick="copilot.init()" style="display: inline-block;margin-top: 10px;" data-i18n="copilot.start">Start Conversation</a>
+			<p style="margin-top: 10px;" data-i18n="copilot.p">Please click top right before using "<i class="bi bi-info-circle"></i>" View usage notes</p>
 		</div>
 		<div class="inputbox disable">
 			<input type="text" class="input" onkeydown="if(event.keyCode==13){copilot.send($(this).val());$(this).val('');this.blur()}">
-			<a class="a send btn" onclick="copilot.send($('#copilot>.inputbox>.input').val());$('#copilot>.inputbox>.input').val('');" data-i18n="copilot.send">发送</a>
+			<a class="a send btn" onclick="copilot.send($('#copilot>.inputbox>.input').val());$('#copilot>.inputbox>.input').val('');" data-i18n="copilot.send">Send</a>
 		</div>
 	</div>
 	<div id="control">
@@ -725,25 +725,25 @@ toggletheme() 切换主题
 					<div class="icon active" onclick="controlStatus.call(this)">
 						<icon class="s-icon"></icon>
 					</div>
-					<div class="tit" data-i18n="ctrl-blue">蓝牙</div>
+					<div class="tit" data-i18n="ctrl-blue">Bluetooth</div>
 				</div>
 				<div class="btn3">
 					<div class="icon" onclick="controlStatus.call(this, 'fly')">
 						<icon class="s-icon"></icon>
 					</div>
-					<div class="tit" data-i18n="ctrl-air">飞行模式</div>
+					<div class="tit" data-i18n="ctrl-air">Airplane Mode</div>
 				</div>
 				<div class="btn4">
 					<div class="icon" onclick="controlStatus.call(this, 'dark')">
 						<icon class="s-icon"></icon>
 					</div>
-					<div class="tit" data-i18n="ctrl-eye">护眼模式</div>
+					<div class="tit" data-i18n="ctrl-eye">Eye Protection</div>
 				</div>
 				<div class="btn5">
 					<div class="icon" onclick="controlStatus.call(this)">
 						<icon class="s-icon"></icon>
 					</div>
-					<div class="tit" data-i18n="ctrl-hotspot">Move热点</div>
+					<div class="tit" data-i18n="ctrl-hotspot">Mobile Hotspot</div>
 				</div>
 				<div class="btn6">
 					<div class="icon" onclick="controlStatus.call(this)">
@@ -880,7 +880,7 @@ toggletheme() 切换主题
 	</div>
 	<div id="desktop-editbar-container">
 		<div id="desktop-editbar">
-			<div onclick="shownotice('widgets.desktop');"><i class="bi bi-plus"></i> <span data-i18n="editmd-add">Add小组件</span></div>
+			<div onclick="shownotice('widgets.desktop');"><i class="bi bi-plus"></i> <span data-i18n="editmd-add">Add Widgets</span></div>
 			<div onclick="openapp('setting');$('#win-setting > div.menu > list > a.enable.appearance')[0].click();"><i class="bi bi-brush"></i> <span data-i18n="psnl">Personalization</span></div>
 			<div onclick="editMode();" win12_title="Exit Edit Mode"><i class="bi bi-x-lg"></i></div>
 		</div>
@@ -932,32 +932,32 @@ toggletheme() 切换主题
 					<li class="nav-list-item">
 						<a class="nav-list-link">
 							<icon></icon>
-							<span data-i18n="defender.virus">病毒威胁与防护</span>
+							<span data-i18n="defender.virus">Virus & threat protection</span>
 						</a>
 					</li>
 					<li class="nav-list-item">
 						<a class="nav-list-link">
 							<icon></icon>
-							<span data-i18n="defender.account">Accounts防护</span>
+							<span data-i18n="defender.account">Account protection</span>
 						</a>
 					</li>
 					<li class="nav-list-item">
 						<a class="nav-list-link">
 							<icon></icon>
-							<span data-i18n="defender.firewall">防火墙和网络防护</span>
+							<span data-i18n="defender.firewall">Firewall & network protection</span>
 						</a>
 					</li>
 					<li class="nav-list-item">
 						<a class="nav-list-link">
 							<icon></icon>
-							<span data-i18n="defender.device">设备安全性</span>
+							<span data-i18n="defender.device">Device security</span>
 						</a>
 					</li>
 				</ul>
 			</div>
 			<div class="app-main">
 				<div class="main-header-line">
-					<h1 data-i18n="defender.glance">安全性概览</h1>
+					<h1 data-i18n="defender.glance">Security at a glance</h1>
 					<div class="action-buttons">
 						<button class="open-right-area">
 							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
@@ -981,7 +981,7 @@ toggletheme() 切换主题
 					<div class="chart-container-wrapper">
 						<div class="chart-container">
 							<div class="chart-info-wrapper">
-								<h2 data-i18n="defender.network">网络流量使用</h2>
+								<h2 data-i18n="defender.network">Network traffic usage</h2>
 								<span>20.5 M</span>
 							</div>
 							<div class="chart-svg">
@@ -1000,7 +1000,7 @@ toggletheme() 切换主题
 					<div class="chart-container-wrapper">
 						<div class="chart-container">
 							<div class="chart-info-wrapper">
-								<h2 data-i18n="defender.speed">网络速度</h2>
+								<h2 data-i18n="defender.speed">Network speed</h2>
 								<span>99 M/S</span>
 							</div>
 							<div class="chart-svg">
@@ -1019,8 +1019,8 @@ toggletheme() 切换主题
 					<div class="chart-container-wrapper">
 						<div class="chart-container">
 							<div class="chart-info-wrapper">
-								<h2 data-i18n="defender.clearv">入侵病毒清除</h2>
-								<h3 style="color: white;" data-i18n="defender.allvc">所有病毒均被清除</h3>
+								<h2 data-i18n="defender.clearv">Intrusion virus clearance</h2>
+								<h3 style="color: white;" data-i18n="defender.allvc">All viruses have been cleared</h3>
 							</div>
 							<div class="chart-svg">
 								<svg viewBox="0 0 36 36" class="circular-chart orange">
@@ -1040,7 +1040,7 @@ toggletheme() 切换主题
 					<div class="chart-container-wrapper big">
 						<div class="chart-container">
 							<div class="chart-container-header">
-								<h2 data-i18n="defender.freq">电脑受病毒攻击频率</h2>
+								<h2 data-i18n="defender.freq">Frequency of virus attacks</h2>
 								<span>过去 30 天</span>
 							</div>
 							<div class="line-chart">
@@ -1054,7 +1054,7 @@ toggletheme() 切换主题
 					<div class="chart-container-wrapper small">
 						<div class="chart-container">
 							<div class="chart-container-header">
-								<h2 data-i18n="defender.netreq">网络通信比例</h2>
+								<h2 data-i18n="defender.netreq">Network communication ratio</h2>
 								<span href="#" data-i18n="defender.netreq-thismonth">这个月</span>
 							</div>
 							<div class="acquisitions-bar">
@@ -1295,7 +1295,7 @@ toggletheme() 切换主题
 				<list class="focs">
 					<a class="enable home check" onclick="apps.setting.page('home')"><img src="apps/icons/setting/home.png"><span data-i18n="home">Home</span></a><!-- 主页  @lh11117 (2023/9/31~2023/10/1) -->
 					<a class="enable system" onclick="apps.setting.page('system')"><img src="apps/icons/setting/system.png"><span data-i18n="setting.system">System</span></a><!-- System  stsc 远古-->
-					<a class="enable blueteeth" onclick="apps.setting.page('blueteeth')"><img src="apps/icons/setting/blueteeth.png"><span data-i18n="setting.device">Bluetooth & devices</span></a><!-- 蓝牙与设备  @Junchen Yi 2023-9-9-->
+					<a class="enable blueteeth" onclick="apps.setting.page('blueteeth')"><img src="apps/icons/setting/blueteeth.png"><span data-i18n="setting.device">Bluetooth & devices</span></a><!-- Bluetooth与设备  @Junchen Yi 2023-9-9-->
 					<a class="enable network" onclick="apps.setting.page('network')"><img src="apps/icons/setting/network.png"><span data-i18n="setting.network">Network & internet</span></a><!-- Network & internet  @Junchen Yi 2023-9-10-->
 					<a class="enable appearance avlb" onclick="apps.setting.page('appearance')"><img src="apps/icons/setting/personal.png"><span data-i18n="setting.psnl">Personalization</span></a><!-- Personalization  stsc 远古-->
 					<a class="enable apps" onclick="apps.setting.page('apps')"><img src="apps/icons/setting/apps.png"><span data-i18n="setting.apps">Apps</span></a><!-- Apps  @Junchen Yi 2023-9-11-->
@@ -1353,9 +1353,9 @@ toggletheme() 切换主题
 						</div>
 					</div>
 					<div class="setting-card">
-						<p>蓝牙设备<br><span style="font-size: 14px;color:var(--text2)">管理、Add和Delete设备</span></p>
+						<p>Bluetooth设备<br><span style="font-size: 14px;color:var(--text2)">管理、Add和Delete设备</span></p>
 						<div class="setting-list">
-							<a onclick="$('#win-setting>.menu>list>a.blueteeth')[0].click();"><icon>&#xE702;</icon><div><p>蓝牙</p><p></p></div><i class="bi bi-chevron-right"></i></a>
+							<a onclick="$('#win-setting>.menu>list>a.blueteeth')[0].click();"><icon>&#xE702;</icon><div><p>Bluetooth</p><p></p></div><i class="bi bi-chevron-right"></i></a>
 						</div>
 					</div>
 					</div></div>
@@ -1389,21 +1389,21 @@ toggletheme() 切换主题
 						<a><icon></icon><div><p>System信息</p><p>设备规格、重命名电脑、Windows 规格</p></div><i class="bi bi-chevron-right"></i></a>
 					</div>
 				</div>
-				<!-- 蓝牙与设备 -->
+				<!-- Bluetooth与设备 -->
 				<div class="cnt blueteeth">
-					<p class="title">蓝牙与设备</p>
+					<p class="title">Bluetooth与设备</p>
 					<div style="display: flex;">
 						<p class="s-icon" style="font-size: 70px;margin: -8px 10px 0px 20px;"></p>
 						<div>
-							<p style="color: #7f7f7f;margin:-8px 0 -5px 0;">我的蓝牙名称</p>
+							<p style="color: #7f7f7f;margin:-8px 0 -5px 0;">我的Bluetooth名称</p>
 							<p style="font-size: 28px;text-overflow: ellipsis;white-space: nowrap;">Blueteeth-PingGai</p>
-							<p class="blueteeth-tips-text" style="color: #7f7f7f;margin:-8px 0 -5px 0;">这是您在其他设备的蓝牙列表中的名称</p>
+							<p class="blueteeth-tips-text" style="color: #7f7f7f;margin:-8px 0 -5px 0;">这是您在其他设备的Bluetooth列表中的名称</p>
 							<a style="color: var(--href);text-decoration: underline !important;;" class="a">重命名</a>
 						</div>
 					</div>
 					<div class="setting-list">
-						<a><icon></icon><div><p>连接</p><p>搜索新的蓝牙设备</p></div><i class="bi bi-chevron-right"></i></a>
-						<a><icon></icon><div><p>设备</p><p>蓝牙鼠标、键盘、其他蓝牙设备</p></div><i class="bi bi-chevron-right"></i></a>
+						<a><icon></icon><div><p>连接</p><p>搜索新的Bluetooth设备</p></div><i class="bi bi-chevron-right"></i></a>
+						<a><icon></icon><div><p>设备</p><p>Bluetooth鼠标、键盘、其他Bluetooth设备</p></div><i class="bi bi-chevron-right"></i></a>
 						<a><icon></icon><div><p>打印机和扫描仪</p><p>Settings打印机、排除故障</p></div><i class="bi bi-chevron-right"></i></a>
 						<a><icon></icon><div><p>Move设备</p><p>立即从电脑访问Move设备</p></div><i class="bi bi-chevron-right"></i></a>
 						<a><icon></icon><div><p>触摸板</p><p>点击、滚动、缩放、手势</p></div><i class="bi bi-chevron-right"></i></a>
@@ -1411,7 +1411,7 @@ toggletheme() 切换主题
 						<a><icon></icon><div><p>USB</p><p>通知、USB 节电模式</p></div><i class="bi bi-chevron-right"></i></a>
 					</div>
 				</div>
-				<!-- 蓝牙与设备 end -->
+				<!-- Bluetooth与设备 end -->
 				<!-- Network & internet -->
 				<div class="cnt network">
 					<p class="title">Network & internet</p>
@@ -1427,8 +1427,8 @@ toggletheme() 切换主题
 						<a><icon></icon><div><p>WLAN</p><p>连接、管理已连接网络</p></div><i class="bi bi-chevron-right"></i></a>
 						<a><icon></icon><div><p>Move网络 未连接</p><p>通过Move网络访问互联网</p></div><i class="bi bi-chevron-right"></i></a>
 						<a><icon></icon><div><p>VPN</p><p>Add、连接、管理</p></div><i class="bi bi-chevron-right"></i></a>
-						<a><icon></icon><div><p>Move热点</p><p>共享 Internet 连接</p></div><i class="bi bi-chevron-right"></i></a>
-						<a><icon></icon><div><p>飞行模式</p><p>停止无线通信</p></div><i class="bi bi-chevron-right"></i></a>
+						<a><icon></icon><div><p>Mobile Hotspot</p><p>共享 Internet 连接</p></div><i class="bi bi-chevron-right"></i></a>
+						<a><icon></icon><div><p>Airplane Mode</p><p>停止无线通信</p></div><i class="bi bi-chevron-right"></i></a>
 						<a><icon></icon><div><p>代理</p><p>用于 WI-Fi 和以太网的代理服务器</p></div><i class="bi bi-chevron-right"></i></a>
 						<a><icon></icon><div><p>拨号</p><p>Settings拨号 Internet 连接</p></div><i class="bi bi-chevron-right"></i></a>
 						<a><icon></icon><div><p>高级网络Settings</p><p>查看所有网络适配器、网络重置</p></div><i class="bi bi-chevron-right"></i></a>
@@ -1877,7 +1877,7 @@ toggletheme() 切换主题
 				<div style="margin-left: 20px;">
 					<details><summary><span>v10.2.3</span>  新增 Copilot 敏感词过滤</summary><p>
 						&emsp;&emsp;-(更新来自 @tangyuan0821)<br>
-						&emsp;&emsp;-发送消息前接入敏感文本过滤 API，拦截违禁内容
+						&emsp;&emsp;-Send消息前接入敏感文本过滤 API，拦截违禁内容
 					</p></details>
 					<details><summary><span>v10.2.2</span> 修改部分动效和 UI 细节</summary><p>
 						&emsp;&emsp;-(更新来自 @HHCL233)<br>
@@ -1998,11 +1998,11 @@ toggletheme() 切换主题
 						&emsp;&emsp;-(更新来自@NB-Group)<br>
 						&emsp;&emsp;- 在Move端竖屏体验时将会提示“横屏以获得最佳体验”<br>
 					</p></details>
-					<details><summary><span>v9.1.0</span> 真正的在线新闻功能！</summary><p>
+					<details><summary><span>v9.1.0</span> 真正的在线News功能！</summary><p>
 						&emsp;&emsp;-(更新来自@lingbopro)<br>
-						&emsp;&emsp;- 现在在小组件面板里有真正从网络实时获取的新闻！ <br>
+						&emsp;&emsp;- 现在在小组件面板里有真正从网络实时获取的News！ <br>
 						&emsp;&emsp;&nbsp; （可能会出现卡顿，触发方式薛定谔）<br>
-						&emsp;&emsp;- 顺便重构了一下新闻部分</p>
+						&emsp;&emsp;- 顺便重构了一下News部分</p>
 					</p></details>
 					<details><summary><span>v9.0.0</span> 窗口背景材质超级大升级！</summary><p>
 						&emsp;&emsp;-(更新来自@NB-Group)<br>
@@ -2828,7 +2828,7 @@ toggletheme() 切换主题
 									<div class="tit" data-i18n="taskmgr.performance.wifi">Wi-Fi</div>
 									<div class="data">
 										<div class="tit">WLAN</div>
-										<div class="value2"><span data-i18n="taskmgr.performance.wifi-speed">发送：1145 接收：1145 Mbps</span></div>
+										<div class="value2"><span data-i18n="taskmgr.performance.wifi-speed">Send：1145 接收：1145 Mbps</span></div>
 									</div>
 								</div>
 							</div>
@@ -2986,7 +2986,7 @@ toggletheme() 切换主题
 									<div class="left">吞吐量</div>
 									<div class="right">100 Mbps</div>
 								</div>
-								<div class="graph" win12_title="此网络上的发送和接收活动">
+								<div class="graph" win12_title="此网络上的Send和接收活动">
 									<svg viewBox="0 0 6000 1000" preserveAspectRatio="none" class="bg" xmlns="http://www.w3.org/2000/svg"></svg>
 									<svg viewBox="0 0 6000 1000" preserveAspectRatio="none" class="chart" xmlns="http://www.w3.org/2000/svg"></svg>
 								</div>
@@ -2996,7 +2996,7 @@ toggletheme() 切换主题
 								</div>
 								<div class="information">
 									<div class="left">
-										<div><div class="top">发送</div><div class="value">114 Mbps</div></div>
+										<div><div class="top">Send</div><div class="value">114 Mbps</div></div>
 										<div><div class="top">接收</div><div class="value">114 Mbps</div></div>
 									</div>
 									<div class="right">
@@ -3132,7 +3132,7 @@ toggletheme() 切换主题
 					</div>
 					<div>
 						<h3 data-i18n="taskmgr.settings.feedback">反馈</h3>
-                        <a class="a jump" onclick="shownotice('feedback')" data-i18n="taskmgr.settings.send-feedback">发送反馈</a>
+                        <a class="a jump" onclick="shownotice('feedback')" data-i18n="taskmgr.settings.send-feedback">Send反馈</a>
 					</div>
 				</div>
 			</div>
