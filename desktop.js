@@ -17,10 +17,368 @@ console.log('%cWindows 12 网页版 (GitHub: win12-online/win12)', 'background-i
 // Simple custom i18n implementation (no decodeURI bug)
 const i18nData = {};
 
+function normalizedLangCode(code) {
+    return {
+        'zh-CN': 'zh_CN',
+        'zh-cn': 'zh_CN',
+        'zh-TW': 'zh_TW',
+        'zh-tw': 'zh_TW',
+        'en-US': 'en-US',
+        'en-us': 'en-US',
+        'en-GB': 'en',
+        'en-gb': 'en'
+    }[code] || code;
+}
+
+function parseProperties(data) {
+    const translations = {};
+    const lines = data.split('\n');
+
+    for (let line of lines) {
+        line = line.trim();
+        if (!line || line.startsWith('#') || line.startsWith('!')) continue;
+
+        const eqIndex = line.indexOf('=');
+        if (eqIndex === -1) continue;
+
+        const key = line.substring(0, eqIndex).trim();
+        const value = line.substring(eqIndex + 1).trim();
+
+        if (key) translations[key] = value;
+    }
+
+    return translations;
+}
+
+function getTranslations(code) {
+    return i18nData[code] || i18nData[normalizedLangCode(code)] || i18nData.en || {};
+}
+
+function applyTranslations(code) {
+    const translations = getTranslations(code);
+    let applied = 0;
+
+    $('[data-i18n]').each(function () {
+        const key = $(this).data("i18n");
+        const value = translations[key];
+        if (value) {
+            $(this).html(value);
+            applied++;
+        }
+    });
+
+    $('[data-i18n-attr]').each(function () {
+        const key = $(this).data("i18n-key");
+        const value = translations[key];
+        if (value) {
+            $(this).attr($(this).data("i18n-attr"), value);
+            applied++;
+        }
+    });
+
+    translateLooseEnglishText(code);
+
+    return applied;
+}
+
+const looseEnglishTranslations = [
+    ['立即体验', 'Try it now'],
+    ['主题', 'Theme'],
+    ['语言', 'Language'],
+    ['简体中文', 'Simplified Chinese'],
+    ['繁體中文', 'Traditional Chinese'],
+    ['Github Trending 榜', 'GitHub Trending'],
+    ['第 3 名', 'No. 3'],
+    ['本项目在 Github Trending 榜上最高排名第 3 名，中文榜最高排名第 1 名！', 'This project reached No. 3 on GitHub Trending and No. 1 on the Chinese chart.'],
+    ['Github 开源仓库获得', 'GitHub open-source repository has received'],
+    ['至今，本项目在 Github 上获得了 7000 多个星标！', 'So far, this project has received more than 7,000 stars on GitHub.'],
+    ['以及', 'And'],
+    ['你们的支持', 'Your support'],
+    ['开发团队', 'Development team'],
+    ['贡献者们', 'Contributors'],
+    ['更多', 'More'],
+    ['项目主仓库', 'Main repository'],
+    ['项目介绍页（此页）', 'Project introduction page (this page)'],
+    ['个性化主题仓库', 'Personalization theme repository'],
+    ['主页', 'Home'],
+    ['已固定', 'Pinned'],
+    ['快速访问', 'Quick access'],
+    ['回收站', 'Recycle Bin'],
+    ['挂载本地文件夹', 'Mount local folder'],
+    ['标签', 'Tags'],
+    ['红色', 'Red'],
+    ['蓝色', 'Blue'],
+    ['黄色', 'Yellow'],
+    ['绿色', 'Green'],
+    ['橙色', 'Orange'],
+    ['紫色', 'Purple'],
+    ['粉色', 'Pink'],
+    ['新建', 'New'],
+    ['排序方式', 'Sort'],
+    ['布局', 'View'],
+    ['简介', 'Introduction'],
+    ['更新记录', 'Update history'],
+    ['文件', 'File'],
+    ['编辑', 'Edit'],
+    ['格式', 'Format'],
+    ['提示', 'Notice'],
+    ['同意并继续', 'Agree and continue'],
+    ['不同意', 'Disagree'],
+    ['打开：', 'Open:'],
+    ['关于 Windows', 'About Windows'],
+    ['代码编辑器', 'Code Editor'],
+    ['进程', 'Processes'],
+    ['性能', 'Performance'],
+    ['进程名称', 'Process name'],
+    ['内存', 'Memory'],
+    ['硬盘', 'Disk'],
+    ['无筛选结果', 'No filtered results'],
+    ['重置筛选器', 'Reset filter'],
+    ['窗口管理', 'Window management'],
+    ['置于顶层', 'Stay on top'],
+    ['反馈', 'Feedback'],
+    ['发送反馈', 'Send feedback'],
+    ['新建文本Documents.txt', 'New Text Document.txt'],
+    ['在必应中搜索，或输入一个网址', 'Search with Bing or enter a web address'],
+    ['为标签页命名', 'Name this tab'],
+    ['Login后，即可在设备上使用你最喜爱的 Microsoft Apps和服务。可以备份设备、让设备更安全，并使用 Microsoft 365 Apps版和云储存空间。', 'After signing in, use your favorite Microsoft apps and services on this device. Back up your device, make it safer, and use Microsoft 365 apps and cloud storage.'],
+    ['您可以在这里填入您的 Github Access Token 来提高 Github API 限制访问次数，即可以更好地使用 Windows Update、主题等功能。您的 Token 仅会存放在本地浏览器中，该数据不会传输至服务端，也更不会外泄，但请您妥善保管好自己的 Token。', 'Enter your GitHub access token here to increase GitHub API limits, which improves Windows Update, themes, and related features. Your token is stored only in this browser and is never sent to a server. Keep it safe.'],
+    ['Windows 和某些Apps程序根据您所在的地区Settings日期和时间的格式', 'Windows and some apps format dates and times based on your region settings'],
+    ['当更新或System出现问题，使用此项Downloads最新完整内容', 'Download the latest full package when updates or the system have problems'],
+    ['获取 Windows 的预览版本，以分享有关新功能的更新和反馈', 'Get Windows preview builds to share feedback on new features and updates'],
+    ['备份您的文件、Apps程序、首选项以跨设备恢复它们', 'Back up your files, apps, and preferences so you can restore them across devices'],
+    ['Login时自动启动的Apps程序', 'Apps that start automatically when you sign in'],
+    ['已安装的Apps程序、Apps程序执行别名', 'Installed apps and app execution aliases'],
+    ['可以在Apps程序而不是浏览器中打开的网站', 'Websites that can open in apps instead of the browser'],
+    ['电子邮件、Apps程序和网络等组织资源', 'Email, apps, network, and other organization resources'],
+    ['管理您的家庭群组、编辑帐户类型和设备权限', 'Manage your family group, account types, and device permissions'],
+    ['设备访问、工作或学校用户、信息亭分配的访问', 'Device access, work or school users, and kiosk assigned access'],
+    ['显示器、亮度、夜间模式、显示描述', 'Displays, brightness, night light, and display profile'],
+    ['睡眠、电池使用情况、节电模式', 'Sleep, battery usage, and battery saver'],
+    ['存储空间、驱动器、配置规则', 'Storage space, drives, and configuration rules'],
+    ['建议的疑难解答、首选项和历史记录', 'Recommended troubleshooting, preferences, and history'],
+    ['贴靠窗口、桌面、任务切换', 'Snap windows, desktops, and task switching'],
+    ['重置、高级启动、返回', 'Reset, advanced startup, and go back'],
+    ['设备规格、重命名电脑、Windows 规格', 'Device specifications, rename PC, and Windows specifications'],
+    ['激活状态、订阅、产品密钥', 'Activation status, subscriptions, and product key'],
+    ['管理、Add和Delete设备', 'Manage, add, and remove devices'],
+    ['Bluetooth鼠标、键盘、其他Bluetooth设备', 'Bluetooth mice, keyboards, and other Bluetooth devices'],
+    ['Settings触控笔、Settings触控屏幕', 'Set up pen and touch screen'],
+    ['权限、配对 PIN、可发现性', 'Permissions, pairing PIN, and discoverability'],
+    ['这是您在其他设备的Bluetooth列表中的名称', 'This is the name shown in Bluetooth lists on other devices'],
+    ['连接、管理已连接网络', 'Connect and manage connected networks'],
+    ['通过Move网络访问互联网', 'Access the internet through mobile network'],
+    ['Settings拨号 Internet 连接', 'Set up dial-up internet connections'],
+    ['Add、连接、管理', 'Add, connect, and manage'],
+    ['用于 WI-Fi 和以太网的代理服务器', 'Proxy server for Wi-Fi and Ethernet'],
+    ['查看所有网络适配器、网络重置', 'View all network adapters and network reset'],
+    ['Settings Windows 的主题色', 'Set the Windows accent color'],
+    ['(Consumes large amount of GitHub API limit!) Settings Windows 的Theme 想要', '(Consumes a large amount of GitHub API limit!) Set the Windows theme. Want to'],
+    ['(Consumes large amount of GitHub API limit!) Settings Windows 的主题 想要', '(Consumes a large amount of GitHub API limit!) Set the Windows theme. Want to'],
+    ['启用平滑圆角（需要较新浏览器）', 'Enable smooth rounded corners (requires a newer browser)'],
+    ['System界面元素过渡动画', 'System interface transition animations'],
+    ['为System界面元素Add阴影效果', 'Add shadow effects to system interface elements'],
+    ['为焦点窗口开启 Mica 效果', 'Enable Mica effects for the focused window'],
+    ['是否启用开机Music', 'Whether to enable startup sound'],
+    ['是否启用语音输入球', 'Whether to enable the voice input ball'],
+    ['文件和链接类型的默认值，其他默认值', 'Defaults for file and link types, plus other defaults'],
+    ['Downloads、存储位置、地图更新', 'Downloads, storage location, and map updates'],
+    ['为您的设备提供额外功能', 'Provide extra features for your device'],
+    ['Windows Hello、安全密钥、Password、动态锁', 'Windows Hello, security key, password, and dynamic lock'],
+    ['电子邮件、日历和联系人使用的帐户', 'Accounts used by email, calendar, and contacts'],
+    ['时区、自动时钟Settings、日历显示', 'Time zone, automatic clock settings, and calendar display'],
+    ['触摸键盘、文本建议、首选项', 'Touch keyboard, text suggestions, and preferences'],
+    ['语音语言、语音识别麦克风Settings、声音', 'Speech language, speech recognition microphone settings, and voices'],
+    ['保存位置，录制首选项', 'Save location and recording preferences'],
+    ['控制器和键盘快捷方式', 'Controllers and keyboard shortcuts'],
+    ['优化电脑以便畅玩', 'Optimize your PC for gaming'],
+    ['Settings是否启用自动更新', 'Set whether automatic updates are enabled'],
+    ['查看历史版本功能', 'View historical version features'],
+    ['通知、自动规则', 'Notifications and automatic rules'],
+    ['通知、USB 节电模式', 'Notifications and USB power saver'],
+    ['来自System和Apps的警报', 'Alerts from system and apps'],
+    ['立即从电脑访问Move设备', 'Access mobile devices from your PC now'],
+    ['点击、滚动、缩放、手势', 'Taps, scrolling, zoom, and gestures'],
+    ['剪贴和复制历史记录、同步、清除', 'Cut and copy history, sync, and clear'],
+    ['这将清除用户自定义的所有图标', 'This will clear all user-customized icons'],
+    ['管理你的信息和数据', 'Manage your information and data'],
+    ['订阅、账单等', 'Subscriptions, billing, and more'],
+    ['所有功能尽在 Microsoft Accounts', 'All features are available with a Microsoft account'],
+    ['最近使用的和常用的Settings', 'Recent and frequently used settings'],
+    ['Personalization你的System', 'Personalize your system'],
+    ['Settings打印机、排除故障', 'Printer settings and troubleshooting'],
+    ['停止无线通信', 'Stop wireless communication'],
+    ['共享 Internet 连接', 'Share internet connection'],
+    ['视频格式调整、HDR 流媒体、电池选项', 'Video format adjustment, HDR streaming, and battery options'],
+    ['高级网络Settings', 'Advanced network settings'],
+    ['Downloads完整内容', 'Download full content'],
+    ['Move网络 未连接', 'Mobile network not connected'],
+    ['Move设备', 'Mobile devices'],
+    ['Power和电池', 'Power & battery'],
+    ['System信息', 'System information'],
+    ['Token 管理', 'Token management'],
+    ['Windows 备份', 'Windows Backup'],
+    ['Windows 预览体验计划', 'Windows Insider Program'],
+    ['WLAN 已连接', 'WLAN connected'],
+    ['Bluetooth与设备', 'Bluetooth & devices'],
+    ['Bluetooth设备', 'Bluetooth devices'],
+    ['Gaming模式', 'Game Mode'],
+    ['Login工作或学校Accounts', 'Sign in to work or school'],
+    ['Login选项', 'Sign-in options'],
+    ['Mica 背景', 'Mica background'],
+    ['Add或Delete GitHub Access Token', 'Add or remove GitHub access token'],
+    ['主题色', 'Accent color'],
+    ['代理', 'Proxy'],
+    ['保存 Token', 'Save token'],
+    ['保存', 'Save'],
+    ['其他用户', 'Other users'],
+    ['加载中', 'Loading'],
+    ['动画', 'Animation'],
+    ['可打开的网站Apps', 'Apps for websites'],
+    ['可选内容', 'Optional features'],
+    ['启动', 'Startup'],
+    ['声音级别、输入、输出、声音设备', 'Volume levels, input, output, and sound devices'],
+    ['声音', 'Sound'],
+    ['多任务处理', 'Multitasking'],
+    ['存储', 'Storage'],
+    ['安装的Apps', 'Installed apps'],
+    ['家庭', 'Family'],
+    ['屏幕', 'Display'],
+    ['平滑圆角', 'Smooth rounded corners'],
+    ['开机Music', 'Startup sound'],
+    ['当前设备时间：', 'Current device time:'],
+    ['当前颜色', 'Current color'],
+    ['恢复', 'Recovery'],
+    ['您的Accounts信息', 'Your account info'],
+    ['您的微软Accounts', 'Your Microsoft account'],
+    ['我的Bluetooth名称', 'My Bluetooth name'],
+    ['打印机和扫描仪', 'Printers & scanners'],
+    ['投影到此电脑', 'Projecting to this PC'],
+    ['拨号', 'Dial-up'],
+    ['推荐Settings', 'Recommended settings'],
+    ['搜索新的Bluetooth设备', 'Search for new Bluetooth devices'],
+    ['摄像', 'Captures'],
+    ['断开', 'Disconnect'],
+    ['日期与时间', 'Date & time'],
+    ['更新历史记录', 'Update history'],
+    ['查看 Token', 'View token'],
+    ['检查更新', 'Check for updates'],
+    ['正在检查更新...', 'Checking for updates...'],
+    ['清除 Token', 'Clear token'],
+    ['清除桌面图标', 'Clear desktop icons'],
+    ['激活', 'Activation'],
+    ['疑难解答', 'Troubleshoot'],
+    ['视频播放', 'Video playback'],
+    ['离线地图', 'Offline maps'],
+    ['笔和 Windows Ink', 'Pen & Windows Ink'],
+    ['自动更新', 'Automatic updates'],
+    ['自定义颜色', 'Custom color'],
+    ['触摸板', 'Touchpad'],
+    ['输入', 'Typing'],
+    ['远程桌面', 'Remote Desktop'],
+    ['远程桌面用户、连接权限', 'Remote Desktop users and connection permissions'],
+    ['连接', 'Connect'],
+    ['通知', 'Notifications'],
+    ['重命名', 'Rename'],
+    ['阴影', 'Shadow'],
+    ['隐私与安全性', 'Privacy & security'],
+    ['颜色', 'Colors'],
+    ['默认Apps', 'Default apps'],
+    ['电子邮件和Accounts', 'Email & accounts'],
+    ['启用平滑圆角', 'Enable smooth rounded corners'],
+    ['剪贴板', 'Clipboard'],
+    ['专注', 'Focus'],
+    ['设备', 'Devices'],
+    ['语言和区域', 'Language & region'],
+    ['语音输入球', 'Voice input ball'],
+    ['语音', 'Speech'],
+    ['主页', 'Home'],
+    ['瓶盖', 'Bottle cap']
+];
+
+function translateLooseString(value) {
+    if (!value || langcode == 'zh-CN' || langcode == 'zh-TW') return value;
+
+    let next = value;
+    const translations = looseEnglishTranslations
+        .slice()
+        .sort((a, b) => b[0].length - a[0].length);
+    for (const [from, to] of translations) {
+        next = next.split(from).join(to);
+    }
+    return next;
+}
+
+function translateLooseEnglishText(code = langcode) {
+    if (code == 'zh-CN' || code == 'zh-TW' || typeof document === 'undefined') return;
+
+    const walker = document.createTreeWalker(document.body || document.documentElement, NodeFilter.SHOW_TEXT);
+    const textNodes = [];
+    while (walker.nextNode()) textNodes.push(walker.currentNode);
+
+    for (const node of textNodes) {
+        const translated = translateLooseString(node.nodeValue);
+        if (translated !== node.nodeValue) node.nodeValue = translated;
+    }
+
+    $('[placeholder],[title],[win12_title]').each(function () {
+        for (const attr of ['placeholder', 'title', 'win12_title']) {
+            const value = $(this).attr(attr);
+            const translated = translateLooseString(value);
+            if (translated !== value) $(this).attr(attr, translated);
+        }
+    });
+}
+
+function observeLooseEnglishText() {
+    if (langcode == 'zh-CN' || langcode == 'zh-TW' || !window.MutationObserver) return;
+
+    let queued = false;
+    const observer = new MutationObserver(() => {
+        if (queued) return;
+        queued = true;
+        window.requestAnimationFrame(() => {
+            queued = false;
+            translateLooseEnglishText();
+        });
+    });
+
+    observer.observe(document.body || document.documentElement, {
+        childList: true,
+        subtree: true,
+        characterData: true,
+        attributes: true,
+        attributeFilter: ['placeholder', 'title', 'win12_title']
+    });
+}
+
+function loadlangSync(code) {
+    const fileCode = normalizedLangCode(code);
+    const filename = 'lang/lang/lang_' + fileCode + '.properties';
+
+    try {
+        const request = new XMLHttpRequest();
+        request.open('GET', filename, false);
+        request.send(null);
+
+        if (request.status >= 200 && request.status < 300) {
+            i18nData[code] = parseProperties(request.responseText);
+            if (fileCode !== code) i18nData[fileCode] = i18nData[code];
+            console.log('Synchronously loaded', Object.keys(i18nData[code]).length, 'translations for', code);
+            return true;
+        }
+    } catch (error) {
+        console.warn('Synchronous language preload failed:', code, error);
+    }
+
+    return false;
+}
+
 function loadlang(code) {
     console.log('Loading language:', code);
 
-    const filename = 'lang/lang/lang_' + code + '.properties';
+    const fileCode = normalizedLangCode(code);
+    const filename = 'lang/lang/lang_' + fileCode + '.properties';
 
     fetch(filename)
         .then(response => {
@@ -30,60 +388,20 @@ function loadlang(code) {
         .then(data => {
             console.log('Language file loaded successfully:', code);
 
-            // Parse properties file without using buggy decodeURI()
-            const lines = data.split('\n');
-            const translations = {};
-
-            for (let line of lines) {
-                line = line.trim();
-                // Skip empty lines and comments
-                if (!line || line.startsWith('#') || line.startsWith('!')) continue;
-
-                // Split on first = only
-                const eqIndex = line.indexOf('=');
-                if (eqIndex === -1) continue;
-
-                const key = line.substring(0, eqIndex).trim();
-                const value = line.substring(eqIndex + 1).trim();
-
-                if (key) translations[key] = value;
-            }
+            const translations = parseProperties(data);
 
             i18nData[code] = translations;
+            if (fileCode !== code) i18nData[fileCode] = translations;
             console.log('Parsed', Object.keys(translations).length, 'translations');
 
-            // Function to apply translations
-            function applyTranslations() {
-                let applied = 0;
-                $('[data-i18n]').each(function () {
-                    const key = $(this).data("i18n");
-                    const value = translations[key];
-                    if (value) {
-                        $(this).html(value);
-                        applied++;
-                    }
-                });
-
-                $('[data-i18n-attr]').each(function () {
-                    const key = $(this).data("i18n-key");
-                    const value = translations[key];
-                    if (value) {
-                        $(this).attr($(this).data("i18n-attr"), value);
-                        applied++;
-                    }
-                });
-
-                return applied;
-            }
-
             // Try immediately, then retry after delay if needed
-            let applied = applyTranslations();
+            let applied = applyTranslations(code);
             console.log('Applied', applied, 'translations immediately');
 
             if (applied === 0) {
                 // Retry after DOM fully loads
                 setTimeout(() => {
-                    applied = applyTranslations();
+                    applied = applyTranslations(code);
                     console.log('Applied', applied, 'translations after delay');
                 }, 500);
             }
@@ -109,16 +427,17 @@ let langc = {
     'zh': 'zh-CN',
 
     'en': 'en',
-    'en-US': 'en',
-    'en-us': 'en',
+    'en-US': 'en-US',
+    'en-us': 'en-US',
     'en-GB': 'en',
     'en-gb': 'en'
 }
 
 let langcode, lang = (txt, id) => {
     // First check if translation exists in i18nData
-    if (i18nData[langcode] && i18nData[langcode][id]) {
-        return i18nData[langcode][id];
+    const translations = getTranslations(langcode);
+    if (translations[id]) {
+        return translations[id];
     }
     // Fall back to provided English text
     return txt;
@@ -148,6 +467,7 @@ if (langcode != 'zh-CN') {
     try {
         console.log('Attempting to load language:', langcode);
         console.log('Looking for file: lang/lang/lang_' + langcode + '.properties');
+        loadlangSync(langcode);
         loadlang(langcode);
     } catch (e) {
         console.warn('Language file failed to load, using fallback:', e);
@@ -161,6 +481,10 @@ if (langcode == 'zh-CN') {
         return txt;
     };
 }
+$(function () {
+    translateLooseEnglishText();
+    observeLooseEnglishText();
+});
 console.log('?')
 
 
