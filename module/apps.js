@@ -1656,7 +1656,7 @@ let apps = {
         },
         // 禁止奇奇怪怪的缩进！尽量压行，不要毫无意义地全部格式化和展开！ 
         // 给我看蒙了这东西，写的是啥
-        path: { folder: { 'C:': { folder: { 'Program Files': { folder: { 'WindowsApps': { folder: {}, file: [] }, 'Microsoft': { folder: {}, file: [] } }, file: [{ name: 'about.exe', ico: 'icon/about.svg', command: 'openapp(\'about\')' }, { name: 'setting.exe', ico: 'icon/setting.svg', command: 'openapp(\'setting\')' },] }, 'Program Files (x86)': { folder: { 'Microsoft': { folder: { 'Edge': { folder: { 'Application': { folder: { 'SetupMetrics': { folder: {}, file: [] } }, file: [{ name: 'msedge.exe', ico: 'icon/edge.svg', command: 'openapp(\'edge\')' }] } } } } } } }, 'Windows': { folder: { 'Boot': { folder: {}, file: [] }, 'System': { folder: {}, file: [] }, 'SysWOW64': { folder: {}, file: [] }, 'System32': { folder: {}, file: [{ name: 'calc.exe', ico: 'icon/calc.svg', command: 'openapp(\'calc\')' }, { name: 'cmd.exe', ico: 'icon/terminal.svg', command: 'openapp(\'terminal\')' }, { name: 'notepad.exe', ico: 'icon/notepad.svg', command: 'openapp(\'notepad\')' }, { name: 'taskmgr.exe', ico: 'icon/taskmgr.png', command: 'openapp(\'taskmgr\')' }, { name: 'winver.exe', ico: 'icon/about.svg', command: 'openapp(\'winver\')' },] } }, file: [{ name: 'explorer.exe', ico: 'icon/explorer.svg', command: 'apps.explorer.newtab()' }, { name: 'notepad.exe', ico: 'icon/notepad.svg', command: 'openapp(\'notepad\')' }, { name: 'py.exe', ico: 'icon/python.svg', command: 'openapp(\'python\')' },] }, '用户': { folder: { 'Administrator': { folder: { '推荐的项目': { folder: {}, file: [{ name: '瓶盖介绍.doc', ico: 'icon/files/word.png', command: 'openapp(\'word\');apps.word.edit()' }, { name: '瓶盖质量统计分析.xlsx', ico: 'icon/files/excel.png', command: '' },] }, '文档': { folder: { 'IISExpress': { folder: {}, file: [] }, 'PowerToys': { folder: {}, file: [] } }, file: [{ name: '瓶盖介绍.doc', ico: 'icon/files/word.png', command: '' }, { name: '瓶盖质量统计分析.xlsx', ico: 'icon/files/excel.png', command: '' },] }, '图片': { folder: { '本机照片': { folder: {}, file: [] }, '屏幕截图': { folder: {}, file: [] } }, file: [{ name: '瓶盖构造图.png', ico: 'icon/files/img.png', command: '' }, { name: '可口可乐瓶盖.jpg', ico: 'icon/files/img.png', command: '' },] }, 'AppData': { folder: { 'Local': { folder: { 'Microsoft': { folder: { 'Windows': { folder: { 'Fonts': {}, 'TaskManager': {}, 'Themes': {}, 'Shell': {}, '应用程序快捷方式': {}, } }, } }, 'Programs': { folder: { 'Python': { folder: { 'Python311': { folder: { 'DLLs': {}, 'Doc': {}, 'include': {}, 'Lib': { folder: { 'site-packages': {}, 'tkinter': {}, } }, 'libs': {}, 'Script': {}, 'share': {}, 'tcl': {}, 'Tools': {} }, file: [{ name: 'python.exe', ico: 'icon/python.png', command: 'openapp(\'python\')' }] } }, } } }, 'Temp': { folder: {} }, } }, 'LocalLow': { folder: { 'Microsoft': { folder: { 'Windows': {}, } }, } }, 'Roaming': { folder: { 'Microsoft': { folder: { 'Windows': { folder: { '「开始」菜单': { folder: { '程序': { folder: {} }, } }, } }, } }, } }, }, file: [] }, '音乐': { folder: { '录音机': { folder: {}, file: [] } } } } }, '公用': { folder: { '公用文档': { folder: { 'IISExpress': { folder: {}, file: [] }, 'PowerToys': { folder: {}, file: [] } }, file: [] }, '公用图片': { folder: { '本机照片': { folder: {}, file: [] }, '屏幕截图': { folder: {}, file: [] } }, file: [] }, '公用音乐': { folder: { '录音机': { folder: {}, file: [] } } } } } } } }, file: [] }, 'D:': { folder: { 'Microsoft': { folder: {}, file: [] } }, file: [{ name: '瓶盖结构说明.docx', ico: 'icon/files/word.png', command: '' }, { name: '可口可乐瓶盖历史.pptx', ico: 'icon/files/ppt.png', command: '' },] } } },
+        path: { folder: { 'C:': { folder: { 'Program Files': { folder: { 'WindowsApps': { folder: {}, file: [] }, 'Microsoft': { folder: {}, file: [] } }, file: [{ name: 'about.exe', ico: 'icon/about.svg', command: 'openapp(\'about\')' }, { name: 'setting.exe', ico: 'icon/setting.svg', command: 'openapp(\'setting\')' },] }, 'Program Files (x86)': { folder: { 'Microsoft': { folder: { 'Edge': { folder: { 'Application': { folder: { 'SetupMetrics': { folder: {}, file: [] } }, file: [{ name: 'msedge.exe', ico: 'icon/edge.svg', command: 'openapp(\'edge\')' }] } } } } } } }, 'Windows': { folder: { 'Boot': { folder: {}, file: [] }, 'System': { folder: {}, file: [] }, 'SysWOW64': { folder: {}, file: [] }, 'System32': { folder: {}, file: [{ name: 'calc.exe', ico: 'icon/calc.svg', command: 'openapp(\'calc\')' }, { name: 'cmd.exe', ico: 'icon/terminal.svg', command: 'openapp(\'terminal\')' }, { name: 'notepad.exe', ico: 'icon/notepad.svg', command: 'openapp(\'notepad\')' }, { name: 'taskmgr.exe', ico: 'icon/taskmgr.png', command: 'openapp(\'taskmgr\')' }, { name: 'winver.exe', ico: 'icon/about.svg', command: 'openapp(\'winver\')' },] } }, file: [{ name: 'explorer.exe', ico: 'icon/explorer.svg', command: 'apps.explorer.newtab()' }, { name: 'notepad.exe', ico: 'icon/notepad.svg', command: 'openapp(\'notepad\')' }, { name: 'py.exe', ico: 'icon/python.svg', command: 'openapp(\'python\')' },] }, '用户': { folder: { 'Administrator': { folder: { 'Recommended的项目': { folder: {}, file: [{ name: 'Bottle Cap Intro.doc', ico: 'icon/files/word.png', command: 'openapp(\'word\');apps.word.edit()' }, { name: 'Bottle Cap Quality Analysis.xlsx', ico: 'icon/files/excel.png', command: '' },] }, '文档': { folder: { 'IISExpress': { folder: {}, file: [] }, 'PowerToys': { folder: {}, file: [] } }, file: [{ name: 'Bottle Cap Intro.doc', ico: 'icon/files/word.png', command: '' }, { name: 'Bottle Cap Quality Analysis.xlsx', ico: 'icon/files/excel.png', command: '' },] }, '图片': { folder: { '本机照片': { folder: {}, file: [] }, '屏幕截图': { folder: {}, file: [] } }, file: [{ name: 'Bottle Cap Diagram.png', ico: 'icon/files/img.png', command: '' }, { name: 'Coca Cola Bottle Cap.jpg', ico: 'icon/files/img.png', command: '' },] }, 'AppData': { folder: { 'Local': { folder: { 'Microsoft': { folder: { 'Windows': { folder: { 'Fonts': {}, 'TaskManager': {}, 'Themes': {}, 'Shell': {}, '应用程序快捷方式': {}, } }, } }, 'Programs': { folder: { 'Python': { folder: { 'Python311': { folder: { 'DLLs': {}, 'Doc': {}, 'include': {}, 'Lib': { folder: { 'site-packages': {}, 'tkinter': {}, } }, 'libs': {}, 'Script': {}, 'share': {}, 'tcl': {}, 'Tools': {} }, file: [{ name: 'python.exe', ico: 'icon/python.png', command: 'openapp(\'python\')' }] } }, } } }, 'Temp': { folder: {} }, } }, 'LocalLow': { folder: { 'Microsoft': { folder: { 'Windows': {}, } }, } }, 'Roaming': { folder: { 'Microsoft': { folder: { 'Windows': { folder: { '「开始」菜单': { folder: { '程序': { folder: {} }, } }, } }, } }, } }, }, file: [] }, '音乐': { folder: { '录音机': { folder: {}, file: [] } } } } }, '公用': { folder: { '公用文档': { folder: { 'IISExpress': { folder: {}, file: [] }, 'PowerToys': { folder: {}, file: [] } }, file: [] }, '公用图片': { folder: { '本机照片': { folder: {}, file: [] }, '屏幕截图': { folder: {}, file: [] } }, file: [] }, '公用音乐': { folder: { '录音机': { folder: {}, file: [] } } } } } } } }, file: [] }, 'D:': { folder: { 'Microsoft': { folder: {}, file: [] } }, file: [{ name: 'Bottle Cap Structure.docx', ico: 'icon/files/word.png', command: '' }, { name: 'Coca Cola Cap History.pptx', ico: 'icon/files/ppt.png', command: '' },] } } },
         history: [],
         historypt: [],
         initHistory: (tab) => {
@@ -2398,14 +2398,14 @@ Micrȯsoft Windows [版本 12.0.39035.7324]
         }
     },
     search: {
-        rand: [{ name: '农夫山泉瓶盖简介.txt', bi: 'text', ty: '文本文档' },
-        { name: '瓶盖构造图.png', bi: 'image', ty: 'PNG 文件' },
-        { name: '瓶盖结构说明.docx', bi: 'richtext', ty: 'Microsoft Word 文档' },
-        { name: '可口可乐瓶盖.jpg', bi: 'image', ty: 'JPG 文件' },
-        { name: '可口可乐瓶盖历史.pptx', bi: 'slides', ty: 'Microsoft Powerpoint 演示文稿' },
-        { name: '瓶盖质量统计分析.xlsx', bi: 'ruled', ty: 'Microsoft Excel 工作表' },
-        { name: '农夫山泉瓶盖.svg', bi: 'image', ty: 'SVG 文件' },
-        { name: '瓶盖介绍.doc', bi: 'richtext', ty: 'Microsoft Word 文档' }],
+        rand: [{ name: 'Bottle Cap Introduction.txt', bi: 'text', ty: 'Text Document' },
+        { name: 'Bottle Cap Diagram.png', bi: 'image', ty: 'PNG File' },
+        { name: 'Bottle Cap Structure.docx', bi: 'richtext', ty: 'Microsoft Word 文档' },
+        { name: 'Coca Cola Bottle Cap.jpg', bi: 'image', ty: 'JPG File' },
+        { name: 'Coca Cola Cap History.pptx', bi: 'slides', ty: 'Microsoft PowerPoint Presentation' },
+        { name: 'Bottle Cap Quality Analysis.xlsx', bi: 'ruled', ty: 'Microsoft Excel Worksheet' },
+        { name: 'Bottle Cap.svg', bi: 'image', ty: 'SVG File' },
+        { name: 'Bottle Cap Intro.doc', bi: 'richtext', ty: 'Microsoft Word 文档' }],
         search: le => {
             if (le > 0) {
                 $('#search-win>.ans>.list>list').html(
@@ -2414,7 +2414,7 @@ Micrȯsoft Windows [版本 12.0.39035.7324]
                 apps.search.showdetail(le % 8);
             } else {
                 $('#search-win>.ans>.list>list').html(
-                    `<p class="text">推荐</p>
+                    `<p class="text">Recommended</p>
 					<a onclick="openapp('setting');$('#search-btn').removeClass('show');
 					$('#search-win').removeClass('show');
 					setTimeout(() => {
@@ -2426,7 +2426,7 @@ Micrȯsoft Windows [版本 12.0.39035.7324]
 					setTimeout(() => {
 						$('#search-win').removeClass('show-begin');
 					}, 200);">
-						<img src="icon/about.svg"><p>关于 Win12 网页版</p></a>`);
+						<img src="icon/about.svg"><p>About Win12 Online</p></a>`);
                 $('#search-win>.ans>.view').removeClass('show');
             }
         },

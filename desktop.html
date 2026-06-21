@@ -59,12 +59,12 @@ showwin(name) 显示窗口，除特殊用途外不建议使用，用法：showwi
 hidewin(name) Close窗口，用法：hidewin('程序（窗口）名称')，注意：程序（窗口）名称就是想要显示的窗口.window 的另一个类名
 toggletheme() 切换主题
 
-关于 App 添加：
+关于 App Add：
 
 壹 常规 app
 	1. 界面与 (伪) 后端的开发，js 在 module/apps.js 中，css 和资源文件在 apps/style 和 apps/icons 中
 	2. 绘制图标，存储于 icon 中，注意后缀名，参考 desktop.js 中 @icon 的说明
-	3. 在开始菜单 (@#startmenu-l>list) 中添加你的Apps
+	3. 在开始菜单 (@#startmenu-l>list) 中Add你的Apps
 
 贰 webapp，即使用 iframe 嵌套网页的Apps：
 	1. 确保目标网页不阻止跨域嵌套，允许 iframe 嵌套
@@ -116,7 +116,7 @@ toggletheme() 切换主题
 	<link rel="stylesheet" href="module/tab.css">
 
 	
-	<!-- 风水宝地，不可移动 -->
+	<!-- 风水宝地，不可Move -->
 	<script src="./scripts/jq.min.js"></script>
 	<script src="./scripts/jquery.i18n.properties.js"></script>
 
@@ -463,11 +463,11 @@ toggletheme() 切换主题
 					</div>
 				</div>
 				<div class="apps">
-					<a class="a tj-obj act"><img src="icon/files/ppt.png"><div><p data-i18n="stmenu-tj-f1">科学地使用瓶盖.pptx</p><p data-i18n="stmenu-tj-t1">5 分钟前</p></div></a>
-					<a class="a tj-obj act"><img src="icon/files/img.png"><div><p data-i18n="stmenu-tj-f2">可口可乐瓶盖.jpg</p><p data-i18n="stmenu-tj-t2">7 分钟前</p></div></a>
-					<a class="a tj-obj act"><img src="icon/files/img.png"><div><p data-i18n="stmenu-tj-f3">瓶盖构造图.jpg</p><p data-i18n="stmenu-tj-t3">16 分钟前</p></div></a>
-					<a class="a tj-obj act" onclick="openapp('word');apps.word.edit();hide_startmenu();"><img src="icon/files/word.png"><div><p data-i18n="stmenu-tj-f4">瓶盖的构造及作用.docx</p><p data-i18n="stmenu-tj-t4">24 分钟前</p></div></a>
-					<a class="a tj-obj act"><img src="icon/files/excel.png"><div><p data-i18n="stmenu-tj-f5">可口可乐瓶盖厚度.xlsx</p><p data-i18n="stmenu-tj-t5">35 分钟前</p></div></a>
+					<a class="a tj-obj act"><img src="icon/files/ppt.png"><div><p data-i18n="stmenu-tj-f1">How to Use Caps Scientifically.pptx</p><p data-i18n="stmenu-tj-t1">5 分钟前</p></div></a>
+					<a class="a tj-obj act"><img src="icon/files/img.png"><div><p data-i18n="stmenu-tj-f2">Coca Cola Bottle Cap.jpg</p><p data-i18n="stmenu-tj-t2">7 分钟前</p></div></a>
+					<a class="a tj-obj act"><img src="icon/files/img.png"><div><p data-i18n="stmenu-tj-f3">Bottle Cap Structure.jpg</p><p data-i18n="stmenu-tj-t3">16 分钟前</p></div></a>
+					<a class="a tj-obj act" onclick="openapp('word');apps.word.edit();hide_startmenu();"><img src="icon/files/word.png"><div><p data-i18n="stmenu-tj-f4">Cap Structure and Function.docx</p><p data-i18n="stmenu-tj-t4">24 分钟前</p></div></a>
+					<a class="a tj-obj act"><img src="icon/files/excel.png"><div><p data-i18n="stmenu-tj-f5">Coca Cola Cap Thickness.xlsx</p><p data-i18n="stmenu-tj-t5">35 分钟前</p></div></a>
 				</div>
 			</div>
 		</div>
@@ -514,8 +514,8 @@ toggletheme() 切换主题
 				<div class="option">
 					<list>
 						<a class="a" data-i18n="sch-open">Open</a>
-						<a class="a" data-i18n="sch-opfl">打开文件所在位置</a>
-						<a class="a" data-i18n="sch-cpp">复制路径</a>
+						<a class="a" data-i18n="sch-opfl">Open file location</a>
+						<a class="a" data-i18n="sch-cpp">Copy path</a>
 					</list>
 				</div>
 			</div>
@@ -527,21 +527,21 @@ toggletheme() 切换主题
 				<p class="tit" data-i18n="widget">Widgets</p>
 				<button onclick="shownotice('widgets')" class="a act btn btn-icon big"
 					style="background: linear-gradient(100deg, var(--theme-1), var(--theme-2));color:#fff;"
-					win12_title="添加"><i class="bi bi-plus-lg"></i></button>
+					win12_title="Add"><i class="bi bi-plus-lg"></i></button>
 			</div>
 			<div class="content">
 				<div class="template">
 					<div class="calc">
 						<div class="wg calc template">
 							<div class="titbar">
-								<a win12_title="更多" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)" class="a more notip" onclick="$('.wg.calc>.titbar>.menu').toggleClass('show')"><i class="bi bi-three-dots"></i></a>
+								<a win12_title="More" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)" class="a more notip" onclick="$('.wg.calc>.titbar>.menu').toggleClass('show')"><i class="bi bi-three-dots"></i></a>
 								<div class="menu">
 									<a win12_title="打开Apps" class="a img openapp" onclick="$('.wg.calc>.titbar>.menu').removeClass('show');hide_widgets();openapp('calc')" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)">
 										<img src="icon/calc.svg">
 									</a>
-									<a class="a move" win12_title="移动" onmouseenter="showdescp(event)" onclick=" hidedescp(event); if (!edit_mode) { editMode(); }" onmouseleave="hidedescp(event)"><i class="bi bi-arrows-move"></i></a>
-									<a class="a addtodt" win12_title="添加到桌面" onmouseenter="showdescp(event)" onclick="hidedescp(event); widgets.widgets.remove('calc'); widgets.widgets.addToDesktop('calc');" onmouseleave="hidedescp(event)"><i class="bi bi-box-arrow-in-right"></i></a>
-									<a class="a delete" win12_title="删除" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)" onclick="hidedescp(event); $('.wg.calc>.titbar>.menu').removeClass('show'); widgets.widgets.remove('calc');"><i class="bi bi-trash"></i></a>
+									<a class="a move" win12_title="Move" onmouseenter="showdescp(event)" onclick=" hidedescp(event); if (!edit_mode) { editMode(); }" onmouseleave="hidedescp(event)"><i class="bi bi-arrows-move"></i></a>
+									<a class="a addtodt" win12_title="Add到桌面" onmouseenter="showdescp(event)" onclick="hidedescp(event); widgets.widgets.remove('calc'); widgets.widgets.addToDesktop('calc');" onmouseleave="hidedescp(event)"><i class="bi bi-box-arrow-in-right"></i></a>
+									<a class="a delete" win12_title="Delete" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)" onclick="hidedescp(event); $('.wg.calc>.titbar>.menu').removeClass('show'); widgets.widgets.remove('calc');"><i class="bi bi-trash"></i></a>
 								</div>
 							</div>
 							<div class="content" onmousedown="widgetsMove(this.parentElement, event);" ontouchstart="widgetsMove(this.parentElement, event);">
@@ -608,12 +608,12 @@ toggletheme() 切换主题
 					<div class="weather">
 						<div class="wg weather template">
 							<div class="titbar">
-								<a win12_title="更多" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)" class="a more notip" onclick="$('.wg.weather>.titbar>.menu').toggleClass('show')"><i class="bi bi-three-dots"></i></a>
+								<a win12_title="More" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)" class="a more notip" onclick="$('.wg.weather>.titbar>.menu').toggleClass('show')"><i class="bi bi-three-dots"></i></a>
 								<div class="menu">
-									<a class="a move" win12_title="移动" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)" onclick="hidedescp(event); if (!edit_mode) { editMode() }; "><i class="bi bi-arrows-move"></i></a>
-									<a class="a addtotb" win12_title="添加到任务栏" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)" onclick="hidedescp(event); widgets.widgets.remove('weather'); widgets.widgets.addToToolbar('weather'); "><i class="bi bi-menu-app"></i></a>
-									<a class="a addtodt" win12_title="添加到桌面" onmouseenter="showdescp(event)" onclick="hidedescp(event); widgets.widgets.remove('weather'); widgets.widgets.addToDesktop('weather'); " onmouseleave="hidedescp(event)"><i class="bi bi-box-arrow-in-right"></i></a>
-									<a class="a delete" win12_title="删除" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)" onclick="hidedescp(event); $('.wg.weather>.titbar>.menu').removeClass('show'); widgets.widgets.remove('weather'); "><i class="bi bi-trash"></i></a>
+									<a class="a move" win12_title="Move" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)" onclick="hidedescp(event); if (!edit_mode) { editMode() }; "><i class="bi bi-arrows-move"></i></a>
+									<a class="a addtotb" win12_title="Add到任务栏" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)" onclick="hidedescp(event); widgets.widgets.remove('weather'); widgets.widgets.addToToolbar('weather'); "><i class="bi bi-menu-app"></i></a>
+									<a class="a addtodt" win12_title="Add到桌面" onmouseenter="showdescp(event)" onclick="hidedescp(event); widgets.widgets.remove('weather'); widgets.widgets.addToDesktop('weather'); " onmouseleave="hidedescp(event)"><i class="bi bi-box-arrow-in-right"></i></a>
+									<a class="a delete" win12_title="Delete" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)" onclick="hidedescp(event); $('.wg.weather>.titbar>.menu').removeClass('show'); widgets.widgets.remove('weather'); "><i class="bi bi-trash"></i></a>
 								</div>
 							</div>
 							<div class="content" onmousedown="widgetsMove(this.parentElement, event);" ontouchstart="widgetsMove(this.parentElement, event);">
@@ -628,16 +628,16 @@ toggletheme() 切换主题
 					<div class="monitor">
 						<div class="wg monitor template">
 							<div class="titbar">
-								<a win12_title="更多" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)" class="a more notip" onclick="$('.wg.monitor>.titbar>.menu').toggleClass('show')"><i class="bi bi-three-dots"></i></a>
+								<a win12_title="More" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)" class="a more notip" onclick="$('.wg.monitor>.titbar>.menu').toggleClass('show')"><i class="bi bi-three-dots"></i></a>
 								<div class="menu">
 									<a win12_title="打开Apps" class="a img openapp" onclick="$('.wg.calc>.titbar>.menu').removeClass('show');hide_widgets();openapp('taskmgr')" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)">
 										<img src="icon/taskmgr.png">
 									</a>
-									<a class="a chose" win12_title="切换监视器类型" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)" onclick="showdescp(event); shownotice('widgets.monitor'); "><i class="bi bi-arrow-left-right"></i></a>
-									<a class="a move" win12_title="移动" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)" onclick="showdescp(event); if (!edit_mode) { editMode(); } "><i class="bi bi-arrows-move"></i></a>
-									<a class="a addtotb" win12_title="添加到任务栏" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)" onclick="showdescp(event); widgets.widgets.remove('monitor'); widgets.widgets.addToToolbar('monitor'); "><i class="bi bi-menu-app"></i></a>
-									<a class="a addtodt" win12_title="添加到桌面" onmouseenter="showdescp(event)" onclick="showdescp(event); widgets.widgets.remove('monitor'); widgets.widgets.addToDesktop('monitor'); " onmouseleave="hidedescp(event)"><i class="bi bi-box-arrow-in-right"></i></a>
-									<a class="a delete" win12_title="删除" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)" onclick="showdescp(event); $('.wg.monitor>.titbar>.menu').removeClass('show'); widgets.widgets.remove('monitor'); "><i class="bi bi-trash"></i></a>
+									<a class="a chose" win12_title="Switch Monitor Type" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)" onclick="showdescp(event); shownotice('widgets.monitor'); "><i class="bi bi-arrow-left-right"></i></a>
+									<a class="a move" win12_title="Move" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)" onclick="showdescp(event); if (!edit_mode) { editMode(); } "><i class="bi bi-arrows-move"></i></a>
+									<a class="a addtotb" win12_title="Add到任务栏" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)" onclick="showdescp(event); widgets.widgets.remove('monitor'); widgets.widgets.addToToolbar('monitor'); "><i class="bi bi-menu-app"></i></a>
+									<a class="a addtodt" win12_title="Add到桌面" onmouseenter="showdescp(event)" onclick="showdescp(event); widgets.widgets.remove('monitor'); widgets.widgets.addToDesktop('monitor'); " onmouseleave="hidedescp(event)"><i class="bi bi-box-arrow-in-right"></i></a>
+									<a class="a delete" win12_title="Delete" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)" onclick="showdescp(event); $('.wg.monitor>.titbar>.menu').removeClass('show'); widgets.widgets.remove('monitor'); "><i class="bi bi-trash"></i></a>
 								</div>
 							</div>
 							<div class="content" onmousedown="widgetsMove(this.parentElement, event);" ontouchstart="widgetsMove(this.parentElement, event);">
@@ -743,7 +743,7 @@ toggletheme() 切换主题
 					<div class="icon" onclick="controlStatus.call(this)">
 						<icon class="s-icon"></icon>
 					</div>
-					<div class="tit" data-i18n="ctrl-hotspot">移动热点</div>
+					<div class="tit" data-i18n="ctrl-hotspot">Move热点</div>
 				</div>
 				<div class="btn6">
 					<div class="icon" onclick="controlStatus.call(this)">
@@ -880,7 +880,7 @@ toggletheme() 切换主题
 	</div>
 	<div id="desktop-editbar-container">
 		<div id="desktop-editbar">
-			<div onclick="shownotice('widgets.desktop');"><i class="bi bi-plus"></i> <span data-i18n="editmd-add">添加小组件</span></div>
+			<div onclick="shownotice('widgets.desktop');"><i class="bi bi-plus"></i> <span data-i18n="editmd-add">Add小组件</span></div>
 			<div onclick="openapp('setting');$('#win-setting > div.menu > list > a.enable.appearance')[0].click();"><i class="bi bi-brush"></i> <span data-i18n="psnl">Personalization</span></div>
 			<div onclick="editMode();" win12_title="退出编辑模式"><i class="bi bi-x-lg"></i></div>
 		</div>
@@ -1353,7 +1353,7 @@ toggletheme() 切换主题
 						</div>
 					</div>
 					<div class="setting-card">
-						<p>蓝牙设备<br><span style="font-size: 14px;color:var(--text2)">管理、添加和删除设备</span></p>
+						<p>蓝牙设备<br><span style="font-size: 14px;color:var(--text2)">管理、Add和Delete设备</span></p>
 						<div class="setting-list">
 							<a onclick="$('#win-setting>.menu>list>a.blueteeth')[0].click();"><icon>&#xE702;</icon><div><p>蓝牙</p><p></p></div><i class="bi bi-chevron-right"></i></a>
 						</div>
@@ -1405,7 +1405,7 @@ toggletheme() 切换主题
 						<a><icon></icon><div><p>连接</p><p>搜索新的蓝牙设备</p></div><i class="bi bi-chevron-right"></i></a>
 						<a><icon></icon><div><p>设备</p><p>蓝牙鼠标、键盘、其他蓝牙设备</p></div><i class="bi bi-chevron-right"></i></a>
 						<a><icon></icon><div><p>打印机和扫描仪</p><p>Settings打印机、排除故障</p></div><i class="bi bi-chevron-right"></i></a>
-						<a><icon></icon><div><p>移动设备</p><p>立即从电脑访问移动设备</p></div><i class="bi bi-chevron-right"></i></a>
+						<a><icon></icon><div><p>Move设备</p><p>立即从电脑访问Move设备</p></div><i class="bi bi-chevron-right"></i></a>
 						<a><icon></icon><div><p>触摸板</p><p>点击、滚动、缩放、手势</p></div><i class="bi bi-chevron-right"></i></a>
 						<a><icon></icon><div><p>笔和 Windows Ink</p><p>Settings触控笔、Settings触控屏幕</p></div><i class="bi bi-chevron-right"></i></a>
 						<a><icon></icon><div><p>USB</p><p>通知、USB 节电模式</p></div><i class="bi bi-chevron-right"></i></a>
@@ -1425,9 +1425,9 @@ toggletheme() 切换主题
 					</div>
 					<div class="setting-list">
 						<a><icon></icon><div><p>WLAN</p><p>连接、管理已连接网络</p></div><i class="bi bi-chevron-right"></i></a>
-						<a><icon></icon><div><p>移动网络 未连接</p><p>通过移动网络访问互联网</p></div><i class="bi bi-chevron-right"></i></a>
-						<a><icon></icon><div><p>VPN</p><p>添加、连接、管理</p></div><i class="bi bi-chevron-right"></i></a>
-						<a><icon></icon><div><p>移动热点</p><p>共享 Internet 连接</p></div><i class="bi bi-chevron-right"></i></a>
+						<a><icon></icon><div><p>Move网络 未连接</p><p>通过Move网络访问互联网</p></div><i class="bi bi-chevron-right"></i></a>
+						<a><icon></icon><div><p>VPN</p><p>Add、连接、管理</p></div><i class="bi bi-chevron-right"></i></a>
+						<a><icon></icon><div><p>Move热点</p><p>共享 Internet 连接</p></div><i class="bi bi-chevron-right"></i></a>
 						<a><icon></icon><div><p>飞行模式</p><p>停止无线通信</p></div><i class="bi bi-chevron-right"></i></a>
 						<a><icon></icon><div><p>代理</p><p>用于 WI-Fi 和以太网的代理服务器</p></div><i class="bi bi-chevron-right"></i></a>
 						<a><icon></icon><div><p>拨号</p><p>Settings拨号 Internet 连接</p></div><i class="bi bi-chevron-right"></i></a>
@@ -1491,7 +1491,7 @@ toggletheme() 切换主题
 								<a class="a checkbox checked" id="sys_setting_2" onclick="sys_setting[1]=1-sys_setting[1];$(this).toggleClass('checked', !sys_setting[1]);$(':root').toggleClass('notrans', !sys_setting[1]);saveDesktop();"></a>
 							</div>
 						</div>
-						<div><icon></icon><div><p data-i18n="setting.psnl.shadow">阴影</p><p data-i18n="setting.psnl.shadow-dt">为System界面元素添加阴影效果</p></div>
+						<div><icon></icon><div><p data-i18n="setting.psnl.shadow">阴影</p><p data-i18n="setting.psnl.shadow-dt">为System界面元素Add阴影效果</p></div>
 							<div class="alr">
 								<a class="a checkbox checked" id="sys_setting_3" onclick="sys_setting[2]=1-sys_setting[2];$(this).toggleClass('checked',!sys_setting[2]);$(':root').toggleClass('nosd',!sys_setting[2]);saveDesktop();"></a>
 							</div>
@@ -1606,7 +1606,7 @@ toggletheme() 切换主题
 							<icon><i class="bi bi-key"></i></icon>
 							<div>
 								<p>Token 管理</p>
-								<p>添加或删除 GitHub Access Token</p>
+								<p>Add或Delete GitHub Access Token</p>
 							</div>
 							<i class="bi bi-chevron-down"></i>
 						</a>
@@ -1882,7 +1882,7 @@ toggletheme() 切换主题
 					<details><summary><span>v10.2.2</span> 修改部分动效和 UI 细节</summary><p>
 						&emsp;&emsp;-(更新来自 @HHCL233)<br>
 						&emsp;&emsp;- 在任务栏自动隐藏时显示隐藏状态图标 (#669)<br>
-						&emsp;&emsp;- 删除 Blackboard 特殊标题效果<br>
+						&emsp;&emsp;- Delete Blackboard 特殊标题效果<br>
 						&emsp;&emsp;- 全屏时窗口不再是圆角<br>
 						&emsp;&emsp;- 不允许 Prettier 自动格式化 html,css,js 文件<br>
 						&emsp;&emsp;- 开始菜单全屏时不再是圆角<br>
@@ -1898,7 +1898,7 @@ toggletheme() 切换主题
 						&emsp;&emsp;-重写Settings的主页<br>
 						&emsp;&emsp;-调整优化Settings外观与操作<br>
 						&emsp;&emsp;-重写Shutdown和Restart界面<br>
-						&emsp;&emsp;-适配更多平滑圆角<br>
+						&emsp;&emsp;-适配More平滑圆角<br>
 						&emsp;&emsp;-细节优化和修复<br>
 					</p></details>
 					<details><summary><span>v10.2.0</span> 平滑圆角</summary><p>
@@ -1915,23 +1915,23 @@ toggletheme() 切换主题
 						&emsp;&emsp;-(更新来自 @tangyuan0821)<br>
 						&emsp;&emsp;-修复了一些已知问题。<br>
 					</p></details>
-					<details><summary><span>v10.0.8</span> 添加 Word</summary><p>
+					<details><summary><span>v10.0.8</span> Add Word</summary><p>
 						&emsp;&emsp;-(更新来自 @HHCL233)<br>
-						&emsp;&emsp;-添加 Word Apps<br>
+						&emsp;&emsp;-Add Word Apps<br>
 					</p></details>
 					<details><summary><span>v10.0.7</span> 优化Shutdown后行为和Settings的部分 UI</summary><p>
 						&emsp;&emsp;-(更新来自 @HHCL233)<br>
-						&emsp;&emsp;-删除Settings中 Windows Update页的重复元素<br>
+						&emsp;&emsp;-DeleteSettings中 Windows Update页的重复元素<br>
 						&emsp;&emsp;-Settings中System页的重命名支持打开重命名窗口<br>
 						&emsp;&emsp;-关于 Windows12 Apps的侧边栏更改为类似Settings侧边栏的样式<br>
 						&emsp;&emsp;-支持在Shutdown后按下回车重新开机<br>
 					</p></details>
 					<details><summary><span>v10.0.6</span> 优化部分Apps</summary><p>
 						&emsp;&emsp;-(更新来自 @HHCL233)<br>
-						&emsp;&emsp;-添加一个没用的重命名电脑窗口<br>
+						&emsp;&emsp;-Add一个没用的重命名电脑窗口<br>
 						&emsp;&emsp;-更改“Minesweeper”名称并重新分类至 Web Apps下<br>
 						&emsp;&emsp;-将“开始菜单”的“Copilot”点击行为和任务栏“Copilot”点击行为一致 (不会再打开窗口化 Copilot)<br>
-						&emsp;&emsp;-支持通过“开始菜单”的“更多”查看推荐项目<br>
+						&emsp;&emsp;-支持通过“开始菜单”的“More”查看推荐项目<br>
 						&emsp;&emsp;-“Task Manager”的进程占用颜色现在会跟随主题色<br>
 						&emsp;&emsp;-“File Explorer”中不可打开的侧边栏项现在打开会显示“你没有权限打开此文件”<br>
 					</p></details>
@@ -1950,10 +1950,10 @@ toggletheme() 切换主题
 				        &emsp;&emsp;-更新了Minesweeper<br>
 				    </p></details>
 					<details><summary><span>v10.0.3</span> Terminal彩蛋命令和System工具</summary><p>
-						&emsp;&emsp;-添加新的Terminal命令：cls、help、hello、matrix、snow、dance、systeminfo 和 starwars<br>
+						&emsp;&emsp;-Add新的Terminal命令：cls、help、hello、matrix、snow、dance、systeminfo 和 starwars<br>
 						&emsp;&emsp;-增加互动和趣味彩蛋效果，如黑客帝国代码雨、下雪、窗口跳舞和星球大战文字滚动<br>
-						&emsp;&emsp;-添加System信息显示和基础Terminal实用工具<br>
-						&emsp;&emsp;-增强Terminal用户体验，添加趣味和实用命令<br>
+						&emsp;&emsp;-AddSystem信息显示和基础Terminal实用工具<br>
+						&emsp;&emsp;-增强Terminal用户体验，Add趣味和实用命令<br>
 					</p></details>
 					<details><summary><span>v10.0.2</span> 细节优化和修复</summary><p>
 						&emsp;&emsp;-(更新来自 @tjy-gitnub)<br>
@@ -1962,7 +1962,7 @@ toggletheme() 切换主题
 					</p></details>
 					<details><summary><span>v10.0.1</span> Traditional Chinese語言支持</summary><p>
 						&emsp;&emsp;-(更新来自 @tjy-gitnub)<br>
-						&emsp;&emsp;-添加繁中語言支持<br>
+						&emsp;&emsp;-Add繁中語言支持<br>
 						&emsp;&emsp;-细节优化和修复<br>
 						&emsp;&emsp;无偿请求帮助我们翻译此项目！详见<a class="jump" href="https://github.com/win12-online/win12">项目主页</a><br>
 					</p></details>
@@ -1983,7 +1983,7 @@ toggletheme() 切换主题
 						&emsp;&emsp;修改大量积累的 bug<br>
 						&emsp;&emsp;-关于开始菜单全屏的问题<br>
 						&emsp;&emsp;-关于小组件的大量问题<br>
-						&emsp;&emsp;-标签页的移动端适配问题<br>
+						&emsp;&emsp;-标签页的Move端适配问题<br>
 						&emsp;&emsp;-天气小组件 api 失效的问题<br>
 						&emsp;&emsp;新增和完善部分内容<br>
 						&emsp;&emsp;-鼠标中键Close标签页<br>
@@ -1994,9 +1994,9 @@ toggletheme() 切换主题
 						&emsp;&emsp;-(更新来自 @fzlzjerry)<br>
 						&emsp;&emsp;-加入任务栏窗口预览<br>
 					</p></details>
-					<details><summary><span>v9.1.1</span> 移动端适配</summary><p>
+					<details><summary><span>v9.1.1</span> Move端适配</summary><p>
 						&emsp;&emsp;-(更新来自@NB-Group)<br>
-						&emsp;&emsp;- 在移动端竖屏体验时将会提示“横屏以获得最佳体验”<br>
+						&emsp;&emsp;- 在Move端竖屏体验时将会提示“横屏以获得最佳体验”<br>
 					</p></details>
 					<details><summary><span>v9.1.0</span> 真正的在线新闻功能！</summary><p>
 						&emsp;&emsp;-(更新来自@lingbopro)<br>
@@ -2020,8 +2020,8 @@ toggletheme() 切换主题
 						&emsp;&emsp;-加入了半成品的 Microsoft Store<br>
 						&emsp;&emsp;-其他一些细微之处的更新</p>
 					</p></details>
-					<!-- 全部列出来那这个更多意义何在？ -->
-					<a onclick="window.open('changelog.md','_blank');" win12_title="changelog.md" class="a jump" style="text-align: center;">更多</a>
+					<!-- 全部列出来那这个More意义何在？ -->
+					<a onclick="window.open('changelog.md','_blank');" win12_title="changelog.md" class="a jump" style="text-align: center;">More</a>
 				</div>
 			</div>
 		</div>
