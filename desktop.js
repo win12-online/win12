@@ -52,18 +52,41 @@ function loadlang(code) {
             i18nData[code] = translations;
             console.log('Parsed', Object.keys(translations).length, 'translations');
 
-            // Apply translations to DOM
-            $('[data-i18n]').each(function () {
-                const key = $(this).data("i18n");
-                const value = translations[key];
-                if (value) $(this).html(value);
-            });
+            // Function to apply translations
+            function applyTranslations() {
+                let applied = 0;
+                $('[data-i18n]').each(function () {
+                    const key = $(this).data("i18n");
+                    const value = translations[key];
+                    if (value) {
+                        $(this).html(value);
+                        applied++;
+                    }
+                });
 
-            $('[data-i18n-attr]').each(function () {
-                const key = $(this).data("i18n-key");
-                const value = translations[key];
-                if (value) $(this).attr($(this).data("i18n-attr"), value);
-            });
+                $('[data-i18n-attr]').each(function () {
+                    const key = $(this).data("i18n-key");
+                    const value = translations[key];
+                    if (value) {
+                        $(this).attr($(this).data("i18n-attr"), value);
+                        applied++;
+                    }
+                });
+
+                return applied;
+            }
+
+            // Try immediately, then retry after delay if needed
+            let applied = applyTranslations();
+            console.log('Applied', applied, 'translations immediately');
+
+            if (applied === 0) {
+                // Retry after DOM fully loads
+                setTimeout(() => {
+                    applied = applyTranslations();
+                    console.log('Applied', applied, 'translations after delay');
+                }, 500);
+            }
         })
         .catch(error => {
             console.error('Failed to load language:', code, error);
