@@ -1,5 +1,5 @@
 // 应用功能
-let apps = {
+window.apps = {
     setting: {
         init: () => {
             $('#win-setting>.menu>list>a.home')[0].click();
