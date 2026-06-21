@@ -83,8 +83,8 @@ toggletheme() 切换主题
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 	<meta name="format-detection" content="telephone=no" />
 
-	<link rel="stylesheet" href="./desktop.css">
-	<link rel="stylesheet" href="bootstrap-icons.css">
+	<link rel="stylesheet" href="./styles/desktop.css">
+	<link rel="stylesheet" href="./styles/bootstrap-icons.css">
 	<!-- Apps style -->
 	<link rel="stylesheet" href="apps/style/setting.css">
 	<link rel="stylesheet" href="apps/style/explorer.css">
@@ -112,8 +112,8 @@ toggletheme() 切换主题
 	<link rel="shortcut icon" href="./pwa/logo.png" type="image/x-icon">
 	<link rel="stylesheet" href="apps/style/login.css">
 	<!-- 模块 -->
-	<link rel="stylesheet" href="module/widget.css">
-	<link rel="stylesheet" href="module/tab.css">
+	<link rel="stylesheet" href="src/modules/widget.css">
+	<link rel="stylesheet" href="src/modules/tab.css">
 
 	
 	<!-- 风水宝地，不可Move -->
@@ -128,7 +128,7 @@ toggletheme() 切换主题
 
 
 <body>
-	<audio src="media/startup.mp3" id="startup-music"></audio>
+	<audio src="assets/media/startup.mp3" id="startup-music"></audio>
 	<div id="loadback" style="background-color:#000;width:100%;height:100%;z-index:105;position:absolute;transition:200ms;cursor: none;/*加载界面隐藏鼠标指针*/">
 		<style>
 			#loadback.hide {
@@ -178,8 +178,8 @@ toggletheme() 切换主题
 	</div>
 	<div class="container" id="orientation-warning">
         <div class="image-container">
-            <img src="icon/ls.svg" alt="Semi-transparent icon" class="svg translucent">
-            <img src="icon/ls.svg" alt="Rotating icon" class="svg rotating">
+            <img src="assets/icons/ls.svg" alt="Semi-transparent icon" class="svg translucent">
+            <img src="assets/icons/ls.svg" alt="Rotating icon" class="svg rotating">
         </div>
         <div data-i18n="cover-hp">Landscape for the best experience</div>
         <button class="orientation-close-btn" onclick="dismissOrientation();" data-i18n="cover-hp-close">Continue using portrait mode</button>
@@ -260,92 +260,92 @@ toggletheme() 切换主题
 			<list>
 				<p class="text" data-i18n="stmenu-avlb">Available</p>
 				<a oncontextmenu="return showcm(event, 'smlapp', ['setting', 'Settings'])" onclick="openapp('setting');hide_startmenu();">
-					<img src="icon/setting.svg">
+					<img src="assets/icons/setting.svg">
 					<p data-i18n="setting.name">Settings</p>
 				</a>
 				<a oncontextmenu="return showcm(event, 'smlapp', ['explorer', 'File Explorer'])" onclick="openapp('explorer');hide_startmenu();">
-					<img src="icon/explorer.svg">
+					<img src="assets/icons/explorer.svg">
 					<p data-i18n="explorer.name">File Explorer</p>
 				</a>
 				<a oncontextmenu="return showcm(event, 'smlapp', ['calc', 'Calculator'])" onclick="openapp('calc');hide_startmenu();">
-					<img src="icon/calc.svg">
+					<img src="assets/icons/calc.svg">
 					<p data-i18n="calc.name">Calculator</p>
 				</a>
 				<a oncontextmenu="return showcm(event, 'smlapp', ['run', 'Run'])" onclick="openapp('run');hide_startmenu();">
-					<img src="icon/run.svg">
+					<img src="assets/icons/run.svg">
 					<p data-i18n="run.name">Run</p>
 				</a>
 				<a oncontextmenu="return showcm(event, 'smlapp', ['about', 'About Win12 Online'])" onclick="openapp('about');hide_startmenu();">
-					<img src="icon/about.svg">
+					<img src="assets/icons/about.svg">
 					<p data-i18n="about.name">About Win12 Online</p>
 				</a>
 				<a oncontextmenu="return showcm(event, 'smlapp', ['taskmgr', 'Task Manager'])" onclick="openapp('taskmgr');hide_startmenu();">
-					<img src="icon/taskmgr.png">
+					<img src="assets/icons/taskmgr.png">
 					<p data-i18n="taskmgr.name">Task Manager</p>
 				</a>
 				<a oncontextmenu="return showcm(event, 'smlapp', ['notepad', 'Notepad'])" onclick="openapp('notepad');hide_startmenu();">
-					<img src="icon/notepad.svg">
+					<img src="assets/icons/notepad.svg">
 					<p data-i18n="notepad.name">Notepad</p>
 				</a>
 				<a oncontextmenu="return showcm(event, 'smlapp', ['copilot', 'AI Chat'])" onclick="shownotice('error_aichat')">
-					<img src="icon/copilot.svg">
+					<img src="assets/icons/copilot.svg">
 					<p>AI Chat</p>
 				</a>
 				<a oncontextmenu="return showcm(event, 'smlapp', ['edge', 'Microsoft Edge'])" onclick="openapp('edge');hide_startmenu();">
-					<img src="icon/edge.svg">
+					<img src="assets/icons/edge.svg">
 					<p data-i18n="edge.name">Microsoft Edge</p>
 				</a>
 				<a oncontextmenu="return showcm(event, 'smlapp', ['msstore', 'Microsoft Store'])" onclick="openapp('msstore');hide_startmenu();">
-					<img src="icon/msstore.svg">
+					<img src="assets/icons/msstore.svg">
 					<p>Microsoft Store</p>
 				</a>
 				<a oncontextmenu="return showcm(event, 'smlapp', ['camera', 'Camera'])" onclick="apps.camera.notice();hide_startmenu()">
-					<img src="icon/camera.svg">
+					<img src="assets/icons/camera.svg">
 					<p data-i18n="camera.name">Camera</p>
 				</a>
 				<a oncontextmenu="return showcm(event, 'smlapp', ['pythonEditor', 'Python Editor'])" onclick="openapp('pythonEditor');hide_startmenu()">
-					<img src="icon/pythonEditor.svg">
+					<img src="assets/icons/pythonEditor.svg">
 					<p>Python Editor</p>
 				</a>
 				<a oncontextmenu="return showcm(event, 'smlapp', ['python', 'Python 3.11.2'])" onclick="openapp('python');hide_startmenu()">
-					<img src="icon/python.svg">
+					<img src="assets/icons/python.svg">
 					<p>Python 3.11.2</p>
 				</a>
 				<a oncontextmenu="return showcm(event, 'smlapp', ['terminal', 'Terminal'])" onclick="openapp('terminal');hide_startmenu();">
-					<img src="icon/terminal.svg">
+					<img src="assets/icons/terminal.svg">
 					<p data-i18n="terminal.name">Terminal</p>
 				</a>
 				<a oncontextmenu="return showcm(event, 'smlapp', ['whiteboard', 'Whiteboard'])" onclick="openapp('whiteboard');hide_startmenu();">
-					<img src="icon/whiteboard.svg">
+					<img src="assets/icons/whiteboard.svg">
 					<p>Whiteboard</p>
 				</a>
 				<a oncontextmenu="return showcm(event, 'smlapp', ['defender', 'Windows Security'])" onclick="openapp('defender');hide_startmenu();">
-					<img src="icon/defender.svg">
+					<img src="assets/icons/defender.svg">
 					<p data-i18n="defender.name">Windows Security</p>
 				</a>
 				<a oncontextmenu="return showcm(event, 'smlapp', ['word', 'Word Preview'])" onclick="openapp('word');hide_startmenu();">
-					<img src="icon/word.svg">
+					<img src="assets/icons/word.svg">
 					<p data-i18n="word.name">Word Preview</p>
 				</a>
 				<p class="text" data-i18n="stmenu-webapp">Webapps</p>
 				<a oncontextmenu="return showcm(event, 'smlapp', ['minesweeper', 'Windows 12 minesweeper'])" onclick="openapp('minesweeper');hide_startmenu()">
-					 <img src="icon/minesweeper.svg">
+					 <img src="assets/icons/minesweeper.svg">
 				  <p>Minesweeper</p>
 			    </a>
 				<a oncontextmenu="return showcm(event, 'smlapp', ['bilibili', 'Bilibili'])" onclick="openapp('bilibili');hide_startmenu();">
-					<img src="icon/bilibili.png">
+					<img src="assets/icons/bilibili.png">
 					<p data-i18n="bilibili.name">Bilibili</p>
 				</a>
 				<a oncontextmenu="return showcm(event, 'smlapp', ['vscode', 'Visual Studio Code'])" onclick="openapp('vscode');hide_startmenu();">
-					<img src="icon/vscode.png">
+					<img src="assets/icons/vscode.png">
 					<p>Visual Studio Code</p>
 				</a>
 				<a oncontextmenu="return showcm(event, 'smlapp', ['wsa', 'Windows Subsystem for Android™'])" onclick="openapp('wsa');hide_startmenu();">
-					<img src="icon/wsa.png">
+					<img src="assets/icons/wsa.png">
 					<p data-i18n="wsa.name">Windows Subsystem for Android™</p>
 				</a>
 				<a oncontextmenu="return showcm(event, 'smlapp', ['windows12', 'Windows 12'])" onclick="openapp('windows12');hide_startmenu();">
-					<img src="icon/logo.svg">
+					<img src="assets/icons/logo.svg">
 					<p>Windows 12</p>
 				</a>
 			</list>
@@ -355,17 +355,17 @@ toggletheme() 切换主题
 				<div class="folder">
 					<a class="a sm-app enable"
 						onclick="openapp('explorer');apps.explorer.goto('C:/用户/Administrator/Documents');hide_startmenu();">
-						<img src="icon/folder/docs.svg">
+						<img src="assets/icons/folder/docs.svg">
 						<p data-i18n="folder.doc">Documents</p>
 					</a>
 					<a class="a sm-app enable"
 						onclick="openapp('explorer');apps.explorer.goto('C:/用户/Administrator/Pictures');hide_startmenu();">
-						<img src="icon/folder/pics.svg">
+						<img src="assets/icons/folder/pics.svg">
 						<p data-i18n="folder.pic">Pictures</p>
 					</a>
 					<a class="a sm-app enable"
 						onclick="openapp('explorer');apps.explorer.goto('C:/用户/Administrator/Music');hide_startmenu();">
-						<img src="icon/folder/music.svg">
+						<img src="assets/icons/folder/music.svg">
 						<p data-i18n="folder.mus">Music</p>
 					</a>
 				</div>
@@ -406,51 +406,51 @@ toggletheme() 切换主题
 				</div>
 				<div class="apps">
 					<a class="a sm-app enable calc" onclick="openapp('calc');hide_startmenu();" oncontextmenu="return showcm(event,'smapp',['calc','Calculator'])">
-						<img src="icon/calc.svg">
+						<img src="assets/icons/calc.svg">
 						<p data-i18n="calc.name">Calculator</p>
 					</a>
 					<a class="a sm-app enable camera" onclick="apps.camera.notice();hide_startmenu();" oncontextmenu="return showcm(event,'smapp',['camera', 'Camera'])">
-						<img src="icon/camera.svg">
+						<img src="assets/icons/camera.svg">
 						<p data-i18n="camera.name">Camera</p>
 					</a>
 					<a class="a sm-app enable" onclick="shownotice('feedback');">
-						<img src="icon/feedback.svg">
+						<img src="assets/icons/feedback.svg">
 						<p data-i18n="feedback.name">Feedback Hub</p>
 					</a>
 					<a class="a sm-app enable about" onclick="openapp('about');hide_startmenu();" oncontextmenu="return showcm(event,'smapp',['about','About Win12 Online'])">
-						<img src="icon/about.svg">
+						<img src="assets/icons/about.svg">
 						<p data-i18n="about.name">About Win12 Online</p>
 					</a>
 					<a class="a sm-app enable explorer" onclick="openapp('explorer');hide_startmenu();" oncontextmenu="return showcm(event,'smapp',['explorer','File Explorer'])">
-						<img src="icon/explorer.svg">
+						<img src="assets/icons/explorer.svg">
 						<p data-i18n="explorer.name">File Explorer</p>
 					</a>
 					<a class="a sm-app enable notepad" onclick="openapp('notepad');hide_startmenu();" oncontextmenu="return showcm(event,'smapp',['notepad','Notepad'])">
-						<img src="icon/notepad.svg">
+						<img src="assets/icons/notepad.svg">
 						<p data-i18n="notepad.name">Notepad</p>
 					</a>
 					<a class="a sm-app enable setting" onclick="openapp('setting');hide_startmenu();" oncontextmenu="return showcm(event,'smapp',['setting','Settings'])">
-						<img src="icon/setting.svg">
+						<img src="assets/icons/setting.svg">
 						<p data-i18n="setting.name">Settings </p>
 					</a>
 					<a class="a sm-app enable defender" onclick="openapp('defender');hide_startmenu();" oncontextmenu="return showcm(event,'smapp',['defender','Windows Security'])">
-						<img src="icon/defender.svg">
+						<img src="assets/icons/defender.svg">
 						<p data-i18n="defender.name">Windows Security</p>
 					</a>
 					<a class="a sm-app enable msstore" onclick="openapp('msstore');hide_startmenu();" oncontextmenu="return showcm(event, 'smapp', ['msstore', 'Microsoft Store'])">
-						<img src="icon/msstore.svg">
+						<img src="assets/icons/msstore.svg">
 						<p>Microsoft Store</p>
 					</a>
 					<a class="a sm-app enable edge" onclick="openapp('edge');hide_startmenu();" oncontextmenu="return showcm(event,'smapp',['edge','Microsoft Edge'])">
-						<img src="icon/edge.svg">
+						<img src="assets/icons/edge.svg">
 						<p data-i18n="edge.name">Microsoft Edge</p>
 					</a>
 					<a class="a sm-app enable windows12" onclick="openapp('windows12');hide_startmenu();" oncontextmenu="return showcm(event,'smapp',['windows12','Windows 12'])">
-						<img src="icon/logo.svg">
+						<img src="assets/icons/logo.svg">
 						<p>Windows 12</p>
 					</a>
 					<a class="a sm-app enable terminal" onclick="openapp('terminal');hide_startmenu();" oncontextmenu="return showcm(event,'smapp',['terminal','Terminal'])">
-						<img src="icon/terminal.svg">
+						<img src="assets/icons/terminal.svg">
 						<p data-i18n="terminal.name">Terminal</p>
 					</a>
 				</div>
@@ -463,11 +463,11 @@ toggletheme() 切换主题
 					</div>
 				</div>
 				<div class="apps">
-					<a class="a tj-obj act"><img src="icon/files/ppt.png"><div><p data-i18n="stmenu-tj-f1">How to Use Caps Scientifically.pptx</p><p data-i18n="stmenu-tj-t1">5 minutes ago</p></div></a>
-					<a class="a tj-obj act"><img src="icon/files/img.png"><div><p data-i18n="stmenu-tj-f2">Coca Cola Bottle Cap.jpg</p><p data-i18n="stmenu-tj-t2">7 minutes ago</p></div></a>
-					<a class="a tj-obj act"><img src="icon/files/img.png"><div><p data-i18n="stmenu-tj-f3">Bottle Cap Structure.jpg</p><p data-i18n="stmenu-tj-t3">16 minutes ago</p></div></a>
-					<a class="a tj-obj act" onclick="openapp('word');apps.word.edit();hide_startmenu();"><img src="icon/files/word.png"><div><p data-i18n="stmenu-tj-f4">Cap Structure and Function.docx</p><p data-i18n="stmenu-tj-t4">24 minutes ago</p></div></a>
-					<a class="a tj-obj act"><img src="icon/files/excel.png"><div><p data-i18n="stmenu-tj-f5">Coca Cola Cap Thickness.xlsx</p><p data-i18n="stmenu-tj-t5">35 minutes ago</p></div></a>
+					<a class="a tj-obj act"><img src="assets/icons/files/ppt.png"><div><p data-i18n="stmenu-tj-f1">How to Use Caps Scientifically.pptx</p><p data-i18n="stmenu-tj-t1">5 minutes ago</p></div></a>
+					<a class="a tj-obj act"><img src="assets/icons/files/img.png"><div><p data-i18n="stmenu-tj-f2">Coca Cola Bottle Cap.jpg</p><p data-i18n="stmenu-tj-t2">7 minutes ago</p></div></a>
+					<a class="a tj-obj act"><img src="assets/icons/files/img.png"><div><p data-i18n="stmenu-tj-f3">Bottle Cap Structure.jpg</p><p data-i18n="stmenu-tj-t3">16 minutes ago</p></div></a>
+					<a class="a tj-obj act" onclick="openapp('word');apps.word.edit();hide_startmenu();"><img src="assets/icons/files/word.png"><div><p data-i18n="stmenu-tj-f4">Cap Structure and Function.docx</p><p data-i18n="stmenu-tj-t4">24 minutes ago</p></div></a>
+					<a class="a tj-obj act"><img src="assets/icons/files/excel.png"><div><p data-i18n="stmenu-tj-f5">Coca Cola Cap Thickness.xlsx</p><p data-i18n="stmenu-tj-t5">35 minutes ago</p></div></a>
 				</div>
 			</div>
 		</div>
@@ -491,7 +491,7 @@ toggletheme() 切换主题
 					setTimeout(() => {
 						$('#search-win').removeClass('show-begin');
 					}, 200);">
-						<img src="icon/setting.svg">
+						<img src="assets/icons/setting.svg">
 						<p data-i18n="setting.name">Settings</p>
 					</a>
 					<a onclick="openapp('about');$('#search-btn').removeClass('show');
@@ -499,7 +499,7 @@ toggletheme() 切换主题
 					setTimeout(() => {
 						$('#search-win').removeClass('show-begin');
 					}, 200);">
-						<img src="icon/about.svg">
+						<img src="assets/icons/about.svg">
 						<p data-i18n="about.name">About Win12 Online</p>
 					</a>
 				</list>
@@ -537,7 +537,7 @@ toggletheme() 切换主题
 								<a win12_title="More" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)" class="a more notip" onclick="$('.wg.calc>.titbar>.menu').toggleClass('show')"><i class="bi bi-three-dots"></i></a>
 								<div class="menu">
 									<a win12_title="Open App" class="a img openapp" onclick="$('.wg.calc>.titbar>.menu').removeClass('show');hide_widgets();openapp('calc')" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)">
-										<img src="icon/calc.svg">
+										<img src="assets/icons/calc.svg">
 									</a>
 									<a class="a move" win12_title="Move" onmouseenter="showdescp(event)" onclick=" hidedescp(event); if (!edit_mode) { editMode(); }" onmouseleave="hidedescp(event)"><i class="bi bi-arrows-move"></i></a>
 									<a class="a addtodt" win12_title="Add to Desktop" onmouseenter="showdescp(event)" onclick="hidedescp(event); widgets.widgets.remove('calc'); widgets.widgets.addToDesktop('calc');" onmouseleave="hidedescp(event)"><i class="bi bi-box-arrow-in-right"></i></a>
@@ -631,7 +631,7 @@ toggletheme() 切换主题
 								<a win12_title="More" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)" class="a more notip" onclick="$('.wg.monitor>.titbar>.menu').toggleClass('show')"><i class="bi bi-three-dots"></i></a>
 								<div class="menu">
 									<a win12_title="Open App" class="a img openapp" onclick="$('.wg.calc>.titbar>.menu').removeClass('show');hide_widgets();openapp('taskmgr')" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)">
-										<img src="icon/taskmgr.png">
+										<img src="assets/icons/taskmgr.png">
 									</a>
 									<a class="a chose" win12_title="Switch Monitor Type" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)" onclick="showdescp(event); shownotice('widgets.monitor'); "><i class="bi bi-arrow-left-right"></i></a>
 									<a class="a move" win12_title="Move" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)" onclick="showdescp(event); if (!edit_mode) { editMode(); } "><i class="bi bi-arrows-move"></i></a>
@@ -805,7 +805,7 @@ toggletheme() 切换主题
 							stroke-miterlimit="8" fill="none" fill-rule="evenodd" />
 					</g>
 				</svg>
-				<img src="icon/logo.svg" class="ico">
+				<img src="assets/icons/logo.svg" class="ico">
 			</a>
 			<a class="dock-btn" id="search-btn" win12_title="Search" onclick="openDockWidget('search-win')">
 				<!--搜索按钮-->
@@ -821,7 +821,7 @@ toggletheme() 切换主题
 			</a>
 			<a class="dock-btn" onclick="$('#copilot').toggleClass('show');$(this).toggleClass('show')" id="copilot-btn">
 				<!--copilot 按钮-->
-			<img src="icon/copilot.svg"></a>
+			<img src="assets/icons/copilot.svg"></a>
 		</div>
 		<div class="dock" id="taskbar" style="display: none;" count="0">
 		</div>
@@ -901,7 +901,7 @@ toggletheme() 切换主题
 	<div class="window defender" data-min-width="800" style="width: max(800px, 70%)">
 		<div class="resize-bar"></div>
 		<div class="titbar">
-			<img src="icon/defender.svg" class="icon">
+			<img src="assets/icons/defender.svg" class="icon">
 			<p data-i18n="defender.name">Windows Security</p>
 			<div>
 				<a class="a wbtg red" onclick="hidewin('defender')"><i class="bi bi-x-lg"></i></a>
@@ -910,7 +910,7 @@ toggletheme() 切换主题
 			</div>
 		</div>
 		<div class="loadback">
-			<img src="icon/defender.svg" class="icon">
+			<img src="assets/icons/defender.svg" class="icon">
 		</div>
 		<div class="content" id="win-defender">
 			<div class="app-left">
@@ -1131,7 +1131,7 @@ toggletheme() 切换主题
 	<div class="window msstore">
 		<div class="resize-bar"></div>
 		<div class="titbar">
-			<img src="icon/msstore.svg" class="icon">
+			<img src="assets/icons/msstore.svg" class="icon">
 			<p>Microsoft Store</p>
 			<div>
 				<a class="a wbtg red" onclick="hidewin('msstore');"><i class="bi bi-x-lg"></i></a>
@@ -1140,7 +1140,7 @@ toggletheme() 切换主题
 			</div>
 		</div>
 		<div class="loadback" data-delay="3500">
-			<img src="icon/msstore.svg" class="icon">
+			<img src="assets/icons/msstore.svg" class="icon">
             <loading style="position: static; ">
                 <svg width="40px" height="40px" viewBox="0 0 16 16">
                     <!-- <circle cx="8px" cy="8px" r="7px" style="stroke:#7f7f7f50;fill:none;stroke-width:3px;"></circle> -->
@@ -1270,7 +1270,7 @@ toggletheme() 切换主题
 	<div class="window setting">
 		<div class="resize-bar"></div>
 		<div class="titbar">
-			<img src="icon/setting.svg" class="icon">
+			<img src="assets/icons/setting.svg" class="icon">
 			<p data-i18n="setting.name">Settings</p>
 			<div>
 				<a class="a wbtg red" onclick="hidewin('setting')"><i class="bi bi-x-lg"></i></a>
@@ -1279,7 +1279,7 @@ toggletheme() 切换主题
 			</div>
 		</div>
 		<div class="loadback">
-			<img src="icon/setting.svg" class="icon">
+			<img src="assets/icons/setting.svg" class="icon">
 		</div>
 		<div class="content" id="win-setting">
 			<div class="menu">
@@ -1650,7 +1650,7 @@ toggletheme() 切换主题
 	<div class="window explorer tabs">
 		<div class="resize-bar"></div>
 		<div class="titbar">
-			<img src="icon/explorer.svg" class="icon">
+			<img src="assets/icons/explorer.svg" class="icon">
 			<!-- <p style="width:min-content">File Explorer</p> -->
 			<div class="tabs">
 			</div>
@@ -1661,7 +1661,7 @@ toggletheme() 切换主题
 			</div>
 		</div>
 		<div class="loadback">
-			<img src="icon/explorer.svg" class="icon">
+			<img src="assets/icons/explorer.svg" class="icon">
 		</div>
 		<div class="content" id="win-explorer">
 			<div class="path">
@@ -1726,7 +1726,7 @@ toggletheme() 切换主题
 	</div>
 	<div class="window calc">
 		<div class="titbar">
-			<img src="icon/calc.svg" class="icon">
+			<img src="assets/icons/calc.svg" class="icon">
 			<p data-i18n="calc.name">Calculator</p>
 			<div>
 				<a class="a wbtg red" onclick="hidewin('calc')"><i class="bi bi-x-lg"></i></a>
@@ -1735,7 +1735,7 @@ toggletheme() 切换主题
 			</div>
 		</div>
 		<div class="loadback">
-			<img src="icon/calc.svg" class="icon">
+			<img src="assets/icons/calc.svg" class="icon">
 		</div>
 		<div class="content" id="win-calc">
 			<div class="container">
@@ -1803,7 +1803,7 @@ toggletheme() 切换主题
 	<div class="window about">
 		<div class="resize-bar"></div>
 		<div class="titbar">
-			<img src="icon/about.svg" class="icon">
+			<img src="assets/icons/about.svg" class="icon">
 			<p data-i18n="about.name">About Win12 Online</p>
 			<div>
 				<a class="a wbtg red" onclick="hidewin('about')"><i class="bi bi-x-lg"></i></a>
@@ -1812,7 +1812,7 @@ toggletheme() 切换主题
 			</div>
 		</div>
 		<div class="loadback">
-			<img src="icon/about.svg" class="icon">
+			<img src="assets/icons/about.svg" class="icon">
 		</div>
 		<div class="content" id="win-about">
 			<div class="menu">
@@ -2029,7 +2029,7 @@ toggletheme() 切换主题
 	<div class="window notepad" onclick="if(font_window){playWindowsBackground();showwin('notepad-fonts');}">
 		<div class="resize-bar"></div>
 		<div class="titbar">
-			<img src="icon/notepad.svg" class="icon">
+			<img src="assets/icons/notepad.svg" class="icon">
 			<p data-i18n="notepad.name">Notepad</p>
 			<div>
 				<a class="a wbtg red" onclick="apps.notepad.close()"><i
@@ -2039,7 +2039,7 @@ toggletheme() 切换主题
 			</div>
 		</div>
 		<div class="loadback">
-			<img src="icon/notepad.svg" class="icon">
+			<img src="assets/icons/notepad.svg" class="icon">
 		</div>
 		<div class="content" id="win-notepad">
 			<div class="tool">
@@ -2058,14 +2058,14 @@ toggletheme() 切换主题
 	<!-- 这个东西还有用吗？？（ -->
 	<div class="window notepad-fonts">
 		<div class="titbar">
-			<img src="icon/notepad.svg" class="icon">
+			<img src="assets/icons/notepad.svg" class="icon">
 			<p>字体</p>
 			<div>
 				<a class="a wbtg red" onclick="hidewin('notepad-fonts', 'configs');font_window=false;"><i class="bi bi-x-lg"></i></a>
 			</div>
 		</div>
 		<div class="loadback">
-			<img src="icon/notepad.svg" class="icon">
+			<img src="assets/icons/notepad.svg" class="icon">
 		</div>
 		<div class="content" id="win-notepad-font">
 			<div class="row">
@@ -2146,7 +2146,7 @@ toggletheme() 切换主题
 	<div class="window terminal terminal-apps">
 		<div class="resize-bar"></div>
 		<div class="titbar">
-			<img src="icon/terminal.svg" class="icon">
+			<img src="assets/icons/terminal.svg" class="icon">
 			<p data-i18n="terminal.name">Terminal</p>
 			<div>
 				<a class="a wbtg red" onclick="hidewin('terminal')"><i class="bi bi-x-lg"></i></a>
@@ -2155,7 +2155,7 @@ toggletheme() 切换主题
 			</div>
 		</div>
 		<div class="loadback">
-			<img src="icon/terminal.svg" class="icon">
+			<img src="assets/icons/terminal.svg" class="icon">
 		</div>
 
 		<div class="content" id="win-terminal" onmouseup="$('#win-terminal input').focus();" ontouchend="$('#win-terminal input').focus();">
@@ -2171,7 +2171,7 @@ toggletheme() 切换主题
 	<div class="window python terminal-apps">
 		<div class="resize-bar"></div>
 		<div class="titbar">
-			<img src="icon/python.svg" class="icon">
+			<img src="assets/icons/python.svg" class="icon">
 			<p>Python 3.11.2</p>
 			<div>
 				<a class="a wbtg red" onclick="hidewin('python')"><i class="bi bi-x-lg"></i></a>
@@ -2180,7 +2180,7 @@ toggletheme() 切换主题
 			</div>
 		</div>
 		<div class="loadback">
-			<img src="icon/python.svg" class="icon">
+			<img src="assets/icons/python.svg" class="icon">
 		</div>
 
 		<div class="content" id="win-python" onmouseup="$('#win-python input').focus();" ontouchend="$('#win-python input').focus();">
@@ -2196,7 +2196,7 @@ toggletheme() 切换主题
 		<div class="resize-bar"></div>
 		<div style="height:3px;width:100%;display: none;" id="over-bar" onmouseover="if(apps.edge.fuls){$('.edge>.titbar').show();$('.edge>.content>.tool').show()}" onmouseleave="if(apps.edge.fuls&&(apps.edge.b1||apps.edge.b2)){$('.edge>.titbar').hide();$('.edge>.content>.tool').hide()}"></div>
 		<div class="titbar" onmouseleave="apps.edge.b1=false;" onmouseover="apps.edge.b1=true;" id="edge-titbar">
-			<img src="icon/edge.svg" class="icon">
+			<img src="assets/icons/edge.svg" class="icon">
 			<p style="display: none;">Microsoft Edge</p>
 			<div class="tabs">
 			</div>
@@ -2209,7 +2209,7 @@ toggletheme() 切换主题
 			</div>
 		</div>
 		<div class="loadback">
-			<img src="icon/edge.svg" class="icon">
+			<img src="assets/icons/edge.svg" class="icon">
 		</div>
 		<div class="content" id="win-edge">
 			<div class="tool" onmouseleave="apps.edge.b2=false;" onmouseover="apps.edge.b2=true;" id="edge-path-bar">
@@ -2276,7 +2276,7 @@ toggletheme() 切换主题
 	<div class="window vscode webapp">
 		<div class="resize-bar"></div>
 		<div class="titbar">
-			<img src="icon/vscode.png" class="icon">
+			<img src="assets/icons/vscode.png" class="icon">
 			<p>Visual Studio Code</p>
 			<div>
 				<a class="a wbtg red" onclick="hidewin('vscode')"><i class="bi bi-x-lg"></i></a>
@@ -2285,7 +2285,7 @@ toggletheme() 切换主题
 			</div>
 		</div>
 		<div class="loadback">
-			<img src="icon/vscode.png" class="icon">
+			<img src="assets/icons/vscode.png" class="icon">
 		</div>
 		<div class="content" id="win-vscode">
 			<!-- <iframe src="https://github1s.com/" frameborder="0" style="width: 100%; height: 100%;" loading="lazy"></iframe> -->
@@ -2294,7 +2294,7 @@ toggletheme() 切换主题
 	<div class="window bilibili webapp">
 		<div class="resize-bar"></div>
 		<div class="titbar">
-			<img src="icon/bilibili.png" class="icon">
+			<img src="assets/icons/bilibili.png" class="icon">
 			<p data-i18n="bilibili.name">Bilibili</p>
 			<div>
 				<a class="a wbtg red" onclick="hidewin('bilibili')"><i class="bi bi-x-lg"></i></a>
@@ -2303,7 +2303,7 @@ toggletheme() 切换主题
 			</div>
 		</div>
 		<div class="loadback">
-			<img src="icon/bilibili.png" class="icon">
+			<img src="assets/icons/bilibili.png" class="icon">
 		</div>
 		<div class="content" id="win-bilibili">
 			<!-- <iframe src="https://bilibili.com/" frameborder="0" style="width: 100%; height: 100%;" loading="lazy"></iframe> -->
@@ -2313,7 +2313,7 @@ toggletheme() 切换主题
 	<div class="window copilot">
 		<div class="resize-bar"></div>
 		<div class="titbar">
-			<img src="icon/copilot.svg" class="icon">
+			<img src="assets/icons/copilot.svg" class="icon">
 			<p>AI Chat</p>
 			<div>
 				<a class="a wbtg red" onclick="hidewin('copilot')"><i class="bi bi-x-lg"></i></a>
@@ -2322,7 +2322,7 @@ toggletheme() 切换主题
 			</div>
 		</div>
 		<div class="loadback">
-			<img src="icon/copilot.svg" class="icon">
+			<img src="assets/icons/copilot.svg" class="icon">
 		</div>
 		<div class="content" id="win-copilot">
 		</div>
@@ -2330,7 +2330,7 @@ toggletheme() 切换主题
 	<div class="window minesweeper">
       <div class="resize-bar"></div>
         <div class="titbar">
-	      <img src="icon/minesweeper.svg" class="icon">
+	      <img src="assets/icons/minesweeper.svg" class="icon">
 						<p>Minesweeper</p>
 				 <div>
 					<a class="a wbtg red" onclick="hidewin('minesweeper')"><i class="bi bi-x-lg"></i></a>
@@ -2339,7 +2339,7 @@ toggletheme() 切换主题
 				</div>
 		            </div>
 					       <div class="loadback">
-		         <img src="icon/minesweeper.svg" class="icon">
+		         <img src="assets/icons/minesweeper.svg" class="icon">
 													
 					</div>
 		        <div class="content" id="win-minesweeper">																														                </div>
@@ -2347,7 +2347,7 @@ toggletheme() 切换主题
 	<div class="window wsa">
 		<div class="resize-bar"></div>
 		<div class="titbar">
-			<img src="icon/wsa.png" class="icon">
+			<img src="assets/icons/wsa.png" class="icon">
 			<p data-i18n="wsa.name">手机连接 (Windows Subsystem for Android™)</p>
 			<div>
 				<a class="a wbtg red" onclick="hidewin('wsa')"><i class="bi bi-x-lg"></i></a>
@@ -2356,7 +2356,7 @@ toggletheme() 切换主题
 			</div>
 		</div>
 		<div class="loadback">
-			<img src="icon/wsa.png" class="icon">
+			<img src="assets/icons/wsa.png" class="icon">
 		</div>
 		<div class="content" id="win-wsa" style="margin-bottom:auto;">
 			<iframe src="https://android11react.osrc.com/" frameborder="0" style=" width: 100%;height: 100%;" loading="lazy"></iframe>
@@ -2365,7 +2365,7 @@ toggletheme() 切换主题
 	<div class="window pythonEditor">
 		<div class="resize-bar"></div>
 		<div class="titbar">
-			<img src="icon/pythonEditor.svg" class="icon">
+			<img src="assets/icons/pythonEditor.svg" class="icon">
 			<p>Python Editor</p>
 			<div>
 				<a class="a wbtg red" onclick="hidewin('pythonEditor')"><i class="bi bi-x-lg"></i></a>
@@ -2375,7 +2375,7 @@ toggletheme() 切换主题
 			</div>
 		</div>
 		<div class="loadback">
-			<img src="icon/pythonEditor.svg" class="icon">
+			<img src="assets/icons/pythonEditor.svg" class="icon">
 		</div>
 		<div class="content" id="win-pythonEditor">
 			<div id="win-python-ace-editor"></div>
@@ -2385,7 +2385,7 @@ toggletheme() 切换主题
 	<div class="window camera">
 		<div class="resize-bar"></div>
 		<div class="titbar">
-			<img src="icon/camera.svg" class="icon">
+			<img src="assets/icons/camera.svg" class="icon">
 			<p data-i18n="camera.name">Camera</p>
 			<div>
 				<a class="a wbtg red" onclick="hidewin('camera')"><i class="bi bi-x-lg"></i></a>
@@ -2394,7 +2394,7 @@ toggletheme() 切换主题
 			</div>
 		</div>
 		<div class="loadback">
-			<img src="icon/camera.svg" class="icon">
+			<img src="assets/icons/camera.svg" class="icon">
 		</div>
 		<div class="content" id="win-camera">
 			<div class="video">
@@ -2412,7 +2412,7 @@ toggletheme() 切换主题
 	<div class="window windows12">
 		<div class="resize-bar"></div>
 		<div class="titbar">
-			<img src="icon/logo.svg" class="icon">
+			<img src="assets/icons/logo.svg" class="icon">
 			<p>Windows 12</p>
 			<div>
 				<a class="a wbtg red" onclick="hidewin('windows12')"><i class="bi bi-x-lg"></i></a>
@@ -2422,7 +2422,7 @@ toggletheme() 切换主题
 			</div>
 		</div>
 		<div class="loadback">
-			<img src="icon/logo.svg" class="icon">
+			<img src="assets/icons/logo.svg" class="icon">
 		</div>
 		<div class="content" id="win-win12">
 			<iframe style="height:100%; width:100%;object-fit:cover;" id="win12-window" frameborder="no"></iframe>
@@ -2430,7 +2430,7 @@ toggletheme() 切换主题
 	</div>
 	<div class="window camera-notice">
 		<div class="titbar">
-			<img src="icon/camera.svg" class="icon">
+			<img src="assets/icons/camera.svg" class="icon">
 			<p data-i18n="camera.notice">提示</p>
 			<div>
 				<a class="a wbtg red" onclick="hidewin('camera-notice');hidewin('camera')"><i
@@ -2438,7 +2438,7 @@ toggletheme() 切换主题
 			</div>
 		</div>
 		<div class="loadback">
-			<img src="icon/camera.svg" class="icon">
+			<img src="assets/icons/camera.svg" class="icon">
 		</div>
 		<div class="content" id="win-camera-notice" style="padding: 0px 10px 0px 10px;">
 			<div style="display: flex; width: 100%; justify-content: center; margin-top: 10px; margin-bottom: 10px;">
@@ -2460,14 +2460,14 @@ toggletheme() 切换主题
 	</div>
 	<div class="window run">
 		<div class="titbar">
-			<img src="icon/run.svg" class="icon">
+			<img src="assets/icons/run.svg" class="icon">
 			<p data-i18n="run.name">Run</p>
 			<div>
 				<a class="a wbtg red" onclick="hidewin('run')"><i class="bi bi-x-lg"></i></a>
 			</div>
 		</div>
 		<div class="loadback">
-			<img src="icon/run.svg" class="icon">
+			<img src="assets/icons/run.svg" class="icon">
 		</div>
 		<div class="content" id="win-run">
 			<div class="top">
@@ -2488,7 +2488,7 @@ toggletheme() 切换主题
 	<div class="window whiteboard">
 		<div class="resize-bar"></div>
 		<div class="titbar">
-			<img src="icon/whiteboard.svg" class="icon">
+			<img src="assets/icons/whiteboard.svg" class="icon">
 			<p>Whiteboard</p>
 			<div>
 				<a class="a wbtg red" onclick="hidewin('whiteboard')"><i class="bi bi-x-lg"></i></a>
@@ -2498,7 +2498,7 @@ toggletheme() 切换主题
 			</div>
 		</div>
 		<div class="loadback">
-			<img src="icon/whiteboard.svg" class="icon">
+			<img src="assets/icons/whiteboard.svg" class="icon">
 		</div>
 		<div class="content" id="win-whiteboard">
 			<a class="download" href="" download="Picture.png"></a>
@@ -2613,7 +2613,7 @@ toggletheme() 切换主题
 	<div class="window code-editor">
 		<div class="resize-bar"></div>
 		<div class="titbar">
-			<img src="icon/vscode.png" class="icon">
+			<img src="assets/icons/vscode.png" class="icon">
 			<p data-i18n="code-editor.name">代码编辑器</p>
 			<div>
 				<a class="a wbtg red" onclick="apps.codeEditor.close()"><i class="bi bi-x-lg"></i></a>
@@ -2622,7 +2622,7 @@ toggletheme() 切换主题
 			</div>
 		</div>
 		<div class="loadback">
-			<img src="icon/vscode.png" class="icon">
+			<img src="assets/icons/vscode.png" class="icon">
 		</div>
 		<div class="content" id="win-code-editor">
 			<div class="code-toolbar">
@@ -2664,7 +2664,7 @@ toggletheme() 切换主题
 	<div class="window imgviewer">
 		<div class="resize-bar"></div>
 		<div class="titbar">
-			<img src="icon/files/picture.png" class="icon">
+			<img src="assets/icons/files/picture.png" class="icon">
 			<p data-i18n="imgviewer.name">Pictures查看器</p>
 			<div>
 				<a class="a wbtg red" onclick="apps.imgviewer.close()"><i class="bi bi-x-lg"></i></a>
@@ -2673,7 +2673,7 @@ toggletheme() 切换主题
 			</div>
 		</div>
 		<div class="loadback">
-			<img src="icon/files/picture.png" class="icon">
+			<img src="assets/icons/files/picture.png" class="icon">
 		</div>
 		<div class="content" id="win-imgviewer" onwheel="event.preventDefault();event.deltaY<0?apps.imgviewer.zoomIn():apps.imgviewer.zoomOut()">
 			<img class="preview-img" src="" alt="">
@@ -2688,7 +2688,7 @@ toggletheme() 切换主题
 	<div class="window mediaplayer">
 		<div class="resize-bar"></div>
 		<div class="titbar">
-			<img src="icon/files/vidio.png" class="icon">
+			<img src="assets/icons/files/vidio.png" class="icon">
 			<p data-i18n="mediaplayer.name">媒体播放器</p>
 			<div>
 				<a class="a wbtg red" onclick="apps.mediaplayer.close()"><i class="bi bi-x-lg"></i></a>
@@ -2697,7 +2697,7 @@ toggletheme() 切换主题
 			</div>
 		</div>
 		<div class="loadback">
-			<img src="icon/files/vidio.png" class="icon">
+			<img src="assets/icons/files/vidio.png" class="icon">
 		</div>
 		<div class="content" id="win-mediaplayer">
 			<video id="mediaplayer-video" controls style="display:none;"></video>
@@ -2707,7 +2707,7 @@ toggletheme() 切换主题
 	<div class="window pdfviewer">
 		<div class="resize-bar"></div>
 		<div class="titbar">
-			<img src="icon/files/pdf.svg" class="icon">
+			<img src="assets/icons/files/pdf.svg" class="icon">
 			<p data-i18n="pdfviewer.name">PDF 查看器</p>
 			<div>
 				<a class="a wbtg red" onclick="apps.pdfviewer.close()"><i class="bi bi-x-lg"></i></a>
@@ -2716,7 +2716,7 @@ toggletheme() 切换主题
 			</div>
 		</div>
 		<div class="loadback">
-			<img src="icon/files/pdf.svg" class="icon">
+			<img src="assets/icons/files/pdf.svg" class="icon">
 		</div>
 		<div class="content" id="win-pdfviewer">
 			<iframe id="pdfviewer-frame" src="" style="width:100%;height:100%;border:none;"></iframe>
@@ -2725,7 +2725,7 @@ toggletheme() 切换主题
 	<div class="window taskmgr">
 		<div class="resize-bar"></div>
 		<div class="titbar">
-			<img src="icon/taskmgr.png" class="icon">
+			<img src="assets/icons/taskmgr.png" class="icon">
 			<span style="font-size: 15px;margin-top: 9px;" data-i18n="taskmgr.name">Task Manager</span>
 			<div style="flex-grow: 1;display: flex;align-items: center;justify-content: center;">
 				<input type="text" class="input" style="width: 75%;" placeholder="键入要搜索的名称" id="tsk-search" oninput="apps.taskmgr.generateProcesses()" value=""></input>
@@ -2737,7 +2737,7 @@ toggletheme() 切换主题
 			</div>
 		</div>
 		<div class="loadback">
-			<img src="icon/taskmgr.png" class="icon">
+			<img src="assets/icons/taskmgr.png" class="icon">
 		</div>
 		<div class="content" id="win-taskmgr" style="height:100%">
 			<div class="menu" style="height:100%; display: flex; flex-direction: column;">
@@ -3142,7 +3142,7 @@ toggletheme() 切换主题
 	<div class="window word" data-min-width="800" style="width: max(800px, 70%)">
 		<div class="resize-bar"></div>
 		<div class="titbar">
-			<img src="icon/word.svg" class="icon">
+			<img src="assets/icons/word.svg" class="icon">
 			<p data-i18n="word.name">Word Preview</p>
 			<div>
 				<a class="a wbtg red" onclick="hidewin('word')"><i class="bi bi-x-lg"></i></a>
@@ -3164,11 +3164,11 @@ toggletheme() 切换主题
 					<h3>新建</h3>
 					<div class="card-list">
 						<div class="card" onclick="apps.word.new()">
-							<img border="0" src="img/office-newfile.png">
+							<img border="0" src="assets/images/office-newfile.png">
 							<p>空白Documents</p>
 						</div>
 						<div class="card" onclick="apps.word.new()">
-							<img border="0" src="img/office-newfile.png">
+							<img border="0" src="assets/images/office-newfile.png">
 							<p>空白Documents</p>
 						</div>
 					</div>
@@ -3215,14 +3215,14 @@ toggletheme() 切换主题
 		</div>
 	</div>
 
-	<script defer src="data/tasks.js"></script>
+	<script defer src="src/data/tasks.js"></script>
 	<script defer src="scripts/utils.js"></script>
 
-	<script defer src="module/apps.js"></script>
-	<script defer src="desktop.js"></script>
-	<script defer src="module/window.js"></script>
-	<script defer src="module/widget.js"></script>
-	<script defer src="module/tab.js"></script>
+	<script defer src="src/modules/apps.js"></script>
+	<script defer src="src/desktop.js"></script>
+	<script defer src="src/modules/window.js"></script>
+	<script defer src="src/modules/widget.js"></script>
+	<script defer src="src/modules/tab.js"></script>
 
 	<script defer src="scripts/setting_getTime.js"></script>
 	<script defer src="scripts/news.js"></script>
