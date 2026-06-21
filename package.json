@@ -10,8 +10,8 @@
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:all": "npm run test && npm run test:e2e",
-    "lint": "eslint . --ext .js,.html",
-    "lint:fix": "eslint . --ext .js,.html --fix"
+    "lint": "eslint . --ext .js,.html --config config/.eslintrc.json",
+    "lint:fix": "eslint . --ext .js,.html --fix --config config/.eslintrc.json"
   },
   "dependencies": {
     "jquery": "^3.7.0"
