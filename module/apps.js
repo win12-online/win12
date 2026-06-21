@@ -478,9 +478,9 @@ let apps = {
             apps.taskmgr.diskSpeed.read = apps.taskmgr.disk != 0 ? (Math.random() * 100).toFixed(2) : 0;
             apps.taskmgr.diskSpeed.write = apps.taskmgr.disk != 0 ? (Math.random() * 100).toFixed(2) : 0;
             $('#win-taskmgr>.main>.cnt.performance>.content>.performance-graph>.graph-disk>.information>.left>div:nth-child(1)>.value')[0].innerText = `${apps.taskmgr.disk}%`;
-            $('#win-taskmgr>.main>.cnt.performance>.content>.performance-graph>.graph-disk>.information>.left>div:nth-child(2)>.value')[0].innerText = `${apps.taskmgr.disk != 0 ? Math.random().toFixed(2) : 0} 毫秒`;
-            $('#win-taskmgr>.main>.cnt.performance>.content>.performance-graph>.graph-disk>.information>.left>div:nth-child(3)>.value')[0].innerText = `${apps.taskmgr.diskSpeed.read} ${apps.taskmgr.disk != 0 ? 'MB/秒' : 'KB/秒'}`;
-            $('#win-taskmgr>.main>.cnt.performance>.content>.performance-graph>.graph-disk>.information>.left>div:nth-child(4)>.value')[0].innerText = `${apps.taskmgr.diskSpeed.write} ${apps.taskmgr.disk != 0 ? 'MB/秒' : 'KB/秒'}`;
+            $('#win-taskmgr>.main>.cnt.performance>.content>.performance-graph>.graph-disk>.information>.left>div:nth-child(2)>.value')[0].innerText = `${apps.taskmgr.disk != 0 ? Math.random().toFixed(2) : 0} ms`;
+            $('#win-taskmgr>.main>.cnt.performance>.content>.performance-graph>.graph-disk>.information>.left>div:nth-child(3)>.value')[0].innerText = `${apps.taskmgr.diskSpeed.read} ${apps.taskmgr.disk != 0 ? 'MB/sec' : 'KB/sec'}`;
+            $('#win-taskmgr>.main>.cnt.performance>.content>.performance-graph>.graph-disk>.information>.left>div:nth-child(4)>.value')[0].innerText = `${apps.taskmgr.diskSpeed.write} ${apps.taskmgr.disk != 0 ? 'MB/sec' : 'KB/sec'}`;
             $('#win-taskmgr>.main>.cnt.performance>.content>.select-menu>.graph-disk>.right>.data>.value2')[0].innerText = `${apps.taskmgr.disk}%`;
 
             $('#win-taskmgr>.main>.cnt.performance>.content>.select-menu>.graph-gpu>.right>.data>.value2')[0].innerText = `${apps.taskmgr.gpu.usage.toFixed(1)}%`;
@@ -495,7 +495,7 @@ let apps = {
             apps.taskmgr.wifi.send = Number((Math.random() * 100).toFixed(2));
             $('#win-taskmgr>.main>.cnt.performance>.content>.performance-graph>.graph-wifi>.information>.left>div:nth-child(1)>.value')[0].innerText = `${apps.taskmgr.wifi.send.toFixed(2)} Mbps`;
             $('#win-taskmgr>.main>.cnt.performance>.content>.performance-graph>.graph-wifi>.information>.left>div:nth-child(2)>.value')[0].innerText = `${apps.taskmgr.wifi.receive.toFixed(2)} Mbps`;
-            $('#win-taskmgr>.main>.cnt.performance>.content>.select-menu>.graph-wifi>.right>.data>.value2')[0].innerText = `发送： ${apps.taskmgr.wifi.send} 接收： ${apps.taskmgr.wifi.receive} Mbps`;
+            $('#win-taskmgr>.main>.cnt.performance>.content>.select-menu>.graph-wifi>.right>.data>.value2')[0].innerText = `Send: ${apps.taskmgr.wifi.send} Receive: ${apps.taskmgr.wifi.receive} Mbps`;
         },
         drawGraph: (chart, data, nth = 0) => {
             var path = $(chart.querySelectorAll('path')[nth]).attr('d');
@@ -824,7 +824,7 @@ let apps = {
             var data = {
                 labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
                 datasets: [{
-                    label: '病毒攻击次数',
+                    label: 'Number of virus attacks',
                     backgroundColor: gradient,
                     pointBackgroundColor: '#00c7d6',
                     borderWidth: 1,
@@ -1131,30 +1131,30 @@ let apps = {
             #win-explorer>.page>.main>.content>.view>.group>.item>div>.bar>.content{height: 100%;background-image: linear-gradient(90deg, var(--theme-1), var(--theme-2));
                 border-radius: 10px;}
             #win-explorer>.page>.main>.content>.view>.group>.item>div>.info{color: #959595;font-size: 14px;}</style>
-            <p class="class"><img src="apps/icons/explorer/disk.svg"> 设备和驱动器</p><div class="group">
+            <p class="class"><img src="apps/icons/explorer/disk.svg"> Devices and Drives</p><div class="group">
             <a class="a item act" ondblclick="apps.explorer.goto('C:')" ontouchend="apps.explorer.goto('C:')" oncontextmenu="showcm(event,'explorer.folder','C:');return stop(event);">
-            <img src="apps/icons/explorer/diskwin.svg"><div><p class="name">本地磁盘 (C:)</p>
+            <img src="apps/icons/explorer/diskwin.svg"><div><p class="name">Local Disk (C:)</p>
             <div class="bar"><div class="content" style="width: 88%;"></div>
             </div><p class="info">32.6 GB 可用，共 143 GB</p></div></a><a class="a item act" ondblclick="apps.explorer.goto('D:')" ontouchend="apps.explorer.goto('D:')"
             oncontextmenu="showcm(event,'explorer.folder','D:');return stop(event);">
-            <img src="apps/icons/explorer/disk.svg"><div><p class="name">本地磁盘 (D:)</p><div class="bar"><div class="content" style="width: 15%;"></div>
+            <img src="apps/icons/explorer/disk.svg"><div><p class="name">Local Disk (D:)</p><div class="bar"><div class="content" style="width: 15%;"></div>
             </div><p class="info">185.3 GB 可用，共 216 GB</p></div></a>`;
             for (let letter in apps.explorer.mounts) {
                 const handle = apps.explorer.mounts[letter];
                 resetHtml += `<a class="a item act" ondblclick="apps.explorer.goto('${letter}')" ontouchend="apps.explorer.goto('${letter}')" oncontextmenu="showcm(event,'explorer.mounted','${letter}');return stop(event);">
                 <img src="apps/icons/explorer/disk.svg"><div><p class="name">${handle.name} (${letter})</p>
                 <div class="bar"><div class="content" style="width: 0%;"></div>
-                </div><p class="info">本地文件夹</p></div></a>`;
+                </div><p class="info">Local Folder</p></div></a>`;
             }
             resetHtml += `</div>`;
             $('#win-explorer>.page>.main>.content>.view')[0].innerHTML = resetHtml;
-            $('#win-explorer>.path>.tit')[0].innerHTML = '<div class="icon" style="background-image: url(\'./apps/icons/explorer/thispc.svg\')"></div><div class="path"><div class="text" onclick="apps.explorer.reset()">此电脑</div><div class="arrow">&gt;</div></div>';
+            $('#win-explorer>.path>.tit')[0].innerHTML = '<div class="icon" style="background-image: url(\'./apps/icons/explorer/thispc.svg\')"></div><div class="path"><div class="text" onclick="apps.explorer.reset()">This PC</div><div class="arrow">&gt;</div></div>';
             // if(rename){
-            m_tab.rename('explorer', '<img src="./apps/icons/explorer/thispc.svg"> 此电脑');
+            m_tab.rename('explorer', '<img src="./apps/icons/explorer/thispc.svg"> This PC');
             apps.explorer.tabs[apps.explorer.now][2] = '';
             if (clear) {
                 apps.explorer.delHistory(apps.explorer.tabs[apps.explorer.now][0]);
-                apps.explorer.pushHistory(apps.explorer.tabs[apps.explorer.now][0], '此电脑');
+                apps.explorer.pushHistory(apps.explorer.tabs[apps.explorer.now][0], 'This PC');
             }
             // }
         },
@@ -1282,7 +1282,7 @@ let apps = {
                     continue;
                 }
                 name_1 = inputTag.value.split('.');
-                if (name_1[0].indexOf('/') > -1) alert('恭喜你发现了这个 bug,但是太懒了不想修 qwq');
+                if (name_1[0].indexOf('/') > -1) alert('Congratulations, you found this bug, but I am too lazy to fix it lol');
                 console.log(name_1);
                 if (name_1[1] == 'txt') {
                     icon_ = 'icon/files/txt.png';
@@ -1339,7 +1339,7 @@ let apps = {
             apps.explorer.Process_Of_Select = '';
         },
         goto: (path, clear = true) => {
-            if (path == '此电脑') { apps.explorer.reset(clear); return null; }
+            if (path == 'This PC') { apps.explorer.reset(clear); return null; }
             var pathl = path.split('/');
             if (apps.explorer.mounts[pathl[0]]) {
                 apps.explorer._gotoAsync(path, clear, !clear);
@@ -1348,7 +1348,7 @@ let apps = {
             }
         },
         _gotoAsync: async (path, clear, forceRefresh = false) => {
-            $('#win-explorer>.page>.main>.content>.view')[0].innerHTML = '<p class="info" style="opacity:0.6;">加载中...</p>';
+            $('#win-explorer>.page>.main>.content>.view')[0].innerHTML = '<p class="info" style="opacity:0.6;">Loading...</p>';
             var pathl = path.split('/');
             let tmp = apps.explorer.path;
             try {
@@ -1361,7 +1361,7 @@ let apps = {
                 }
                 apps.explorer._gotoSync(path, clear);
             } catch (e) {
-                $('#win-explorer>.page>.main>.content>.view')[0].innerHTML = '<p class="info">无法读取此文件夹。</p>';
+                $('#win-explorer>.page>.main>.content>.view')[0].innerHTML = '<p class="info">Unable to read this folder.</p>';
             }
         },
         _gotoSync: (path, clear = true) => {
@@ -1371,12 +1371,12 @@ let apps = {
             var pathqwq = '';
             var index_ = 0;
             let tmp = apps.explorer.getPath();
-            if (path == '此电脑') {
+            if (path == 'This PC') {
                 apps.explorer.reset(clear);
                 return null;
             }
             $('#win-explorer>.path>.tit')[0].dataset.path = path;
-            $('#win-explorer>.path>.tit>.path')[0].innerHTML = '<div class="text" onclick="apps.explorer.reset()">此电脑</div><div class="arrow">&gt;</div>';
+            $('#win-explorer>.path>.tit>.path')[0].innerHTML = '<div class="text" onclick="apps.explorer.reset()">This PC</div><div class="arrow">&gt;</div>';
             $('#win-explorer>.path>.tit>.icon')[0].style.marginTop = '0px';
             if (pathl[pathl.length - 1] == 'C:') {
                 $('#win-explorer>.path>.tit>.icon')[0].style.backgroundImage = 'url("apps/icons/explorer/diskwin.svg")';
@@ -1406,7 +1406,7 @@ let apps = {
             });
             var path_ = path;
             if (Object.keys(tmp['folder']) == 0 && tmp['file'].length == 0) {
-                $('#win-explorer>.page>.main>.content>.view')[0].innerHTML = '<p class="info">此文件夹为空。</p>';
+                $('#win-explorer>.page>.main>.content>.view')[0].innerHTML = '<p class="info">This folder is empty.</p>';
             }
             else {
                 let ht = '';
@@ -1729,14 +1729,14 @@ let apps = {
         },
         get: () => {
             apps.about.run_loading('#contri');
-            // 实时获取项目贡献者
+            // Real-time project contributors retrieval
             $.get('https://api.github.com/repos/win12-online/win12/contributors').then(cs => {
                 setTimeout(() => {
                     $('#contri').html('');
                     cs.forEach(c => {
-                        $('#contri').append(`<a class="a" title="${c['login']}" onclick="window.open('${c['html_url']}','_blank');"><img class="avatar" src="${c['avatar_url']}" alt="${c['login']}"><span class="info"><p class="name">${c['login']}</p><p class="cbs">贡献 <span class="num">${c['contributions']}</span></p></span></a>`);
+                        $('#contri').append(`<a class="a" title="${c['login']}" onclick="window.open('${c['html_url']}','_blank');"><img class="avatar" src="${c['avatar_url']}" alt="${c['login']}"><span class="info"><p class="name">${c['login']}</p><p class="cbs">Contributed <span class="num">${c['contributions']}</span></p></span></a>`);
                     });
-                    $('#contri').append('<a class="button" onclick="apps.about.get()"><i class="bi bi-arrow-clockwise"></i> 刷新</a>');
+                    $('#contri').append('<a class="button" onclick="apps.about.get()"><i class="bi bi-arrow-clockwise"></i> Refresh</a>');
                 }, 200);
             });
         },
@@ -1748,12 +1748,12 @@ let apps = {
                 .then(data => {
                     setTimeout(() => {
                         const starCount = data.stargazers_count;
-                        $('#StarShow').html('<div style="display: flex;"><p>&emsp;&emsp;Star 数量：' + starCount + ' (实时数据)</p>&emsp;<a class="button" onclick="apps.about.get_star()"><i class="bi bi-arrow-clockwise"></i> 刷新</a></div>');
+                        $('#StarShow').html('<div style="display: flex;"><p>&emsp;&emsp;Number of Stars:' + starCount + ' (Real-time data)</p>&emsp;<a class="button" onclick="apps.about.get_star()"><i class="bi bi-arrow-clockwise"></i> Refresh</a></div>');
                     }, 200);
                 })
                 .catch(error => {
-                    console.error('获取 star 数量时出错：', error);
-                    $('#StarShow').html('<div style="display: flex;"><p>&emsp;&emsp;哎呀！出错了！</p>&emsp;<a class="button" onclick="apps.about.get_star()"><i class="bi bi-arrow-clockwise"></i> 重试</a></div>');
+                    console.error('Error getting star count:', error);
+                    $('#StarShow').html('<div style="display: flex;"><p>&emsp;&emsp;Oops! An error occurred!</p>&emsp;<a class="button" onclick="apps.about.get_star()"><i class="bi bi-arrow-clockwise"></i> Retry</a></div>');
                 });
         }
     },
@@ -1802,7 +1802,7 @@ let apps = {
         _resetPreview: () => {
             apps.notepad._isMd = false;
             apps.notepad._previewing = false;
-            $('#notepad-md-toggle').hide().removeClass('active').html('<i class="bi bi-eye"></i> 预览');
+            $('#notepad-md-toggle').hide().removeClass('active').html('<i class="bi bi-eye"></i> Preview');
             $('#notepad-md-preview').hide();
             $('#win-notepad>.text-box').show();
         },
@@ -1820,11 +1820,11 @@ let apps = {
                 var html = marked.parse(text);
                 $('#notepad-md-preview').html(typeof DOMPurify !== 'undefined' ? DOMPurify.sanitize(html) : html).show();
                 $('#win-notepad>.text-box').hide();
-                $('#notepad-md-toggle').addClass('active').html('<i class="bi bi-pencil"></i> 编辑');
+                $('#notepad-md-toggle').addClass('active').html('<i class="bi bi-pencil"></i> Edit');
             } else {
                 $('#notepad-md-preview').hide();
                 $('#win-notepad>.text-box').show();
-                $('#notepad-md-toggle').removeClass('active').html('<i class="bi bi-eye"></i> 预览');
+                $('#notepad-md-toggle').removeClass('active').html('<i class="bi bi-eye"></i> Preview');
             }
         },
         saveMounted: async () => {
@@ -1998,7 +1998,7 @@ let apps = {
             ed.commands.addCommand({
                 name: 'gotoline', bindKey: { win: 'Ctrl-G', mac: 'Command-G' },
                 exec: () => {
-                    var line = prompt('跳转到行：');
+                    var line = prompt('Go to line:');
                     if (line) ed.gotoLine(parseInt(line), 0, true);
                 }
             });
@@ -2455,7 +2455,7 @@ Micrȯsoft Windows [版本 12.0.39035.7324]
         fuls: false,
         b1: false, b2: false, b3: false,
         newtab: () => {
-            m_tab.newtab('edge', '新建标签页');
+            m_tab.newtab('edge', 'New Tab');
             apps.edge.initHistory(apps.edge.tabs[apps.edge.tabs.length - 1][0]);
             apps.edge.pushHistory(apps.edge.tabs[apps.edge.tabs.length - 1][0], 'mainpage.html');
             $('#win-edge').append(`<iframe src="mainpage.html" frameborder="0" class="${apps.edge.tabs[apps.edge.tabs.length - 1][0]}">`);
@@ -2583,7 +2583,7 @@ Micrȯsoft Windows [版本 12.0.39035.7324]
                 }
                 else {
                     $('#win-edge>iframe.show').attr('src', u);
-                    m_tab.rename('edge', u.match(/^mainpage.html$/) ? '新建标签页' : u);
+                    m_tab.rename('edge', u.match(/^mainpage.html$/) ? 'New Tab' : u);
                 }
                 if (!$('.window.edge>.titbar>.tabs>.tab.' + apps.edge.tabs[apps.edge.now][0] + '>.reloading')[0]) {
                     $('.window.edge>.titbar>.tabs>.tab.' + apps.edge.tabs[apps.edge.now][0])[0].insertAdjacentHTML('afterbegin', apps.edge.reloadElt);
