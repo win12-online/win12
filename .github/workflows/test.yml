@@ -89,6 +89,10 @@ jobs:
 
       - name: Start web server
         run: |
+          cd ${{ github.workspace }}
+          echo "Working directory: $(pwd)"
+          echo "Files: $(ls -la | head -20)"
+
           python -m http.server 3000 > /tmp/server.log 2>&1 &
           SERVER_PID=$!
           echo "Server PID: $SERVER_PID"
@@ -97,10 +101,16 @@ jobs:
           for i in {1..30}; do
             if curl -s http://localhost:3000/desktop.html > /dev/null; then
               echo "✅ Server is ready"
+              cat /tmp/server.log
               break
             fi
             echo "Waiting for server... ($i/30)"
             sleep 1
+            if [ $i -eq 30 ]; then
+              echo "❌ Server failed to start"
+              cat /tmp/server.log
+              exit 1
+            fi
           done
         timeout-minutes: 2
 

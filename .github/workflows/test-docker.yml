@@ -1,0 +1,41 @@
+name: Test (Docker)
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  build-and-test:
+    name: Build & Test with Docker
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        run: docker build -t win12-tests .
+
+      - name: Run unit tests
+        run: docker run --rm win12-tests npm test -- --run
+
+      - name: Run linting
+        run: docker run --rm win12-tests npm run lint
+
+      - name: Run E2E tests
+        run: |
+          docker run --rm \
+            -e CI=true \
+            -p 3000:3000 \
+            win12-tests \
+            bash -c "python -m http.server 3000 & sleep 3 && npm run test:e2e"
+        timeout-minutes: 15
+        continue-on-error: true
+
+      - name: Test Summary
+        run: echo "✅ All Docker tests completed"

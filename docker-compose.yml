@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  tests:
+    build: .
+    environment:
+      - CI=true
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: bash -c "python -m http.server 3000 & sleep 2 && npm run test:all"
+
+  test-unit:
+    build: .
+    environment:
+      - CI=false
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: npm test
+
+  test-e2e:
+    build: .
+    environment:
+      - CI=true
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: bash -c "python -m http.server 3000 & sleep 2 && npm run test:e2e"
