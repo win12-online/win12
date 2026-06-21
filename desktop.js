@@ -108,7 +108,7 @@ function isTauriApp() {
 }
 
 function getAboutAppId() {
-    return isTauriApp() ? 'about-desktop' : 'about';
+    return 'about';
 }
 
 function getAboutAppTitle() {
@@ -128,7 +128,6 @@ function getAboutAppContextArg() {
 
 function updateAboutAppEntrypoints() {
     $('.about-app-title').text(getAboutAppTitle());
-    $('.about-desktop-title').text(getAboutAppTitle());
 }
 
 updateAboutAppEntrypoints();
@@ -523,8 +522,8 @@ const cms = {
     ],
     'msgupdate': [
         ['<i class="bi bi-layout-text-window-reverse"></i> 查看详细', `openapp('about');if($('.window.about').hasClass('min'))
-        minwin('about');$('#win-about>.about').removeClass('show');$('#win-about>.update').addClass('show');
-        $('#win-about>.update>div>details:first-child').attr('open','open')`],
+        minwin('about');apps.about.page('update');
+        $('#win-about>.update.show>div>details:first-child').attr('open','open')`],
         ['<i class="bi bi-box-arrow-right"></i> 关闭', '$(\'.msg.update\').removeClass(\'show\')']
     ],
     'explorer.folder': [
@@ -2048,7 +2047,6 @@ function pinapp(id, name, command) {
 const icon = {
     bilibili: 'bilibili.png',
     vscode: 'vscode.png',
-    'about-desktop': 'about.svg',
     // python: 'python.png',
     winver: 'about.svg',
     // run: 'run.png',
@@ -2509,7 +2507,7 @@ function setIcon() {
         <img src="icon/setting.svg">
         <p>${lang('设置', 'setting.name')}</p>
     </div>
-    <div class="b" ondblclick="openAboutApp();" ontouchstart="openAboutApp();" oncontextmenu="return showcm(event,'desktop.icon',[getAboutAppId(),-1]);" appname="${getAboutAppId()}">
+    <div class="b" ondblclick="openAboutApp();" ontouchstart="openAboutApp();" oncontextmenu="return showcm(event,'desktop.icon',['about',-1]);" appname="about">
         <img src="icon/about.svg">
         <p>${getAboutAppTitle()}</p>
     </div>

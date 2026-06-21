@@ -417,7 +417,7 @@ toggletheme() 切换主题
 						<img src="icon/feedback.svg">
 						<p data-i18n="feedback.name">反馈中心</p>
 					</a>
-					<a class="a sm-app enable about about-desktop" onclick="openAboutApp();hide_startmenu();" oncontextmenu="return showcm(event,'smapp',getAboutAppContextArg())">
+					<a class="a sm-app enable about" onclick="openAboutApp();hide_startmenu();" oncontextmenu="return showcm(event,'smapp',getAboutAppContextArg())">
 						<img src="icon/about.svg">
 						<p class="about-app-title" data-i18n="about.name">关于 Win12 网页版</p>
 					</a>
@@ -1635,7 +1635,7 @@ toggletheme() 切换主题
 						</div>
 					</div>
 					<div class="setting-list">
-						<a onclick="openapp('about');$('#win-about>.update').addClass('show');$('#win-about>.about').removeClass('show');" style="opacity: 0.5; pointer-events: none;"><icon>&#xE946;</icon><div><p>更新历史记录</p><p>查看历史版本功能</p></div><i class="bi bi-chevron-right"></i></a>
+						<a onclick="openapp('about');apps.about.page('update');" style="opacity: 0.5; pointer-events: none;"><icon>&#xE946;</icon><div><p>更新历史记录</p><p>查看历史版本功能</p></div><i class="bi bi-chevron-right"></i></a>
 						<a style="opacity: 0.5; pointer-events: none;"><icon>&#xE896;</icon><div><p>下载完整内容</p><p>当更新或系统出现问题，使用此项下载最新完整内容</p></div><i class="bi bi-chevron-right"></i></a>
 						<div><icon></icon><div><p>自动更新</p><p>设置是否启用自动更新</p></div>
 							<div class="alr">
@@ -1805,7 +1805,7 @@ toggletheme() 切换主题
 		<div class="resize-bar"></div>
 		<div class="titbar">
 			<img src="icon/about.svg" class="icon">
-			<p data-i18n="about.name">关于 Win12 网页版</p>
+			<p class="about-app-title" data-i18n="about.name">关于 Win12 网页版</p>
 			<div>
 				<a class="a wbtg red" onclick="hidewin('about')"><i class="bi bi-x-lg"></i></a>
 				<a class="a wbtg max" onclick="maxwin('about')"><i class="bi bi-app"></i></a>
@@ -1823,13 +1823,13 @@ toggletheme() 切换主题
 				</list> -->
 
 				<list class="about-menu">
-					<a class="enable check about avlb" onclick="$('#win-about>.about').addClass('show');$('.about-menu>.about').addClass('check');$('.about-menu>.update').removeClass('check');$('#win-about>.update').removeClass('show');">
+					<a class="enable check about avlb" onclick="apps.about.page('about');">
 						<span data-i18n="about.intro">简介</span></a>
-					<a class="enable update avlb" onclick="$('#win-about>.update').addClass('show');$('.about-menu>.update').addClass('check');$('.about-menu>.about').removeClass('check');$('#win-about>.about').removeClass('show');">
+					<a class="enable update avlb" onclick="apps.about.page('update');">
 						<span data-i18n="about.update">更新记录</span></a>
 				</list>
 			</div>
-			<div class="cnt about">
+			<div class="cnt about about-web">
 				<h1 class="tit" data-i18n="about.intro.name"><span></span>Windows 12 网页版</h1>
 				<div style="margin-left: 20px;">
 					<h2 class="tit" data-i18n="about.intro.intro"><span></span>简介</h2>
@@ -1873,7 +1873,7 @@ toggletheme() 切换主题
 					<p data-i18n="about.intro.others.p4">&emsp;&emsp;若您在本项目（网址为 win12-online.github.io/win12/）之外的网站看到此页面，那么您可能正在浏览一个镜像网站。若欲造访原始页面，请点击<a onclick="window.open('https://win12-online.github.io/win12/desktop.html','_blank');" win12_title="https://win12-online.github.io/win12/desktop.html" class="jump">这里</a>。</p>
 				</div>
 			</div>
-			<div class="cnt update">
+			<div class="cnt update update-web">
 				<h1 class="tit" data-i18n="about.update.name"><span></span>更新记录</h1>
 				<div style="margin-left: 20px;">
 					<details><summary><span>v10.2.2</span> 修改部分动效和 UI 细节</summary><p>
@@ -2021,32 +2021,7 @@ toggletheme() 切换主题
 					<a onclick="window.open('changelog.md','_blank');" win12_title="changelog.md" class="a jump" style="text-align: center;">更多</a>
 				</div>
 			</div>
-		</div>
-	</div>
-	<div class="window about-desktop">
-		<div class="resize-bar"></div>
-		<div class="titbar">
-			<img src="icon/about.svg" class="icon">
-			<p class="about-desktop-title">关于 Win12-desktop</p>
-			<div>
-				<a class="a wbtg red" onclick="hidewin('about-desktop')"><i class="bi bi-x-lg"></i></a>
-				<a class="a wbtg max" onclick="maxwin('about-desktop')"><i class="bi bi-app"></i></a>
-				<a class="a wbtg" onclick="minwin('about-desktop')"><i class="bi bi-dash-lg"></i></a>
-			</div>
-		</div>
-		<div class="loadback">
-			<img src="icon/about.svg" class="icon">
-		</div>
-		<div class="content" id="win-about-desktop">
-			<div class="menu">
-				<list class="about-menu-desktop">
-					<a class="enable check about avlb" onclick="$('#win-about-desktop>.about').addClass('show');$('.about-menu-desktop>.about').addClass('check');$('.about-menu-desktop>.update').removeClass('check');$('#win-about-desktop>.update').removeClass('show');">
-						<span>简介</span></a>
-					<a class="enable update avlb" onclick="$('#win-about-desktop>.update').addClass('show');$('.about-menu-desktop>.update').addClass('check');$('.about-menu-desktop>.about').removeClass('check');$('#win-about-desktop>.about').removeClass('show');">
-						<span>更新记录</span></a>
-				</list>
-			</div>
-			<div class="cnt about show">
+			<div class="cnt about about-tauri">
 				<h1 class="tit"><span></span>Win12-desktop</h1>
 				<div style="margin-left: 20px;">
 					<h2 class="tit"><span></span>简介</h2>
@@ -2083,7 +2058,7 @@ toggletheme() 切换主题
 					<p>&emsp;&emsp;此项目绝不附属于微软，且不应与微软操作系统或产品混淆。</p>
 				</div>
 			</div>
-			<div class="cnt update">
+			<div class="cnt update update-tauri">
 				<h1 class="tit"><span></span>更新记录</h1>
 				<div id="ReleaseShowDesktop" style="margin-left: 20px;">
 					<loading>
@@ -2338,8 +2313,8 @@ toggletheme() 切换主题
 	</div>
 	<div class="msg update" oncontextmenu="return showcm(event,'msgupdate',null)">
 		<div class="main" onclick="openapp('about');if($('.window.about').hasClass('min'))minwin('about');
-			$('#win-about>.about').removeClass('show');$('#win-about>.update').addClass('show');
-			$('#win-about>.update>div>details:first-child').attr('open','open')">
+			apps.about.page('update');
+			$('#win-about>.update.show>div>details:first-child').attr('open','open')">
 			<p class="tit"></p>
 			<p class="cont"></p>
 		</div>
