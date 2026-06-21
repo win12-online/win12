@@ -75,8 +75,8 @@ let apps = {
             $('#win-setting>.page>.cnt.update>.lo>.update-main>div:last-child').addClass('disabled');
             // Simulate the previous functionality for backward compatibility but disable actual updates
             setTimeout(() => {
-                $('#win-setting>.page>.cnt.update>.lo>.update-main .notice')[0].innerText = '开发者暂未完善此功能';
-                $('#win-setting>.page>.cnt.update>.lo>.update-main .detail')[0].innerText = 'Windows 更新已被禁用';
+                $('#win-setting>.page>.cnt.update>.lo>.update-main .notice')[0].innerText = 'This feature is not yet completed';
+                $('#win-setting>.page>.cnt.update>.lo>.update-main .detail')[0].innerText = 'Windows Update is disabled';
                 // $('#win-setting>.page>.cnt.update>.setting-list>.update-now>div>p:first-child')[0].innerText = '开发者暂未完善此功能';
                 // $('#win-setting>.page>.cnt.update>.setting-list>.update-now>div>p:last-child')[0].innerText = 'Windows 更新已被禁用';
                 // Keep buttons disabled as requested
@@ -132,10 +132,10 @@ let apps = {
                         else {
                             nts['Can-not-open-file'] = {
                                 cnt: '<p class="tit">' + cmd + `</p>
-                                <p>Windows 找不到文件 '` + cmd + '\'。请确定文件名是否正确后，再试一次。</p> ',
+                                <p>Windows cannot find the file '` + cmd + `'. Please verify the filename is correct and try again.</p> ',
                                 btn: [
-                                    { type: 'main', text: '确定', js: 'closenotice();showwin(\'run\');$(\'#win-run>.open>input\').select();' },
-                                    { type: 'cancel', text: '在 Micrsoft Edge 中搜索', js: 'closenotice();openapp(\'edge\');window.setTimeout(() => {apps.edge.newtab();apps.edge.goto(\'https://www.bing.com/search?q=' + encodeURIComponent(cmd) + '\');}, 300);' }
+                                    { type: 'main', text: 'OK', js: 'closenotice();showwin(\'run\');$(\'#win-run>.open>input\').select();' },
+                                    { type: 'cancel', text: 'Search in Microsoft Edge', js: 'closenotice();openapp(\'edge\');window.setTimeout(() => {apps.edge.newtab();apps.edge.goto(\'https://www.bing.com/search?q=' + encodeURIComponent(cmd) + '\');}, 300);' }
                                 ]
                             };
                             shownotice('Can-not-open-file');
@@ -144,10 +144,10 @@ let apps = {
                     catch {
                         nts['Can-not-open-file'] = {
                             cnt: '<p class="tit">' + cmd + `</p>
-                            <p>Windows 找不到文件 '` + cmd + '\'。请确定文件名是否正确后，再试一次。</p> ',
+                            <p>Windows cannot find the file '` + cmd + `'. Please verify the filename is correct and try again.</p> ',
                             btn: [
-                                { type: 'main', text: '确定', js: 'closenotice();showwin(\'run\');$(\'#win-run>.open>input\').select();' },
-                                { type: 'cancel', text: '在 Micrsoft Edge 中搜索', js: 'closenotice();openapp(\'edge\');window.setTimeout(() => {apps.edge.newtab();apps.edge.goto(\'https://www.bing.com/search?q=' + encodeURIComponent(cmd) + '\');}, 300);' }
+                                { type: 'main', text: 'OK', js: 'closenotice();showwin(\'run\');$(\'#win-run>.open>input\').select();' },
+                                { type: 'cancel', text: 'Search in Microsoft Edge', js: 'closenotice();openapp(\'edge\');window.setTimeout(() => {apps.edge.newtab();apps.edge.goto(\'https://www.bing.com/search?q=' + encodeURIComponent(cmd) + '\');}, 300);' }
                             ]
                         };
                         shownotice('Can-not-open-file');
@@ -424,7 +424,7 @@ let apps = {
             for (const elt of processList) {
                 const newElt = document.createElement('tr');
                 newElt.classList.add('notrans');
-                newElt.innerHTML = `<td><div class="text"><div class="icon" style="background-image: url('${elt.icon ? elt.icon : ''}');"></div>${elt.name}</div></td><td style="text-align: right;background-color: color-mix(in srgb, var(--theme-2) ${elt.cpu >= (max / 1.3) ? '75%' : '50%'}, transparent);">${elt.cpu.toFixed(1)}%</td><td style="text-align: right;background-color: color-mix(in srgb, var(--theme-2) ${elt.memory >= (max / 1) ? '75%' : '50%'}, transparent);">${elt.memory.toFixed(1)}%</td><td style="text-align: right;background-color: color-mix(in srgb, var(--theme-2) ${elt.disk >= (max / 1.3) ? '75%' : '50%'}, transparent);">${elt.disk.toFixed(1)}%</td><td>${['非常低', '非常低', '非常低', '低', '中'][Math.floor(Math.random() * 5)]}</td>`;
+                newElt.innerHTML = `<td><div class="text"><div class="icon" style="background-image: url('${elt.icon ? elt.icon : ''}');"></div>${elt.name}</div></td><td style="text-align: right;background-color: color-mix(in srgb, var(--theme-2) ${elt.cpu >= (max / 1.3) ? '75%' : '50%'}, transparent);">${elt.cpu.toFixed(1)}%</td><td style="text-align: right;background-color: color-mix(in srgb, var(--theme-2) ${elt.memory >= (max / 1) ? '75%' : '50%'}, transparent);">${elt.memory.toFixed(1)}%</td><td style="text-align: right;background-color: color-mix(in srgb, var(--theme-2) ${elt.disk >= (max / 1.3) ? '75%' : '50%'}, transparent);">${elt.disk.toFixed(1)}%</td><td>${['Very Low', 'Very Low', 'Very Low', 'Low', 'Medium'][Math.floor(Math.random() * 5)]}</td>`;
                 if (elt.name == selected) {
                     newElt.classList.add('select');
                 }
