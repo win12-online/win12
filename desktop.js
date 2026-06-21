@@ -115,7 +115,7 @@ let langc = {
     'en-gb': 'en'
 }
 
-let langcode, i18nData = {}, lang = (txt, id) => {
+let langcode, lang = (txt, id) => {
     // First check if translation exists in i18nData
     if (i18nData[langcode] && i18nData[langcode][id]) {
         return i18nData[langcode][id];
