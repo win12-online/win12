@@ -590,6 +590,12 @@ function win12FinishLogin() {
     $('#login-password').css('opacity', '0');
     $('#login-error').css('opacity', '0');
     $('#login-welc').css('opacity', '1');
+    // Show desktop elements
+    $('#page').css('display', 'grid');
+    $('#taskbar').css('display', 'flex');
+    $('.window').css('display', 'grid');
+    $('#orient-hint').css('display', 'block');
+    $('#notice-board').css('display', 'flex');
     setTimeout(() => {
         $('#loginback').addClass('close');
         setTimeout(() => {
