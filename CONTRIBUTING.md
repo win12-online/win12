@@ -91,3 +91,74 @@
    4. 对于代码规范的规定：
 
       对于那些不需要展开的代码，尽量压成一行
+
+---
+
+## Testing Requirements (English)
+
+Since the project now includes automated tests, contributors must ensure their changes pass all tests before submitting a PR.
+
+### Before Submitting a PR
+
+1. **Install dependencies** (one-time setup)
+   ```bash
+   npm install
+   npx playwright install
+   ```
+
+2. **Run all tests** before committing
+   ```bash
+   npm run test:all
+   ```
+
+3. **Fix any failing tests** - do not submit PRs with failing tests
+   ```bash
+   npm run lint:fix      # Auto-fix code style
+   npm test -- --watch   # Run unit tests in watch mode
+   npm run test:e2e -- --headed  # See E2E tests in browser
+   ```
+
+### Test Types
+
+- **Unit Tests** - Test individual functions/modules (`tests/unit/`)
+- **E2E Tests** - Test user workflows (`tests/e2e/`)
+- **Linting** - Code quality checks (ESLint)
+
+### Writing Tests for New Features
+
+When adding new features:
+
+1. Write tests first (TDD approach is recommended)
+2. Implement the feature
+3. Ensure all tests pass
+4. Commit both tests and feature together
+
+Example:
+```bash
+npm test -- --watch           # Start watching unit tests
+# Edit your code in another terminal
+# Tests auto-rerun as you save
+```
+
+For detailed testing patterns and examples, see [TESTING.md](TESTING.md) and [TESTING-QUICKSTART.md](TESTING-QUICKSTART.md).
+
+### CI/CD Pipeline
+
+All PRs automatically run tests via GitHub Actions. Your PR will be blocked if:
+- ❌ Linting fails
+- ❌ Unit tests fail
+- ❌ E2E tests fail
+
+Fix issues locally with `npm run test:all` and push again - tests will re-run automatically.
+
+### Quick Reference
+
+| Command | Purpose |
+|---------|---------|
+| `npm test` | Run unit tests |
+| `npm run test:e2e` | Run E2E tests |
+| `npm run test:all` | Run everything |
+| `npm run lint` | Check code style |
+| `npm run lint:fix` | Auto-fix style issues |
+
+See [TESTING-QUICKSTART.md](TESTING-QUICKSTART.md) for more commands and help.
