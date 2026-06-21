@@ -897,13 +897,13 @@ const nts = {
             <p>Windows 12 网页版是一个开放源项目,<br />
             希望让用户在网络上预先体验 Windows 12,<br />
             内容可能与 Windows 12 正式版本不一致。<br />
-            使用标准网络技术,例如 HTML, CSS 和 JS<br />
-            此项目绝不附属于微软,且不应与微软操作系统或产品混淆,<br />
-            这也不是 Windows365 cloud PC<br />
-            本项目中微软、Windows和其他示范产品是微软公司的商标<br />
-            本项目中 Android 是谷歌公司的商标。</p>`, 'nts.about'),
+            Using standard web technologies such as HTML, CSS and JavaScript<br />
+            This project is not affiliated with Microsoft and should not be confused with Microsoft operating systems or products,<br />
+            This is also not Windows 365 cloud PC<br />
+            Microsoft, Windows and other demonstration products in this project are trademarks of Microsoft Corporation<br />
+            Android in this project is a trademark of Google Inc.</p>`, 'nts.about'),
         btn: [
-            { type: 'main', text: lang(lang('Close', 'close'), 'close'), js: 'closenotice();' },
+            { type: 'main', text: lang('Close', 'close'), js: 'closenotice();' },
             { type: 'detail', text: lang('More', 'more'), js: 'closenotice();openapp(\'about\');if($(\'.window.about\').hasClass(\'min\'))minwin(\'about\');$(\'.dock.about\').removeClass(\'show\')' },
         ]
     },
@@ -914,7 +914,7 @@ const nts = {
                 <a class="a" onclick="window.open('https://github.com/win12-online/win12/issues','_blank');" win12_title="在浏览器新窗口Open链接" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)">${lang('Submit an issue on GitHub (requires a GitHub account)', 'nts.feedback.github')}</a>
             </list>`,
         btn: [
-            { type: 'main', text: lang(lang('Close', 'close'), 'close'), js: 'closenotice();' },
+            { type: 'main', text: lang('Close', 'close'), js: 'closenotice();' },
         ]
     },
     'widgets': {
@@ -2727,7 +2727,7 @@ if (urlParams.get('skip_login') !== '1') {
 
 // PWA 应用
 if (!location.href.match(/((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])(?::(?:[0-9]|[1-9][0-9]{1,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5]))/) && !location.href.match('localhost') && !urlParams.get('develop')) {
-    shownotice('about');
+    // shownotice('about'); // Disabled: do not show notification on startup
     navigator.serviceWorker.register('sw.js', { updateViaCache: 'none', scope: './' }).then(reg => {
 
         reg.update();
