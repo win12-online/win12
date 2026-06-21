@@ -5,29 +5,45 @@ services:
     build: .
     environment:
       - CI=true
+      - NODE_ENV=test
     ports:
       - "3000:3000"
     volumes:
       - .:/app
       - /app/node_modules
-    command: bash -c "python -m http.server 3000 & sleep 2 && npm run test:all"
+    working_dir: /app
+    command: bash -c "python3 -m http.server 3000 > /tmp/server.log 2>&1 & sleep 2 && npm run test:all"
 
   test-unit:
     build: .
     environment:
       - CI=false
+      - NODE_ENV=test
     volumes:
       - .:/app
       - /app/node_modules
+    working_dir: /app
     command: npm test
 
   test-e2e:
     build: .
     environment:
       - CI=true
+      - NODE_ENV=test
     ports:
       - "3000:3000"
     volumes:
       - .:/app
       - /app/node_modules
-    command: bash -c "python -m http.server 3000 & sleep 2 && npm run test:e2e"
+    working_dir: /app
+    command: bash -c "python3 -m http.server 3000 > /tmp/server.log 2>&1 & sleep 3 && npm run test:e2e"
+
+  lint:
+    build: .
+    environment:
+      - CI=true
+    volumes:
+      - .:/app
+      - /app/node_modules
+    working_dir: /app
+    command: npm run lint

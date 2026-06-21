@@ -1,22 +1,30 @@
-FROM node:22-alpine
+FROM mcr.microsoft.com/playwright:v1.40.0-focal
 
 WORKDIR /app
 
-# Install Python and curl for HTTP server
-RUN apk add --no-cache python3 curl bash
+# Install Node.js 22 (Playwright image includes Node, but ensure latest)
+RUN apt-get update && apt-get install -y \
+    python3 \
+    curl \
+    bash \
+    git \
+    && rm -rf /var/lib/apt/lists/*
 
-# Install dependencies
+# Install Node.js dependencies
 COPY package*.json ./
-RUN npm ci
+RUN npm ci --omit=optional
 
-# Install Playwright browsers
-RUN npx playwright install --with-deps chromium firefox webkit
+# Install Playwright browsers (already included in base image, but refresh)
+RUN npx playwright install chromium firefox webkit
 
 # Copy project files
 COPY . .
 
 # Expose port for web server
 EXPOSE 3000
+
+# Set environment for CI
+ENV CI=true
 
 # Default command runs tests
 CMD ["npm", "run", "test:all"]
