@@ -469,16 +469,16 @@ const cms = {
         },
         arg => {
             if (arg in nomin) {
-                return ['<i class="bi bi-window-x"></i> ' + lang('关闭', 'close'), `hidewin('${arg}', 'configs')`];
+                return ['<i class="bi bi-window-x"></i> ' + lang('Close', 'close'), `hidewin('${arg}', 'configs')`];
             }
             else {
-                return ['<i class="bi bi-window-x"></i> ' + lang('关闭', 'close'), `hidewin('${arg}')`];
+                return ['<i class="bi bi-window-x"></i> ' + lang('Close', 'close'), `hidewin('${arg}')`];
             }
         },
     ],
     'taskbar': [
         arg => {
-            return ['<i class="bi bi-window-x"></i> ' + lang('关闭', 'close'), `hidewin('${arg}')`];
+            return ['<i class="bi bi-window-x"></i> ' + lang('Close', 'close'), `hidewin('${arg}')`];
         }
     ],
     'desktop': [
@@ -487,13 +487,13 @@ const cms = {
         `<a onmousedown="window.open(\'https://github.com/win12-online/win12\',\'_blank\');" win12_title="https://github.com/win12-online/win12" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)"><i class="bi bi-github"></i> ${lang('View this project on Github', 'desktop.vogithub')}</a>`,
         arg => {
             if (edit_mode) {
-                return ['<i class="bi bi-pencil"></i> ' + lang('退出编辑模式', 'desktop.exitedit'), 'editMode();'];
+                return ['<i class="bi bi-pencil"></i> ' + lang('Exit editing mode', 'desktop.exitedit'), 'editMode();'];
             }
             else if (!edit_mode) {
-                return ['<i class="bi bi-pencil"></i> ' + lang('进入编辑模式', 'desktop.enteredit'), 'editMode();'];
+                return ['<i class="bi bi-pencil"></i> ' + lang('Enter editing mode', 'desktop.enteredit'), 'editMode();'];
             }
         },
-        ['<i class="bi bi-info-circle"></i> ' + lang('关于 Win12 网页版', 'about.name'), '$(\'#win-about>.about\').addClass(\'show\');$(\'#win-about>.update\').removeClass(\'show\');openapp(\'about\');if($(\'.window.about\').hasClass(\'min\'))minwin(\'about\');'],
+        ['<i class="bi bi-info-circle"></i> ' + lang('About Win12 Online', 'about.name'), '$(\'#win-about>.about\').addClass(\'show\');$(\'#win-about>.update\').removeClass(\'show\');openapp(\'about\');if($(\'.window.about\').hasClass(\'min\'))minwin(\'about\');'],
         ['<i class="bi bi-brush"></i> ' + lang('Personalization', 'psnl'), 'openapp(\'setting\');$(\'#win-setting > div.menu > list > a.enable.appearance\')[0].click()']
     ],
     'desktop.icon': [
@@ -522,9 +522,9 @@ const cms = {
             }
         },
         '<hr>',
-        ['<i class="bi bi-gear"></i> ' + lang('设置', 'setting.name'), 'openapp(\'setting\')'],
-        ['<i class="bi bi-terminal"></i> ' + lang('运行', 'run.name'), 'openapp(\'run\')'],
-        ['<i class="bi bi-folder2-open"></i> ' + lang('文件资源管理器', 'explorer.name'), 'openapp(\'explorer\')'],
+        ['<i class="bi bi-gear"></i> ' + lang('Settings', 'setting.name'), 'openapp(\'setting\')'],
+        ['<i class="bi bi-terminal"></i> ' + lang('Run', 'run.name'), 'openapp(\'run\')'],
+        ['<i class="bi bi-folder2-open"></i> ' + lang('File Explorer', 'explorer.name'), 'openapp(\'explorer\')'],
         ['<i class="bi bi-search"></i> 搜索', `$('#search-btn').addClass('show');hide_startmenu();
         $('#search-win').addClass('show-begin');setTimeout(() => {$('#search-win').addClass('show');
         $('#search-input').focus();}, 0);`],
@@ -903,30 +903,30 @@ const nts = {
             本项目中微软、Windows和其他示范产品是微软公司的商标<br />
             本项目中 Android 是谷歌公司的商标。</p>`, 'nts.about'),
         btn: [
-            { type: 'main', text: lang(lang('关闭', 'close'), 'close'), js: 'closenotice();' },
-            { type: 'detail', text: lang('更多', 'more'), js: 'closenotice();openapp(\'about\');if($(\'.window.about\').hasClass(\'min\'))minwin(\'about\');$(\'.dock.about\').removeClass(\'show\')' },
+            { type: 'main', text: lang(lang('Close', 'close'), 'close'), js: 'closenotice();' },
+            { type: 'detail', text: lang('More', 'more'), js: 'closenotice();openapp(\'about\');if($(\'.window.about\').hasClass(\'min\'))minwin(\'about\');$(\'.dock.about\').removeClass(\'show\')' },
         ]
     },
     'feedback': {
-        cnt: `<p class="tit">${lang('反馈', 'nts.feedback.name')}</p>
-            <p>${lang('我们非常注重用户的体验与反馈', 'nts.feedback.txt')}</p>
+        cnt: `<p class="tit">${lang('Feedback', 'nts.feedback.name')}</p>
+            <p>${lang('We place great emphasis on user experience and feedback', 'nts.feedback.txt')}</p>
             <list class="new">
-                <a class="a" onclick="window.open('https://github.com/win12-online/win12/issues','_blank');" win12_title="在浏览器新窗口Open链接" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)">${lang('在 github 上提交 issue (需要 github 账户)', 'nts.feedback.github')}</a>
+                <a class="a" onclick="window.open('https://github.com/win12-online/win12/issues','_blank');" win12_title="在浏览器新窗口Open链接" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)">${lang('Submit an issue on GitHub (requires a GitHub account)', 'nts.feedback.github')}</a>
             </list>`,
         btn: [
-            { type: 'main', text: lang(lang('关闭', 'close'), 'close'), js: 'closenotice();' },
+            { type: 'main', text: lang(lang('Close', 'close'), 'close'), js: 'closenotice();' },
         ]
     },
     'widgets': {
         cnt: `
-            <p class="tit">${lang('添加小组件', 'nts.addwg')}</p>
+            <p class="tit">${lang('Add a widget', 'nts.addwg')}</p>
             <list class="new">
-                <a class="a" onclick="closenotice(); widgets.widgets.add('calc');">${lang('计算器', 'calc.name')}</a>
-                <a class="a" onclick="closenotice(); widgets.widgets.add('weather');">${lang('天气', 'nts.addwg.weather')}</a>
-                <a class="a" onclick="closenotice(); widgets.widgets.add('monitor');">${lang('系统性能监视器', 'nts.addwg.monitor')}</a>
+                <a class="a" onclick="closenotice(); widgets.widgets.add('calc');">${lang('Calculator', 'calc.name')}</a>
+                <a class="a" onclick="closenotice(); widgets.widgets.add('weather');">${lang('Weather', 'nts.addwg.weather')}</a>
+                <a class="a" onclick="closenotice(); widgets.widgets.add('monitor');">${lang('Resource monitor', 'nts.addwg.monitor')}</a>
             </list>`,
         btn: [
-            { type: 'cancel', text: lang('取消', 'cancel'), js: 'closenotice();' }
+            { type: 'cancel', text: lang('Cancel', 'cancel'), js: 'closenotice();' }
         ]
     },
     'ZeroDivision': {//计算器报错窗口
@@ -934,14 +934,14 @@ const nts = {
         cnt: lang(`<p class="tit">错误</p>
             <p>除数不得等于 0</p>`, 'calc.error.zero'),
         btn: [
-            { type: 'main', text: lang('确定', 'ok'), js: 'closenotice();' },
+            { type: 'main', text: lang('OK', 'ok'), js: 'closenotice();' },
         ]
     },
     'Can-not-open-file': {
         cnt: '<p class="tit">' + run_cmd + `</p>
         <p>Windows 找不到文件 '` + run_cmd + '\'。请确定文件名是否正确后，再试一次。</p> ',
         btn: [
-            { type: 'main', text: lang('确定', 'ok'), js: 'closenotice();' },
+            { type: 'main', text: lang('OK', 'ok'), js: 'closenotice();' },
             { type: 'detail', text: '在 Micrsoft Edge 中搜索', js: 'closenotice();openapp(\'edge\');window.setTimeout(() => {apps.edge.newtab();apps.edge.goto(' + run_cmd + ');}, 300);' }
         ]
     },
@@ -957,7 +957,7 @@ const nts = {
             <a class="a" onclick="closenotice(); widgets.monitor.type = 'gpu';">GPU 利用率</a>
         </list>`,
         btn: [
-            { type: 'cancel', text: lang('取消', 'cancel'), js: 'closenotice();' }
+            { type: 'cancel', text: lang('Cancel', 'cancel'), js: 'closenotice();' }
         ]
     },
     'widgets.desktop': {
@@ -969,7 +969,7 @@ const nts = {
                 <a class="a" onclick="closenotice(); widgets.widgets.addToDesktop('monitor');">系统性能监视器</a>
             </list>`,
         btn: [
-            { type: 'cancel', text: lang('取消', 'cancel'), js: 'closenotice();' }
+            { type: 'cancel', text: lang('Cancel', 'cancel'), js: 'closenotice();' }
         ]
     },
     'widgets.news.source': {
@@ -978,14 +978,14 @@ const nts = {
             <list class="new">
                 新闻源未加载，请检查网络连接
             </list>`,
-        btn: [{ type: 'cancel', text: lang('取消', 'cancel'), js: 'closenotice();' }],
+        btn: [{ type: 'cancel', text: lang('Cancel', 'cancel'), js: 'closenotice();' }],
     },
     'duplication file name': {
         cnt: `
             <p class="tit">错误</p>
             <p>文件名重复</p>`,
         btn: [
-            { type: 'cancel', text: lang('取消', 'cancel'), js: 'closenotice();' }
+            { type: 'cancel', text: lang('Cancel', 'cancel'), js: 'closenotice();' }
         ]
     },
     'about-copilot': {
@@ -998,7 +998,7 @@ const nts = {
             <a class="a" onclick="window.open('https://www.yunzhiapi.cn/','_blank');" win12_title="在浏览器新窗口Open链接">云智 API 官网</a>
         `,
         btn: [
-            { type: 'main', text: lang('确定', 'ok'), js: 'closenotice();' },
+            { type: 'main', text: lang('OK', 'ok'), js: 'closenotice();' },
         ]
     },
     'shutdown': {
@@ -1006,7 +1006,7 @@ const nts = {
         <p class="tit">即将注销你的登录</p>
         <p>Windows 将在 114514 分钟后关闭。</p>`,
         btn: [
-            { type: 'main', text: lang('关闭', 'close'), js: 'closenotice();' }
+            { type: 'main', text: lang('Close', 'close'), js: 'closenotice();' }
         ]
     },
     'setting.update': {
@@ -1033,7 +1033,7 @@ const nts = {
         </p>
          `,
         btn: [
-            { type: 'main', text: lang('确定', 'ok'), js: 'closenotice();' },
+            { type: 'main', text: lang('OK', 'ok'), js: 'closenotice();' },
         ]
     },
     'setting.down': {
@@ -1047,12 +1047,12 @@ const nts = {
     },
     'whiteboard-saveas': {
         cnt: `
-        <p class="tit">${lang('另存为', 'whiteboard.saveas.title')}</p>
-        <p>${lang('请输入文件名:', 'whiteboard.saveas.prompt')}</p>
+        <p class="tit">${lang('Save As', 'whiteboard.saveas.title')}</p>
+        <p>${lang('Enter filename:', 'whiteboard.saveas.prompt')}</p>
         <input type="text" id="whiteboard-filename" placeholder="Whiteboard_${new Date().toISOString().slice(0, 10)}" style="width: 100%; padding: 8px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px;">
         `,
         btn: [
-            { type: 'main', text: lang('保存', 'whiteboard.saveas.save'), js: 'apps.whiteboard.doSaveAs();' },
+            { type: 'main', text: lang('Save', 'whiteboard.saveas.save'), js: 'apps.whiteboard.doSaveAs();' },
             { type: 'detail', text: lang('取消', 'whiteboard.saveas.cancel'), js: 'closenotice();' }
         ]
     },
@@ -1060,7 +1060,7 @@ const nts = {
         cnt: lang(`<p class="tit">文件资源管理器</p>
             <p>你没有权限Open该文件，请向文件的所有者或管理员申请权限<br /></p>`),
         btn: [
-            { type: 'main', text: lang(lang('关闭', 'close'), 'close'), js: 'closenotice();' }
+            { type: 'main', text: lang(lang('Close', 'close'), 'close'), js: 'closenotice();' }
         ]
     },
     'rename-pc': {
@@ -1070,7 +1070,7 @@ const nts = {
         <input type="text" id="rename-name" placeholder="Desktop-${Math.floor(Math.random() * 1000000)}">
         `,
         btn: [
-            { type: 'main', text: lang('保存', 'pc.saveas.save'), js: '' },
+            { type: 'main', text: lang('Save', 'pc.saveas.save'), js: '' },
             { type: 'detail', text: lang('取消', 'pc.saveas.cancel'), js: 'closenotice();' }
         ]
     },
@@ -1078,7 +1078,7 @@ const nts = {
         cnt: lang(`<p class="tit">文件资源管理器</p>
             <p>你没有权限Open该文件，请向文件的所有者或管理员申请权限<br /></p>`),
         btn: [
-            { type: 'main', text: lang(lang('关闭', 'close'), 'close'), js: 'closenotice();' }
+            { type: 'main', text: lang(lang('Close', 'close'), 'close'), js: 'closenotice();' }
         ]
     },
     'rename-pc': {
@@ -1088,7 +1088,7 @@ const nts = {
         <input type="text" id="rename-name" placeholder="Desktop-${Math.floor(Math.random() * 1000000)}" style="width: 100%; padding: 8px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px;">
         `,
         btn: [
-            { type: 'main', text: lang('保存', 'pc.saveas.save'), js: 'closenotice();' },
+            { type: 'main', text: lang('Save', 'pc.saveas.save'), js: 'closenotice();' },
             { type: 'detail', text: lang('取消', 'pc.saveas.cancel'), js: 'closenotice();' }
         ]
     },
@@ -1096,50 +1096,50 @@ const nts = {
         cnt: lang(`<p class="tit">Open失败</p>
             <p>Word在试图Open文件时遇到错误<br /></p>`),
         btn: [
-            { type: 'main', text: lang(lang('关闭', 'close'), 'close'), js: 'closenotice();' }
+            { type: 'main', text: lang(lang('Close', 'close'), 'close'), js: 'closenotice();' }
         ]
     },
     'fs-api-unsupported': {
         cnt: lang(`<p class="tit">不支持的功能</p>
             <p>您的浏览器不支持文件系统访问 API。请使用 Chrome 或 Edge 浏览器。</p>`, 'nts.fs-api-unsupported'),
         btn: [
-            { type: 'main', text: lang('确定', 'ok'), js: 'closenotice();' }
+            { type: 'main', text: lang('OK', 'ok'), js: 'closenotice();' }
         ]
     },
     'fs-mount-error': {
         cnt: lang(`<p class="tit">挂载失败</p>
             <p>无法挂载本地文件夹，权限可能被拒绝。</p>`, 'nts.fs-mount-error'),
         btn: [
-            { type: 'main', text: lang('确定', 'ok'), js: 'closenotice();' }
+            { type: 'main', text: lang('OK', 'ok'), js: 'closenotice();' }
         ]
     },
     'unsupported-file-type': {
         cnt: lang(`<p class="tit">无法Open文件</p>
             <p>没有找到可以Open此类型文件的应用程序。</p>`, 'nts.unsupported-file-type'),
         btn: [
-            { type: 'main', text: lang('确定', 'ok'), js: 'closenotice();' }
+            { type: 'main', text: lang('OK', 'ok'), js: 'closenotice();' }
         ]
     },
     'file-read-error': {
         cnt: lang(`<p class="tit">读取失败</p>
             <p>无法读取文件内容，权限可能已过期。</p>`, 'nts.file-read-error'),
         btn: [
-            { type: 'main', text: lang('确定', 'ok'), js: 'closenotice();' }
+            { type: 'main', text: lang('OK', 'ok'), js: 'closenotice();' }
         ]
     },
     'file-write-error': {
         cnt: lang(`<p class="tit">保存失败</p>
             <p>无法写入文件，权限可能已过期。</p>`, 'nts.file-write-error'),
         btn: [
-            { type: 'main', text: lang('确定', 'ok'), js: 'closenotice();' }
+            { type: 'main', text: lang('OK', 'ok'), js: 'closenotice();' }
         ]
     },
     'unsaved-notepad': {
         cnt: lang(`<p class="tit">是否保存更改？</p>
             <p>文件有未保存的修改，关闭前是否保存？</p>`, 'nts.unsaved-changes'),
         btn: [
-            { type: 'main', text: lang('保存','save'), js: 'closenotice();apps.notepad.saveMounted().then(()=>{apps.notepad._forceClose();})' },
-            { type: '', text: lang('不保存','discard'), js: 'closenotice();apps.notepad._forceClose();' },
+            { type: 'main', text: lang('Save','save'), js: 'closenotice();apps.notepad.saveMounted().then(()=>{apps.notepad._forceClose();})' },
+            { type: '', text: lang('Do not Save','discard'), js: 'closenotice();apps.notepad._forceClose();' },
             { type: '', text: lang('取消','cancel'), js: 'closenotice();' }
         ]
     },
@@ -1147,8 +1147,8 @@ const nts = {
         cnt: lang(`<p class="tit">是否保存更改？</p>
             <p>文件有未保存的修改，关闭前是否保存？</p>`, 'nts.unsaved-changes'),
         btn: [
-            { type: 'main', text: lang('保存','save'), js: 'closenotice();apps.codeEditor.save().then(()=>{apps.codeEditor._forceClose();})' },
-            { type: '', text: lang('不保存','discard'), js: 'closenotice();apps.codeEditor._forceClose();' },
+            { type: 'main', text: lang('Save','save'), js: 'closenotice();apps.codeEditor.save().then(()=>{apps.codeEditor._forceClose();})' },
+            { type: '', text: lang('Do not Save','discard'), js: 'closenotice();apps.codeEditor._forceClose();' },
             { type: '', text: lang('取消','cancel'), js: 'closenotice();' }
         ]
     },
@@ -1156,8 +1156,8 @@ const nts = {
         cnt: lang(`<p class="tit">是否保存更改？</p>
             <p>文件有未保存的修改，关闭前是否保存？</p>`, 'nts.unsaved-changes'),
         btn: [
-            { type: 'main', text: lang('保存','save'), js: 'closenotice();apps.notepad.saveMounted().then(()=>{apps.notepad._forceClose();})' },
-            { type: '', text: lang('不保存','discard'), js: 'closenotice();apps.notepad._forceClose();' },
+            { type: 'main', text: lang('Save','save'), js: 'closenotice();apps.notepad.saveMounted().then(()=>{apps.notepad._forceClose();})' },
+            { type: '', text: lang('Do not Save','discard'), js: 'closenotice();apps.notepad._forceClose();' },
             { type: '', text: lang('取消','cancel'), js: 'closenotice();' }
         ]
     },
@@ -1165,8 +1165,8 @@ const nts = {
         cnt: lang(`<p class="tit">是否保存更改？</p>
             <p>文件有未保存的修改，关闭前是否保存？</p>`, 'nts.unsaved-changes'),
         btn: [
-            { type: 'main', text: lang('保存','save'), js: 'closenotice();apps.codeEditor.save().then(()=>{apps.codeEditor._forceClose();})' },
-            { type: '', text: lang('不保存','discard'), js: 'closenotice();apps.codeEditor._forceClose();' },
+            { type: 'main', text: lang('Save','save'), js: 'closenotice();apps.codeEditor.save().then(()=>{apps.codeEditor._forceClose();})' },
+            { type: '', text: lang('Do not Save','discard'), js: 'closenotice();apps.codeEditor._forceClose();' },
             { type: '', text: lang('取消','cancel'), js: 'closenotice();' }
         ]
     },
@@ -1174,7 +1174,7 @@ const nts = {
         cnt: lang(`<p class="tit">AI Chat 无法使用</p>
             <p>暂时无法使用此功能，请转用语音输入球</p>`),
         btn: [
-            { type: 'main', text: lang('确定', 'ok'), js: 'closenotice();' }
+            { type: 'main', text: lang('OK', 'ok'), js: 'closenotice();' }
         ]
     },
 };
@@ -1232,24 +1232,24 @@ function runcmd(cmd, inTerminal = false) {
     else if (cmd === 'help') {
         if (inTerminal) {
             $('#win-terminal>.text-cmd').append(`
-${lang('有关某个命令的详细信息，请键入 HELP 命令名', 'terminal.help.title')}
-DIR             ${lang('显示目录中的文件和子目录列表', 'terminal.help.dir')}
-LS              ${lang('显示目录中的文件和子目录列表 (DIR 的别名)', 'terminal.help.ls')}
-DEL             ${lang('Delete一个或多个文件', 'terminal.help.del')}
-CD              ${lang('显示当前目录的名称或将其更改', 'terminal.help.cd')}
-CLS             ${lang('清除屏幕', 'terminal.help.cls')}
-HELP            ${lang('提供 Windows 命令的帮助信息', 'terminal.help.help')}
-SYSTEMINFO      ${lang('显示系统信息', 'terminal.help.systeminfo')}
-SHUTDOWN        ${lang('关闭计算机', 'terminal.help.shutdown')}
-CMD             ${lang('Open新的命令提示符窗口', 'terminal.help.cmd')}
-EXIT            ${lang('退出命令提示符程序', 'terminal.help.exit')}
+${lang('For detailed info, type HELP command name', 'terminal.help.title')}
+DIR             ${lang('Display directory listing', 'terminal.help.dir')}
+LS              ${lang('Display directory listing (DIR alias)', 'terminal.help.ls')}
+DEL             ${lang('Delete one or more files', 'terminal.help.del')}
+CD              ${lang('Show or change directory', 'terminal.help.cd')}
+CLS             ${lang('Clear screen', 'terminal.help.cls')}
+HELP            ${lang('Provide help for Windows commands', 'terminal.help.help')}
+SYSTEMINFO      ${lang('Display system information', 'terminal.help.systeminfo')}
+SHUTDOWN        ${lang('Shut down computer', 'terminal.help.shutdown')}
+CMD             ${lang('Open new command prompt window', 'terminal.help.cmd')}
+EXIT            ${lang('Exit command prompt', 'terminal.help.exit')}
 
-${lang('彩蛋命令：', 'terminal.help.easter')}
-HELLO           ${lang('打个招呼', 'terminal.help.hello')}
-MATRIX          ${lang('黑客帝国特效', 'terminal.help.matrix')}
-SNOW            ${lang('下雪特效', 'terminal.help.snow')}
-DANCE           ${lang('让窗口跳舞', 'terminal.help.dance')}
-STARWARS        ${lang('原力觉醒', 'terminal.help.starwars')}
+${lang('Easter egg commands:', 'terminal.help.easter')}
+HELLO           ${lang('Say hello', 'terminal.help.hello')}
+MATRIX          ${lang('Matrix effect', 'terminal.help.matrix')}
+SNOW            ${lang('Snow effect', 'terminal.help.snow')}
+DANCE           ${lang('Make windows dance', 'terminal.help.dance')}
+STARWARS        ${lang('The Force awakens', 'terminal.help.starwars')}
 `);
         }
         return true;
@@ -1640,7 +1640,7 @@ shutdown [-s] [-r] [-f] [-a] [-t time]
                         <p class="tit">注销已取消</p>
                         <p>计划的关闭已取消。</p>`,
                         btn: [
-                            { type: 'main', text: lang('关闭', 'close'), js: 'closenotice();' },
+                            { type: 'main', text: lang('Close', 'close'), js: 'closenotice();' },
                         ]
                     };
                     shownotice('shutdown');
@@ -1677,7 +1677,7 @@ shutdown [-s] [-r] [-f] [-a] [-t time]
                 <p class="tit">即将${operation === 'restart' ? '重启' : operation === 'logoff' ? '注销' : '关机'}</p>
                 <p>Windows 将在 ${timeString} 后${operation === 'restart' ? '重启' : operation === 'logoff' ? '注销' : '关机'}。</p>`,
                 btn: [
-                    { type: 'main', text: lang('关闭', 'close'), js: 'closenotice();' },
+                    { type: 'main', text: lang('Close', 'close'), js: 'closenotice();' },
                 ]
             };
 
@@ -2386,12 +2386,12 @@ function setBatteryTooltip(title) {
 
 function getBatteryTooltip(level, charging) {
     const percent = Math.round(level * 100);
-    const chargingText = charging ? lang('，正在充电', 'battery.charging') : '';
-    return `${lang('电量：', 'battery.level')}${percent}%${chargingText}`;
+    const chargingText = charging ? lang(', charging', 'battery.charging') : '';
+    return `${lang('Battery: ', 'battery.level')}${percent}%${chargingText}`;
 }
 
 function setBatteryUnavailableTooltip() {
-    setBatteryTooltip(lang('无法获取电量', 'battery.unavailable'));
+    setBatteryTooltip(lang('Unable to get battery level', 'battery.unavailable'));
 }
 
 if (navigator.getBattery) {
@@ -2535,15 +2535,15 @@ function setIcon() {
     if (Array.isArray(JSON.parse(localStorage.getItem('desktop')))) {
         $('#desktop')[0].innerHTML = `<div ondblclick="openapp('explorer');" ontouchstart="openapp('explorer');" oncontextmenu="return showcm(event,'desktop.icon',['explorer',-1]);" appname="explorer">
         <img src="apps/icons/explorer/thispc.svg">
-        <p>${lang('此电脑', 'explorer.thispc')}</p>
+        <p>${lang('This PC', 'explorer.thispc')}</p>
     </div>
     <div class="b" ondblclick="openapp('setting');" ontouchstart="openapp('setting');" oncontextmenu="return showcm(event,'desktop.icon',['setting',-1]);" appname="setting">
         <img src="icon/setting.svg">
-        <p>${lang('设置', 'setting.name')}</p>
+        <p>${lang('Settings', 'setting.name')}</p>
     </div>
     <div class="b" ondblclick="openapp('about');" ontouchstart="openapp('about');" oncontextmenu="return showcm(event,'desktop.icon',['about',-1]);" appname="about">
         <img src="icon/about.svg">
-        <p>${lang('关于 Win12 网页版', 'about.name')}</p>
+        <p>${lang('About Win12 Online', 'about.name')}</p>
     </div>
     <div class="b" ondblclick="openapp('edge');" ontouchstart="openapp('edge');" oncontextmenu="return showcm(event,'desktop.icon',['edge',-1]);" appname="edge">
         <img src="icon/edge.svg">
@@ -2551,7 +2551,7 @@ function setIcon() {
     </div>
     <div class="b" ondblclick="shownotice('feedback');" ontouchstart="shownotice('feedback');">
         <img src="icon/feedback.svg">
-        <p>${lang('反馈中心', 'feedback.name')}</p>
+        <p>${lang('Feedback Hub', 'feedback.name')}</p>
     </div>
     <span class="selection">
     </span>
@@ -2596,7 +2596,7 @@ function setIcon() {
         $cornerToggle.removeClass('checked').addClass('disabled');
         $cornerToggle.removeAttr('onclick');
         root.removeClass('corner_squ');
-        const message = lang('浏览器不支持', 'setting.psnl.round-unav');
+        const message = lang('Browser not supported', 'setting.psnl.round-unav');
         if ($cornerHint.length) {
             $cornerHint.text(message);
         }
