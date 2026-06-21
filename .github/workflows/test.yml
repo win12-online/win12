@@ -1,4 +1,4 @@
-name: Test & Quality
+name: Test & Quality (Node)
 
 on:
   push:
