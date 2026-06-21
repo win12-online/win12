@@ -107,23 +107,11 @@ function isTauriApp() {
     return !!((window.win12Native && window.win12Native.isTauri && window.win12Native.isTauri()) || (window.__TAURI__ && window.__TAURI__.core));
 }
 
-function getAboutAppId() {
-    return 'about';
-}
-
 function getAboutAppTitle() {
     if (!isTauriApp()) return lang('关于 Win12 网页版', 'about.name');
     if (langcode == 'en') return 'About Win12-desktop';
     if (langcode == 'zh-TW') return '關於 Win12-desktop';
     return '关于 Win12-desktop';
-}
-
-function openAboutApp() {
-    openapp(getAboutAppId());
-}
-
-function getAboutAppContextArg() {
-    return [getAboutAppId(), getAboutAppTitle()];
 }
 
 function updateAboutAppEntrypoints() {
@@ -459,7 +447,7 @@ const cms = {
                 return ['<i class="bi bi-pencil"></i> ' + lang('进入编辑模式', 'desktop.enteredit'), 'editMode();'];
             }
         },
-        ['<i class="bi bi-info-circle"></i> ' + getAboutAppTitle(), 'openAboutApp();'],
+        ['<i class="bi bi-info-circle"></i> ' + getAboutAppTitle(), 'openapp(\'about\');'],
         ['<i class="bi bi-brush"></i> ' + lang('个性化', 'psnl'), 'openapp(\'setting\');$(\'#win-setting > div.menu > list > a.enable.appearance\')[0].click()']
     ],
     'desktop.icon': [
@@ -2507,7 +2495,7 @@ function setIcon() {
         <img src="icon/setting.svg">
         <p>${lang('设置', 'setting.name')}</p>
     </div>
-    <div class="b" ondblclick="openAboutApp();" ontouchstart="openAboutApp();" oncontextmenu="return showcm(event,'desktop.icon',['about',-1]);" appname="about">
+    <div class="b" ondblclick="openapp('about');" ontouchstart="openapp('about');" oncontextmenu="return showcm(event,'desktop.icon',['about',-1]);" appname="about">
         <img src="icon/about.svg">
         <p>${getAboutAppTitle()}</p>
     </div>

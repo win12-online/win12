@@ -275,7 +275,7 @@ toggletheme() 切换主题
 					<img src="icon/run.svg">
 					<p data-i18n="run.name">运行</p>
 				</a>
-				<a oncontextmenu="return showcm(event, 'smlapp', getAboutAppContextArg())" onclick="openAboutApp();hide_startmenu();">
+				<a oncontextmenu="return showcm(event, 'smlapp', ['about', getAboutAppTitle()])" onclick="openapp('about');hide_startmenu();">
 					<img src="icon/about.svg">
 					<p class="about-app-title" data-i18n="about.name">关于 Win12 网页版</p>
 				</a>
@@ -417,7 +417,7 @@ toggletheme() 切换主题
 						<img src="icon/feedback.svg">
 						<p data-i18n="feedback.name">反馈中心</p>
 					</a>
-					<a class="a sm-app enable about" onclick="openAboutApp();hide_startmenu();" oncontextmenu="return showcm(event,'smapp',getAboutAppContextArg())">
+					<a class="a sm-app enable about" onclick="openapp('about');hide_startmenu();" oncontextmenu="return showcm(event,'smapp',['about', getAboutAppTitle()])">
 						<img src="icon/about.svg">
 						<p class="about-app-title" data-i18n="about.name">关于 Win12 网页版</p>
 					</a>
@@ -494,7 +494,7 @@ toggletheme() 切换主题
 						<img src="icon/setting.svg">
 						<p data-i18n="setting.name">设置</p>
 					</a>
-					<a onclick="openAboutApp();$('#search-btn').removeClass('show');
+					<a onclick="openapp('about');$('#search-btn').removeClass('show');
 					$('#search-win').removeClass('show');
 					setTimeout(() => {
 						$('#search-win').removeClass('show-begin');
