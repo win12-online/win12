@@ -4,11 +4,11 @@
   "description": "Windows 12 Web Simulation - Open Source Project",
   "type": "module",
   "scripts": {
-    "test": "vitest",
-    "test:ui": "vitest --ui",
-    "test:coverage": "vitest --coverage",
-    "test:e2e": "playwright test",
-    "test:e2e:ui": "playwright test --ui",
+    "test": "vitest --config config/vitest.config.js",
+    "test:ui": "vitest --ui --config config/vitest.config.js",
+    "test:coverage": "vitest --coverage --config config/vitest.config.js",
+    "test:e2e": "playwright test --config config/playwright.config.js",
+    "test:e2e:ui": "playwright test --ui --config config/playwright.config.js",
     "test:all": "npm run test && npm run test:e2e",
     "lint": "eslint . --ext .js,.html --config config/.eslintrc.json",
     "lint:fix": "eslint . --ext .js,.html --fix --config config/.eslintrc.json"
