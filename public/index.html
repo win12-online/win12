@@ -29,13 +29,23 @@
     <iframe id="bootFrame" src="boot.html"></iframe>
 
     <script>
-        // Boot sequence: Show boot.html for ~5 seconds, then redirect to desktop
-        // Windows 12 boot animation simulates startup before loading the desktop
+        // Boot sequence: Show boot.html for ~5 seconds, then redirect to login
+        // Windows 12 boot animation simulates startup before the login screen
 
-        setTimeout(() => {
-            console.log('Boot sequence complete, loading desktop...');
-            window.location.href = 'desktop.html';
-        }, 5000); // 5 second boot animation + transition
+        // Check if already logged in - if so, skip to desktop
+        if (localStorage.getItem('win12_logged_in') === 'true') {
+            // Already logged in, go straight to desktop
+            setTimeout(() => {
+                console.log('Boot sequence complete, resuming session...');
+                window.location.href = 'desktop.html';
+            }, 3000); // Shorter boot animation for returning users
+        } else {
+            // First time, show login after boot
+            setTimeout(() => {
+                console.log('Boot sequence complete, loading login screen...');
+                window.location.href = 'login.html';
+            }, 5000); // Full 5 second boot animation
+        }
     </script>
 </body>
 </html>
