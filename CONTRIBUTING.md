@@ -48,7 +48,7 @@
 
 * **请善用`Update branch`按钮**。点击`Update branch`按钮可将`main`分支的最新更改合并到当前 PR 中。但请勿频繁操作——会误通知关注者“有新变更”。
 
-* 在开发过程中请一并完善 i18n 的相关属性并将其添加到相关的 properties 文件中，对于如何设置属性和添加新的翻译词条等问题[在翻译贡献指南](/lang/lang/readme.md)中已有相关说明，请自行查阅。
+* 在开发过程中请一并完善 i18n 的相关属性并将其添加到相关的 properties 文件中，对于如何设置属性和添加新的翻译词条等问题[在翻译贡献指南](https://github.com/win12-online/win12-locales/blob/main/lang/readme.md)中已有相关说明，请自行查阅。
 
 * 在开发时，请参考 [中文文案排版指北](https://github.com/sparanoid/chinese-copywriting-guidelines) 中推荐的写作风格撰写文本。另外请注意，我们使用 [autocorrect](https://github.com/huacnlee/autocorrect) 进行自动检查。原则上，未通过检查的 PR 将不会被合并。
 
