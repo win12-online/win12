@@ -58,9 +58,9 @@
 <body onload="
 setTimeout(()=>{
     document.getElementById('ld').remove();
-    document.getElementById('ldt').textContent='按 Enter 键开机。';
+    document.getElementById('ldt').textContent='Press Enter to start.';
     document.getElementById('ldt').style.opacity=0.5;
-    document.title='已关机';
+    document.title='Shut down';
     document.body.onkeydown=e=>{
         if(e.key==='Enter') {
             location.href='boot.html';
@@ -75,7 +75,7 @@ setTimeout(()=>{
         </svg>
     </loading>
     <p id="ldt" style="text-align:center;color:#fff;font-size:20px">
-        正在关机
+        Shutting down
     </p>
 </body>
 
