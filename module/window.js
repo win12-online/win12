@@ -143,22 +143,22 @@ function minwin(name) {
 }
 
 function resizewin(win, arg, resizeElt) {
-    page.onmousemove = function (e) {
+    document.onmousemove = function (e) {
         win_resizing(win, e, arg);
     };
-    page.ontouchmove = function (e) {
+    document.ontouchmove = function (e) {
         win_resizing(win, e, arg);
     };
     function up_f() {
-        page.onmousedown = null;
-        page.ontouchstart = null;
-        page.onmousemove = null;
-        page.ontouchmove = null;
-        page.ontouchcancel = null;
-        page.style.cursor = 'auto';
+        document.onmousedown = null;
+        document.ontouchstart = null;
+        document.onmousemove = null;
+        document.ontouchmove = null;
+        document.ontouchcancel = null;
+        document.body.style.cursor = 'auto';
     }
-    page.onmouseup = up_f;
-    page.ontouchend = up_f;
+    document.onmouseup = up_f;
+    document.ontouchend = up_f;
     page.ontouchcancel = up_f;
     page.style.cursor = window.getComputedStyle(resizeElt, null).cursor;
 }
@@ -396,11 +396,11 @@ for (let i = 0; i < wins.length; i++) {
         }
         deltaLeft = e.targetTouches[0].clientX - x;
         deltaTop = e.targetTouches[0].clientY - y;
-        page.ontouchmove = win_move.bind(win);
+        document.ontouchmove = win_move.bind(win);
     });
 }
-page.addEventListener('mouseup', () => {
-    page.onmousemove = null;
+document.addEventListener('mouseup', () => {
+    document.onmousemove = null;
     if (fil) {
         if (filty == 'top') {
             maxwin(fil.classList[1], false);
