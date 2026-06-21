@@ -88,7 +88,20 @@ jobs:
         run: npx playwright install --with-deps ${{ matrix.browser }}
 
       - name: Start web server
-        run: python -m http.server 3000 &
+        run: |
+          python -m http.server 3000 > /tmp/server.log 2>&1 &
+          SERVER_PID=$!
+          echo "Server PID: $SERVER_PID"
+
+          # Wait for server to be ready
+          for i in {1..30}; do
+            if curl -s http://localhost:3000/desktop.html > /dev/null; then
+              echo "✅ Server is ready"
+              break
+            fi
+            echo "Waiting for server... ($i/30)"
+            sleep 1
+          done
         timeout-minutes: 2
 
       - name: Run E2E tests
@@ -96,6 +109,7 @@ jobs:
         timeout-minutes: 10
         env:
           CI: true
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
 
       - name: Upload Playwright report
         uses: actions/upload-artifact@v4

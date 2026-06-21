@@ -28,9 +28,9 @@ export default defineConfig({
     },
   ],
 
-  webServer: {
+  webServer: process.env.CI ? undefined : {
     command: 'python -m http.server 3000',
     url: 'http://localhost:3000/desktop.html',
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: true,
   },
 });
