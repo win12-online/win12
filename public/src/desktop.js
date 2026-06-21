@@ -354,7 +354,7 @@ function observeLooseEnglishText() {
 
 function loadlangSync(code) {
     const fileCode = normalizedLangCode(code);
-    const filename = 'lang/lang/lang_' + fileCode + '.properties';
+    const filename = '../lang/lang/lang_' + fileCode + '.properties';
 
     try {
         const request = new XMLHttpRequest();
@@ -378,7 +378,7 @@ function loadlang(code) {
     console.log('Loading language:', code);
 
     const fileCode = normalizedLangCode(code);
-    const filename = 'lang/lang/lang_' + fileCode + '.properties';
+    const filename = '../lang/lang/lang_' + fileCode + '.properties';
 
     fetch(filename)
         .then(response => {
