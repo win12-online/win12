@@ -131,8 +131,7 @@ let apps = {
                         }
                         else {
                             nts['Can-not-open-file'] = {
-                                cnt: '<p class="tit">' + cmd + `</p>
-                                <p>Windows cannot find the file '` + cmd + `'. Please verify the filename is correct and try again.</p> ',
+                                cnt: '<p class="tit">' + cmd + '</p><p>Windows cannot find the file \'' + cmd + '\'. Please verify the filename is correct and try again.</p> ',
                                 btn: [
                                     { type: 'main', text: 'OK', js: 'closenotice();showwin(\'run\');$(\'#win-run>.open>input\').select();' },
                                     { type: 'cancel', text: 'Search in Microsoft Edge', js: 'closenotice();openapp(\'edge\');window.setTimeout(() => {apps.edge.newtab();apps.edge.goto(\'https://www.bing.com/search?q=' + encodeURIComponent(cmd) + '\');}, 300);' }
@@ -143,8 +142,7 @@ let apps = {
                     }
                     catch {
                         nts['Can-not-open-file'] = {
-                            cnt: '<p class="tit">' + cmd + `</p>
-                            <p>Windows cannot find the file '` + cmd + `'. Please verify the filename is correct and try again.</p> ',
+                            cnt: '<p class="tit">' + cmd + '</p><p>Windows cannot find the file \'' + cmd + '\'. Please verify the filename is correct and try again.</p> ',
                             btn: [
                                 { type: 'main', text: 'OK', js: 'closenotice();showwin(\'run\');$(\'#win-run>.open>input\').select();' },
                                 { type: 'cancel', text: 'Search in Microsoft Edge', js: 'closenotice();openapp(\'edge\');window.setTimeout(() => {apps.edge.newtab();apps.edge.goto(\'https://www.bing.com/search?q=' + encodeURIComponent(cmd) + '\');}, 300);' }
