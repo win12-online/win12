@@ -1936,7 +1936,7 @@ let copilot = {
 
         // 敏感词过滤
         $.ajax({
-            url: `https://yunzhiapi.cn{encodeURIComponent(t)}`,
+            url: `https://yunzhiapi.cn/vip/win12/mgwbgl.php?msg=${encodeURIComponent(t)}`,
             method: 'GET',
             success: function (filteredText) {
                 if (filteredText !== t) {
