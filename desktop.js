@@ -1936,21 +1936,51 @@ let copilot = {
 
         // 敏感词过滤
         $.ajax({
-            url: `https://yunzhiapi.cn/vip/win12/mgwbgl.php?msg=${encodeURIComponent(t)}`,
+            url: `https://yunzhiapi.cn{encodeURIComponent(t)}`,
             method: 'GET',
             success: function (filteredText) {
                 if (filteredText !== t) {
-                    $('#copilot>.chat').append(`<div class="line system"><p class="text">针对这个问题我无法为你提供相应解答。你可以尝试提供其他话题，我会尽力为你提供支持和解答。</p></div>`);
-                    $('#copilot>.chat').scrollTop($('#copilot>.chat')[0].scrollHeight);
-                    msgDoneOperate();
+                    triggerBlockAction();
                     return;
                 }
-                proceedSend();
+                proceedToSecondLayer();
             },
             error: function () {
-                proceedSend();
+                proceedToSecondLayer();
             }
         });
+
+
+        function proceedToSecondLayer() {
+            $.ajax({
+                url: 'llama-guard-api.freedom-323.workers.dev',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    model: 'llama-guard3:1b',
+                    messages: [{ role: 'user', content: t }],
+                    stream: false
+                }),
+                success: function (response) {
+                    if (response && response.message && response.message.content.includes('unsafe')) {
+                        triggerBlockAction();
+                        return; 
+                    }
+                    proceedSend();
+                },
+                error: function () {
+                    $('#copilot>.chat').append(`<div class="line system"><p class="text">安全检查服务暂时不可用，请稍后再试。</p></div>`);
+                    $('#copilot>.chat').scrollTop($('#copilot>.chat').scrollHeight);
+                    msgDoneOperate();
+                }
+            });
+        }
+
+        function triggerBlockAction() {
+            $('#copilot>.chat').append(`<div class="line system"><p class="text">针对这个问题我无法为你提供相应解答。你可以尝试提供其他话题，我会尽力为你提供支持和解答。</p></div>`);
+            $('#copilot>.chat').scrollTop($('#copilot>.chat').scrollHeight);
+            msgDoneOperate();
+        }
 
         function proceedSend() {
         // 显示用户消息
