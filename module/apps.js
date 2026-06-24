@@ -67,22 +67,55 @@ let apps = {
                 })
             });
         },
-        // 无法正常运行，待调试
-        checkUpdate: () => {
-            $('#win-setting>.page>.cnt.update>.lo>.update-main .notice')[0].innerText = '开发者暂未完善此功能';
-            $('#win-setting>.page>.cnt.update>.lo>.update-main .detail')[0].innerHTML = 'Windows 更新已被禁用';
-            $('#win-setting>.page>.cnt.update>.setting-list>.update-now').addClass('disabled');
-            $('#win-setting>.page>.cnt.update>.lo>.update-main>div:last-child').addClass('disabled');
-            // Simulate the previous functionality for backward compatibility but disable actual updates
-            setTimeout(() => {
-                $('#win-setting>.page>.cnt.update>.lo>.update-main .notice')[0].innerText = '开发者暂未完善此功能';
-                $('#win-setting>.page>.cnt.update>.lo>.update-main .detail')[0].innerText = 'Windows 更新已被禁用';
-                // $('#win-setting>.page>.cnt.update>.setting-list>.update-now>div>p:first-child')[0].innerText = '开发者暂未完善此功能';
-                // $('#win-setting>.page>.cnt.update>.setting-list>.update-now>div>p:last-child')[0].innerText = 'Windows 更新已被禁用';
-                // Keep buttons disabled as requested
-                $('#win-setting>.page>.cnt.update>.setting-list>.update-now').addClass('disabled');
-                $('#win-setting>.page>.cnt.update>.lo>.update-main>div:last-child').addClass('disabled');
-            }, 1000);
+        checkUpdate: async (manual = false) => {
+            const $update = $('#win-setting>.page>.cnt.update');
+            const $notice = $update.find('.update-main .notice');
+            const $detail = $update.find('.update-main .detail');
+            const $button = $update.find('.update-check');
+            const $release = $update.find('.update-release');
+
+            $release.addClass('disabled').removeAttr('onclick');
+
+            if (!(window.win12Native && window.win12Native.isTauri())) {
+                $notice.text('仅 Tauri App 可用');
+                $detail.text('Windows 更新需要桌面版调用 GitHub 发布接口。');
+                $button.addClass('disabled');
+                return;
+            }
+
+            $button.addClass('disabled').text('正在检查...');
+            $notice.text('正在检查更新...');
+            $detail.text('正在连接 GitHub');
+
+            try {
+                const result = await window.win12Native.checkAppUpdate();
+                const currentVersion = result.current_version || '未知版本';
+                const latestVersion = result.latest_version || '未知版本';
+                const publishedAt = result.published_at ? new Date(result.published_at).toLocaleString() : '';
+                const releaseText = result.latest_name || latestVersion;
+
+                if (result.update_available) {
+                    $notice.text('有可用更新');
+                    $detail.text(`当前版本 ${currentVersion}，最新版本 ${latestVersion}${publishedAt ? `，发布于 ${publishedAt}` : ''}`);
+                    $release.removeClass('disabled')
+                        .attr('onclick', `window.open(${JSON.stringify(result.release_url)}, '_blank')`)
+                        .find('div>p:first-child').text(`获取 ${releaseText}`);
+                    $release.find('div>p:last-child').text('打开 GitHub 最新发布页下载安装包');
+                }
+                else {
+                    $notice.text('你使用的是最新版本');
+                    $detail.text(`当前版本 ${currentVersion}，GitHub 最新版本 ${latestVersion}`);
+                    $release.find('div>p:first-child').text('下载完整内容');
+                    $release.find('div>p:last-child').text('当前没有比本机更新的版本');
+                }
+            }
+            catch (e) {
+                $notice.text('无法检查更新');
+                $detail.text(String(e));
+            }
+            finally {
+                $button.removeClass('disabled').text(manual ? '重新检查' : '检查更新');
+            }
         },
     },
     msstore: {
