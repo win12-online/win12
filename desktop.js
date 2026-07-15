@@ -2566,7 +2566,97 @@ function saveDesktop() {
         localStorage.setItem(key, value);
     });
 }
+function desktopMove(elt, e) {
+    if (!edit_mode) return;// 编辑模式有效
+    e = e || window.event;
+    // 阻止桌面响应
+    try { e.stopPropagation(); } catch (err) { }
+    try { e.preventDefault(); } catch (err) { }
+    let rect = elt.getBoundingClientRect();
+    let deltaLeft = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+    let deltaTop = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+    elt.style.position = 'fixed';
+    elt.style.width = `${rect.width}px`;
+    elt.style.height = `${rect.height}px`;
+    elt.classList.add('moving');
+    elt.classList.add('notrans');
 
+    function moving(ev) {
+        let clientX = ev.type.match('touch') ? ev.touches[0].clientX : ev.clientX;
+        let clientY = ev.type.match('touch') ? ev.touches[0].clientY : ev.clientY;
+
+        let leftPx = clientX - deltaLeft;
+        let topPx = clientY - deltaTop;
+        // 与网格对齐
+        const parentRect = $('#desktop')[0].getBoundingClientRect();
+        const cell = 83; // 单位尺寸
+        const gap = 10; // 单位间隔
+        const padding = 20; // 偏移
+        let relLeft = leftPx - parentRect.left - padding;
+        let relTop = topPx - parentRect.top - padding;
+        const cols = Math.max(1, Math.floor((parentRect.width - padding * 2 + gap) / (cell + gap)));
+        const rows = Math.max(1, Math.floor((parentRect.height - padding * 2 + gap) / (cell + gap)));
+        let col = Math.round(relLeft / (cell + gap));
+        let row = Math.round(relTop / (cell + gap));//近似是第几格
+        if (col < 0) col = 0;
+        if (col >= cols) col = cols - 1;
+        if (row < 0) row = 0;
+        if (row >= rows) row = rows - 1;
+        const snapLeft = parentRect.left + padding + col * (cell + gap);
+        const snapTop = parentRect.top + padding + row * (cell + gap);
+        elt.style.left = `${snapLeft}px`;
+        elt.style.top = `${snapTop}px`;
+    }
+
+    function up() {
+        elt.classList.remove('notrans');
+        elt.classList.remove('moving');
+        document.body.style.userSelect = '';
+        // 将固定坐标转换为相对于桌面的绝对位置
+        const left = parseFloat(elt.style.left || 0) - parentRect.left;
+        const top = parseFloat(elt.style.top || 0) - parentRect.top;
+        elt.style.position = 'absolute';
+        elt.style.left = `${left}px`;
+        // 存储网格坐标
+        elt.setAttribute('data-grid-left', elt.style.left);
+        elt.setAttribute('data-grid-top', elt.style.top);
+        elt.style.top = `${top}px`;
+        page.onmousemove = null;
+        page.ontouchmove = null;
+        page.onmouseup = null;
+        page.ontouchend = null;
+        page.ontouchcancel = null;
+    }
+
+    moving(e);
+    // 不要出现选择框
+    document.body.style.userSelect = 'none';
+    page.onmousemove = moving;
+    page.ontouchmove = moving;
+    page.onmouseup = up;
+    page.ontouchend = up;
+    page.ontouchcancel = up;
+}
+
+function attachDesktopDrag() {
+    const parent = $('#desktop')[0];
+    if (!parent) return;
+    const children = Array.from(parent.children).filter(n => n.tagName.toLowerCase() === 'div' || n.tagName.toLowerCase() === 'a');
+    children.forEach(ch => {
+        ch.ondragstart = () => false;
+        ch.onmousedown = (e) => {
+            //防止桌面响应
+            try { e.stopPropagation(); } catch (err) { }
+            try { e.preventDefault(); } catch (err) { }
+            desktopMove(ch, e);
+        };
+        ch.ontouchstart = (e) => {
+            try { e.stopPropagation(); } catch (err) { }
+            try { e.preventDefault(); } catch (err) { }
+            desktopMove(ch, e);
+        };
+    });
+}
 function setIcon() {
     // return;
     if (!Array.isArray(JSON.parse(localStorage.getItem('desktop')))) {
@@ -2683,7 +2773,7 @@ document.getElementsByTagName('body')[0].onload = () => {
         $(':root').css('--theme-2', localStorage.getItem('color2'));
     }
     setIcon();//加载桌面图标
-
+	attachDesktopDrag();
     // 所以这个东西为啥要在开机的时候加载？
     // 不应该在 python.init 里面吗？
     //     (async function () {
