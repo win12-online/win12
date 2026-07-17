@@ -948,8 +948,8 @@ const nts = {
              <p>你可以使用此 AI 助手帮助你更快地完成工作，此 AI 助手基于 Deepseek v4 pro 模型 (有人用 Win12 工作？)<br>
             也请适当使用，不要谈论敏感、违规话题，<br>请有身为一个人类最基本的道德底线。<br>根据相关法律法规，我们不向欧盟用户提供服务。<br>
             在此特别感谢云智 API(yunzhiapi.cn) 为本项目提供赞助！</p>
-            <a class="a" onclick="window.open('readme/legal/privacy-policy-copliot.md','_blank');" win12_title="在浏览器新窗口打开链接">《隐私政策》</a><br>
-            <a class="a" onclick="window.open('readme/legal/user-agreement-copliot.md','_blank');" win12_title="在浏览器新窗口打开链接">《用户协议》</a><br>
+            <a class="a" onclick="window.open('readme/legal/privacy-policy-copliot','_blank');" win12_title="在浏览器新窗口打开链接">《隐私政策》</a><br>
+            <a class="a" onclick="window.open('readme/legal/user-agreement-copliot','_blank');" win12_title="在浏览器新窗口打开链接">《用户协议》</a><br>
             <a class="a" onclick="window.open('https://status.win12.tech/status/win12/','_blank');" win12_title="在浏览器新窗口打开链接">状态监测</a><br>
             <a class="a" onclick="window.open('https://www.yunzhiapi.cn/','_blank');" win12_title="在浏览器新窗口打开链接">云智 API 官网</a>
         `,
