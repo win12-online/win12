@@ -192,13 +192,13 @@ Special thanks to the following sponsors:
 ### Email
 For partnership requests, media inquiries, complaints and reports, please contact the project owner: `starry-source@outlook.com`
 
-For intellectual property complaints, please CC `ipcomplaint@win12.cloud` when sending to the above address.
+For intellectual property complaints, please CC `ipcomplaint@win12.tech` when sending to the above address.
 
-For community building, content maintenance, suggestions, and other usage issues, please contact `generalinquiry@win12.cloud`
+For community building, content maintenance, suggestions, and other usage issues, please contact `generalinquiry@win12.tech`
 
 Please include detailed contact information when writing so we can reply.
 
-**Note**: Emails ending with `win12.cloud` are handled by @tangyuan0821.
+**Note**: Emails ending with `win12.tech` are handled by @tangyuan0821.
 
 ## Community Groups
 We provide several groups for users and contributors to communicate.

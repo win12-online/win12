@@ -176,13 +176,13 @@ Remerciements particuliers aux sponsors suivants :
 ### Courriel
 Pour les demandes de partenariat, les demandes des médias, les plaintes et les signalements, veuillez contacter le propriétaire du projet : `starry-source@outlook.com`
 
-Pour les plaintes liées à la propriété intellectuelle, veuillez mettre en copie `ipcomplaint@win12.cloud` lors de l'envoi à l'adresse ci-dessus.
+Pour les plaintes liées à la propriété intellectuelle, veuillez mettre en copie `ipcomplaint@win12.tech` lors de l'envoi à l'adresse ci-dessus.
 
-Pour le développement communautaire, la maintenance du contenu, les suggestions et autres questions d'utilisation, veuillez contacter `generalinquiry@win12.cloud`
+Pour le développement communautaire, la maintenance du contenu, les suggestions et autres questions d'utilisation, veuillez contacter `generalinquiry@win12.tech`
 
 Veuillez inclure des informations de contact détaillées lors de votre correspondance afin que nous puissions vous répondre.
 
-**Remarque** : Les courriels se terminant par `win12.cloud` sont traités par @tangyuan0821.
+**Remarque** : Les courriels se terminant par `win12.tech` sont traités par @tangyuan0821.
 
 ## Groupes communautaires
 Nous proposons plusieurs groupes permettant aux utilisateurs et aux contributeurs d'échanger.
