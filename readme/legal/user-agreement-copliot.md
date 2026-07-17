@@ -1,4 +1,5 @@
 <h1 style="text-align: center;">Win12 Copilot 用户协议</h1>
+
 更新日期：2026 年 7 月 15 日
 
 生效日期：2026 年 7 月 23 日
