@@ -51,9 +51,19 @@ window.win12Native = {
       }
     });
 
+    // Backend timeout safety net: if the backend never sends done,
+    // unblock the UI after 35 seconds
+    const timeout = new Promise((_, reject) => {
+      setTimeout(() => reject(new Error("ping 超时")), 35000);
+    });
+
     try {
       await window.__TAURI__.core.invoke("ping_host", { host, ipv6, requestId });
-      await finished;
+      await Promise.race([finished, timeout]);
+    } catch (e) {
+      // If the backend timed out, the event listener will linger;
+      // ensure we always clean up and propagate the error
+      throw e;
     } finally {
       unlisten();
     }
