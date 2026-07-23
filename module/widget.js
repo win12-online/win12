@@ -55,8 +55,9 @@ let widgets = {
         update: () => {
             $('.wg.music163>.content').html(
                 `<p class="text">网易云音乐插件使用步骤</p>
+                <p class="text">（目前仅支持单曲循环）</p>
                 <p class="text">1. 打开网易云音乐，找到你喜欢的歌曲</p>
-                <p class="text">2.通过<a onclick="window.open('https://yunzhiapi.cn/?action=doc&id=52','_blank');“win12_title="获取音乐ID API - 云智API"class="jump">云智api</a>获取音乐ID</p>
+                <p class="text">2.通过<a onclick="window.open('https://https://stxttkx.github.io/netease-music-search','_blank');“win12_title="网易云音乐搜索" class="jump">音乐搜索网站</a>获取音乐ID</p>
                 <input type="text" id="music163-input" placeholder="3.在这里粘贴音乐ID，回车确认" onkeydown="goMusic(event)">`
             )
             
