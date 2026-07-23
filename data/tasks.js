@@ -6,7 +6,7 @@ let taskmgrTasks = [
     },
     {
         name: 'Whiteboard',
-        icon: 'icon/whiteboard.png',
+        icon: 'icon/whiteboard.svg',
         link: 'whiteboard'
     },
     {
@@ -25,7 +25,7 @@ let taskmgrTasks = [
         link: 'edge'
     },
     {
-        name: 'WebView2运行时组件'
+        name: 'WebView2 运行时组件'
     },
     {
         name: '设置',
@@ -33,7 +33,7 @@ let taskmgrTasks = [
         link: 'setting'
     },
     {
-        name: 'Python Editor(Python程序编辑器)',
+        name: 'Python Editor(Python 程序编辑器)',
         icon: 'icon/pythonEditor.svg',
         link: 'pythonEditor'
     },
@@ -48,7 +48,7 @@ let taskmgrTasks = [
         link: 'explorer'
     },
     {
-        name: '关于Windows12',
+        name: '关于 Windows12',
         icon: 'icon/about.svg',
         link: 'about'
     },
@@ -76,16 +76,16 @@ let taskmgrTasks = [
         name: 'System'
     },
     {
-        name: 'Windows内存处理系统进程'
+        name: 'Windows 内存处理系统进程'
     },
     {
         name: '应用层网关服务'
     },
     {
-        name: 'DCOM DLL Host进程'
+        name: 'DCOM DLL Host 进程'
     },
     {
-        name: 'Windows内存处理系统进程'
+        name: 'Windows 内存处理系统进程'
     },
     {
         name: '应用层网关服务'
@@ -97,7 +97,7 @@ let taskmgrTasks = [
         name: 'DirectDraw Helper'
     },
     {
-        name: 'DCOM DLL Host进程'
+        name: 'DCOM DLL Host 进程'
     },
     {
         name: 'IIS Admin Service Helper'
@@ -106,7 +106,7 @@ let taskmgrTasks = [
         name: 'Input Locales'
     },
     {
-        name: 'Windows壳进程'
+        name: 'Windows 壳进程'
     },
     {
         name: '本地安全权限服务'
@@ -118,13 +118,13 @@ let taskmgrTasks = [
         name: '多媒体支持进程'
     },
     {
-        name: 'Windows路由进程'
+        name: 'Windows 路由进程'
     },
     {
-        name: 'Windows信使服务'
+        name: 'Windows 信使服务'
     },
     {
-        name: 'Windows计划任务'
+        name: 'Windows 计划任务'
     },
     {
         name: '远程注册表服务'

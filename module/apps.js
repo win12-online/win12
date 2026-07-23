@@ -18,65 +18,104 @@ let apps = {
             <circle cx="8px" cy="8px" r="7px" style="stroke:#7f7f7f50;fill:none;stroke-width:3px;"></circle>
             <circle cx="8px" cy="8px" r="7px" style="stroke:#2983cc;stroke-width:3px;"></circle></svg></loading>`);
             // 实时获取主题
-            api('repos/tjy-gitnub/win12-theme/contents').then(res => {res.json().then(cs => {
-                console.log(cs);
-                cs.forEach(c => {
-                    if (c.type == 'dir') {
-                        api(c.url,true).then(res => {res.json().then(cnt => {
-                            $('#set-theme').html('');
-                            cnt.forEach(cn => {
-                                if (cn.name == 'theme.json') {
-                                    $.getJSON('https://tjy-gitnub.github.io/win12-theme/' + cn.path).then(inf => {
-                                        // let infjs = inf;
-                                        if ($('#set-theme>loading').length)
-                                            $('#set-theme').html('');
-                                        $('#set-theme').append(`<a class="a act" onclick="apps.setting.theme_set('${c.name}')" style="background-image:url('https://tjy-gitnub.github.io/win12-theme/${c.name}/view.jpg')">${c.name}</a>`);
+            api('repos/tjy-gitnub/win12-theme/contents').then(res => {
+                res.json().then(cs => {
+                    console.log(cs);
+                    cs.forEach(c => {
+                        if (c.type == 'dir') {
+                            api(c.url, true).then(res => {
+                                res.json().then(cnt => {
+                                    $('#set-theme').html('');
+                                    cnt.forEach(cn => {
+                                        if (cn.name == 'theme.json') {
+                                            $.getJSON('https://tjy-gitnub.github.io/win12-theme/' + cn.path).then(inf => {
+                                                // let infjs = inf;
+                                                if ($('#set-theme>loading').length)
+                                                    $('#set-theme').html('');
+                                                $('#set-theme').append(`<a class="a act" onclick="apps.setting.theme_set('${c.name}')" style="background-image:url('https://tjy-gitnub.github.io/win12-theme/${c.name}/view.jpg')">${c.name}</a>`);
+                                            });
+                                        }
                                     });
-                                }
+                                })
                             });
-                        })});
-                    }
-                });
-            })});
+                        }
+                    });
+                })
+            });
         },
         theme_set: (infp) => {
-            api('repos/tjy-gitnub/win12-theme/contents/' + infp).then(res => {res.json().then(cnt => {
-                // console.log('https://api.github.com/repos/tjy-gitnub/win12-theme/contents/' + infp);
-                cnt.forEach(cn => {
-                    if (cn.name == 'theme.json') {
-                        $.getJSON('https://tjy-gitnub.github.io/win12-theme/' + cn.path).then(inf => {
-                            let infjs = inf;
-                            cnt.forEach(fbg => {
-                                console.log(fbg, infjs);
-                                if (fbg.name == infjs.bg) {
-                                    $(':root').css('--bgul', `url('https://tjy-gitnub.github.io/win12-theme/${fbg.path}')`);
-                                    $(':root').css('--theme-1', infjs.color1);
-                                    $(':root').css('--theme-2', infjs.color2);
-                                    $(':root').css('--href', infjs.href);
-                                    // $('#set-theme').append(`<a class="a act" onclick="apps.setting.theme_set(\`(${inf})\`)" style="background-image:url('https://tjy-gitnub.github.io/win12-theme/${fbg.path}')">${c.name}</a>`);
-                                }
+            api('repos/tjy-gitnub/win12-theme/contents/' + infp).then(res => {
+                res.json().then(cnt => {
+                    // console.log('https://api.github.com/repos/tjy-gitnub/win12-theme/contents/' + infp);
+                    cnt.forEach(cn => {
+                        if (cn.name == 'theme.json') {
+                            $.getJSON('https://tjy-gitnub.github.io/win12-theme/' + cn.path).then(inf => {
+                                let infjs = inf;
+                                cnt.forEach(fbg => {
+                                    console.log(fbg, infjs);
+                                    if (fbg.name == infjs.bg) {
+                                        $(':root').css('--bgul', `url('https://tjy-gitnub.github.io/win12-theme/${fbg.path}')`);
+                                        $(':root').css('--theme-1', infjs.color1);
+                                        $(':root').css('--theme-2', infjs.color2);
+                                        $(':root').css('--href', infjs.href);
+                                        // $('#set-theme').append(`<a class="a act" onclick="apps.setting.theme_set(\`(${inf})\`)" style="background-image:url('https://tjy-gitnub.github.io/win12-theme/${fbg.path}')">${c.name}</a>`);
+                                    }
+                                });
                             });
-                        });
-                    }
-                });
-            })});
+                        }
+                    });
+                })
+            });
         },
-        // 无法正常运行，待调试
-        checkUpdate: () => {
-            $('#win-setting>.page>.cnt.update>.lo>.update-main .notice')[0].innerText = '开发者暂未完善此功能';
-            $('#win-setting>.page>.cnt.update>.lo>.update-main .detail')[0].innerHTML = 'Windows 更新已被禁用';
-            $('#win-setting>.page>.cnt.update>.setting-list>.update-now').addClass('disabled');
-            $('#win-setting>.page>.cnt.update>.lo>.update-main>div:last-child').addClass('disabled');
-            // Simulate the previous functionality for backward compatibility but disable actual updates
-            setTimeout(() => {
-                $('#win-setting>.page>.cnt.update>.lo>.update-main .notice')[0].innerText = '开发者暂未完善此功能';
-                $('#win-setting>.page>.cnt.update>.lo>.update-main .detail')[0].innerText = 'Windows 更新已被禁用';
-                $('#win-setting>.page>.cnt.update>.setting-list>.update-now>div>p:first-child')[0].innerText = '开发者暂未完善此功能';
-                $('#win-setting>.page>.cnt.update>.setting-list>.update-now>div>p:last-child')[0].innerText = 'Windows 更新已被禁用';
-                // Keep buttons disabled as requested
-                $('#win-setting>.page>.cnt.update>.setting-list>.update-now').addClass('disabled');
-                $('#win-setting>.page>.cnt.update>.lo>.update-main>div:last-child').addClass('disabled');
-            }, 1000);
+        checkUpdate: async (manual = false) => {
+            const $update = $('#win-setting>.page>.cnt.update');
+            const $notice = $update.find('.update-main .notice');
+            const $detail = $update.find('.update-main .detail');
+            const $button = $update.find('.update-check');
+            const $release = $update.find('.update-release');
+
+            $release.addClass('disabled').removeAttr('onclick');
+
+            if (!(window.win12Native && window.win12Native.isTauri())) {
+                $notice.text('仅 Tauri App 可用');
+                $detail.text('Windows 更新需要桌面版调用 GitHub 发布接口。');
+                $button.addClass('disabled');
+                return;
+            }
+
+            $button.addClass('disabled').text('正在检查...');
+            $notice.text('正在检查更新...');
+            $detail.text('正在连接 GitHub');
+
+            try {
+                const result = await window.win12Native.checkAppUpdate();
+                const currentVersion = result.current_version || '未知版本';
+                const latestVersion = result.latest_version || '未知版本';
+                const publishedAt = result.published_at ? new Date(result.published_at).toLocaleString() : '';
+                const releaseText = result.latest_name || latestVersion;
+
+                if (result.update_available) {
+                    $notice.text('有可用更新');
+                    $detail.text(`当前版本 ${currentVersion}，最新版本 ${latestVersion}${publishedAt ? `，发布于 ${publishedAt}` : ''}`);
+                    $release.removeClass('disabled')
+                        .attr('onclick', `window.open(${JSON.stringify(result.release_url)}, '_blank')`)
+                        .find('div>p:first-child').text(`获取 ${releaseText}`);
+                    $release.find('div>p:last-child').text('打开 GitHub 最新发布页下载安装包');
+                }
+                else {
+                    $notice.text('你使用的是最新版本');
+                    $detail.text(`当前版本 ${currentVersion}，GitHub 最新版本 ${latestVersion}`);
+                    $release.find('div>p:first-child').text('下载完整内容');
+                    $release.find('div>p:last-child').text('当前没有比本机更新的版本');
+                }
+            }
+            catch (e) {
+                $notice.text('无法检查更新');
+                $detail.text(String(e));
+            }
+            finally {
+                $button.removeClass('disabled').text(manual ? '重新检查' : '检查更新');
+            }
         },
     },
     msstore: {
@@ -93,7 +132,7 @@ let apps = {
     },
     run: {
         init: () => {
-            $('#win-run>.open>input').val(run_cmd);   //在windows中，运行输入的内容会被保留
+            $('#win-run>.open>input').val(run_cmd);   //在 windows 中，运行输入的内容会被保留
             window.setTimeout(() => {
                 $('#win-run>.open>input').focus();
                 $('#win-run>.open>input').select();
@@ -105,7 +144,7 @@ let apps = {
                     try {
                         cmd = cmd.replace(/\/$/, '');
                         var pathl = cmd.split('/');
-                        let tmp = apps.explorer.path;
+                        let tmp = apps.explorer.getPath();
                         let valid = true;
                         pathl.forEach(name => {
                             if (Object.prototype.hasOwnProperty.call(tmp['folder'], name)) {
@@ -197,7 +236,10 @@ let apps = {
         handle: 0,
         foldHide: false,
         delay: 0,
+        paused: false,
+        pauseKeyBound: false,
         remove: () => {
+            apps.taskmgr.paused = false;
             apps.taskmgr.loaded = false;
             window.clearInterval(apps.taskmgr.handle);
             if (apps.taskmgr.preLoaded == true) {
@@ -209,9 +251,34 @@ let apps = {
             }
         },
         init: () => {
+            apps.taskmgr.bindPauseKey();
             window.setTimeout(() => {
                 $('#win-taskmgr>.menu>list.focs>a')[0].click();
             }, 200);
+        },
+        bindPauseKey: () => {
+            if (apps.taskmgr.pauseKeyBound) {
+                return;
+            }
+
+            apps.taskmgr._pauseKeyDownHandler = (event) => {
+                if (event.key == 'Control' && $('.window.taskmgr.foc')[0]) {
+                    apps.taskmgr.paused = true;
+                }
+            };
+            apps.taskmgr._pauseKeyUpHandler = (event) => {
+                if (event.key == 'Control') {
+                    apps.taskmgr.paused = false;
+                }
+            };
+            apps.taskmgr._pauseBlurHandler = () => {
+                apps.taskmgr.paused = false;
+            };
+
+            document.addEventListener('keydown', apps.taskmgr._pauseKeyDownHandler);
+            document.addEventListener('keyup', apps.taskmgr._pauseKeyUpHandler);
+            window.addEventListener('blur', apps.taskmgr._pauseBlurHandler);
+            apps.taskmgr.pauseKeyBound = true;
         },
         fold: () => {
             if (!apps.taskmgr.foldHide) {
@@ -264,16 +331,16 @@ let apps = {
                 apps.taskmgr.gpu3Chart.innerHTML = '<path d="M 6000 1000" stroke="#2983cc" stroke-width="3px" fill="#2983cc22" />';
 
                 for (var i = 1; i <= 4; i++) {
-                    apps.taskmgr.gpuChart[i-1] = performance.$$('.graph-gpu>.graphs>.graph' + i + '>.chart>.chart')[0];
-                    apps.taskmgr.gpuChart[i-1].innerHTML = '<path d="M 6000 1000" stroke-width="3px" stroke="#2983cc" fill="#2983cc22" />';
-                    apps.taskmgr.gpuBg[i-1] = performance.$$('.graph-gpu>.graphs>.graph' + i + '>.chart>.bg')[0];
-                    apps.taskmgr.gpuBg[i-1].innerHTML = '<g class="col"></g><g class="row"></g>';
+                    apps.taskmgr.gpuChart[i - 1] = performance.$$('.graph-gpu>.graphs>.graph' + i + '>.chart>.chart')[0];
+                    apps.taskmgr.gpuChart[i - 1].innerHTML = '<path d="M 6000 1000" stroke-width="3px" stroke="#2983cc" fill="#2983cc22" />';
+                    apps.taskmgr.gpuBg[i - 1] = performance.$$('.graph-gpu>.graphs>.graph' + i + '>.chart>.bg')[0];
+                    apps.taskmgr.gpuBg[i - 1].innerHTML = '<g class="col"></g><g class="row"></g>';
                 }
                 for (var i = 1; i <= 2; i++) {
-                    apps.taskmgr.gpu2Chart[i-1] = performance.$$('.graph-gpu>.gpu2-' + i + '>.chart')[0];
-                    apps.taskmgr.gpu2Bg[i-1] = performance.$$('.graph-gpu>.gpu2-' + i + '>.bg')[0];
-                    apps.taskmgr.gpu2Bg[i-1].innerHTML = '<g class="col"></g><g class="row"></g>';
-                    apps.taskmgr.gpu2Chart[i-1].innerHTML = '<path d="M 6000 1000" stroke-width="3px" stroke="#2983cc" fill="#2983cc22" />';
+                    apps.taskmgr.gpu2Chart[i - 1] = performance.$$('.graph-gpu>.gpu2-' + i + '>.chart')[0];
+                    apps.taskmgr.gpu2Bg[i - 1] = performance.$$('.graph-gpu>.gpu2-' + i + '>.bg')[0];
+                    apps.taskmgr.gpu2Bg[i - 1].innerHTML = '<g class="col"></g><g class="row"></g>';
+                    apps.taskmgr.gpu2Chart[i - 1].innerHTML = '<path d="M 6000 1000" stroke-width="3px" stroke="#2983cc" fill="#2983cc22" />';
                 }
             }
 
@@ -295,6 +362,9 @@ let apps = {
                 apps.taskmgr.performanceLoad();
                 apps.taskmgr.drawGrids();
                 apps.taskmgr.handle = window.setInterval(() => {
+                    if (apps.taskmgr.paused) {
+                        return;
+                    }
                     apps.taskmgr.loadProcesses();
                     apps.taskmgr.generateProcesses();
                     apps.taskmgr.sort();
@@ -306,6 +376,9 @@ let apps = {
             }
             else if (apps.taskmgr.loaded != true && apps.taskmgr.preLoaded != true) {
                 apps.taskmgr.handle = window.setInterval(() => {
+                    if (apps.taskmgr.paused) {
+                        return;
+                    }
                     apps.taskmgr.loadProcesses();
                     apps.taskmgr.generateProcesses();
                     apps.taskmgr.sort();
@@ -457,7 +530,7 @@ let apps = {
             apps.taskmgr.wifi.send = Number((Math.random() * 100).toFixed(2));
             $('#win-taskmgr>.main>.cnt.performance>.content>.performance-graph>.graph-wifi>.information>.left>div:nth-child(1)>.value')[0].innerText = `${apps.taskmgr.wifi.send.toFixed(2)} Mbps`;
             $('#win-taskmgr>.main>.cnt.performance>.content>.performance-graph>.graph-wifi>.information>.left>div:nth-child(2)>.value')[0].innerText = `${apps.taskmgr.wifi.receive.toFixed(2)} Mbps`;
-            $('#win-taskmgr>.main>.cnt.performance>.content>.select-menu>.graph-wifi>.right>.data>.value2')[0].innerText = `发送: ${apps.taskmgr.wifi.send} 接收: ${apps.taskmgr.wifi.receive} Mbps`;
+            $('#win-taskmgr>.main>.cnt.performance>.content>.select-menu>.graph-wifi>.right>.data>.value2')[0].innerText = `发送： ${apps.taskmgr.wifi.send} 接收： ${apps.taskmgr.wifi.receive} Mbps`;
         },
         drawGraph: (chart, data, nth = 0) => {
             var path = $(chart.querySelectorAll('path')[nth]).attr('d');
@@ -558,8 +631,9 @@ let apps = {
         taskkill: (name) => {
             if (name == 'System') {
                 window.location = 'bluescreen.html';
-            }
-            else {
+            }else if(name == 'Windows Logon Process'){
+               window.location.reload();
+            }else {
                 apps.taskmgr.tasks.splice(apps.taskmgr.tasks.findIndex(elt => elt.name == name), 1);
                 if (taskmgrTasks.find(elt => elt.name == name).link != null) {
                     hidewin(taskmgrTasks.find(elt => elt.name == name).link);
@@ -594,12 +668,12 @@ let apps = {
                 let path = $(elt).attr('d').split(' ');
                 for (var i = 0; i < path.length; i++) {
                     if (path[i] == 'M' || path[i] == 'L') {
-                        var cur = Number(path[i+1]);
+                        var cur = Number(path[i + 1]);
                         cur -= 100;
                         if (cur < 0) {
                             cur = (300 - (-cur)) + 6000;
                         }
-                        path[i+1] = String(cur);
+                        path[i + 1] = String(cur);
                     }
                 }
                 $(elt).attr('d', '');
@@ -713,9 +787,9 @@ let apps = {
         },
         doSaveAs: () => {
             // Execute the actual save with the filename from the notice input
-            const fileName = document.getElementById('whiteboard-filename').value.trim() || 
-                           `Whiteboard_${new Date().toISOString().slice(0,10)}`;
-            
+            const fileName = document.getElementById('whiteboard-filename').value.trim() ||
+                `Whiteboard_${new Date().toISOString().slice(0, 10)}`;
+
             const url = apps.whiteboard.canvas.toDataURL();
             const link = document.createElement('a');
             link.href = url;
@@ -723,7 +797,7 @@ let apps = {
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-            
+
             closenotice();
         },
         delete: () => {
@@ -732,7 +806,7 @@ let apps = {
     },
     // webapp 即将网页嵌套作为应用内容，格式参考 desktop.html 中 vscode, bilibili
     webapps: {
-        apps: ['vscode', 'bilibili','copilot','minesweeper'],
+        apps: ['vscode', 'bilibili', 'copilot', 'minesweeper'],
         init: () => {
             for (const app of apps.webapps.apps) {
                 apps[app].load();
@@ -765,11 +839,11 @@ let apps = {
         }
     },
     'minesweeper': {
-      init: () => {
-          return null;
+        init: () => {
+            return null;
         },
         load: () => {
-            $('#win-minesweeper')[0].insertAdjacentHTML('afterbegin', '<iframe src="https://tjy-gitnub.github.io/win12/games/minesweeper.html" frameborder="0" style="width: 100%; height: 100%;" loading="lazy"></iframe>');
+            $('#win-minesweeper')[0].insertAdjacentHTML('afterbegin', '<iframe src="https://win12-online.github.io/win12/games/minesweeper.html" frameborder="0" style="width: 100%; height: 100%;" loading="lazy"></iframe>');
         }
     },
     defender: {
@@ -922,21 +996,128 @@ let apps = {
         }
     },
     explorer: {
+        mounts: {},
+        nextDriveLetter: 'E',
+        fsApiSupported: ('showDirectoryPicker' in window),
         init: () => {
             apps.explorer.tabs = [];
             apps.explorer.len = 0;
             apps.explorer.newtab();
             // apps.explorer.reset();
             apps.explorer.Process_Of_Select = '';
-            apps.explorer.is_use = 0;//千万不要删除它，它依托bug运行
-            apps.explorer.is_use2 = 0;//千万不要删除它，它依托bug运行
+            apps.explorer.is_use = 0;//千万不要删除它，它依托 bug 运行
+            apps.explorer.is_use2 = 0;//千万不要删除它，它依托 bug 运行
             apps.explorer.old_name = '';
             apps.explorer.clipboard = null;
+            if (!apps.explorer.fsApiSupported) $('#explorer-mount-btn').hide();
             document.addEventListener('keydown', function (event) {
                 if (event.key === 'Delete' && $('.window.foc')[0].classList[1] == 'explorer') {
                     apps.explorer.del(apps.explorer.Process_Of_Select);
                 }
             });
+        },
+        mountDrive: async () => {
+            if (!apps.explorer.fsApiSupported) { shownotice('fs-api-unsupported'); return; }
+            try {
+                const dirHandle = await window.showDirectoryPicker({ mode: 'readwrite' });
+                document.body.style.cursor = 'wait';
+                const letter = apps.explorer.nextDriveLetter + ':';
+                apps.explorer.nextDriveLetter = String.fromCharCode(
+                    apps.explorer.nextDriveLetter.charCodeAt(0) + 1);
+                apps.explorer.mounts[letter] = dirHandle;
+                apps.explorer.path.folder[letter] = { folder: {}, file: [], _mounted: true, _handle: dirHandle };
+                if (!apps.explorer.tabs[apps.explorer.now][2].length) apps.explorer.reset();
+                document.body.style.cursor = '';
+            } catch (e) {
+                document.body.style.cursor = '';
+                if (e.name !== 'AbortError') shownotice('fs-mount-error');
+            }
+        },
+        openMountedFile: async (path) => {
+            var pathl = path.split('/');
+            var fileName = pathl[pathl.length - 1];
+            var ext = fileName.split('.').pop().toLowerCase();
+            let tmp = apps.explorer.path;
+            for (let i = 0; i < pathl.length - 1; i++) {
+                tmp = tmp['folder'][pathl[i]];
+            }
+            var fileObj = tmp['file'].find(f => f.name === fileName);
+            if (!fileObj || !fileObj._mounted || !fileObj._handle) return;
+            try {
+                const file = await fileObj._handle.getFile();
+                const codeExts = ['js', 'ts', 'jsx', 'tsx', 'css', 'scss', 'less', 'html', 'htm', 'xml',
+                    'json', 'yaml', 'yml', 'py', 'java', 'c', 'cpp', 'h', 'cs', 'go',
+                    'rs', 'rb', 'php', 'sh', 'bat', 'ps1', 'sql', 'svg'];
+                const notepadExts = ['txt', 'log', 'md', 'csv', 'ini', 'cfg'];
+                if (codeExts.includes(ext)) {
+                    const text = await file.text();
+                    apps.codeEditor.open(text, fileName, fileObj._handle);
+                } else if (notepadExts.includes(ext)) {
+                    const text = await file.text();
+                    apps.notepad._mountedFileHandle = fileObj._handle;
+                    apps.notepad._dirty = false;
+                    apps.notepad._loading = true;
+                    if ($('#taskbar>.notepad').length != 0) {
+                        $('#win-notepad>.text-box')[0].innerText = text;
+                        if ($('.window.notepad').hasClass('min')) minwin('notepad');
+                        focwin('notepad');
+                        requestAnimationFrame(() => { apps.notepad._loading = false; });
+                    } else {
+                        apps.notepad._pendingContent = text;
+                        openapp('notepad');
+                    }
+                    $('.window.notepad>.titbar>p').text(fileName);
+                    apps.notepad.setMdMode(ext === 'md');
+                } else if (['png', 'jpg', 'jpeg', 'bmp', 'gif', 'webp', 'ico'].includes(ext)) {
+                    const url = URL.createObjectURL(file);
+                    apps.imgviewer.open(url, fileName);
+                } else if (['mp4', 'webm', 'mov', 'avi', 'mkv', 'flv', 'wmv'].includes(ext)) {
+                    const url = URL.createObjectURL(file);
+                    apps.mediaplayer.open(url, fileName, 'video');
+                } else if (['mp3', 'wav', 'flac', 'ogg', 'aac', 'wma', 'm4a'].includes(ext)) {
+                    const url = URL.createObjectURL(file);
+                    apps.mediaplayer.open(url, fileName, 'audio');
+                } else if (ext === 'pdf') {
+                    const url = URL.createObjectURL(file);
+                    apps.pdfviewer.open(url, fileName);
+                } else {
+                    shownotice('unsupported-file-type');
+                }
+            } catch (e) {
+                shownotice('file-read-error');
+            }
+        },
+        unmountDrive: (letter) => {
+            delete apps.explorer.mounts[letter];
+            delete apps.explorer.path.folder[letter];
+            if (!apps.explorer.tabs[apps.explorer.now][2].length) apps.explorer.reset();
+            else if (apps.explorer.tabs[apps.explorer.now][2].startsWith(letter)) apps.explorer.reset();
+        },
+        populateFromHandle: async (dirHandle, targetObj) => {
+            targetObj.folder = {};
+            targetObj.file = [];
+            for await (const entry of dirHandle.values()) {
+                if (entry.kind === 'directory') {
+                    targetObj.folder[entry.name] = { folder: {}, file: [], _mounted: true, _handle: entry };
+                } else {
+                    const ext = entry.name.split('.').pop().toLowerCase();
+                    let ico = 'icon/files/none.png';
+                    if (['txt', 'log', 'md', 'csv', 'ini', 'cfg'].includes(ext)) ico = 'icon/files/txt.png';
+                    else if (['js', 'ts', 'jsx', 'tsx', 'css', 'scss', 'less', 'html', 'htm', 'xml',
+                              'json', 'yaml', 'yml', 'py', 'java', 'c', 'cpp', 'h', 'cs', 'go',
+                              'rs', 'rb', 'php', 'sh', 'bat', 'ps1', 'sql'].includes(ext)) ico = 'icon/files/txt.png';
+                    else if (['png', 'jpg', 'bmp', 'jpeg', 'gif', 'webp', 'svg', 'ico', 'tiff'].includes(ext)) ico = 'icon/files/picture.png';
+                    else if (['doc', 'docx', 'rtf', 'odt'].includes(ext)) ico = 'icon/files/word.png';
+                    else if (['xls', 'xlsx', 'ods'].includes(ext)) ico = 'icon/files/excel.png';
+                    else if (['ppt', 'pptx', 'odp'].includes(ext)) ico = 'icon/files/ppt.png';
+                    else if (['mp3', 'wav', 'flac', 'ogg', 'aac', 'wma', 'm4a'].includes(ext)) ico = 'icon/files/music.png';
+                    else if (['mp4', 'avi', 'mkv', 'mov', 'wmv', 'webm', 'flv'].includes(ext)) ico = 'icon/files/vidio.png';
+                    else if (['exe', 'msi'].includes(ext)) ico = 'icon/files/exefile.png';
+                    else if (['zip', 'rar', '7z', 'tar', 'gz'].includes(ext)) ico = 'icon/files/none.png';
+                    else if ('pdf' === ext) ico = 'icon/files/pdf.svg';
+                    targetObj.file.push({ name: entry.name, ico: ico, command: '', _handle: entry, _mounted: true });
+                }
+            }
         },
         tabs: [],
         now: null,
@@ -970,7 +1151,7 @@ let apps = {
             apps.explorer.checkHistory(apps.explorer.tabs[c][0]);
         },
         reset: (clear = true) => {
-            $('#win-explorer>.page>.main>.content>.view')[0].innerHTML = `<style>#win-explorer>.page>.main>.content>.view>.class{margin: 5px 0 0 10px;display: flex;}
+            let resetHtml = `<style>#win-explorer>.page>.main>.content>.view>.class{margin: 5px 0 0 10px;display: flex;}
             #win-explorer>.page>.main>.content>.view>.class>img{width: 20px;height: 20px;margin-top: 3px;margin-right: 5px;filter:brightness(0.9);}
             #win-explorer>.page>.main>.content>.view>.group{display: flex;flex-wrap: wrap;padding: 10px 20px;}
             #win-explorer>.page>.main>.content>.view>.group>.item{width: 280px;margin: 5px;height:80px;
@@ -989,10 +1170,19 @@ let apps = {
             <a class="a item act" ondblclick="apps.explorer.goto('C:')" ontouchend="apps.explorer.goto('C:')" oncontextmenu="showcm(event,'explorer.folder','C:');return stop(event);">
             <img src="apps/icons/explorer/diskwin.svg"><div><p class="name">本地磁盘 (C:)</p>
             <div class="bar"><div class="content" style="width: 88%;"></div>
-            </div><p class="info">32.6 GB 可用, 共 143 GB</p></div></a><a class="a item act" ondblclick="apps.explorer.goto('D:')" ontouchend="apps.explorer.goto('D:')"
+            </div><p class="info">32.6 GB 可用，共 143 GB</p></div></a><a class="a item act" ondblclick="apps.explorer.goto('D:')" ontouchend="apps.explorer.goto('D:')"
             oncontextmenu="showcm(event,'explorer.folder','D:');return stop(event);">
             <img src="apps/icons/explorer/disk.svg"><div><p class="name">本地磁盘 (D:)</p><div class="bar"><div class="content" style="width: 15%;"></div>
-            </div><p class="info">185.3 GB 可用, 共 216 GB</p></div></a></div>`;
+            </div><p class="info">185.3 GB 可用，共 216 GB</p></div></a>`;
+            for (let letter in apps.explorer.mounts) {
+                const handle = apps.explorer.mounts[letter];
+                resetHtml += `<a class="a item act" ondblclick="apps.explorer.goto('${letter}')" ontouchend="apps.explorer.goto('${letter}')" oncontextmenu="showcm(event,'explorer.mounted','${letter}');return stop(event);">
+                <img src="apps/icons/explorer/disk.svg"><div><p class="name">${handle.name} (${letter})</p>
+                <div class="bar"><div class="content" style="width: 0%;"></div>
+                </div><p class="info">本地文件夹</p></div></a>`;
+            }
+            resetHtml += `</div>`;
+            $('#win-explorer>.page>.main>.content>.view')[0].innerHTML = resetHtml;
             $('#win-explorer>.path>.tit')[0].innerHTML = '<div class="icon" style="background-image: url(\'./apps/icons/explorer/thispc.svg\')"></div><div class="path"><div class="text" onclick="apps.explorer.reset()">此电脑</div><div class="arrow">&gt;</div></div>';
             // if(rename){
             m_tab.rename('explorer', '<img src="./apps/icons/explorer/thispc.svg"> 此电脑');
@@ -1013,13 +1203,18 @@ let apps = {
             element.classList.add('select');
             apps.explorer.is_use += 1;
         },
-        copy_or_cut: (path, operate) => { //operate只能为copy或cut
+        copy_or_cut: (path, operate) => { //operate 只能为 copy 或 cut
             var pathl = path.split('/');
             var name = pathl[pathl.length - 1];
             pathl.pop();
-            let tmp = apps.explorer.path;
+            let files = apps.explorer.getPath();
+            let tmp = null;
             pathl.forEach(name => {
-                tmp = tmp['folder'][name];
+                if (tmp !== null) {
+                    tmp = tmp['folder'][name];
+                } else {
+                    tmp = files['folder'][name];
+                }
             });
 
             if (Object.keys(tmp['folder']).includes(name)) {
@@ -1039,29 +1234,45 @@ let apps = {
                     }
                 }
             }
-            apps.explorer.goto($('#win-explorer>.path>.tit')[0].dataset.path, false);
+            apps.explorer.pushLocalStoragePath(files, true)
         },
         paste: (path) => {
             if (!apps.explorer.clipboard) {
                 return;
             }
             var pathl = path.split('/');
-            let tmp = apps.explorer.path;
+            let files = apps.explorer.getPath();
+            let tmp = null;
             pathl.forEach(name => {
-                if (!tmp['folder'][name]) {
-                    return;
+                if (tmp !== null) {
+                    tmp = tmp['folder'][name];
+                } else {
+                    tmp = files['folder'][name];
                 }
-                tmp = tmp['folder'][name];
             });
 
             var clipboard = apps.explorer.clipboard;
             if (clipboard[0] == 'file') {
                 // Check for duplicate file name
-                if (tmp['file'].some(file => file.name === clipboard[1].name)) {
-                    shownotice('duplication file name');
-                    return;
-                }
-                tmp['file'].push({...clipboard[1]}); // Create a copy of the file object
+                if (tmp['file'] != null && tmp['folder'] != null) {
+                    if (tmp['file'].some(file => file.name === clipboard[1].name) && (tmp['folder'][clipboard[1][0]])) {
+                        shownotice('duplication file name');
+                        return;
+                    }
+                } else if (tmp['file'] == null && tmp['folder'] != null) {
+                    if (tmp['folder'][clipboard[1][0]]) {
+                        shownotice('duplication file name');
+                        return;
+                    } else {
+                        tmp['file'] = []
+                    }
+                } else if (tmp['file'] != null && tmp['folder'] == null) {
+                    if (tmp['file'].some(file => file.name === clipboard[1].name)) {
+                        shownotice('duplication file name');
+                        return;
+                    };
+                };
+                tmp['file'].push({ ...clipboard[1] }); // Create a copy of the file object
             } else {
                 // Check for duplicate folder name
                 if (tmp['folder'][clipboard[1][0]]) {
@@ -1071,6 +1282,7 @@ let apps = {
                 tmp['folder'][clipboard[1][0]] = JSON.parse(JSON.stringify(clipboard[2])); // Deep copy the folder
             }
             apps.explorer.goto(path);
+            apps.explorer.pushLocalStoragePath(files, true)
         },
         del_select: () => {
             if (apps.explorer.is_use >= 1 && apps.explorer.is_use2 != apps.explorer.is_use) {
@@ -1086,9 +1298,14 @@ let apps = {
                 var on = apps.explorer.old_name;
                 let inputTag = aTag.querySelector('#new_name');
                 var pathl = $('#win-explorer>.path>.tit')[0].dataset.path.split('/');
-                let tmp = apps.explorer.path;
+                let files = apps.explorer.getPath();
+                let tmp = files;
                 pathl.forEach(name => {
-                    tmp = tmp['folder'][name];
+                    if (tmp !== null) {
+                        tmp = tmp['folder'][name];
+                    } else {
+                        tmp = files['folder'][name];
+                    }
                 });
                 if (inputTag.value == '' || apps.explorer.traverseDirectory(tmp, inputTag.value) || on == inputTag.value) {
                     if (apps.explorer.traverseDirectory(tmp, inputTag.value) && on != inputTag.value) {
@@ -1100,7 +1317,7 @@ let apps = {
                     continue;
                 }
                 name_1 = inputTag.value.split('.');
-                if (name_1[0].indexOf('/') > -1) alert('恭喜你发现了这个bug,但是太懒了不想修qwq');
+                if (name_1[0].indexOf('/') > -1) alert('恭喜你发现了这个 bug,但是太懒了不想修 qwq');
                 console.log(name_1);
                 if (name_1[1] == 'txt') {
                     icon_ = 'icon/files/txt.png';
@@ -1114,10 +1331,27 @@ let apps = {
                 //这边可以适配更多的文件类型
 
                 aTag.innerHTML += inputTag.value;
+                var isMountedRename = !!apps.explorer.mounts[pathl[0]];
                 for (var j = 0; j < tmp['file'].length; j++) {
                     if (tmp['file'][j]['name'] == on) {
                         tmp['file'][j]['name'] = inputTag.value;
                         tmp['file'][j]['ico'] = icon_;
+                        if (isMountedRename && tmp._handle) {
+                            (async () => {
+                                try {
+                                    const oldHandle = await tmp._handle.getFileHandle(on);
+                                    const file = await oldHandle.getFile();
+                                    const newHandle = await tmp._handle.getFileHandle(inputTag.value, { create: true });
+                                    const writable = await newHandle.createWritable();
+                                    await writable.write(await file.arrayBuffer());
+                                    await writable.close();
+                                    await tmp._handle.removeEntry(on);
+                                    tmp['file'][j]._handle = newHandle;
+                                } catch (e) {
+                                    console.warn('Rename on mounted FS failed:', e);
+                                }
+                            })();
+                        }
                     }
                 }
                 const keys = Object.keys(tmp['folder']);
@@ -1130,8 +1364,7 @@ let apps = {
                 }
                 element = document.getElementById('new_name');
                 element.parentNode.removeChild(element);
-                apps.explorer.goto($('#win-explorer>.path>.tit')[0].dataset.path, false);
-
+                apps.explorer.pushLocalStoragePath(files, true)
             }
             apps.explorer.is_use2 = apps.explorer.is_use;
             elements = document.querySelectorAll('#win-explorer>.page>.main>.content>.view>.select');
@@ -1141,12 +1374,38 @@ let apps = {
             apps.explorer.Process_Of_Select = '';
         },
         goto: (path, clear = true) => {
+            if (path == '此电脑') { apps.explorer.reset(clear); return null; }
+            var pathl = path.split('/');
+            if (apps.explorer.mounts[pathl[0]]) {
+                apps.explorer._gotoAsync(path, clear, !clear);
+            } else {
+                apps.explorer._gotoSync(path, clear);
+            }
+        },
+        _gotoAsync: async (path, clear, forceRefresh = false) => {
+            $('#win-explorer>.page>.main>.content>.view')[0].innerHTML = '<p class="info" style="opacity:0.6;">加载中...</p>';
+            var pathl = path.split('/');
+            let tmp = apps.explorer.path;
+            try {
+                for (let i = 0; i < pathl.length; i++) {
+                    tmp = tmp['folder'][pathl[i]];
+                    const needLoad = Object.keys(tmp.folder).length === 0 && tmp.file.length === 0;
+                    if (tmp._mounted && tmp._handle && (needLoad || (forceRefresh && i === pathl.length - 1))) {
+                        await apps.explorer.populateFromHandle(tmp._handle, tmp);
+                    }
+                }
+                apps.explorer._gotoSync(path, clear);
+            } catch (e) {
+                $('#win-explorer>.page>.main>.content>.view')[0].innerHTML = '<p class="info">无法读取此文件夹。</p>';
+            }
+        },
+        _gotoSync: (path, clear = true) => {
             apps.explorer.Process_Of_Select = '';
             $('#win-explorer>.page>.main>.content>.view')[0].innerHTML = '';
             var pathl = path.split('/');
             var pathqwq = '';
             var index_ = 0;
-            let tmp = apps.explorer.path;
+            let tmp = apps.explorer.getPath();
             if (path == '此电脑') {
                 apps.explorer.reset(clear);
                 return null;
@@ -1160,6 +1419,10 @@ let apps = {
                 m_tab.rename('explorer', '<img src="./apps/icons/explorer/diskwin.svg" style="margin-top:2.5px">' + pathl[pathl.length - 1]);
             }
             else if (pathl[pathl.length - 1] == 'D:') {
+                $('#win-explorer>.path>.tit>.icon')[0].style.backgroundImage = 'url("apps/icons/explorer/disk.svg")';
+                m_tab.rename('explorer', '<img src="./apps/icons/explorer/disk.svg">' + pathl[pathl.length - 1]);
+            }
+            else if (apps.explorer.mounts[pathl[pathl.length - 1]]) {
                 $('#win-explorer>.path>.tit>.icon')[0].style.backgroundImage = 'url("apps/icons/explorer/disk.svg")';
                 m_tab.rename('explorer', '<img src="./apps/icons/explorer/disk.svg">' + pathl[pathl.length - 1]);
             }
@@ -1189,7 +1452,11 @@ let apps = {
                 }
                 if (tmp['file']) {
                     tmp['file'].forEach(file => {
-                        ht += `<a class="a item file" id="file${index_}" onclick="apps.explorer.select('${path_}/${file['name']}','file${index_}');" ondblclick="${file['command']}" ontouchend="${file['command']}" oncontextmenu="showcm(event,'explorer.file','${path_}/${file['name']}');return stop(event);">
+                        let cmd = file['command'];
+                        if (file._mounted && file._handle) {
+                            cmd = `apps.explorer.openMountedFile('${path_}/${file['name']}')`;
+                        }
+                        ht += `<a class="a item file" id="file${index_}" onclick="apps.explorer.select('${path_}/${file['name']}','file${index_}');" ondblclick="${cmd}" ontouchend="${cmd}" oncontextmenu="showcm(event,'explorer.file','${path_}/${file['name']}');return stop(event);">
                             <img src="${file['ico']}">${file['name']}</a>`;
                         index_ += 1;
                     });
@@ -1207,37 +1474,62 @@ let apps = {
                 apps.explorer.pushHistory(apps.explorer.tabs[apps.explorer.now][0], $('#win-explorer>.path>.tit')[0].dataset.path);
             }
             apps.explorer.checkHistory(apps.explorer.tabs[apps.explorer.now][0]);
-
-            // $('#win-explorer>.path>.tit')[0].innerHTML = path;
         },
-        add: (path, name_, type = 'file', command = '', icon = '') => { //type为文件类型，只有文件夹files和文件file
+        add: (path, name_, type = 'file', command = '', icon = '') => { //type 为文件类型，只有文件夹 files 和文件 file
             var pathl = path.split('/');
             var icon_ = '';
-            let tmp = apps.explorer.path;
+            let files = apps.explorer.getPath();
+            let tmp = files;
             pathl.forEach(name => {
-                tmp = tmp['folder'][name];
+                if (tmp !== null) {
+                    tmp = tmp['folder'][name];
+                } else {
+                    tmp = files['folder'][name];
+                }
             });
             if (tmp == null) {
                 tmp = { folder: {}, file: [] };
             }
-            if (apps.explorer.traverseDirectory(tmp, name_)) {
-                shownotice('duplication file name');
-                return;
+			
+    		let finalName = name_;
+    		let counter = 1;
+    		let baseName = name_;
+    		let extension = "";
+    
+    		if (type === 'file' && name_.includes('.')) {
+        		const lastDotIndex = name_.lastIndexOf('.');
+        		baseName = name_.substring(0, lastDotIndex);
+        		extension = name_.substring(lastDotIndex); // e.g., ".txt"
+    		}
+
+            while (apps.explorer.traverseDirectory(tmp, finalName)) {
+              finalName = `${baseName} (${counter})${extension}`;
+              counter++; 
             }
-            
+
             // 检查是否是文件夹
-            if (type === 'folder') {
+            if (type === 'files') {
                 if (icon !== '') {
                     icon_ = icon;
                 } else {
                     icon_ = 'icon/folder.png';
                 }
                 try {
-                    tmp.folder[name_] = { folder: {}, file: [] };
+                    if (isMounted && tmp._handle) {
+                        tmp.folder[name_] = { folder: {}, file: [], _mounted: true };
+                        tmp._handle.getDirectoryHandle(name_, { create: true }).then(h => {
+                            tmp.folder[name_]._handle = h;
+                        }).catch(() => shownotice('file-write-error'));
+                    } else {
+                        tmp.folder[name_] = { folder: {}, file: [] };
+                    }
                 } catch {
                     tmp = { folder: {}, file: [] };
                     tmp.folder[name_] = { folder: {}, file: [] };
                 }
+                apps.explorer.pushLocalStoragePath(files, true);
+                apps.explorer.goto(path);
+                apps.explorer.rename(path + '/' + name_);
                 return;
             }
 
@@ -1264,12 +1556,21 @@ let apps = {
             }
 
             try {
-                tmp.file.push({ name: name_, ico: icon_, command: command });
+                if (isMounted && tmp._handle) {
+                    var fileEntry = { name: name_, ico: icon_, command: '', _mounted: true };
+                    tmp.file.push(fileEntry);
+                    tmp._handle.getFileHandle(name_, { create: true }).then(h => {
+                        fileEntry._handle = h;
+                    }).catch(() => shownotice('file-write-error'));
+                } else {
+                    tmp.file.push({ name: name_, ico: icon_, command: command });
+                }
             }
             catch {
                 tmp = { folder: {}, file: [] };
                 tmp.file = [{ name: name_, ico: icon_, command: command }];
             }
+            apps.explorer.pushLocalStoragePath(files, true);
             apps.explorer.goto(path);
             apps.explorer.rename(path + '/' + name_);
         },
@@ -1278,11 +1579,19 @@ let apps = {
             var name = pathl[pathl.length - 1];
             apps.explorer.old_name = name;
             pathl.pop();
-            let tmp = apps.explorer.path;
+            let files = apps.explorer.getPath();
+            let tmp = files;
             pathl.forEach(name => {
-                tmp = tmp['folder'][name];
+                if (tmp !== null) {
+                    tmp = tmp['folder'][name];
+                } else {
+                    tmp = files['folder'][name];
+                }
             });
             let element = document.querySelector('#' + apps.explorer.get_file_id(name));
+            console.log(element)
+            console.log(apps.explorer.get_file_id(name))
+            console.log(name)
             let img = element.querySelector('img').outerHTML;
             element.innerHTML = img;
             let input = document.createElement('input');
@@ -1301,8 +1610,9 @@ let apps = {
                     apps.explorer.del_select();
                 }
             });
+            apps.explorer.pushLocalStoragePath(files, false)
         },
-        get_file_id: (name) => {  //只能找到已经打开了的文件夹的元素id
+        get_file_id: (name) => {  //只能找到已经打开了的文件夹的元素 id
             var elements = document.getElementsByClassName('item');
             for (var i = 0; i < elements.length; i++) {
                 var element = elements[i];
@@ -1314,12 +1624,20 @@ let apps = {
         del: (path) => {
             var pathl = path.split('/');
             var name = pathl[pathl.length - 1];
+            var isMounted = !!apps.explorer.mounts[pathl[0]];
             pathl.pop();
-            let tmp = apps.explorer.path;
+            let files = apps.explorer.getPath();
+            let tmp = files;
             pathl.forEach(name => {
-                tmp = tmp['folder'][name];
+                if (tmp !== null) {
+                    tmp = tmp['folder'][name];
+                } else {
+                    tmp = files['folder'][name];
+                }
             });
             let tmp_file = tmp['file'];
+            console.log(tmp_file)
+            console.log(tmp)
             for (var i = 0; i < tmp_file.length; i++) {
                 if (tmp_file[i]['name'] == name) {
                     tmp_file.splice(i, 1);
@@ -1327,16 +1645,37 @@ let apps = {
             }
             let tmp_files = tmp['folder'];
             delete tmp_files[name];
+            if (isMounted && tmp._handle) {
+                tmp._handle.removeEntry(name, { recursive: true }).catch(() => shownotice('file-write-error'));
+            }
             apps.explorer.goto(pathl.join('/'));
             apps.explorer.history.forEach(item => {
                 while (item.includes(path)) {
                     item.splice(item.findIndex(elt => { return elt == path; }), 1);
                 }
             });
+            apps.explorer.pushLocalStoragePath(files, true)
+        },
+        pushLocalStoragePath: (path, isRefresh = false) => {
+            const pathStr = JSON.stringify(path);
+            localStorage.setItem("files_path", pathStr);
+            if ((isRefresh ?? false) == true) {
+                apps.explorer.goto($('#win-explorer>.path>.tit')[0].dataset.path, false);
+            }
+        },
+        getPath: () => {
+            const filesPath = localStorage.getItem("files_path");
+            if (filesPath !== null) {
+                return JSON.parse(filesPath);
+            } else {
+                apps.explorer.pushLocalStoragePath(apps.explorer.path);
+                return apps.explorer.path;
+            };
         },
         traverseDirectory(dir, name) {
-            if (dir['file'] == null && dir['folder'] == null)
+            if (dir['file'] == null || dir['folder'] == null)
                 return false;
+            console.log(name)
             for (var i = 0; i < dir['file'].length; i++) {
                 if (dir['file'][i]['name'] == name) {
                     return true;
@@ -1351,8 +1690,8 @@ let apps = {
             return false;
         },
         // 禁止奇奇怪怪的缩进！尽量压行，不要毫无意义地全部格式化和展开！ 
-        // 给我看蒙了这东西，写的是啥？
-        path: {folder:{'C:':{folder:{'Program Files':{folder:{'WindowsApps':{folder:{},file:[]},'Microsoft':{folder:{},file:[]}},file:[{name:'about.exe',ico:'icon/about.svg',command:'openapp(\'about\')'},{name:'setting.exe',ico:'icon/setting.svg',command:'openapp(\'setting\')'},]},'Program Files (x86)':{folder:{'Microsoft':{folder:{'Edge':{folder:{'Application':{folder:{'SetupMetrics':{folder:{},file:[]}},file:[{name:'msedge.exe',ico:'icon/edge.svg',command:'openapp(\'edge\')'}]}}}}}}},'Windows':{folder:{'Boot':{folder:{},file:[]},'System':{folder:{},file:[]},'SysWOW64':{folder:{},file:[]},'System32':{folder:{},file:[{name:'calc.exe',ico:'icon/calc.svg',command:'openapp(\'calc\')'},{name:'cmd.exe',ico:'icon/terminal.svg',command:'openapp(\'terminal\')'},{name:'notepad.exe',ico:'icon/notepad.svg',command:'openapp(\'notepad\')'},{name:'taskmgr.exe',ico:'icon/taskmgr.png',command:'openapp(\'taskmgr\')'},{name:'winver.exe',ico:'icon/about.svg',command:'openapp(\'winver\')'},]}},file:[{name:'explorer.exe',ico:'icon/explorer.svg',command:'apps.explorer.newtab()'},{name:'notepad.exe',ico:'icon/notepad.svg',command:'openapp(\'notepad\')'},{name:'py.exe',ico:'icon/python.svg',command:'openapp(\'python\')'},]},'用户':{folder:{'Administrator':{folder:{'推荐的项目':{folder:{},file:[{name:'瓶盖介绍.doc',ico:'icon/files/word.png',command:'openapp(\'word\');apps.word.edit()'},{name:'瓶盖质量统计分析.xlsx',ico:'icon/files/excel.png',command:''},]},'文档':{folder:{'IISExpress':{folder:{},file:[]},'PowerToys':{folder:{},file:[]}},file:[{name:'瓶盖介绍.doc',ico:'icon/files/word.png',command:''},{name:'瓶盖质量统计分析.xlsx',ico:'icon/files/excel.png',command:''},]},'图片':{folder:{'本机照片':{folder:{},file:[]},'屏幕截图':{folder:{},file:[]}},file:[{name:'瓶盖构造图.png',ico:'icon/files/img.png',command:''},{name:'可口可乐瓶盖.jpg',ico:'icon/files/img.png',command:''},]},'AppData':{folder:{'Local':{folder:{'Microsoft':{folder:{'Windows':{folder:{'Fonts':{},'TaskManager':{},'Themes':{},'Shell':{},'应用程序快捷方式':{},}},}},'Programs':{folder:{'Python':{folder:{'Python310':{folder:{'DLLs':{},'Doc':{},'include':{},'Lib':{folder:{'site-packages':{},'tkinter':{},}},'libs':{},'Script':{},'share':{},'tcl':{},'Tools':{}},file:[{name:'python.exe',ico:'icon/python.png',command:'openapp(\'python\')'}]}},}}},'Temp':{folder:{}},}},'LocalLow':{folder:{'Microsoft':{folder:{'Windows':{},}},}},'Roaming':{folder:{'Microsoft':{folder:{'Windows':{folder:{'「开始」菜单':{folder:{'程序':{folder:{}},}},}},}},}},},file:[]},'音乐':{folder:{'录音机':{folder:{},file:[]}}}}},'公用':{folder:{'公用文档':{folder:{'IISExpress':{folder:{},file:[]},'PowerToys':{folder:{},file:[]}},file:[]},'公用图片':{folder:{'本机照片':{folder:{},file:[]},'屏幕截图':{folder:{},file:[]}},file:[]},'公用音乐':{folder:{'录音机':{folder:{},file:[]}}}}}}}},file:[]},'D:':{folder:{'Microsoft':{folder:{},file:[]}},file:[{name:'瓶盖结构说明.docx',ico:'icon/files/word.png',command:''},{name:'可口可乐瓶盖历史.pptx',ico:'icon/files/ppt.png',command:''},]}}},
+        // 给我看蒙了这东西，写的是啥
+        path: { folder: { 'C:': { folder: { 'Program Files': { folder: { 'WindowsApps': { folder: {}, file: [] }, 'Microsoft': { folder: {}, file: [] } }, file: [{ name: 'about.exe', ico: 'icon/about.svg', command: 'openapp(\'about\')' }, { name: 'setting.exe', ico: 'icon/setting.svg', command: 'openapp(\'setting\')' },] }, 'Program Files (x86)': { folder: { 'Microsoft': { folder: { 'Edge': { folder: { 'Application': { folder: { 'SetupMetrics': { folder: {}, file: [] } }, file: [{ name: 'msedge.exe', ico: 'icon/edge.svg', command: 'openapp(\'edge\')' }] } } } } } } }, 'Windows': { folder: { 'Boot': { folder: {}, file: [] }, 'System': { folder: {}, file: [] }, 'SysWOW64': { folder: {}, file: [] }, 'System32': { folder: {}, file: [{ name: 'calc.exe', ico: 'icon/calc.svg', command: 'openapp(\'calc\')' }, { name: 'cmd.exe', ico: 'icon/terminal.svg', command: 'openapp(\'terminal\')' }, { name: 'notepad.exe', ico: 'icon/notepad.svg', command: 'openapp(\'notepad\')' }, { name: 'taskmgr.exe', ico: 'icon/taskmgr.png', command: 'openapp(\'taskmgr\')' }, { name: 'winver.exe', ico: 'icon/about.svg', command: 'openapp(\'winver\')' },] } }, file: [{ name: 'explorer.exe', ico: 'icon/explorer.svg', command: 'apps.explorer.newtab()' }, { name: 'notepad.exe', ico: 'icon/notepad.svg', command: 'openapp(\'notepad\')' }, { name: 'py.exe', ico: 'icon/python.svg', command: 'openapp(\'python\')' },] }, '用户': { folder: { 'Administrator': { folder: { '推荐的项目': { folder: {}, file: [{ name: '瓶盖介绍.doc', ico: 'icon/files/word.png', command: 'openapp(\'word\');apps.word.edit()' }, { name: '瓶盖质量统计分析.xlsx', ico: 'icon/files/excel.png', command: '' },] }, '文档': { folder: { 'IISExpress': { folder: {}, file: [] }, 'PowerToys': { folder: {}, file: [] } }, file: [{ name: '瓶盖介绍.doc', ico: 'icon/files/word.png', command: '' }, { name: '瓶盖质量统计分析.xlsx', ico: 'icon/files/excel.png', command: '' },] }, '图片': { folder: { '本机照片': { folder: {}, file: [] }, '屏幕截图': { folder: {}, file: [] } }, file: [{ name: '瓶盖构造图.png', ico: 'icon/files/img.png', command: '' }, { name: '可口可乐瓶盖.jpg', ico: 'icon/files/img.png', command: '' },] }, 'AppData': { folder: { 'Local': { folder: { 'Microsoft': { folder: { 'Windows': { folder: { 'Fonts': {}, 'TaskManager': {}, 'Themes': {}, 'Shell': {}, '应用程序快捷方式': {}, } }, } }, 'Programs': { folder: { 'Python': { folder: { 'Python311': { folder: { 'DLLs': {}, 'Doc': {}, 'include': {}, 'Lib': { folder: { 'site-packages': {}, 'tkinter': {}, } }, 'libs': {}, 'Script': {}, 'share': {}, 'tcl': {}, 'Tools': {} }, file: [{ name: 'python.exe', ico: 'icon/python.png', command: 'openapp(\'python\')' }] } }, } } }, 'Temp': { folder: {} }, } }, 'LocalLow': { folder: { 'Microsoft': { folder: { 'Windows': {}, } }, } }, 'Roaming': { folder: { 'Microsoft': { folder: { 'Windows': { folder: { '「开始」菜单': { folder: { '程序': { folder: {} }, } }, } }, } }, } }, }, file: [] }, '音乐': { folder: { '录音机': { folder: {}, file: [] } } } } }, '公用': { folder: { '公用文档': { folder: { 'IISExpress': { folder: {}, file: [] }, 'PowerToys': { folder: {}, file: [] } }, file: [] }, '公用图片': { folder: { '本机照片': { folder: {}, file: [] }, '屏幕截图': { folder: {}, file: [] } }, file: [] }, '公用音乐': { folder: { '录音机': { folder: {}, file: [] } } } } } } } }, file: [] }, 'D:': { folder: { 'Microsoft': { folder: {}, file: [] } }, file: [{ name: '瓶盖结构说明.docx', ico: 'icon/files/word.png', command: '' }, { name: '可口可乐瓶盖历史.pptx', ico: 'icon/files/ppt.png', command: '' },] } } },
         history: [],
         historypt: [],
         initHistory: (tab) => {
@@ -1412,54 +1751,435 @@ let apps = {
         }
     },
     about: {
+        repo: () => {
+            return isTauriApp() ? 'win12-online/win12-desktop' : 'win12-online/win12';
+        },
+        contentSuffix: () => {
+            return isTauriApp() ? 'tauri' : 'web';
+        },
         init: () => {
-            $('#win-about>.about').addClass('show');
-            $('#win-about>.update').removeClass('show');
-            if (!($('#contri').length > 1)) apps.about.get();
-            if (!($('#StarShow').html().includes('刷新'))) apps.about.get_star();
+            updateAboutAppEntrypoints();
+            apps.about.page('about');
+            if (!$(apps.about.contributorsSelector() + '>.a').length) apps.about.get();
+            if (!($(apps.about.starSelector()).html().includes('刷新'))) apps.about.get_star();
+            if (isTauriApp() && !$('#ReleaseShowDesktop>details').length) apps.about.get_releases();
+        },
+        page: (name) => {
+            const suffix = apps.about.contentSuffix();
+            $('#win-about>.cnt').removeClass('show');
+            $(`#win-about>.${name}-${suffix}`).addClass('show');
+            $('.about-menu>a').removeClass('check');
+            $(`.about-menu>.${name}`).addClass('check');
+        },
+        contributorsSelector: () => {
+            return isTauriApp() ? '#contri-desktop' : '#contri';
+        },
+        starSelector: () => {
+            return isTauriApp() ? '#StarShowDesktop' : '#StarShow';
         },
         run_loading: (expr) => {
             $(expr).html(`<loading><svg width="30px" height="30px" viewBox="0 0 16 16">
             <circle cx="8px" cy="8px" r="7px" style="stroke:#7f7f7f50;fill:none;stroke-width:3px;"></circle>
             <circle cx="8px" cy="8px" r="7px" style="stroke:#2983cc;stroke-width:3px;"></circle></svg></loading>`);
         },
+        escape_html: (text) => {
+            return String(text || '').replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+        },
+        render_release_body: (body) => {
+            const text = body || '此发行版没有填写发行日志。';
+            if (typeof marked !== 'undefined' && typeof DOMPurify !== 'undefined') {
+                const html = marked.parse(text);
+                return DOMPurify.sanitize(html);
+            }
+            return apps.about.escape_html(text).replace(/\n/g, '<br>');
+        },
+        get_releases: () => {
+            apps.about.run_loading('#ReleaseShowDesktop');
+            fetch('https://api.github.com/repos/win12-online/win12-desktop/releases')
+                .then(response => response.json())
+                .then(releases => {
+                    setTimeout(() => {
+                        $('#ReleaseShowDesktop').html('');
+                        if (!Array.isArray(releases) || releases.length == 0) {
+                            $('#ReleaseShowDesktop').html('<p>&emsp;&emsp;暂无发行版发行日志。</p><a class="button" onclick="apps.about.get_releases()"><i class="bi bi-arrow-clockwise"></i> 刷新</a>');
+                            return;
+                        }
+                        releases.forEach((release, index) => {
+                            const title = apps.about.escape_html(release.name || release.tag_name || '未命名发行版');
+                            const tag = release.tag_name ? `<span>${apps.about.escape_html(release.tag_name)}</span> ` : '';
+                            const date = release.published_at ? ` ${apps.about.escape_html(new Date(release.published_at).toLocaleDateString())}` : '';
+                            const body = apps.about.render_release_body(release.body);
+                            $('#ReleaseShowDesktop').append(`<details ${index == 0 ? 'open' : ''}><summary>${tag}${title}${date}</summary><div class="release-body">${body}</div></details>`);
+                        });
+                        $('#ReleaseShowDesktop').append('<a onclick="window.open(\'https://github.com/win12-online/win12-desktop/releases\',\'_blank\');" win12_title="https://github.com/win12-online/win12-desktop/releases" class="a jump" style="text-align: center;">更多</a>');
+                    }, 200);
+                })
+                .catch(error => {
+                    console.error('获取发行版发行日志时出错：', error);
+                    $('#ReleaseShowDesktop').html('<div style="display: flex;"><p>&emsp;&emsp;哎呀！出错了！</p>&emsp;<a class="button" onclick="apps.about.get_releases()"><i class="bi bi-arrow-clockwise"></i> 重试</a></div>');
+                });
+        },
         get: () => {
-            apps.about.run_loading('#contri');
+            const selector = apps.about.contributorsSelector();
+            apps.about.run_loading(selector);
             // 实时获取项目贡献者
-            $.get('https://api.github.com/repos/tjy-gitnub/win12/contributors').then(cs => {
+            $.get(`https://api.github.com/repos/${apps.about.repo()}/contributors`).then(cs => {
                 setTimeout(() => {
-                    $('#contri').html('');
+                    $(selector).html('');
                     cs.forEach(c => {
-                        $('#contri').append(`<a class="a" onclick="window.open('${c['html_url']}','_blank');"><p class="name">${c['login']}</p><p class="cbs">贡献：<span class="num">${c['contributions']}</span></p></a>`);
+                        $(selector).append(`<a class="a" title="${c['login']}" onclick="window.open('${c['html_url']}','_blank');"><img class="avatar" src="${c['avatar_url']}" alt="${c['login']}"><span class="info"><p class="name">${c['login']}</p><p class="cbs">贡献 <span class="num">${c['contributions']}</span></p></span></a>`);
                     });
-                    $('#contri').append('<a class="button" onclick="apps.about.get()"><i class="bi bi-arrow-clockwise"></i> 刷新</a>');
+                    $(selector).append('<a class="button" onclick="apps.about.get()"><i class="bi bi-arrow-clockwise"></i> 刷新</a>');
                 }, 200);
             });
         },
         get_star: () => {
-            apps.about.run_loading('#StarShow');
-            const repoFullName = 'tjy-gitnub/win12';
-            fetch(`https://api.github.com/repos/${repoFullName}`)
+            const selector = apps.about.starSelector();
+            apps.about.run_loading(selector);
+            fetch(`https://api.github.com/repos/${apps.about.repo()}`)
                 .then(response => response.json())
                 .then(data => {
                     setTimeout(() => {
                         const starCount = data.stargazers_count;
-                        $('#StarShow').html('<div style="display: flex;"><p>&emsp;&emsp;Star 数量：' + starCount + ' (实时数据)</p>&emsp;<a class="button" onclick="apps.about.get_star()"><i class="bi bi-arrow-clockwise"></i> 刷新</a></div>');
+                        $(selector).html('<div style="display: flex;"><p>&emsp;&emsp;Star 数量：' + starCount + ' (实时数据)</p>&emsp;<a class="button" onclick="apps.about.get_star()"><i class="bi bi-arrow-clockwise"></i> 刷新</a></div>');
                     }, 200);
                 })
                 .catch(error => {
-                    console.error('获取star数量时出错：', error);
-                    $('#StarShow').html('<div style="display: flex;"><p>&emsp;&emsp;哎呀！出错了！</p>&emsp;<a class="button" onclick="apps.about.get_star()"><i class="bi bi-arrow-clockwise"></i> 重试</a></div>');
+                    console.error('获取 star 数量时出错：', error);
+                    $(selector).html('<div style="display: flex;"><p>&emsp;&emsp;哎呀！出错了！</p>&emsp;<a class="button" onclick="apps.about.get_star()"><i class="bi bi-arrow-clockwise"></i> 重试</a></div>');
                 });
         }
     },
     notepad: {
+        _pendingContent: null,
+        _mountedFileHandle: null,
+        _keyBound: false,
+        _isMd: false,
+        _previewing: false,
+        _dirty: false,
+        _loading: false,
+        _markDirty: () => {
+            if (!apps.notepad._dirty && apps.notepad._mountedFileHandle && !apps.notepad._loading) {
+                apps.notepad._dirty = true;
+                var p = $('.window.notepad>.titbar>p');
+                if (!p.text().startsWith('* ')) p.text('* ' + p.text());
+            }
+        },
         init: () => {
+            apps.notepad._resetPreview();
+            apps.notepad._dirty = false;
+            apps.notepad._loading = true;
             $('#win-notepad>.text-box').addClass('down');
             setTimeout(() => {
-                $('#win-notepad>.text-box').val('');
+                if (apps.notepad._pendingContent !== null) {
+                    $('#win-notepad>.text-box')[0].innerText = apps.notepad._pendingContent;
+                    apps.notepad._pendingContent = null;
+                } else {
+                    $('#win-notepad>.text-box').val('');
+                    apps.notepad._mountedFileHandle = null;
+                }
                 $('#win-notepad>.text-box').removeClass('down');
+                requestAnimationFrame(() => { apps.notepad._loading = false; });
             }, 200);
+            if (!apps.notepad._keyBound) {
+                apps.notepad._keyBound = true;
+                $('#win-notepad>.text-box').on('input', apps.notepad._markDirty);
+                document.addEventListener('keydown', function (e) {
+                    if (e.ctrlKey && e.key === 's' && $('.window.foc')[0]?.classList.contains('notepad')) {
+                        e.preventDefault();
+                        apps.notepad.saveMounted();
+                    }
+                });
+            }
+        },
+        _resetPreview: () => {
+            apps.notepad._isMd = false;
+            apps.notepad._previewing = false;
+            $('#notepad-md-toggle').hide().removeClass('active').html('<i class="bi bi-eye"></i> 预览');
+            $('#notepad-md-preview').hide();
+            $('#win-notepad>.text-box').show();
+        },
+        setMdMode: (enabled) => {
+            apps.notepad._resetPreview();
+            apps.notepad._isMd = enabled;
+            if (enabled) {
+                $('#notepad-md-toggle').show();
+            }
+        },
+        togglePreview: () => {
+            apps.notepad._previewing = !apps.notepad._previewing;
+            if (apps.notepad._previewing) {
+                var text = $('#win-notepad>.text-box')[0].innerText;
+                var html = marked.parse(text);
+                $('#notepad-md-preview').html(typeof DOMPurify !== 'undefined' ? DOMPurify.sanitize(html) : html).show();
+                $('#win-notepad>.text-box').hide();
+                $('#notepad-md-toggle').addClass('active').html('<i class="bi bi-pencil"></i> 编辑');
+            } else {
+                $('#notepad-md-preview').hide();
+                $('#win-notepad>.text-box').show();
+                $('#notepad-md-toggle').removeClass('active').html('<i class="bi bi-eye"></i> 预览');
+            }
+        },
+        saveMounted: async () => {
+            if (!apps.notepad._mountedFileHandle) return;
+            try {
+                const writable = await apps.notepad._mountedFileHandle.createWritable();
+                await writable.write($('#win-notepad>.text-box')[0].innerText);
+                await writable.close();
+                apps.notepad._dirty = false;
+                var p = $('.window.notepad>.titbar>p');
+                p.text(p.text().replace(/^\* /, ''));
+                p.css('opacity', '0.5');
+                setTimeout(() => p.css('opacity', ''), 300);
+            } catch (e) {
+                shownotice('file-write-error');
+            }
+        },
+        close: () => {
+            if (apps.notepad._dirty && apps.notepad._mountedFileHandle) {
+                shownotice('unsaved-notepad');
+                return;
+            }
+            apps.notepad._forceClose();
+        },
+        _forceClose: () => {
+            apps.notepad._dirty = false;
+            apps.notepad._mountedFileHandle = null;
+            hidewin('notepad');
+            hidewin('notepad-fonts', 'configs');
+        }
+    },
+    imgviewer: {
+        _blobUrl: null,
+        _scale: 1,
+        _rotate: 0,
+        init: () => {},
+        open: (url, name) => {
+            openapp('imgviewer');
+            apps.imgviewer._blobUrl = url;
+            apps.imgviewer._scale = 1;
+            apps.imgviewer._rotate = 0;
+            apps.imgviewer._applyTransform();
+            $('#win-imgviewer .preview-img').attr('src', url);
+            $('.window.imgviewer>.titbar>p').text(name || lang('图片查看器', 'imgviewer.name'));
+        },
+        close: () => {
+            if (apps.imgviewer._blobUrl) {
+                URL.revokeObjectURL(apps.imgviewer._blobUrl);
+                apps.imgviewer._blobUrl = null;
+            }
+            hidewin('imgviewer');
+        },
+        zoomIn: () => {
+            apps.imgviewer._scale = Math.min(apps.imgviewer._scale * 1.25, 10);
+            apps.imgviewer._applyTransform();
+        },
+        zoomOut: () => {
+            apps.imgviewer._scale = Math.max(apps.imgviewer._scale / 1.25, 0.1);
+            apps.imgviewer._applyTransform();
+        },
+        rotateRight: () => {
+            apps.imgviewer._rotate = (apps.imgviewer._rotate + 90) % 360;
+            apps.imgviewer._applyTransform();
+        },
+        resetView: () => {
+            apps.imgviewer._scale = 1;
+            apps.imgviewer._rotate = 0;
+            apps.imgviewer._applyTransform();
+        },
+        _applyTransform: () => {
+            $('#win-imgviewer .preview-img').css('transform',
+                `scale(${apps.imgviewer._scale}) rotate(${apps.imgviewer._rotate}deg)`);
+        }
+    },
+    mediaplayer: {
+        _blobUrl: null,
+        init: () => {},
+        open: (url, name, type) => {
+            openapp('mediaplayer');
+            apps.mediaplayer._blobUrl = url;
+            $('.window.mediaplayer>.titbar>p').text(name || lang('媒体播放器', 'mediaplayer.name'));
+            if (type === 'video') {
+                $('#mediaplayer-video').attr('src', url).show()[0].load();
+                $('#mediaplayer-audio').hide()[0].pause();
+                $('.window.mediaplayer>.titbar>img').attr('src', 'icon/files/vidio.png');
+            } else {
+                $('#mediaplayer-audio').attr('src', url).show()[0].load();
+                $('#mediaplayer-video').hide()[0].pause();
+                $('.window.mediaplayer>.titbar>img').attr('src', 'icon/files/music.png');
+            }
+        },
+        close: () => {
+            $('#mediaplayer-video')[0].pause();
+            $('#mediaplayer-audio')[0].pause();
+            if (apps.mediaplayer._blobUrl) {
+                URL.revokeObjectURL(apps.mediaplayer._blobUrl);
+                apps.mediaplayer._blobUrl = null;
+            }
+            hidewin('mediaplayer');
+        }
+    },
+    pdfviewer: {
+        _blobUrl: null,
+        init: () => {},
+        open: (url, name) => {
+            openapp('pdfviewer');
+            apps.pdfviewer._blobUrl = url;
+            $('#pdfviewer-frame').attr('src', url);
+            $('.window.pdfviewer>.titbar>p').text(name || lang('PDF 查看器', 'pdfviewer.name'));
+        },
+        close: () => {
+            $('#pdfviewer-frame').attr('src', '');
+            if (apps.pdfviewer._blobUrl) {
+                URL.revokeObjectURL(apps.pdfviewer._blobUrl);
+                apps.pdfviewer._blobUrl = null;
+            }
+            hidewin('pdfviewer');
+        }
+    },
+    codeEditor: {
+        editor: null,
+        _fileHandle: null,
+        _dirty: false,
+        _loading: false,
+        _wrap: false,
+        _fontSize: 15,
+        _modeMap: {
+            js: 'javascript', jsx: 'jsx', ts: 'typescript', tsx: 'tsx',
+            css: 'css', scss: 'scss', less: 'less',
+            html: 'html', htm: 'html', xml: 'xml', svg: 'svg',
+            json: 'json', yaml: 'yaml', yml: 'yaml',
+            py: 'python', java: 'java', c: 'c_cpp', cpp: 'c_cpp', h: 'c_cpp',
+            cs: 'csharp', go: 'golang', rs: 'rust', rb: 'ruby',
+            php: 'php', sh: 'sh', bat: 'batchfile', ps1: 'powershell',
+            sql: 'sql', md: 'markdown', r: 'r', lua: 'lua', swift: 'swift',
+            kt: 'kotlin', dart: 'dart', toml: 'toml', ini: 'ini',
+            dockerfile: 'dockerfile', makefile: 'makefile'
+        },
+        _modeLabelMap: {
+            javascript: 'JavaScript', jsx: 'JSX', typescript: 'TypeScript', tsx: 'TSX',
+            css: 'CSS', scss: 'SCSS', less: 'Less',
+            html: 'HTML', xml: 'XML', svg: 'SVG',
+            json: 'JSON', yaml: 'YAML',
+            python: 'Python', java: 'Java', c_cpp: 'C/C++',
+            csharp: 'C#', golang: 'Go', rust: 'Rust', ruby: 'Ruby',
+            php: 'PHP', sh: 'Shell', batchfile: 'Batch', powershell: 'PowerShell',
+            sql: 'SQL', markdown: 'Markdown', r: 'R', lua: 'Lua', swift: 'Swift',
+            kotlin: 'Kotlin', dart: 'Dart', toml: 'TOML', ini: 'INI',
+            text: 'Text'
+        },
+        init: () => { return null; },
+        load: () => {
+            ace.require('ace/ext/language_tools');
+            var ed = ace.edit('code-ace-editor');
+            apps.codeEditor.editor = ed;
+            ed.setTheme('ace/theme/vibrant_ink');
+            ed.setOptions({
+                enableBasicAutocompletion: true,
+                enableSnippets: true,
+                showPrintMargin: false,
+                enableLiveAutocompletion: true,
+                fontSize: 15,
+                tabSize: 4,
+                useSoftTabs: true,
+                scrollPastEnd: 0.5
+            });
+            ed.commands.addCommand({
+                name: 'save', bindKey: { win: 'Ctrl-S', mac: 'Command-S' },
+                exec: () => apps.codeEditor.save()
+            });
+            ed.commands.addCommand({
+                name: 'gotoline', bindKey: { win: 'Ctrl-G', mac: 'Command-G' },
+                exec: () => {
+                    var line = prompt('跳转到行：');
+                    if (line) ed.gotoLine(parseInt(line), 0, true);
+                }
+            });
+            ed.on('change', () => {
+                if (!apps.codeEditor._dirty && apps.codeEditor._fileHandle && !apps.codeEditor._loading) {
+                    apps.codeEditor._dirty = true;
+                    var p = $('.window.code-editor>.titbar>p');
+                    if (!p.text().startsWith('* ')) p.text('* ' + p.text());
+                }
+            });
+            ed.selection.on('changeCursor', () => apps.codeEditor._updateStatus());
+            ed.on('changeSession', () => apps.codeEditor._updateStatus());
+        },
+        _updateStatus: () => {
+            var ed = apps.codeEditor.editor;
+            if (!ed) return;
+            var cursor = ed.getCursorPosition();
+            $('#code-status-cursor').text('行 ' + (cursor.row + 1) + ', 列 ' + (cursor.column + 1));
+            var sel = ed.getSelectedText();
+            if (sel.length > 0) {
+                $('#code-status-cursor').text(
+                    '行 ' + (cursor.row + 1) + ', 列 ' + (cursor.column + 1) +
+                    ' (已选 ' + sel.length + ' 字符)');
+            }
+            var modePath = ed.session.getMode().$id || '';
+            var modeName = modePath.split('/').pop();
+            $('#code-status-lang').text(apps.codeEditor._modeLabelMap[modeName] || modeName || 'Text');
+            var tab = ed.session.getUseSoftTabs() ? '空格' : 'Tab';
+            $('#code-status-tab').text(tab + ': ' + ed.session.getTabSize());
+        },
+        open: (text, fileName, fileHandle) => {
+            apps.codeEditor._fileHandle = fileHandle || null;
+            apps.codeEditor._dirty = false;
+            openapp('code-editor');
+            if (!apps.codeEditor.editor) {
+                shownotice('file-read-error');
+                return;
+            }
+            var ext = fileName.split('.').pop().toLowerCase();
+            var mode = apps.codeEditor._modeMap[ext] || 'text';
+            apps.codeEditor._loading = true;
+            apps.codeEditor.editor.session.setMode('ace/mode/' + mode);
+            apps.codeEditor.editor.setValue(text, -1);
+            apps.codeEditor._loading = false;
+            apps.codeEditor._dirty = false;
+            $('.window.code-editor>.titbar>p').text(fileName);
+            apps.codeEditor._updateStatus();
+        },
+        save: async () => {
+            if (!apps.codeEditor._fileHandle) return;
+            try {
+                const writable = await apps.codeEditor._fileHandle.createWritable();
+                await writable.write(apps.codeEditor.editor.getValue());
+                await writable.close();
+                apps.codeEditor._dirty = false;
+                var p = $('.window.code-editor>.titbar>p');
+                p.text(p.text().replace(/^\* /, ''));
+                p.css('opacity', '0.5');
+                setTimeout(() => p.css('opacity', ''), 300);
+            } catch (e) {
+                shownotice('file-write-error');
+            }
+        },
+        setTheme: (theme) => {
+            if (apps.codeEditor.editor) apps.codeEditor.editor.setTheme(theme);
+        },
+        toggleWrap: () => {
+            apps.codeEditor._wrap = !apps.codeEditor._wrap;
+            if (apps.codeEditor.editor)
+                apps.codeEditor.editor.session.setUseWrapMode(apps.codeEditor._wrap);
+            $('#code-wrap-btn').toggleClass('active', apps.codeEditor._wrap);
+        },
+        changeFontSize: (delta) => {
+            apps.codeEditor._fontSize = Math.max(10, Math.min(30, apps.codeEditor._fontSize + delta));
+            if (apps.codeEditor.editor)
+                apps.codeEditor.editor.setFontSize(apps.codeEditor._fontSize);
+        },
+        close: () => {
+            if (apps.codeEditor._dirty && apps.codeEditor._fileHandle) {
+                shownotice('unsaved-code-editor');
+                return;
+            }
+            apps.codeEditor._forceClose();
+        },
+        _forceClose: () => {
+            apps.codeEditor._dirty = false;
+            apps.codeEditor._fileHandle = null;
+            hidewin('code-editor');
         }
     },
     pythonEditor: {
@@ -1624,7 +2344,7 @@ import io
         init: () => {
             $('#win-python').html(`
         <pre>
-Python 3.10.2  [MSC v.1912 64 bit (AMD64)] :: Anaconda, Inc. on win32
+Python 3.11.2  [MSC v.1912 64 bit (AMD64)] :: Anaconda, Inc. on win32
 Type "help", "copyright", "credits" or "license" for more information.
         </pre>
         <pre class="text-cmd"></pre>
@@ -1724,37 +2444,37 @@ Micrȯsoft Windows [版本 12.0.39035.7324]
             const elt = $('#win-terminal>pre.text-cmd')[0];
             const input = $('#win-terminal input');
             const command = input.val().trim();
-            
+
             if (command !== '') {
                 // Add command to history
                 apps.terminal.historyList.push(command);
                 apps.terminal.historypt = apps.terminal.historyList.length;
-                
+
                 var newD = document.createElement('div');
                 newD.innerText = `C:\\Windows\\System32> ${command}`;
                 elt.appendChild(newD);
-                
+
                 if (command === 'exit') {
                     hidewin('terminal');
                 } else if (!runcmd(command, true)) {
                     var newD = document.createElement('div');
-                    newD.innerText = `"${command}" 不是内部或外部命令,也不是可运行程序或批处理文件`;
+                    newD.innerText = `"${command}" 不是内部或外部命令，也不是可运行程序或批处理文件`;
                     elt.appendChild(newD);
                 }
             }
-            
+
             input.val('');
             input.blur();
             input.focus();
         },
         history: (direction) => {
             const input = $('#win-terminal input');
-            
+
             if (!apps.terminal.isViewingHistory) {
                 apps.terminal.isViewingHistory = true;
                 apps.terminal.historyTemp = input.val();
             }
-            
+
             if (direction === 'up' && apps.terminal.historypt > 0) {
                 apps.terminal.historypt--;
                 input.val(apps.terminal.historyList[apps.terminal.historypt]);
@@ -1772,13 +2492,13 @@ Micrȯsoft Windows [版本 12.0.39035.7324]
     },
     search: {
         rand: [{ name: '农夫山泉瓶盖简介.txt', bi: 'text', ty: '文本文档' },
-            { name: '瓶盖构造图.png', bi: 'image', ty: 'PNG 文件' },
-            { name: '瓶盖结构说明.docx', bi: 'richtext', ty: 'Microsoft Word 文档' },
-            { name: '可口可乐瓶盖.jpg', bi: 'image', ty: 'JPG 文件' },
-            { name: '可口可乐瓶盖历史.pptx', bi: 'slides', ty: 'Microsoft Powerpoint 演示文稿' },
-            { name: '瓶盖质量统计分析.xlsx', bi: 'ruled', ty: 'Microsoft Excel 工作表' },
-            { name: '农夫山泉瓶盖.svg', bi: 'image', ty: 'SVG 文件' },
-            { name: '瓶盖介绍.doc', bi: 'richtext', ty: 'Microsoft Word 文档' }],
+        { name: '瓶盖构造图.png', bi: 'image', ty: 'PNG 文件' },
+        { name: '瓶盖结构说明.docx', bi: 'richtext', ty: 'Microsoft Word 文档' },
+        { name: '可口可乐瓶盖.jpg', bi: 'image', ty: 'JPG 文件' },
+        { name: '可口可乐瓶盖历史.pptx', bi: 'slides', ty: 'Microsoft Powerpoint 演示文稿' },
+        { name: '瓶盖质量统计分析.xlsx', bi: 'ruled', ty: 'Microsoft Excel 工作表' },
+        { name: '农夫山泉瓶盖.svg', bi: 'image', ty: 'SVG 文件' },
+        { name: '瓶盖介绍.doc', bi: 'richtext', ty: 'Microsoft Word 文档' }],
         search: le => {
             if (le > 0) {
                 $('#search-win>.ans>.list>list').html(
@@ -1799,7 +2519,7 @@ Micrȯsoft Windows [版本 12.0.39035.7324]
 					setTimeout(() => {
 						$('#search-win').removeClass('show-begin');
 					}, 200);">
-						<img src="icon/about.svg"><p>关于Win12网页版</p></a>`);
+						<img src="icon/about.svg"><p>${getAboutAppTitle()}</p></a>`);
                 $('#search-win>.ans>.view').removeClass('show');
             }
         },
@@ -1873,7 +2593,7 @@ Micrȯsoft Windows [版本 12.0.39035.7324]
             $('.edge>.content>.tool').show();
             apps.edge.fuls = !apps.edge.fuls;
         },
-        in_div(id,event) {
+        in_div(id, event) {
             var div = document.getElementById(id);
             var x = event.clientX;
             var y = event.clientY;
@@ -1949,7 +2669,7 @@ Micrȯsoft Windows [版本 12.0.39035.7324]
                     $('#win-edge>iframe.show').attr('src', 'https://bing.com/search?q=' + encodeURIComponent(u));
                     m_tab.rename('edge', u);
                 }
-                // 检测网址是否带有http头
+                // 检测网址是否带有 http 头
                 else if (!/^https?:\/\//.test(u) && !u.match(/^mainpage.html$/)) {
                     $('#win-edge>iframe.show').attr('src', 'http://' + u);
                     m_tab.rename('edge', 'http://' + u);

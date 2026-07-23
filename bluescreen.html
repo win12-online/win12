@@ -1,294 +1,499 @@
-<!DOCTYPE html>
-<html lang="en" style="height: 100%;">
+<!doctype html>
+<html lang="en" style="height: 100%">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <meta name="format-detection" content="telephone=no" />
 
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="format-detection" content="telephone=no">
-    
     <!-- 添加有关网页的描述信息 -->
-    <meta name="description" content="Windows 12 Web Version - 一个开放源项目，提供对 Windows 12 的网络预览。">
+    <meta
+      name="description"
+      content="Windows 12 Web Version - 一个开放源项目，提供对 Windows 12 的网络预览。"
+    />
 
-	<!-- Windows 12 网页版 星源原创  -->
+    <!-- Windows 12 网页版 星源原创  -->
 
-	<!-- Windows 12 网页版是一个开放源项目,
+    <!-- Windows 12 网页版是一个开放源项目，
 	希望让用户在网络上预先体验 Windows 12,
 	内容可能与 Windows 12 正式版本不一致。
-	使用标准网络技术,例如 HTML、CSS 和 Javascript
-	此项目绝不附属于微软,且不应与微软操作系统或产品混淆,
+	使用标准网络技术，例如 HTML、CSS 和 Javascript
+	此项目绝不附属于微软，且不应与微软操作系统或产品混淆，
 	这也不是 Windows365 cloud PC
-	本项目中微软、Windows和其他示范产品是微软公司的商标 -->
-	<link rel="stylesheet" href="./base.css" />
-	<base target="_blank">
+	本项目中微软、Windows 和其他示范产品是微软公司的商标 -->
+    <link rel="stylesheet" href="./base.css" />
+    <base target="_blank" />
 
-	<title>Windows 12 网页版</title>
-</head>
-<body>
+    <title>Windows 12 网页版</title>
+  </head>
+  <body>
     <style>
-	*{
+      * {
         user-select: none;
-	}
-        body{
-            width: 100%;
-            height: 100%;
-            background-color: #005eaa;
-            /* cursor: default; */
-            /* 有链接呢，看不到鼠标怎么点 from stsc */
+      }
+      body {
+        width: 100%;
+        height: 100%;
+        /* background-color: #005eaa; */
+        background-color: #136fca;
+        cursor: default;
+      }
+      #box {
+        display: flex;
+        flex-direction: column;
+        justify-items: center;
+        width: 70%;
+        left: 15%;
+        position: absolute;
+        height: 100%;
+        justify-content: center;
+      }
+      #happy-face {
+        color: #fff;
+        font-size: 150px;
+        margin: 0;
+        line-height: 1;
+        /* margin-left: -40px; */
+        margin-top: -10px;
+        height: 150px;
+        height: 150px;
+        display: flex;
+      }
+      #happy-face > * {
+        position: relative;
+        line-height: 0px;
+      }
+      @keyframes eyea {
+        0% {
+          top: -140px;
+          left: -40px;
         }
-        #box{
-            display: flex;
-            flex-direction: column;
-            justify-items: center;
-            width: 70%;
-            left: 15%;
-            position: absolute;
-            height: 100%;
-            justify-content: center;
+        15% {
+          top: -150px;
+          left: -60px;
         }
-        #happy-face{
-            color: #fff;
-            font-size: 150px;
-            margin: 0;
-            line-height: 1;
-            /* margin-left: -40px; */
-            margin-top: -10px;
-            height: 150px;
-            height: 150px;
-            display: flex;
+        25% {
+          top: -140px;
+          left: -40px;
         }
-        #happy-face>*{
-            position: relative;
-            line-height: 0px;
+        35% {
+          top: -150px;
+          left: -20px;
         }
-        @keyframes eyea{
-            0%{
-                top: -140px;
-                left: -40px;
-            }
-            15%{
-                top: -150px;
-                left: -60px;
-            }
-            25%{
-                top: -140px;
-                left: -40px;
-            }
-            35%{
-                top: -150px;
-                left: -20px;
-            }
-            50%{
-                top: -140px;
-                left: -40px;
-            }
-            85%{
-                top: -140px;
-                left: -40px;
-            }
-            95%{
-                top: -50px;
-                left: -40px;
-            }
-            /* 63%{
+        50% {
+          top: -140px;
+          left: -40px;
+        }
+        85% {
+          top: -140px;
+          left: -40px;
+        }
+        95% {
+          top: -50px;
+          left: -40px;
+        }
+        /* 63%{
                 top: 0px;
                 left: 0;
             } */
+      }
+      #happy-face > .eye.a {
+        top: -50px;
+        left: -40px;
+        animation: eyea 2s;
+      }
+      @keyframes eyeb {
+        0% {
+          top: -140px;
+          left: 14px;
         }
-        #happy-face>.eye.a{
-            top: -50px;
-            left: -40px;
-            animation: eyea 2s;
+        15% {
+          top: -150px;
+          left: -6px;
         }
-        @keyframes eyeb{
-            0%{
-                top: -140px;
-                left: 14px;
-            }
-            15%{
-                top: -150px;
-                left: -6px;
-            }
-            25%{
-                top: -140px;
-                left: 14px;
-            }
-            35%{
-                top: -150px;
-                left: 34px;
-            }
-            50%{
-                top: -140px;
-                left: 24px;
-            }
-            90%{
-                top: -140px;
-                left: 24px;
-            }
+        25% {
+          top: -140px;
+          left: 14px;
         }
-        #happy-face>.eye.b{
-            left: -75px;
-            top: -120px;
-            animation: eyeb 2s;
+        35% {
+          top: -150px;
+          left: 34px;
         }
-        @keyframes mou{
-            0%{
-                transform: rotate(90deg);
-                top: 10px;
-                left: -60px;
-            }
-            15%{
-                transform: rotate(120deg);
-                top: -10px;
-                left: -80px;
-            }
-            25%{
-                transform: rotate(90deg);
-                top: 10px;
-                left: -60px;
-            }
-            35%{
-                transform: rotate(60deg);
-                top: -10px;
-                left: -20px;
-            }
-            50%{
-                transform: rotate(270deg);
-                top: 10px;
-                left: -80px;
-            }
-            80%{
-                transform: rotate(270deg);
-                top: -10px;
-                left: -80px;
-            }
-            90%{
-                transform: rotate(180deg);
-                top: -25px;
-                left: -60px;
-            }
-            /* 50%{
+        50% {
+          top: -140px;
+          left: 24px;
+        }
+        90% {
+          top: -140px;
+          left: 24px;
+        }
+      }
+      #happy-face > .eye.b {
+        left: -75px;
+        top: -120px;
+        animation: eyeb 2s;
+      }
+      @keyframes mou {
+        0% {
+          transform: rotate(90deg);
+          top: 10px;
+          left: -60px;
+        }
+        15% {
+          transform: rotate(120deg);
+          top: -10px;
+          left: -80px;
+        }
+        25% {
+          transform: rotate(90deg);
+          top: 10px;
+          left: -60px;
+        }
+        35% {
+          transform: rotate(60deg);
+          top: -10px;
+          left: -20px;
+        }
+        50% {
+          transform: rotate(270deg);
+          top: 10px;
+          left: -80px;
+        }
+        80% {
+          transform: rotate(270deg);
+          top: -10px;
+          left: -80px;
+        }
+        90% {
+          transform: rotate(180deg);
+          top: -25px;
+          left: -60px;
+        }
+        /* 50%{
                 transform: rotate(180deg);
                 top: 20px;
                 left: 50px;
             } */
-        }
-        #happy-face>.mouse{
-            transform: rotate(180deg);
-            top: -25px;
-            left: -60px;
-            animation: mou 2s;
-        }
-        #tx1{
-            color: #fff;
-            font-size: 23px;
-            margin-bottom: 5px;
-            margin-top: 50px;
-        }
-        #prog{
-            color: #fff;
-            font-size: 23px;
-        }
-        #dtx{
-            color: #fff;
-            margin-left: 20px;
-            font-size: 17px;
-            margin-top: 0;
-        }
-        #qr{
-            min-width: 150px;
-            width: 150px;
-            height: 150px;
-            fill: #005eaa;
-            background-color: #fff;
-        }
-        #detail{
-            display: flex;
-        }
-        .link{
-            color: #efefef;
-            text-decoration: none;
-            transition: 100ms;
-            cursor: pointer;
-        }
-        .link:hover{
-            color: #aaa;
-        }
+      }
+      #happy-face > .mouse {
+        transform: rotate(180deg);
+        top: -25px;
+        left: -60px;
+        animation: mou 2s;
+      }
+      #tx1 {
+        color: #fff;
+        font-size: 23px;
+        margin-bottom: 5px;
+        margin-top: 50px;
+      }
+      #prog {
+        color: #fff;
+        font-size: 23px;
+      }
+      #dtx {
+        color: #fff;
+        margin-left: 20px;
+        font-size: 17px;
+        margin-top: 0;
+      }
+      #qr {
+        min-width: 150px;
+        width: 150px;
+        height: 150px;
+        /* fill: #005eaa; */
+        fill: #136fca;
+        background-color: #fff;
+      }
+      #detail {
+        display: flex;
+      }
+      .link {
+        color: #efefef;
+        text-decoration: none;
+        transition: 100ms;
+        cursor: pointer;
+      }
+      .link:hover {
+        color: #aaa;
+      }
     </style>
     <div id="box">
-        <div id="happy-face">
-            <p class="eye a">.</p>
-            <p class="eye b">.</p>
-            <p class="mouse">)</p>
-        </div>
-        <p id="tx1">你的设备遇到问题，需要重启。<br>我们只假装收集某些错误信息，然后为你重新蓝屏。</p>
-        <p id="prog"><span id="complete">0</span>% 完成</p>
-        <div id="detail">
-            <svg id="qr" xmlns="http://www.w3.org/2000/svg" version="1.2" baseProfile="tiny" shape-rendering="crispEdges" viewBox="20 15 305 305" style="background-color:rgba(255, 255, 255, 1);"><rect x="42" y="37" width="9" height="63"/><rect x="42" y="109" width="9" height="18"/><rect x="42" y="136" width="9" height="18"/><rect x="42" y="163" width="18" height="9"/><rect x="42" y="181" width="9" height="18"/><rect x="42" y="217" width="36" height="9"/><rect x="42" y="235" width="9" height="63"/><rect x="51" y="37" width="54" height="9"/><rect x="51" y="91" width="54" height="9"/><rect x="51" y="109" width="9" height="9"/><rect x="51" y="145" width="9" height="9"/><rect x="51" y="172" width="9" height="9"/><rect x="51" y="235" width="54" height="9"/><rect x="51" y="289" width="54" height="9"/><rect x="60" y="55" width="27" height="27"/><rect x="60" y="118" width="18" height="9"/><rect x="60" y="136" width="9" height="9"/><rect x="60" y="181" width="9" height="9"/><rect x="60" y="199" width="9" height="9"/><rect x="60" y="253" width="27" height="27"/><rect x="69" y="127" width="72" height="9"/><rect x="69" y="145" width="9" height="9"/><rect x="69" y="190" width="9" height="9"/><rect x="69" y="208" width="9" height="18"/><rect x="78" y="109" width="27" height="9"/><rect x="78" y="154" width="9" height="27"/><rect x="78" y="208" width="9" height="9"/><rect x="87" y="145" width="18" height="9"/><rect x="87" y="190" width="9" height="18"/><rect x="96" y="46" width="9" height="54"/><rect x="96" y="163" width="9" height="9"/><rect x="96" y="181" width="45" height="9"/><rect x="96" y="199" width="9" height="9"/><rect x="96" y="217" width="18" height="9"/><rect x="96" y="244" width="9" height="54"/><rect x="105" y="118" width="9" height="27"/><rect x="105" y="154" width="18" height="9"/><rect x="105" y="172" width="9" height="18"/><rect x="105" y="208" width="9" height="18"/><rect x="114" y="37" width="9" height="36"/><rect x="114" y="82" width="9" height="18"/><rect x="114" y="163" width="18" height="9"/><rect x="114" y="190" width="9" height="18"/><rect x="114" y="226" width="27" height="9"/><rect x="114" y="244" width="9" height="18"/><rect x="114" y="280" width="9" height="18"/><rect x="123" y="55" width="9" height="36"/><rect x="123" y="136" width="9" height="9"/><rect x="123" y="190" width="9" height="9"/><rect x="123" y="235" width="27" height="9"/><rect x="123" y="253" width="18" height="18"/><rect x="123" y="289" width="9" height="9"/><rect x="132" y="64" width="9" height="54"/><rect x="132" y="154" width="9" height="9"/><rect x="132" y="199" width="9" height="9"/><rect x="132" y="271" width="9" height="18"/><rect x="141" y="46" width="27" height="9"/><rect x="141" y="100" width="9" height="9"/><rect x="141" y="145" width="9" height="9"/><rect x="141" y="163" width="9" height="18"/><rect x="141" y="217" width="36" height="9"/><rect x="141" y="244" width="9" height="9"/><rect x="141" y="262" width="9" height="18"/><rect x="150" y="55" width="18" height="27"/><rect x="150" y="91" width="9" height="9"/><rect x="150" y="109" width="18" height="9"/><rect x="150" y="136" width="9" height="9"/><rect x="150" y="154" width="18" height="18"/><rect x="150" y="181" width="27" height="9"/><rect x="150" y="208" width="27" height="27"/><rect x="150" y="271" width="45" height="9"/><rect x="150" y="289" width="27" height="9"/><rect x="159" y="37" width="9" height="45"/><rect x="159" y="118" width="9" height="18"/><rect x="159" y="145" width="9" height="27"/><rect x="159" y="190" width="9" height="54"/><rect x="159" y="262" width="9" height="36"/><rect x="168" y="73" width="9" height="36"/><rect x="168" y="118" width="27" height="9"/><rect x="168" y="136" width="9" height="18"/><rect x="168" y="172" width="9" height="18"/><rect x="168" y="199" width="9" height="36"/><rect x="168" y="244" width="9" height="9"/><rect x="177" y="37" width="18" height="9"/><rect x="177" y="55" width="9" height="18"/><rect x="177" y="127" width="9" height="18"/><rect x="177" y="154" width="9" height="27"/><rect x="177" y="190" width="18" height="9"/><rect x="177" y="226" width="18" height="9"/><rect x="186" y="82" width="9" height="27"/><rect x="186" y="163" width="9" height="9"/><rect x="186" y="181" width="9" height="63"/><rect x="186" y="253" width="9" height="27"/><rect x="195" y="46" width="9" height="18"/><rect x="195" y="82" width="9" height="9"/><rect x="195" y="109" width="9" height="9"/><rect x="195" y="181" width="9" height="9"/><rect x="195" y="208" width="9" height="18"/><rect x="195" y="280" width="9" height="9"/><rect x="204" y="37" width="9" height="9"/><rect x="204" y="91" width="9" height="9"/><rect x="204" y="127" width="18" height="9"/><rect x="204" y="199" width="9" height="18"/><rect x="204" y="226" width="9" height="18"/><rect x="204" y="253" width="9" height="9"/><rect x="204" y="271" width="18" height="9"/><rect x="213" y="55" width="9" height="9"/><rect x="213" y="73" width="18" height="9"/><rect x="213" y="100" width="9" height="90"/><rect x="213" y="208" width="27" height="18"/><rect x="213" y="262" width="9" height="18"/><rect x="222" y="46" width="9" height="9"/><rect x="222" y="64" width="9" height="54"/><rect x="222" y="136" width="18" height="9"/><rect x="222" y="154" width="9" height="9"/><rect x="222" y="172" width="9" height="27"/><rect x="222" y="226" width="9" height="36"/><rect x="231" y="118" width="9" height="36"/><rect x="231" y="172" width="9" height="9"/><rect x="231" y="253" width="45" height="9"/><rect x="240" y="37" width="9" height="63"/><rect x="240" y="118" width="9" height="18"/><rect x="240" y="145" width="9" height="27"/><rect x="240" y="190" width="9" height="18"/><rect x="240" y="217" width="27" height="9"/><rect x="240" y="235" width="9" height="9"/><rect x="240" y="262" width="9" height="36"/><rect x="249" y="37" width="54" height="9"/><rect x="249" y="91" width="54" height="9"/><rect x="249" y="109" width="9" height="18"/><rect x="249" y="145" width="9" height="18"/><rect x="249" y="181" width="9" height="18"/><rect x="249" y="262" width="9" height="9"/><rect x="249" y="280" width="36" height="9"/><rect x="258" y="55" width="27" height="27"/><rect x="258" y="118" width="9" height="18"/><rect x="258" y="154" width="9" height="18"/><rect x="258" y="190" width="9" height="18"/><rect x="258" y="226" width="9" height="36"/><rect x="258" y="271" width="9" height="27"/><rect x="267" y="109" width="36" height="9"/><rect x="267" y="127" width="9" height="27"/><rect x="267" y="163" width="27" height="9"/><rect x="267" y="181" width="27" height="9"/><rect x="267" y="199" width="27" height="9"/><rect x="267" y="226" width="18" height="18"/><rect x="267" y="262" width="27" height="9"/><rect x="276" y="118" width="9" height="18"/><rect x="276" y="145" width="9" height="27"/><rect x="276" y="190" width="18" height="18"/><rect x="276" y="244" width="18" height="9"/><rect x="276" y="271" width="9" height="18"/><rect x="285" y="145" width="9" height="9"/><rect x="285" y="172" width="9" height="45"/><rect x="285" y="271" width="18" height="9"/><rect x="285" y="289" width="9" height="9"/><rect x="294" y="46" width="9" height="54"/><rect x="294" y="127" width="9" height="9"/><rect x="294" y="190" width="9" height="9"/><rect x="294" y="235" width="9" height="9"/><rect x="294" y="253" width="9" height="9"/></svg>
-            <p id="dtx">有关此问题的详细信息和可能的解决方案，请访问<br><a onclick="window.open('https:\/\/www.bilibili.com/video/BV1GJ411x7h7','_blank')" class="link">https://www.windows.com/stopcode</a><br><br>如果致电支持人员，请向他们提供以下信息：<br>终止代码: <span id="stopcode" style="user-select:text;">YOU_MAY_DID_NOT_STAR_THIS_PROJECT</span></p>
-        </div>
+      <div id="happy-face">
+        <p class="eye a">.</p>
+        <p class="eye b">.</p>
+        <p class="mouse">)</p>
+      </div>
+      <p id="tx1">
+        你的设备遇到问题，需要重启。
+        <br />
+        我们只假装收集某些错误信息，然后为你重新蓝屏。
+      </p>
+      <p id="prog">
+        <span id="complete">0</span>
+        % 完成
+      </p>
+      <div id="detail">
+        <svg
+          id="qr"
+          xmlns="http://www.w3.org/2000/svg"
+          version="1.2"
+          baseProfile="tiny"
+          shape-rendering="crispEdges"
+          viewBox="20 15 305 305"
+          style="background-color: rgba(255, 255, 255, 1)"
+        >
+          <rect x="42" y="37" width="9" height="63" />
+          <rect x="42" y="109" width="9" height="18" />
+          <rect x="42" y="136" width="9" height="18" />
+          <rect x="42" y="163" width="18" height="9" />
+          <rect x="42" y="181" width="9" height="18" />
+          <rect x="42" y="217" width="36" height="9" />
+          <rect x="42" y="235" width="9" height="63" />
+          <rect x="51" y="37" width="54" height="9" />
+          <rect x="51" y="91" width="54" height="9" />
+          <rect x="51" y="109" width="9" height="9" />
+          <rect x="51" y="145" width="9" height="9" />
+          <rect x="51" y="172" width="9" height="9" />
+          <rect x="51" y="235" width="54" height="9" />
+          <rect x="51" y="289" width="54" height="9" />
+          <rect x="60" y="55" width="27" height="27" />
+          <rect x="60" y="118" width="18" height="9" />
+          <rect x="60" y="136" width="9" height="9" />
+          <rect x="60" y="181" width="9" height="9" />
+          <rect x="60" y="199" width="9" height="9" />
+          <rect x="60" y="253" width="27" height="27" />
+          <rect x="69" y="127" width="72" height="9" />
+          <rect x="69" y="145" width="9" height="9" />
+          <rect x="69" y="190" width="9" height="9" />
+          <rect x="69" y="208" width="9" height="18" />
+          <rect x="78" y="109" width="27" height="9" />
+          <rect x="78" y="154" width="9" height="27" />
+          <rect x="78" y="208" width="9" height="9" />
+          <rect x="87" y="145" width="18" height="9" />
+          <rect x="87" y="190" width="9" height="18" />
+          <rect x="96" y="46" width="9" height="54" />
+          <rect x="96" y="163" width="9" height="9" />
+          <rect x="96" y="181" width="45" height="9" />
+          <rect x="96" y="199" width="9" height="9" />
+          <rect x="96" y="217" width="18" height="9" />
+          <rect x="96" y="244" width="9" height="54" />
+          <rect x="105" y="118" width="9" height="27" />
+          <rect x="105" y="154" width="18" height="9" />
+          <rect x="105" y="172" width="9" height="18" />
+          <rect x="105" y="208" width="9" height="18" />
+          <rect x="114" y="37" width="9" height="36" />
+          <rect x="114" y="82" width="9" height="18" />
+          <rect x="114" y="163" width="18" height="9" />
+          <rect x="114" y="190" width="9" height="18" />
+          <rect x="114" y="226" width="27" height="9" />
+          <rect x="114" y="244" width="9" height="18" />
+          <rect x="114" y="280" width="9" height="18" />
+          <rect x="123" y="55" width="9" height="36" />
+          <rect x="123" y="136" width="9" height="9" />
+          <rect x="123" y="190" width="9" height="9" />
+          <rect x="123" y="235" width="27" height="9" />
+          <rect x="123" y="253" width="18" height="18" />
+          <rect x="123" y="289" width="9" height="9" />
+          <rect x="132" y="64" width="9" height="54" />
+          <rect x="132" y="154" width="9" height="9" />
+          <rect x="132" y="199" width="9" height="9" />
+          <rect x="132" y="271" width="9" height="18" />
+          <rect x="141" y="46" width="27" height="9" />
+          <rect x="141" y="100" width="9" height="9" />
+          <rect x="141" y="145" width="9" height="9" />
+          <rect x="141" y="163" width="9" height="18" />
+          <rect x="141" y="217" width="36" height="9" />
+          <rect x="141" y="244" width="9" height="9" />
+          <rect x="141" y="262" width="9" height="18" />
+          <rect x="150" y="55" width="18" height="27" />
+          <rect x="150" y="91" width="9" height="9" />
+          <rect x="150" y="109" width="18" height="9" />
+          <rect x="150" y="136" width="9" height="9" />
+          <rect x="150" y="154" width="18" height="18" />
+          <rect x="150" y="181" width="27" height="9" />
+          <rect x="150" y="208" width="27" height="27" />
+          <rect x="150" y="271" width="45" height="9" />
+          <rect x="150" y="289" width="27" height="9" />
+          <rect x="159" y="37" width="9" height="45" />
+          <rect x="159" y="118" width="9" height="18" />
+          <rect x="159" y="145" width="9" height="27" />
+          <rect x="159" y="190" width="9" height="54" />
+          <rect x="159" y="262" width="9" height="36" />
+          <rect x="168" y="73" width="9" height="36" />
+          <rect x="168" y="118" width="27" height="9" />
+          <rect x="168" y="136" width="9" height="18" />
+          <rect x="168" y="172" width="9" height="18" />
+          <rect x="168" y="199" width="9" height="36" />
+          <rect x="168" y="244" width="9" height="9" />
+          <rect x="177" y="37" width="18" height="9" />
+          <rect x="177" y="55" width="9" height="18" />
+          <rect x="177" y="127" width="9" height="18" />
+          <rect x="177" y="154" width="9" height="27" />
+          <rect x="177" y="190" width="18" height="9" />
+          <rect x="177" y="226" width="18" height="9" />
+          <rect x="186" y="82" width="9" height="27" />
+          <rect x="186" y="163" width="9" height="9" />
+          <rect x="186" y="181" width="9" height="63" />
+          <rect x="186" y="253" width="9" height="27" />
+          <rect x="195" y="46" width="9" height="18" />
+          <rect x="195" y="82" width="9" height="9" />
+          <rect x="195" y="109" width="9" height="9" />
+          <rect x="195" y="181" width="9" height="9" />
+          <rect x="195" y="208" width="9" height="18" />
+          <rect x="195" y="280" width="9" height="9" />
+          <rect x="204" y="37" width="9" height="9" />
+          <rect x="204" y="91" width="9" height="9" />
+          <rect x="204" y="127" width="18" height="9" />
+          <rect x="204" y="199" width="9" height="18" />
+          <rect x="204" y="226" width="9" height="18" />
+          <rect x="204" y="253" width="9" height="9" />
+          <rect x="204" y="271" width="18" height="9" />
+          <rect x="213" y="55" width="9" height="9" />
+          <rect x="213" y="73" width="18" height="9" />
+          <rect x="213" y="100" width="9" height="90" />
+          <rect x="213" y="208" width="27" height="18" />
+          <rect x="213" y="262" width="9" height="18" />
+          <rect x="222" y="46" width="9" height="9" />
+          <rect x="222" y="64" width="9" height="54" />
+          <rect x="222" y="136" width="18" height="9" />
+          <rect x="222" y="154" width="9" height="9" />
+          <rect x="222" y="172" width="9" height="27" />
+          <rect x="222" y="226" width="9" height="36" />
+          <rect x="231" y="118" width="9" height="36" />
+          <rect x="231" y="172" width="9" height="9" />
+          <rect x="231" y="253" width="45" height="9" />
+          <rect x="240" y="37" width="9" height="63" />
+          <rect x="240" y="118" width="9" height="18" />
+          <rect x="240" y="145" width="9" height="27" />
+          <rect x="240" y="190" width="9" height="18" />
+          <rect x="240" y="217" width="27" height="9" />
+          <rect x="240" y="235" width="9" height="9" />
+          <rect x="240" y="262" width="9" height="36" />
+          <rect x="249" y="37" width="54" height="9" />
+          <rect x="249" y="91" width="54" height="9" />
+          <rect x="249" y="109" width="9" height="18" />
+          <rect x="249" y="145" width="9" height="18" />
+          <rect x="249" y="181" width="9" height="18" />
+          <rect x="249" y="262" width="9" height="9" />
+          <rect x="249" y="280" width="36" height="9" />
+          <rect x="258" y="55" width="27" height="27" />
+          <rect x="258" y="118" width="9" height="18" />
+          <rect x="258" y="154" width="9" height="18" />
+          <rect x="258" y="190" width="9" height="18" />
+          <rect x="258" y="226" width="9" height="36" />
+          <rect x="258" y="271" width="9" height="27" />
+          <rect x="267" y="109" width="36" height="9" />
+          <rect x="267" y="127" width="9" height="27" />
+          <rect x="267" y="163" width="27" height="9" />
+          <rect x="267" y="181" width="27" height="9" />
+          <rect x="267" y="199" width="27" height="9" />
+          <rect x="267" y="226" width="18" height="18" />
+          <rect x="267" y="262" width="27" height="9" />
+          <rect x="276" y="118" width="9" height="18" />
+          <rect x="276" y="145" width="9" height="27" />
+          <rect x="276" y="190" width="18" height="18" />
+          <rect x="276" y="244" width="18" height="9" />
+          <rect x="276" y="271" width="9" height="18" />
+          <rect x="285" y="145" width="9" height="9" />
+          <rect x="285" y="172" width="9" height="45" />
+          <rect x="285" y="271" width="18" height="9" />
+          <rect x="285" y="289" width="9" height="9" />
+          <rect x="294" y="46" width="9" height="54" />
+          <rect x="294" y="127" width="9" height="9" />
+          <rect x="294" y="190" width="9" height="9" />
+          <rect x="294" y="235" width="9" height="9" />
+          <rect x="294" y="253" width="9" height="9" />
+        </svg>
+        <p id="dtx">
+          有关此问题的详细信息和可能的解决方案，请访问
+          <br />
+          <a
+            onclick="
+              window.open(
+                'https:\/\/www.bilibili.com/video/BV1GJ411x7h7',
+                '_blank',
+              )
+            "
+            class="link"
+          >
+            https://www.windows.com/stopcode
+          </a>
+          <br />
+          <br />
+          如果致电支持人员，请向他们提供以下信息：
+          <br />
+          终止代码：
+          <span id="stopcode" style="user-select: text">
+            YOU_MAY_DID_NOT_STAR_THIS_PROJECT
+          </span>
+        </p>
+      </div>
     </div>
     <script src="scripts/jq.min.js"></script>
     <script>
-        function sleep(millisecond, callback) {
-            // 延迟指定的毫秒数后执行回调函数
-            setTimeout(callback, millisecond);
+      function sleep(millisecond, callback) {
+        // 延迟指定的毫秒数后执行回调函数
+        setTimeout(callback, millisecond);
+      }
+
+      function update_complete() {
+        // 更新 complete 元素的文本内容，将其值加 1
+        complete.innerText = (parseInt(complete.innerText) + 1).toString();
+      }
+      function next_loop(element) {
+        // 将 complete 元素的文本内容解析为整数
+        var i = parseInt(complete.innerText, 10);
+        // 定义延迟时间数组
+        var delays = [300, 200, 100, 50];
+
+        if (i >= 100) {
+          // 重新加载页面
+          $("html").css("filter", "brightness(0)");
+          setTimeout(() => {
+            reload();
+          }, 2000);
+          return;
         }
 
-        function update_complete() {
-            // 更新complete元素的文本内容，将其值加1
-            complete.innerText = (parseInt(complete.innerText) + 1).toString();
-        }
-        function next_loop(element) {
-            // 将complete元素的文本内容解析为整数
-            var i = parseInt(complete.innerText, 10);
-            // 定义延迟时间数组
-            var delays = [300, 200, 100, 50];
-
-            if (i >= 100) {
-                 // 重新加载页面
-                $('html').css('filter','brightness(0)')
-                setTimeout(() => {
-                    reload();
-                }, 2000);
-                return;
-            }
-
-            var delay;
-            if (i < 20) {
-                // 对应i小于20时的延迟时间
-                delay = delays[0];
-            } else if (i < 60) {
-                // 对应i小于60时的延迟时间
-                delay = delays[1];
-            } else if (i < 80) {
-                 // 对应i小于80时的延迟时间
-                delay = delays[2];
-            } else {
-                // 对应i大于等于80时的延迟时间
-                delay = delays[3];
-            }
-
-            sleep(delay, function () {
-                 // 更新complete元素的值
-                update_complete();
-                 // 递归调用next_loop函数，形成循环
-                next_loop();
-            });
+        var delay;
+        if (i < 20) {
+          // 对应 i 小于 20 时的延迟时间
+          delay = delays[0];
+        } else if (i < 60) {
+          // 对应 i 小于 60 时的延迟时间
+          delay = delays[1];
+        } else if (i < 80) {
+          // 对应 i 小于 80 时的延迟时间
+          delay = delays[2];
+        } else {
+          // 对应 i 大于等于 80 时的延迟时间
+          delay = delays[3];
         }
 
-        function reload() {
-            // 重新加载页面
-            window.location.reload();
-        }
+        sleep(delay, function () {
+          // 更新 complete 元素的值
+          update_complete();
+          // 递归调用 next_loop 函数，形成循环
+          next_loop();
+        });
+      }
 
-        let complete = document.getElementById("complete");
-        next_loop();
-        // 从URL参数中获取名为"code"的值
-        var r = window.location.search.substr(1).match(/(^|&)code=([^&]*)(&|$)/);
-        if(r!=null){
-            document.getElementById('stopcode').innerHTML = r[2];
-        }
+      function reload() {
+        // 重新加载页面
+        window.location.reload();
+      }
+
+      let complete = document.getElementById("complete");
+      next_loop();
+      // 从 URL 参数中获取名为"code"的值
+      var r = window.location.search.substr(1).match(/(^|&)code=([^&]*)(&|$)/);
+      if (r != null) {
+        document.getElementById("stopcode").innerHTML = r[2];
+      }
     </script>
-</body>
+  </body>
 </html>

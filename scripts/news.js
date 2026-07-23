@@ -9,7 +9,7 @@ var news = {
     sources: [
         {
             name: '东方网',
-            description: '东方网新闻头条（使用公益API）',
+            description: '东方网新闻头条（使用公益 API）',
             url: 'https://tools.mgtv100.com/external/v1/toutiao/index',
             async getData() {
                 try {
@@ -44,7 +44,7 @@ var news = {
         },
         {
             name: '知乎每日新闻',
-            description: '知乎每日新闻（使用公益API）',
+            description: '知乎每日新闻（使用公益 API）',
             url: 'https://v.api.aa1.cn/api/zhihu-news/index.php?aa1=xiarou',
             async getData() {
                 try {

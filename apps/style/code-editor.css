@@ -1,0 +1,107 @@
+#win-code-editor {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    user-select: all;
+}
+
+#win-code-editor *::-webkit-scrollbar {
+    background-color: #FFFFFF10;
+}
+
+#win-code-editor * {
+    scroll-behavior: initial !important;
+}
+
+#code-ace-editor {
+    font-size: 15px;
+    line-height: 1.4;
+    width: 100% !important;
+    flex: 1;
+    min-height: 0;
+    font-weight: 200;
+}
+
+/* Toolbar */
+.code-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 34px;
+    padding: 0 8px;
+    background: #1e1e1e;
+    border-bottom: 1px solid #333;
+    flex-shrink: 0;
+}
+.code-toolbar-left,
+.code-toolbar-right {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+.code-tb-btn {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.12s, color 0.12s;
+}
+.code-tb-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+.code-tb-btn.active {
+    background: rgba(255, 255, 255, 0.15);
+    color: #569cd6;
+}
+.code-tb-sep {
+    width: 1px;
+    height: 18px;
+    background: #444;
+    margin: 0 4px;
+}
+
+/* Theme selector */
+#code-theme-select {
+    background: #2d2d2d;
+    color: #ccc;
+    border: 1px solid #444;
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-size: 12px;
+    height: 26px;
+    cursor: pointer;
+    outline: none;
+}
+#code-theme-select:hover {
+    border-color: #569cd6;
+}
+#code-theme-select option {
+    background: #2d2d2d;
+    color: #ccc;
+}
+
+/* Status bar */
+.code-statusbar {
+    display: flex;
+    align-items: center;
+    height: 24px;
+    padding: 0 12px;
+    background: #007acc;
+    color: #fff;
+    font-size: 12px;
+    gap: 16px;
+    flex-shrink: 0;
+    user-select: none;
+}
+.code-statusbar > span {
+    white-space: nowrap;
+}
+#code-status-lang {
+    margin-left: auto;
+}

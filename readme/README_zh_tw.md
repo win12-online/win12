@@ -1,28 +1,36 @@
 <p align="center">
     <img src="./icon/windows12.svg" width="100" height="100">
 </p>
-<h1 align="center">Windows 12 網頁版</h1>
+<h1 align="center">Win12 網頁版</h1>
 <p align="center" class="shields">
-  <span href="https://github.com/tjy-gitnub/win12/issues" style="text-decoration:none">
-    <img src="https://img.shields.io/github/issues/tjy-gitnub/win12.svg" alt="GitHub issues"/>
+  <span href="https://github.com/win12-online/win12/issues" style="text-decoration:none">
+    <img src="https://img.shields.io/github/issues/win12-online/win12.svg" alt="GitHub issues"/>
   </span>
-<span href="https://github.com/tjy-gitnub/win12/stargazers" style="text-decoration:none">
-    <img src="https://img.shields.io/github/stars/tjy-gitnub/win12.svg" alt="GitHub stars"/>
+  <span href="https://github.com/win12-online/win12/stargazers" style="text-decoration:none">
+    <img src="https://img.shields.io/github/stars/win12-online/win12.svg" alt="GitHub stars"/>
   </span>
-  <span href="https://github.com/tjy-gitnub/win12/network" style="text-decoration:none">
-<img src="https://img.shields.io/github/forks/tjy-gitnub/win12.svg" alt="GitHub forks"/>
+  <span href="https://github.com/win12-online/win12/network" style="text-decoration:none">
+    <img src="https://img.shields.io/github/forks/win12-online/win12.svg" alt="GitHub forks"/>
   </span>
+  <span href="https://status.win12.tech/status/win12" style="text-decoration:none">
+    <img src="https://status.win12.tech/api/badge/5/status?style=plastic" alt="GitHub forks"/>
+  </span>
+</p>
+<p align="center">
+  <a href="https://trendshift.io/repositories/115" target="_blank">
+    <img src="https://trendshift.io/api/badge/repositories/115" alt="win12-online%2Fwin12 | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/>
+  </a>
 </p>
 <p align="center" class="language" title="語言選擇 语言选择">
 <a href="readme/README_en_us.md">English</a> | 
-<b>簡體中文</b> | 
-<a href="readme/README_fr_fr.md">Français</a>|
+<b>简体中文</b> | 
+<a href="readme/README_fr_fr.md">Français</a> |
 <a href="readme/README_zh_tw.md">繁體中文</a>
 </p>
 <details align="center">
   <summary>星史</summary>
-  <a href="https://star-history.com/#tjy-gitnub/win12&Date" style="text-decoration:none">
-<img src="https://api.star-history.com/svg?repos=tjy-gitnub/win12&type=Date" alt="Star History Chart">
+  <a href="https://star-history.com/#win12-online/win12&Date" style="text-decoration:none">
+<img src="https://api.star-history.com/svg?repos=win12-online/win12&type=Date" alt="Star History Chart">
   </a>
 </details>
 
@@ -32,18 +40,21 @@
   - [前言](#前言)
   - [線上體驗](#線上體驗)
   - [效果展示](#效果展示)
-- [前景規劃](#前景規劃)
-  - [開源聲明](#開源聲明)
-  - [貢獻須知](#貢獻須知)
-  - [貢獻者](#貢獻者)
+  - [前景規劃](#前景規劃)
+- [開源聲明](#開源聲明)
+- [貢獻須知](#貢獻須知)
+- [專案索引](#專案索引)
+- [貢獻者](#貢獻者)
 - [資助我們](#资助我們)
+- [聯絡我們](#聯絡我們)
+- [交流群](#交流群)
     
 
     
 
 ## 前言
 
-很久以前 tjy-gitnub 在看到 Windows 12 概念版（Powered by PowerPoint）後深受啟發，決定做一個 Windows 12 網頁版，就像 [Windows 11 網頁版](https://win11.blueedge.me/) 一樣。 它擁有精美的 UI 設計、流暢豐富的動畫，以及各種進階功能。
+很久以前 tjy-gitnub 在看到 Windows 12 概念版（Powered by PowerPoint）後深受啟發，決定做一個 Windows 12 網頁版，就像 [Windows 11 網頁版](https://win11.blueedge.me/) 一樣。它擁有精美的 UI 設計、流暢豐富的動畫，以及各種進階功能。
 
 於是就有了這個專案（是的，這個專案的誕生就是這麼突然）
 
@@ -51,30 +62,30 @@
 
 ## 在線體驗
 
-點擊[此處](tjy-gitnub.github.io/win12/desktop.html)即可體驗。
+點擊[此處](https://win12.tech)即可體驗。
 
 
 ## 效果展示
 
-> 新的版本有很多變化，僅供參考，請以實物為準（你點一下 [這裡](https://tjy-gitnub.github.io/win12/desktop.html) 就知道了啊，不麻煩`-_-)o` ）
+> 新的版本有很多變化，僅供參考，請以實物為準（你點一下 [這裡](https://win12-online.github.io/win12/desktop.html) 就知道了啊，不麻煩`-_-)o` ）
 
-![image](https://tjy-gitnub.github.io/win12/img/start-menu.png)
+![image](https://win12-online.github.io/win12/img/start-menu.png)
 
 *開始功能表*
 
-![image](https://tjy-gitnub.github.io/win12/img/colorful-apps.png)
+![image](https://win12-online.github.io/win12/img/colorful-apps.png)
 
 *豐富的應用*
 
-![image](https://tjy-gitnub.github.io/win12/img/dark-mode.png)
+![image](https://win12-online.github.io/win12/img/dark-mode.png)
 
 *深色模式*
 
-![image](https://tjy-gitnub.github.io/win12/img/ai-copilot.png)
+![image](https://win12-online.github.io/win12/img/ai-copilot.png)
 *AI Copilot([實作方法](./scripts/AI%20Copilot%20service/README.md))*
 ## 前景規劃
 
-關於該專案的路徑規劃:
+關於該專案的路徑規劃：
 
 - [x] 基本功能與應用
 - [x] 外觀整體優化
@@ -107,38 +118,52 @@
 - [ ] 將專案更名為「550W」
 
 ## 開源聲明
->[!TIP]
+> [!TIP]
 >無論您以何種方式使用本專案，皆表示您已仔細閱讀並同意遵守本章節的全部內容。
 
 Windows12 網頁版的內容均採用較為寬鬆的著作權許可協議授權社會大眾使用。
 
 ### 計算機程式原始碼
-Wndows12 網頁版是自由軟體，採用 Eclipse 基金會發佈的 Eclipse Public License 2.0 許可證（網址:<https://www.eclipse.org/legal/epl-2.0/>）進行授權。在遵守該許可證的前提下，您可以自由使用本專案的原始碼。
+Wndows12 網頁版是自由軟體，採用 Eclipse 基金會發佈的 Eclipse Public License 2.0 許可證（網址：<https://www.eclipse.org/legal/epl-2.0/>）進行授權。在遵守該許可證的前提下，您可以自由使用本專案的原始碼。
 
 ### 媒體檔案
 
-Windows12 網頁版的媒體檔案內容（圖形作品、美術作品、視聽作品）依照知識共享 署名-相同方式共享 4.0 協議國際版（CC BY-SA 4.0）公開發表（另有聲明的部分除外）；在遵守該授權協議的前提下，您可以自由使用本專案內的媒體檔案。
+Windows12 網頁版的媒體檔案內容（圖形作品、美術作品、視聽作品）依照知識共享 署名 - 相同方式共享 4.0 協議國際版（CC BY-SA 4.0）公開發表（另有聲明的部分除外）；在遵守該授權協議的前提下，您可以自由使用本專案內的媒體檔案。
 
 相關檔案屬於合理使用的範疇，但使用相關媒體檔案可能存在法律風險，請在使用前查閱著作權相關法律法規之規定。
 
 ### 附加條款
-1. 任何使用、分享或分發本專案者，必須在專案介紹、文件或相關材料中明確附上原作者資訊（譚景元，tjy-gitnub）及原專案連結（<https://github.com/tjy-gitnub/win12>）。**您不得故意隱瞞、移除或修改原專案中的署名資訊、作者資訊或專案連結等；不得限制他人查看這些資訊**。
+1. 任何使用、分享或分發本專案者，必須在專案介紹、文件或相關材料中明確附上原作者資訊（譚景元，tjy-gitnub）及原專案連結（<https://github.com/win12-online/win12>）。**您不得故意隱瞞、移除或修改原專案中的署名資訊、作者資訊或專案連結等；不得限制他人查看這些資訊**。
 2. 將本專案用於商業用途者，必須標明原作者及專案連結，並以 EPL-2.0 協議開源全部相關原始碼。
 3. 未經修改的原始碼不得用於商業用途。
 4. 任何使用或分享本專案者，不得移除、隱藏或限制查看本開源聲明。
-5. 您在發現他人違反前四款所列各項要求時，請及時[向我們回報](https://github.com/tjy-gitnub/win12/issues)，並盡可能及時制止相關內容的發布與傳輸。
+5. 您在發現他人違反前四款所列各項要求時，請及時[向我們回報](https://github.com/win12-online/win12/issues)，並盡可能及時制止相關內容的發布與傳輸。
 6. 若您實施侵權行為，我們將根據法律規定保留記錄，且保留在任何時間以一切方式採取法律行動、追究法律責任的權利（包括但不限於依法向執法機關提交報告、向司法機關提出控告、配合執法機關和司法機關調查等）。
+
 ## 貢獻須知
 
 詳情請見 [貢獻指南](./CONTRIBUTING.md)。
 
 本專案使用 i18n 函式庫實現多語言，翻譯工作依據[翻譯貢獻指南](lang/readme.md)進行。
 
+## 專案索引
+由於歷史遺留問題，本專案的很多內容分散在不同的倉庫或網站中，為了方便大家尋找，以下是一些內容的索引。
+- [狀態監測](https://status.win12.tech/status/win12)
+- [主題倉庫](https://github.com/tjy-gitnub/win12-theme)
+- [PR 預覽](https://github.com/tangyuan0821/win12-pr-preview)
+- [Wiki 倉庫](https://github.com/freedom-323/win12-wiki)
+- [文件（已存檔）](https://github.com/tangyuan0821/windows12-docs)
+- [離線倉庫](https://github.com/tjy-gitnub/win12-offline)
+- [應用資料倉庫](https://github.com/win12-online/win12-msstore)
+- [React 版本](https://github.com/User782Tec/win12-react)
+- [CDN](https://github.com/User782Tec/win12-cdn)
+- [擴充套件](https://github.com/User782Tec/win12-addons)
+
 ## 貢獻者
 
-核心開發者: tjy-gitnub([Bilibili](https://space.bilibili.com/2010692096/))，NB-group([Bilibili](https://space.bilibili.com/1570243738/))，782([Bilibili](https://space.bilibili.com/1046361194/))（三人均為國中生）
+核心開發者：tjy-gitnub([Bilibili](https://space.bilibili.com/2010692096/))，NB-group([Bilibili](https://space.bilibili.com/1570243738/))，782([Bilibili](https://space.bilibili.com/1046361194/))（三人當年均為國中生）
 
-專案貢獻者:詳見[此處](https://github.com/tjy-gitnub/win12/graphs/contributors)（感謝我們出色的貢獻者！）
+專案貢獻者：詳見[此處](https://github.com/win12-online/win12/graphs/contributors)（感謝我們出色的貢獻者！）
 
 ## 贊助我們
 
@@ -147,3 +172,22 @@ Windows12 網頁版的媒體檔案內容（圖形作品、美術作品、視聽�
 特別感謝以下贊助者：
 - CursoR_光標（<https://afdian.com/a/cursor>）
 - Baymax（<https://afdian.com/u/a131cd504dea11eeb6be5254001e7c00>）
+
+## 聯絡我們
+### 郵件聯絡
+有關合作請求、媒體諮詢、投訴檢舉等問題，您可聯絡本專案的擁有者：`starry-source@outlook.com`
+
+若涉及智慧財產權投訴，在向前述地址傳送郵件的同時，請抄送`ipcomplaint@win12.tech`
+
+有關社群建設、內容維護、諮詢建議、其他使用問題，可聯絡`generalinquiry@win12.tech`
+
+來信時，請儘量留下詳細聯絡方式，以便我們回覆。
+
+**注意事項**:以`win12.tech`結尾的郵箱由 @tangyuan0821 負責處理。
+
+## 交流群
+我們提供多個供用戶、貢獻者交流的交流群。
+
+- [Microsoft Teams](https://teams.live.com/l/invite/FEA0yrNkE_bAn-ddwI)
+- [TailChat](https://nightly.paw.msgbyte.com/invite/PRdJ34zo)（實驗性，不活躍）
+- [Nerimity](https://nerimity.com/i/w2lvf)（實驗性）

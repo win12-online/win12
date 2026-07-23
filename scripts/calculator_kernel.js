@@ -14,7 +14,7 @@ class Calculator {
 
     number_key(key) {
         // key:按下的数字键，int
-        // id:显示区的id
+        // id:显示区的 id
         console.log($(this.elt)[0],$(this.elt)[0].value);
         if ($(this.elt)[0].value == '0' || this.preview) {
             $(this.elt)[0].value = '';
@@ -25,7 +25,7 @@ class Calculator {
     }
 
     func_key(key) {
-        // key:按下的功能键，int,加1，减2，乘3，除4
+        // key:按下的功能键，int，加 1，减 2，乘 3，除 4
         if (!this.isCheck()) {
             if (this.num1 != null) {
                 this.num2 = Big($(this.elt)[0].value);

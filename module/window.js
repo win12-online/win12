@@ -36,13 +36,10 @@ function hidewin(name, arg = 'window') {
       closeVideo()
     }
     if (arg == 'window') {
-        $('#taskbar').attr('count', Number($('#taskbar').attr('count')) - 1);
         $('#taskbar>.' + name).remove();
-        $('#taskbar').css('width', 4 + $('#taskbar').attr('count') * (34 + 4));
+        syncTaskbarLayout();
         setTimeout(() => {
-            if ($('#taskbar').attr('count') == '0') {
-                $('#taskbar').css('display', 'none');
-            }
+            syncTaskbarLayout();
         }, 80);
     }
     setTimeout(() => {

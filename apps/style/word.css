@@ -106,7 +106,7 @@
     width: 125px !important;
     border-radius: 8px;
     margin: 12.5px;
-    background-color: var(--cm);
+    background-color: var(--contextmeu);
 }
 
 .office-icon {
@@ -151,7 +151,7 @@
 .window.word>.pages>.edit>.content>.doc {
     aspect-ratio: 1/1.414;
     width: 60%;
-    background-color: var(--cm);
+    background-color: var(--contextmeu);
     color: var(--text);
     margin: auto;
     padding: 64px;

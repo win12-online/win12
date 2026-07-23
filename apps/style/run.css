@@ -1,38 +1,42 @@
 #win-run {
     display: flex !important;
-    flex-direction: column;
+    padding: 12px;
+    
 }
 
-#win-run>.top {
-    display: flex;
-    padding: 10px;
+#win-run>.open {
+    display: flex !important;
+    width: 100%;
+    gap: 12px;
+    height: 100%;
+    align-items: center;
 }
 
-#win-run>.top>.icon {
-    min-width: 70px;
+#win-run>.open>.icon {
+    min-width:48px;
+    min-height:48px ;
     background-image: url('../../icon/run.svg');
     background-position: 50% 50%;
     background-repeat: no-repeat;
     background-size: contain;
-    margin-right: 10px;
-}
-
-#win-run>.top>.text {
-    font-size: 15px;
-    line-height: 1.2;
-}
-
-#win-run>.open {
-    display: flex;
-    gap: 15px;
-    padding: 10px 20px 10px 20px;
 }
 
 #win-run>.open>input {
-    flex-grow: 1;
-    width: auto !important;
+    height: 100%;
+    flex:1;
+    background-color: transparent;
+    border: 0;
+    box-shadow: none;
 }
 
-#win-run>.open>.prompt {
-    margin-top: 3px;
+#win-run>.open>input:focus {
+    background-color: transparent;
+    border: 0;
+    box-shadow: none;
+    background-image: none;
+}
+
+
+#win-run>.open>.button {
+    width: 64px;
 }

@@ -19,24 +19,25 @@ async function getLunar() {
     if (!lunarCache && !lunarCachePromise) {
         lunarCachePromise = (async () => {
             try {
-                const response = await fetch('https://api.lolimi.cn/API/rl/api');
+                const response = await fetch('https://api.xcboke.cn/api/calendar');
                 if (!response.ok) {
                     // 你是怎么想出来往开发控制台打印这种东西的。。。
                     // throw new Error('网络不给力');
-                    throw new Error('HTTP 状态码不符合预期: ' + response.status);
+                    throw new Error('HTTP 状态码不符合预期：' + response.status);
                 }
                 const jsonContent = await response.json();
-                if (jsonContent.code !== 1) {
-                    throw new Error(`服务器异常，错误码: ${jsonContent.code}`);
-                }
-                if (typeof jsonContent?.data?.lunar !== 'string') {
+                //新的 api 根本没有 code 这个参数。。。
+                //if (jsonContent.code !== 1) {
+                //    throw new Error(`服务器异常，错误码：${jsonContent.code}`);
+                //}
+                if (typeof jsonContent?.['农历'] !== 'string') {
                     throw new Error('服务器返回数据格式异常');
                 }
                 lunarCache = jsonContent;
                 return lunarCache;
             } catch (error) {
                 lunarDisplay.textContent = '';
-                console.error('获取农历信息失败: ', error);
+                console.error('获取农历信息失败：', error);
                 throw error;
             } finally {
                 // 请求结束后，无论成功与否，都清除进行中的 Promise 标记
@@ -49,8 +50,8 @@ async function getLunar() {
         await lunarCachePromise;
     }
 
-    if (lunarCache?.data?.lunar) {
-        const lunarContent = lunarCache.data.lunar;
+    if (lunarCache?.['农历']) {
+        const lunarContent = lunarCache['农历'];
         lunarDisplay.textContent = lunarContent;
     }
 }
