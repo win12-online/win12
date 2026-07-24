@@ -240,6 +240,15 @@ let apps = {
         pauseKeyBound: false,
         remove: () => {
             apps.taskmgr.paused = false;
+            if (apps.taskmgr.pauseKeyBound) {
+                document.removeEventListener('keydown', apps.taskmgr._pauseKeyDownHandler);
+                document.removeEventListener('keyup', apps.taskmgr._pauseKeyUpHandler);
+                window.removeEventListener('blur', apps.taskmgr._pauseBlurHandler);
+                apps.taskmgr._pauseKeyDownHandler = null;
+                apps.taskmgr._pauseKeyUpHandler = null;
+                apps.taskmgr._pauseBlurHandler = null;
+                apps.taskmgr.pauseKeyBound = false;
+            }
             apps.taskmgr.loaded = false;
             window.clearInterval(apps.taskmgr.handle);
             if (apps.taskmgr.preLoaded == true) {
