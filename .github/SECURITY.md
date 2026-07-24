@@ -1,7 +1,7 @@
 # 安全策略
 
 如果你发现安全漏洞，请不要公开提交 Issue。  
-请发送邮件至 security AT win12 DOT cloud 私下报告。
+请发送邮件至 security AT win12 DOT tech 私下报告。
 
 我们会尽快处理并在修复后致谢。
 
