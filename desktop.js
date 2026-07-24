@@ -864,6 +864,7 @@ const nts = {
     'feedback': {
         cnt: `<p class="tit">${lang('反馈', 'nts.feedback.name')}</p>
             <p>${lang('我们非常注重用户的体验与反馈', 'nts.feedback.txt')}</p>
+            <p><a class="a" onclick="window.open('https://nerimity.com/i/w2lvf','_blank');" win12_title="在浏览器新窗口打开链接" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)">${lang('欢迎通过本项目的即时通讯软件向我们寻求帮助或提交反馈', 'nts.feedback.txt1')}</a></p>
             <list class="new">
                 <a class="a" onclick="window.open('https://github.com/win12-online/win12/issues','_blank');" win12_title="在浏览器新窗口打开链接" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)">${lang('在 github 上提交 issue (需要 github 账户)', 'nts.feedback.github')}</a>
             </list>`,
