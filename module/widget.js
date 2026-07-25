@@ -9,14 +9,14 @@ let widgets = {
             $('#widgets>.widgets>.content>.grid')[0].innerHTML += $('#widgets>.widgets>.content>.template>.' + arg).html();
             $('#widgets>.widgets>.content>.grid>.wg.' + arg).removeClass('template').addClass('menu');
             widgets[arg].init();
-
         },
+
         remove: (arg) => {
             $(`.wg.${arg}.menu,.wg.${arg}.toolbar,.wg.${arg}.desktop`).remove();
             widgets[arg].remove();
-        }, 
+        },
+
         addToToolbar: (arg) => {
-            // widgets.widgets.remove(arg);
             if ($('.wg.toolbar.' + arg).length != 0) {
                 return;
             }
@@ -24,35 +24,286 @@ let widgets = {
             $('#toolbar>.wg.' + arg).removeClass('template').addClass('toolbar');
             widgets[arg].init();
         },
+
         addToDesktop: (arg) => {
-            // widgets.widgets.remove(arg);
-            if ($('.wg.toolbar.' + arg).length != 0) {
+            if ($('.wg.desktop.' + arg).length != 0) {
                 return;
             }
             $('#desktop-widgets')[0].innerHTML += $('#widgets>.widgets>.content>.template>.' + arg).html();
             $('#desktop-widgets>.' + arg).removeClass('template').addClass('desktop');
-            // setTimeout(() => {
-                widgets[arg].init();
-            // }, 5000);
+            widgets[arg].init();
         }
     },
+
     calc: {
         init: () => {
-            widgetCalculator = new Calculator('.wg.calc:not(.template)>.content>.container>#calc-input-widgets', '.wg.calc:not(.template)>.content');
+            widgetCalculator = new Calculator(
+                '.wg.calc:not(.template):not(.nowplaying)>.content>.container>#calc-input-widgets',
+                '.wg.calc:not(.template):not(.nowplaying)>.content'
+            );
         },
+
         remove: () => {
-            // $('#calc-input-widgets')[0].value = '0';
             $('#calc-input-widgets').val('0');
         }
     },
+
+    nowplaying: {
+        audio: null,
+        fileUrl: null,
+        fileName: '',
+        playing: false,
+        updateHandle: null,
+
+        init: () => {
+            widgets.nowplaying.bindAudio();
+            widgets.nowplaying.render();
+
+            if ("mediaSession" in navigator) {
+                try {
+                    navigator.mediaSession.setActionHandler("play", () => {
+                        widgets.nowplaying.play();
+                    });
+
+                    navigator.mediaSession.setActionHandler("pause", () => {
+                        widgets.nowplaying.pause();
+                    });
+
+                    navigator.mediaSession.setActionHandler("previoustrack", () => {
+                        widgets.nowplaying.restart();
+                    });
+
+                    navigator.mediaSession.setActionHandler("stop", () => {
+                        widgets.nowplaying.stop();
+                    });
+                }
+                catch (e) {
+                    console.warn("Now Playing media handlers unavailable:", e);
+                }
+            }
+        },
+
+        remove: () => {
+            if ($('.wg.nowplaying:not(.template)').length != 0) {
+                widgets.nowplaying.render();
+                return;
+            }
+
+            widgets.nowplaying.stop();
+
+            if (widgets.nowplaying.audio) {
+                widgets.nowplaying.audio.src = '';
+                widgets.nowplaying.audio = null;
+            }
+
+            if (widgets.nowplaying.fileUrl) {
+                URL.revokeObjectURL(widgets.nowplaying.fileUrl);
+                widgets.nowplaying.fileUrl = null;
+            }
+
+            window.clearInterval(widgets.nowplaying.updateHandle);
+            widgets.nowplaying.updateHandle = null;
+            widgets.nowplaying.fileName = '';
+        },
+
+        bindAudio: () => {
+            if (!widgets.nowplaying.audio) {
+                return;
+            }
+
+            widgets.nowplaying.audio.onplay = () => {
+                widgets.nowplaying.playing = true;
+                widgets.nowplaying.render();
+            };
+
+            widgets.nowplaying.audio.onpause = () => {
+                widgets.nowplaying.playing = false;
+                widgets.nowplaying.render();
+            };
+
+            widgets.nowplaying.audio.onended = () => {
+                widgets.nowplaying.playing = false;
+                widgets.nowplaying.render();
+            };
+
+            widgets.nowplaying.audio.ontimeupdate = widgets.nowplaying.renderProgress;
+            widgets.nowplaying.audio.onloadedmetadata = widgets.nowplaying.renderProgress;
+        },
+
+        pickFile: (source) => {
+            let input = null;
+
+            if (source) {
+                input = $(source).closest('.wg.nowplaying').find('.nowplaying-file')[0];
+            }
+
+            if (!input) {
+                input = $('.wg.nowplaying:not(.template) .nowplaying-file')[0];
+            }
+
+            if (input) {
+                input.click();
+            }
+        },
+
+        importFile: (file) => {
+            if (!file) {
+                return;
+            }
+
+            if (!/\.mp3$/i.test(file.name) && file.type != 'audio/mpeg') {
+                $('.wg.nowplaying:not(.template) .nowplaying-artist').text('Please choose an MP3 file');
+                return;
+            }
+
+            if (widgets.nowplaying.audio) {
+                widgets.nowplaying.audio.pause();
+            }
+
+            if (widgets.nowplaying.fileUrl) {
+                URL.revokeObjectURL(widgets.nowplaying.fileUrl);
+            }
+
+            widgets.nowplaying.fileUrl = URL.createObjectURL(file);
+            widgets.nowplaying.fileName = file.name.replace(/\.mp3$/i, '');
+            widgets.nowplaying.audio = new Audio(widgets.nowplaying.fileUrl);
+            widgets.nowplaying.audio.preload = 'metadata';
+            widgets.nowplaying.playing = false;
+            widgets.nowplaying.bindAudio();
+            widgets.nowplaying.render();
+            widgets.nowplaying.play();
+        },
+
+        render: () => {
+            const hasAudio = !!widgets.nowplaying.audio;
+            const title = hasAudio ? widgets.nowplaying.fileName : 'No MP3 loaded';
+            const detail = hasAudio ? (widgets.nowplaying.playing ? 'Playing local MP3' : 'Paused') : 'Import a local MP3 from your desktop';
+
+            $('.wg.nowplaying:not(.template) .nowplaying-title').text(title);
+            $('.wg.nowplaying:not(.template) .nowplaying-artist').text(detail);
+            $('.wg.nowplaying:not(.template)').toggleClass('playing', widgets.nowplaying.playing).toggleClass('empty', !hasAudio);
+            $('.wg.nowplaying:not(.template) .nowplaying-play-icon')
+                .removeClass('bi-play-fill bi-pause-fill')
+                .addClass(widgets.nowplaying.playing ? 'bi-pause-fill' : 'bi-play-fill');
+
+            if ("mediaSession" in navigator && hasAudio) {
+                try {
+                    navigator.mediaSession.metadata = new MediaMetadata({
+                        title: title,
+                        artist: 'Local MP3',
+                        album: 'Win12 Now Playing'
+                    });
+
+                    navigator.mediaSession.playbackState = widgets.nowplaying.playing ? "playing" : "paused";
+                }
+                catch (e) {
+                    console.warn("Now Playing metadata unavailable:", e);
+                }
+            }
+
+            widgets.nowplaying.renderProgress();
+        },
+
+        renderProgress: () => {
+            const audio = widgets.nowplaying.audio;
+            const hasDuration = !!(audio && isFinite(audio.duration) && audio.duration > 0);
+            const duration = hasDuration ? audio.duration : 0;
+            const current = audio ? audio.currentTime : 0;
+            const percent = hasDuration ? current / duration * 100 : 0;
+
+            $('.wg.nowplaying:not(.template) .nowplaying-progress').val(percent);
+            $('.wg.nowplaying:not(.template) .nowplaying-current').text(widgets.nowplaying.formatTime(current));
+            $('.wg.nowplaying:not(.template) .nowplaying-duration').text(widgets.nowplaying.formatTime(duration));
+        },
+
+        formatTime: (time) => {
+            if (!isFinite(time) || time < 0) {
+                time = 0;
+            }
+
+            const minutes = Math.floor(time / 60);
+            const seconds = Math.floor(time % 60).toString().padStart(2, '0');
+            return `${minutes}:${seconds}`;
+        },
+
+        play: () => {
+            if (!widgets.nowplaying.audio) {
+                widgets.nowplaying.pickFile();
+                return;
+            }
+
+            widgets.nowplaying.audio.play().then(() => {
+                widgets.nowplaying.playing = true;
+                widgets.nowplaying.render();
+            }).catch(e => {
+                console.warn('Now Playing could not start playback:', e);
+            });
+        },
+
+        pause: () => {
+            if (!widgets.nowplaying.audio) {
+                return;
+            }
+
+            widgets.nowplaying.audio.pause();
+            widgets.nowplaying.playing = false;
+            widgets.nowplaying.render();
+        },
+
+        toggle: () => {
+            if (widgets.nowplaying.playing) {
+                widgets.nowplaying.pause();
+            }
+            else {
+                widgets.nowplaying.play();
+            }
+        },
+
+        stop: () => {
+            if (!widgets.nowplaying.audio) {
+                widgets.nowplaying.playing = false;
+                widgets.nowplaying.render();
+                return;
+            }
+
+            widgets.nowplaying.audio.pause();
+            widgets.nowplaying.audio.currentTime = 0;
+            widgets.nowplaying.playing = false;
+            widgets.nowplaying.render();
+        },
+
+        restart: () => {
+            if (!widgets.nowplaying.audio) {
+                widgets.nowplaying.pickFile();
+                return;
+            }
+
+            widgets.nowplaying.audio.currentTime = 0;
+            widgets.nowplaying.play();
+        },
+
+        seek: (value) => {
+            const audio = widgets.nowplaying.audio;
+
+            if (!audio || !isFinite(audio.duration) || audio.duration <= 0) {
+                return;
+            }
+
+            audio.currentTime = audio.duration * (Number(value) / 100);
+            widgets.nowplaying.renderProgress();
+        }
+    },
+
     weather: {
         init: () => {
             widgets.weather.update();
             widgets.weather.handel = setInterval(widgets.weather.update, 100000);
         },
+
         remove: () => {
             clearInterval(widgets.weather.handel);
         },
+
         update: () => {
             let wic = {
                 "d000": "SunnyDayV3",
@@ -131,18 +382,25 @@ let widgets = {
                 "n900": "Hazy-Night",
                 "xxxx1": "WindyV2"
             };
+
             $.getJSON('https://api.msn.cn/weather/overview?apikey=j5i4gDqHL6nGYwx5wi5kRhXjtf2c5qgFX9fzfk0TOo&locale=zh-cn&ocid=msftweather').then(r => {
                 let inf = r.value[0].responses[0].weather[0].current;
-                // console.log(inf.icon,wic[inf.icon]);
-                $('.wg.weather>.content>.img').attr('src', `https://assets.msn.cn/weathermapdata/1/static/weather/Icons/taskbar_v10/Condition_Card/${wic[inf.symbol]}.svg`);
+
+                $('.wg.weather>.content>.img').attr(
+                    'src',
+                    `https://assets.msn.cn/weathermapdata/1/static/weather/Icons/taskbar_v10/Condition_Card/${wic[inf.symbol]}.svg`
+                );
+
                 $('.wg.weather>.content>.text>.temperature').text(`${inf.temp}℃`);
                 $('.wg.weather>.content>.text>.detail').text(`${inf.cap} 体感温度${inf.feels}℃`);
             });
-        },
+        }
     },
+
     monitor: {
         type: 'cpu',
         handle: null,
+
         init: () => {
             if ($('*:not(.template)>*>.wg.monitor')[0].classList.contains('toolbar')) {
                 $('*:not(.template)>*>.wg.monitor>.content>.container>svg>circle').attr('r', '15px');
@@ -150,18 +408,34 @@ let widgets = {
             else {
                 $('*:not(.template)>*>.wg.monitor>.content>.container>svg>circle').attr('r', '26px');
             }
+
             if (apps.taskmgr.preLoaded != true && apps.taskmgr.loaded != true) {
                 apps.taskmgr.load(false);
             }
+
             apps.taskmgr.preLoaded = true;
             widgets.monitor.update();
             widgets.monitor.handle = window.setInterval(widgets.monitor.update, 1000);
         },
+
         update: () => {
-            $('*:not(.template)>*>.wg.monitor>.content>.container>svg>circle:last-child').css('stroke-dasharray', `${widgets.monitor.type != 'gpu' ? widgets.monitor.type.match('wifi') ? widgets.monitor.type == 'wifi-send' ? apps.taskmgr.wifi.send / 100 * (Math.PI * $('*:not(.template)>*>.wg.monitor>.content>.container>svg>circle:last-child')[0].r.baseVal.value * 2) : apps.taskmgr.wifi.receive / 100 * (Math.PI * $('*:not(.template)>*>.wg.monitor>.content>.container>svg>circle:last-child')[0].r.baseVal.value * 2) : apps.taskmgr[widgets.monitor.type] / 100 * (Math.PI * $('*:not(.template)>*>.wg.monitor>.content>.container>svg>circle:last-child')[0].r.baseVal.value * 2) : apps.taskmgr.gpu.usage / 100 * (Math.PI * $('*:not(.template)>*>.wg.monitor>.content>.container>svg>circle:last-child')[0].r.baseVal.value * 2)}, 170`);
+            $('*:not(.template)>*>.wg.monitor>.content>.container>svg>circle:last-child').css(
+                'stroke-dasharray',
+                `${
+                    widgets.monitor.type != 'gpu'
+                        ? widgets.monitor.type.match('wifi')
+                            ? widgets.monitor.type == 'wifi-send'
+                                ? apps.taskmgr.wifi.send / 100 * (Math.PI * $('*:not(.template)>*>.wg.monitor>.content>.container>svg>circle:last-child')[0].r.baseVal.value * 2)
+                                : apps.taskmgr.wifi.receive / 100 * (Math.PI * $('*:not(.template)>*>.wg.monitor>.content>.container>svg>circle:last-child')[0].r.baseVal.value * 2)
+                            : apps.taskmgr[widgets.monitor.type] / 100 * (Math.PI * $('*:not(.template)>*>.wg.monitor>.content>.container>svg>circle:last-child')[0].r.baseVal.value * 2)
+                        : apps.taskmgr.gpu.usage / 100 * (Math.PI * $('*:not(.template)>*>.wg.monitor>.content>.container>svg>circle:last-child')[0].r.baseVal.value * 2)
+                }, 170`
+            );
+
             if (widgets.monitor.type == 'cpu' || widgets.monitor.type == 'gpu') {
                 $('*:not(.template)>*>.wg.monitor>.content>.container>svg>circle:last-child').css('stroke', '#2983cc');
-                $('*:not(.template)>*>.wg.monitor>.content>.text>.type')[0].innerText = widgets.monitor.type == 'cpu' ? 'CPU利用率' : 'GPU利用率';
+                $('*:not(.template)>*>.wg.monitor>.content>.text>.type')[0].innerText =
+                    widgets.monitor.type == 'cpu' ? 'CPU 利用率' : 'GPU 利用率';
             }
             else if (widgets.monitor.type == 'memory') {
                 $('*:not(.template)>*>.wg.monitor>.content>.container>svg>circle:last-child').css('stroke', '#660099');
@@ -173,21 +447,39 @@ let widgets = {
             }
             else if (widgets.monitor.type == 'wifi-send') {
                 $('*:not(.template)>*>.wg.monitor>.content>.container>svg>circle:last-child').css('stroke', '#8e5829');
-                $('*:not(.template)>*>.wg.monitor>.content>.text>.type')[0].innerText = '网络吞吐量-发送';
+                $('*:not(.template)>*>.wg.monitor>.content>.text>.type')[0].innerText = '网络吞吐量 - 发送';
             }
             else if (widgets.monitor.type == 'wifi-receive') {
                 $('*:not(.template)>*>.wg.monitor>.content>.container>svg>circle:last-child').css('stroke', '#8e5829');
-                $('*:not(.template)>*>.wg.monitor>.content>.text>.type')[0].innerText = '网络吞吐量-接收';
+                $('*:not(.template)>*>.wg.monitor>.content>.text>.type')[0].innerText = '网络吞吐量 - 接收';
             }
-            $('*:not(.template)>*>.wg.monitor>.content>.text>.value')[0].innerText = (widgets.monitor.type != 'gpu' ? widgets.monitor.type.match('wifi') ? widgets.monitor.type == 'wifi-send' ? apps.taskmgr.wifi.send : apps.taskmgr.wifi.receive : apps.taskmgr[widgets.monitor.type] : apps.taskmgr.gpu.usage).toFixed(widgets.monitor.type.match('wifi') ? 2 : 1) + (widgets.monitor.type.match('wifi') ? 'Mbps' : '%');
-            $('*:not(.template)>*>.wg.monitor>.content>.container>.text>.value')[0].innerText = (widgets.monitor.type != 'gpu' ? widgets.monitor.type.match('wifi') ? widgets.monitor.type == 'wifi-send' ? apps.taskmgr.wifi.send : apps.taskmgr.wifi.receive : apps.taskmgr[widgets.monitor.type] : apps.taskmgr.gpu.usage).toFixed(widgets.monitor.type.match('wifi') ? 2 : 1) + (widgets.monitor.type.match('wifi') ? 'Mbps' : '%');
+
+            let monitorValue =
+                widgets.monitor.type != 'gpu'
+                    ? widgets.monitor.type.match('wifi')
+                        ? widgets.monitor.type == 'wifi-send'
+                            ? apps.taskmgr.wifi.send
+                            : apps.taskmgr.wifi.receive
+                        : apps.taskmgr[widgets.monitor.type]
+                    : apps.taskmgr.gpu.usage;
+
+            let monitorText = monitorValue.toFixed(widgets.monitor.type.match('wifi') ? 2 : 1) +
+                (widgets.monitor.type.match('wifi') ? 'Mbps' : '%');
+
+            $('*:not(.template)>*>.wg.monitor>.content>.text>.value')[0].innerText = monitorText;
+            $('*:not(.template)>*>.wg.monitor>.content>.container>.text>.value')[0].innerText = monitorText;
         },
+
         remove: () => {
             window.clearInterval(widgets.monitor.handle);
         }
     }
 };
-let edit_mode = false,gridnow;
+
+let widgetNowPlaying = widgets.nowplaying;
+
+let edit_mode = false, gridnow;
+
 function editMode() {
     if (edit_mode) {
         $('#desktop-editbar-container').removeClass('show');
@@ -197,8 +489,10 @@ function editMode() {
         $('#desktop-editbar-container').addClass('show');
         $('#desktop-widgets').addClass('edit');
     }
+
     edit_mode = !edit_mode;
 }
+
 function widgetsMove(elt, e) {
     if (elt.classList.contains('desktop') && edit_mode == true) {
         let width = elt.getBoundingClientRect().width;
@@ -209,18 +503,18 @@ function widgetsMove(elt, e) {
         let gridcolmax = window.getComputedStyle($('#desktop-widgets')[0], null).gridTemplateColumns.split(' ').length;
         let deltaLeft = e.clientX - elt.getBoundingClientRect().left;
         let deltaTop = e.clientY - elt.getBoundingClientRect().top;
+
         elt.style.position = 'fixed';
         elt.style.width = `${width}px`;
         elt.style.height = `${height}px`;
         elt.classList.add('moving');
         elt.classList.add('notrans');
-        // elt.style.left = `${e.clientX - deltaLeft}px`;
-        // elt.style.top = `${e.clientY - deltaTop}px`;
 
         $('#desktop-widgets>.widgets-move').addClass('show');
-        // $('#desktop-widgets>.widgets-move').css('cssText', `width: ${width}px; height: ${height}px;`);
+
         function widgetsMoving(e) {
             let left = 0, top = 0;
+
             if (e.type.match('mouse')) {
                 left = e.clientX - deltaLeft;
                 top = e.clientY - deltaTop;
@@ -229,39 +523,66 @@ function widgetsMove(elt, e) {
                 left = e.touches[0].clientX - deltaLeft;
                 top = e.touches[0].clientY - deltaTop;
             }
+
             elt.style.left = `${left}px`;
             elt.style.top = `${top}px`;
-            // 基于人脑计算qwq
+
             gridnow = {
-                // 四舍五入(组件宽度 / 2 + 组件视窗右边距 - 布局右边距) / ((网格总列数 * 网格宽度 + 网格间距 * 网格间距数量) / 网格总数量) - 元素网格列尾 + 校正值)
-                col: ((width / 2 + elt.getBoundingClientRect().right - 20) / ((gridcolmax * 83 + 10 * (gridcolmax - 1)) / gridcolmax) - gridcol/* + (gridcol - 2) * 0.5*/).toFixed(0),
+                col: ((width / 2 + elt.getBoundingClientRect().right - 20) / ((gridcolmax * 83 + 10 * (gridcolmax - 1)) / gridcolmax) - gridcol).toFixed(0),
                 row: ((height / 2 + top - 20) / ((gridrowmax * 83 + 10 * (gridrowmax - 1)) / gridrowmax) + (2 - gridrow) * 0.5).toFixed(0)
             };
-            gridnow.col = gridnow.col <= Math.floor(gridcol / 2) ? 1 + Math.floor(gridcol / 2) : gridnow.col > (gridcolmax - gridcol + (gridcol % 2 ? (Number(gridcol) + 1) / 2 : gridcol / 2)) ? (gridcolmax - gridcol + (gridcol % 2 ? (Number(gridcol) + 1) / 2 : gridcol / 2)) : gridnow.col;
-            gridnow.row = gridnow.row <= 0 ? 1 : gridnow.row >= (gridrowmax - gridrow + 1) ? gridrowmax - gridrow + 1 : gridnow.row;
-            $('#desktop-widgets>.widgets-move').css('cssText', `grid-column: ${gridcolmax - gridnow.col} / span ${gridcol}; grid-row: ${gridnow.row} / span ${gridrow}`);
+
+            gridnow.col = gridnow.col <= Math.floor(gridcol / 2)
+                ? 1 + Math.floor(gridcol / 2)
+                : gridnow.col > (gridcolmax - gridcol + (gridcol % 2 ? (Number(gridcol) + 1) / 2 : gridcol / 2))
+                    ? (gridcolmax - gridcol + (gridcol % 2 ? (Number(gridcol) + 1) / 2 : gridcol / 2))
+                    : gridnow.col;
+
+            gridnow.row = gridnow.row <= 0
+                ? 1
+                : gridnow.row >= (gridrowmax - gridrow + 1)
+                    ? gridrowmax - gridrow + 1
+                    : gridnow.row;
+
+            $('#desktop-widgets>.widgets-move').css(
+                'cssText',
+                `grid-column: ${gridcolmax - gridnow.col} / span ${gridcol}; grid-row: ${gridnow.row} / span ${gridrow}`
+            );
         }
+
         function up() {
             elt.classList.remove('notrans');
             elt.classList.remove('moving');
+
             let destTop = $('#desktop-widgets>.widgets-move')[0].getBoundingClientRect().top;
             let destLeft = $('#desktop-widgets>.widgets-move')[0].getBoundingClientRect().left;
+
             elt.style.left = `${destLeft}px`;
             elt.style.top = `${destTop}px`;
+
             window.setTimeout(() => {
                 elt.style.position = 'static';
-                $(elt).css('cssText', `grid-column: ${gridcolmax - gridnow.col} / span ${gridcol}; grid-row: ${gridnow.row} / span ${gridrow}`);
+
+                $(elt).css(
+                    'cssText',
+                    `grid-column: ${gridcolmax - gridnow.col} / span ${gridcol}; grid-row: ${gridnow.row} / span ${gridrow}`
+                );
+
                 elt.style.left = '0px';
                 elt.style.top = '0px';
+
                 $('#desktop-widgets>.widgets-move').removeClass('show');
             }, 500);
+
             page.onmousemove = null;
             page.ontouchmove = null;
             page.onmouseup = null;
             page.ontouchend = null;
             page.ontouchcancel = null;
         }
+
         widgetsMoving(e);
+
         page.onmousemove = widgetsMoving;
         page.ontouchmove = widgetsMoving;
         page.onmouseup = up;
