@@ -26,7 +26,7 @@ let widgets = {
         },
         addToDesktop: (arg) => {
             // widgets.widgets.remove(arg);
-            if ($('.wg.toolbar.' + arg).length != 0) {
+            if ($('.wg.desktop.' + arg).length != 0) {
                 return;
             }
             $('#desktop-widgets')[0].innerHTML += $('#widgets>.widgets>.content>.template>.' + arg).html();
@@ -45,6 +45,155 @@ let widgets = {
             $('#calc-input-widgets').val('0');
         }
     },
+    
+    nowplaying: {
+        audio: null,
+        objectUrl: null,
+        title: 'No track selected',
+        artist: 'Import a local audio file',
+        playing: false,
+        init: () => {
+            if (!widgets.nowplaying.audio) {
+                widgets.nowplaying.audio = new Audio();
+                widgets.nowplaying.audio.addEventListener('timeupdate', widgets.nowplaying.render);
+                widgets.nowplaying.audio.addEventListener('loadedmetadata', widgets.nowplaying.render);
+                widgets.nowplaying.audio.addEventListener('ended', () => {
+                    widgets.nowplaying.playing = false;
+                    widgets.nowplaying.render();
+                });
+            }
+
+            widgets.nowplaying.bind();
+            widgets.nowplaying.render();
+        },
+        bind: () => {
+            $('.wg.nowplaying:not(.template) .nowplaying-file')
+                .off('change.nowplaying')
+                .on('change.nowplaying', function () {
+                    if (this.files && this.files[0]) {
+                        widgets.nowplaying.loadFile(this.files[0]);
+                    }
+
+                    this.value = '';
+                });
+
+            $('.wg.nowplaying:not(.template) .nowplaying-progress')
+                .off('input.nowplaying')
+                .on('input.nowplaying', function () {
+                    if (!widgets.nowplaying.audio || !isFinite(widgets.nowplaying.audio.duration)) {
+                        return;
+                    }
+
+                    widgets.nowplaying.audio.currentTime = Number(this.value);
+                    widgets.nowplaying.render();
+                });
+        },
+        formatTime: (seconds) => {
+            if (!isFinite(seconds)) {
+                return '0:00';
+            }
+
+            let min = Math.floor(seconds / 60);
+            let sec = Math.floor(seconds % 60).toString().padStart(2, '0');
+            return `${min}:${sec}`;
+        },
+        pickFile: (event) => {
+            let widget = $(event.currentTarget).closest('.wg.nowplaying');
+            widget.find('.nowplaying-file').trigger('click');
+        },
+        loadFile: (file) => {
+            if (!file) {
+                return;
+            }
+
+            if (widgets.nowplaying.objectUrl) {
+                URL.revokeObjectURL(widgets.nowplaying.objectUrl);
+            }
+
+            widgets.nowplaying.objectUrl = URL.createObjectURL(file);
+            widgets.nowplaying.title = file.name.replace(/\.[^.]+$/, '');
+            widgets.nowplaying.artist = 'Local audio file';
+            widgets.nowplaying.audio.src = widgets.nowplaying.objectUrl;
+
+            widgets.nowplaying.audio.play().then(() => {
+                widgets.nowplaying.playing = true;
+                widgets.nowplaying.render();
+            }).catch(() => {
+                widgets.nowplaying.playing = false;
+                widgets.nowplaying.render();
+            });
+        },
+        play: () => {
+            if (!widgets.nowplaying.audio || !widgets.nowplaying.audio.src) {
+                $('.wg.nowplaying:not(.template):first .nowplaying-file').trigger('click');
+                return;
+            }
+
+            widgets.nowplaying.audio.play().then(() => {
+                widgets.nowplaying.playing = true;
+                widgets.nowplaying.render();
+            }).catch(() => {
+                widgets.nowplaying.playing = false;
+                widgets.nowplaying.render();
+            });
+        },
+        pause: () => {
+            if (widgets.nowplaying.audio) {
+                widgets.nowplaying.audio.pause();
+            }
+
+            widgets.nowplaying.playing = false;
+            widgets.nowplaying.render();
+        },
+        toggle: () => {
+            if (widgets.nowplaying.playing) {
+                widgets.nowplaying.pause();
+            }
+            else {
+                widgets.nowplaying.play();
+            }
+        },
+        stop: () => {
+            if (widgets.nowplaying.audio) {
+                widgets.nowplaying.audio.pause();
+                widgets.nowplaying.audio.currentTime = 0;
+            }
+
+            widgets.nowplaying.playing = false;
+            widgets.nowplaying.render();
+        },
+        restart: () => {
+            if (!widgets.nowplaying.audio || !widgets.nowplaying.audio.src) {
+                return;
+            }
+
+            widgets.nowplaying.audio.currentTime = 0;
+            widgets.nowplaying.play();
+        },
+        render: () => {
+            let audio = widgets.nowplaying.audio;
+            let current = audio ? audio.currentTime || 0 : 0;
+            let duration = audio && isFinite(audio.duration) ? audio.duration : 0;
+
+            $('.wg.nowplaying:not(.template)').toggleClass('playing', widgets.nowplaying.playing);
+            $('.wg.nowplaying:not(.template) .nowplaying-title').text(widgets.nowplaying.title);
+            $('.wg.nowplaying:not(.template) .nowplaying-artist').text(widgets.nowplaying.artist);
+            $('.wg.nowplaying:not(.template) .nowplaying-current').text(widgets.nowplaying.formatTime(current));
+            $('.wg.nowplaying:not(.template) .nowplaying-duration').text(widgets.nowplaying.formatTime(duration));
+            $('.wg.nowplaying:not(.template) .nowplaying-progress')
+                .attr('max', duration || 100)
+                .val(current);
+
+            $('.wg.nowplaying:not(.template) .nowplaying-play-icon')
+                .removeClass('bi-play-fill bi-pause-fill')
+                .addClass(widgets.nowplaying.playing ? 'bi-pause-fill' : 'bi-play-fill');
+        },
+        remove: () => {
+            widgets.nowplaying.pause();
+        }
+    },
+
+
     weather: {
         init: () => {
             widgets.weather.update();

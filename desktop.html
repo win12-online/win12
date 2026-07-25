@@ -605,6 +605,66 @@ toggletheme() 切换主题
 							</div>
 						</div>
 					</div>
+<div class="nowplaying">
+<div class="wg nowplaying template">
+<div class="titbar">
+<a win12_title="更多" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)" class="a more notip" onclick="$(this).siblings('.menu').toggleClass('show')">
+<i class="bi bi-three-dots"></i>
+</a>
+<div class="menu">
+<a win12_title="打开应用" class="a img openapp" onclick="$(this).parent().removeClass('show');hide_widgets();shownotice('NowPlaying')" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)">
+<i class="bi bi-music-note-beamed"></i>
+</a>
+<a class="a move" win12_title="移动" onmouseenter="showdescp(event)" onclick="hidedescp(event); if (!edit_mode) { editMode(); }" onmouseleave="hidedescp(event)">
+<i class="bi bi-arrows-move"></i>
+</a>
+<a class="a addtotb" win12_title="添加到任务栏" onmouseenter="showdescp(event)" onclick="hidedescp(event); widgets.widgets.remove('nowplaying'); widgets.widgets.addToToolbar('nowplaying');" onmouseleave="hidedescp(event)">
+<i class="bi bi-pin-angle"></i>
+</a>
+<a class="a addtodt" win12_title="添加到桌面" onmouseenter="showdescp(event)" onclick="hidedescp(event); widgets.widgets.remove('nowplaying'); widgets.widgets.addToDesktop('nowplaying');" onmouseleave="hidedescp(event)">
+<i class="bi bi-box-arrow-in-right"></i>
+</a>
+<a class="a delete" win12_title="删除" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)" onclick="hidedescp(event); $(this).parent().removeClass('show'); widgets.widgets.remove('nowplaying');">
+<i class="bi bi-trash"></i>
+</a>
+</div>
+</div>
+<div class="content" onmousedown="widgetsMove(this.parentElement, event);" ontouchstart="widgetsMove(this.parentElement, event);">
+<input class="nowplaying-file" type="file" accept="audio/*">
+<div class="nowplaying-art">
+<i class="bi bi-music-note-beamed"></i>
+</div>
+<div class="nowplaying-info">
+<div class="nowplaying-kicker">Now Playing</div>
+<div class="nowplaying-title">No track selected</div>
+<div class="nowplaying-artist">Import a local audio file</div>
+</div>
+<div class="nowplaying-progressbox">
+<input class="nowplaying-progress" type="range" min="0" max="100" value="0">
+<div class="nowplaying-time">
+<span class="nowplaying-current">0:00</span>
+<span class="nowplaying-duration">0:00</span>
+</div>
+</div>
+<div class="nowplaying-controls">
+<a class="nowplaying-control" onclick="widgets.nowplaying.restart()">
+<i class="bi bi-skip-start-fill"></i>
+</a>
+<a class="nowplaying-control main" onclick="widgets.nowplaying.toggle(event)">
+<i class="bi bi-play-fill nowplaying-play-icon"></i>
+</a>
+<a class="nowplaying-control" onclick="widgets.nowplaying.stop()">
+<i class="bi bi-stop-fill"></i>
+</a>
+<a class="nowplaying-import" onclick="widgets.nowplaying.pickFile(event)">
+<i class="bi bi-folder2-open"></i>
+<span>Import audio</span>
+</a>
+</div>
+</div>
+</div>
+</div>
+
 					<div class="weather">
 						<div class="wg weather template">
 							<div class="titbar">

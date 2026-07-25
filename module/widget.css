@@ -330,3 +330,221 @@
 /* .wg.monitor.toolbar>.content>.text {
     font-siz
 } */
+
+
+/* Now Playing widget */
+.wg.nowplaying {
+    grid-column: auto / span 3;
+    grid-row: auto / span 2;
+    min-height: 166px;
+    background: radial-gradient(circle at top left, color-mix(in srgb, var(--theme-1) 45%, transparent), transparent 46%), linear-gradient(135deg, var(--bg70), var(--bg50));
+    border: 1px solid #ffffff45;
+    box-shadow: 0 12px 36px var(--shadow), inset 0 1px 0 #ffffff40;
+    backdrop-filter: blur(26px) saturate(1.7);
+    -webkit-backdrop-filter: blur(26px) saturate(1.7);
+}
+
+.wg.nowplaying>.content {
+    display: grid;
+    grid-template-columns: 76px 1fr;
+    grid-template-rows: 72px 38px 46px;
+    gap: 0 12px;
+    padding: 34px 14px 12px 14px;
+    box-sizing: border-box;
+}
+
+.wg.nowplaying .nowplaying-file {
+    display: none;
+}
+
+.wg.nowplaying .nowplaying-art {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+    width: 76px;
+    height: 76px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 34px;
+    background: linear-gradient(135deg, var(--theme-1), var(--theme-2));
+    box-shadow: 0 10px 24px color-mix(in srgb, var(--theme-2) 38%, transparent);
+    overflow: hidden;
+}
+
+.wg.nowplaying.playing .nowplaying-art>.bi {
+    animation: nowplaying-pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes nowplaying-pulse {
+    0%, 100% {
+        transform: scale(1);
+        filter: drop-shadow(0 0 0 #ffffff00);
+    }
+
+    50% {
+        transform: scale(1.12) rotate(-4deg);
+        filter: drop-shadow(0 0 10px #ffffffaa);
+    }
+}
+
+.wg.nowplaying .nowplaying-info {
+    grid-column: 2;
+    grid-row: 1;
+    min-width: 0;
+    align-self: center;
+}
+
+.wg.nowplaying .nowplaying-kicker {
+    font-size: 11px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--text2);
+    margin-bottom: 3px;
+}
+
+.wg.nowplaying .nowplaying-title {
+    font-size: 18px;
+    line-height: 1.15;
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.wg.nowplaying .nowplaying-artist {
+    color: var(--text2);
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-top: 4px;
+}
+
+.wg.nowplaying .nowplaying-progressbox {
+    grid-column: 2;
+    grid-row: 2;
+    align-self: center;
+    min-width: 0;
+}
+
+.wg.nowplaying .nowplaying-progress {
+    display: block;
+    width: 100%;
+    accent-color: var(--theme-2);
+    height: 4px;
+}
+
+.wg.nowplaying .nowplaying-time {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    color: var(--text2);
+    margin-top: -2px;
+}
+
+.wg.nowplaying .nowplaying-controls {
+    grid-column: 1 / span 2;
+    grid-row: 3;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.wg.nowplaying .nowplaying-control,
+.wg.nowplaying .nowplaying-import {
+    height: 34px;
+    border-radius: 999px;
+    background: var(--hover-half);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: inset 0 1px 0 #ffffff30;
+    transition: 120ms;
+}
+
+.wg.nowplaying .nowplaying-control {
+    width: 38px;
+    font-size: 18px;
+}
+
+.wg.nowplaying .nowplaying-control.main {
+    width: 44px;
+    color: #fff;
+    background: linear-gradient(135deg, var(--theme-1), var(--theme-2));
+    box-shadow: 0 6px 18px color-mix(in srgb, var(--theme-2) 35%, transparent);
+}
+
+.wg.nowplaying .nowplaying-import {
+    flex: 1;
+    gap: 7px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.wg.nowplaying .nowplaying-control:hover,
+.wg.nowplaying .nowplaying-import:hover {
+    filter: brightness(1.12);
+    background-color: var(--hover);
+}
+
+.wg.nowplaying .nowplaying-control:active,
+.wg.nowplaying .nowplaying-import:active {
+    transform: scale(0.94);
+    opacity: .8;
+}
+
+.wg.nowplaying.toolbar {
+    min-width: 250px;
+    height: 100%;
+    min-height: 0;
+}
+
+.wg.nowplaying.toolbar>.content {
+    grid-template-columns: 36px 1fr 36px;
+    grid-template-rows: 1fr;
+    gap: 8px;
+    padding: 8px 10px 6px 10px;
+    margin-top: -22px;
+}
+
+.wg.nowplaying.toolbar .nowplaying-art {
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    font-size: 16px;
+    grid-row: 1;
+}
+
+.wg.nowplaying.toolbar .nowplaying-info {
+    grid-column: 2;
+    grid-row: 1;
+}
+
+.wg.nowplaying.toolbar .nowplaying-kicker,
+.wg.nowplaying.toolbar .nowplaying-progressbox,
+.wg.nowplaying.toolbar .nowplaying-control:not(.main),
+.wg.nowplaying.toolbar .nowplaying-import {
+    display: none;
+}
+
+.wg.nowplaying.toolbar .nowplaying-title {
+    font-size: 12px;
+}
+
+.wg.nowplaying.toolbar .nowplaying-artist {
+    font-size: 10px;
+    margin-top: 1px;
+}
+
+.wg.nowplaying.toolbar .nowplaying-controls {
+    grid-column: 3;
+    grid-row: 1;
+}
+
+.wg.nowplaying.toolbar .nowplaying-control.main {
+    width: 32px;
+    height: 32px;
+    font-size: 15px;
+}
