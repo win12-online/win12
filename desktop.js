@@ -2613,6 +2613,7 @@ function desktopMove(elt, e) {
         elt.classList.remove('moving');
         document.body.style.userSelect = '';
         // 将固定坐标转换为相对于桌面的绝对位置
+        const parentRect = $('#desktop')[0].getBoundingClientRect();
         const left = parseFloat(elt.style.left || 0) - parentRect.left;
         const top = parseFloat(elt.style.top || 0) - parentRect.top;
         elt.style.position = 'absolute';
