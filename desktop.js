@@ -2,8 +2,8 @@
 
 /*
 
-Windows 12 网页版
-    GitHub: tjy-gitnub/win12
+Win12 网页版
+    codenerg.org/win12-online/win12
 
 */
 
@@ -17,7 +17,7 @@ console.log('%cWindows 12 网页版 (GitHub: win12-online/win12)', 'background-i
 function loadlang(code) {
     $.i18n.properties({
         name: 'lang',
-        path: 'lang/', // 目录
+        path: 'lang/lang/', // 目录
         language: code,
         mode: 'map',
         callback: function () {
@@ -34,6 +34,7 @@ function loadlang(code) {
                 // if($.i18n.prop($(this).data("i18n-key"))!=$(this).attr($(this).data("i18n-attr")))console.log($(this).data("i18n-key"),$(this).attr($(this).data("i18n-attr")));
                 $(this).attr($(this).data("i18n-attr"), $.i18n.prop($(this).data("i18n-key")));
             });
+            updateAboutAppEntrypoints();
         }
     });
 }
@@ -98,9 +99,26 @@ console.log('?')
 // 函数 lang(txt,id)
 /// langcode==zh_cn 下返回 txt,
 /// 否则返回语言 properties 文件中键 id 对应的值。
-/// 用例： lang('设置','setting.name')
+/// 用例：lang('设置','setting.name')
 // 
 // 为开发方便，故不将简体中文纳入语言考虑
+
+function isTauriApp() {
+    return !!((window.win12Native && window.win12Native.isTauri && window.win12Native.isTauri()) || (window.__TAURI__ && window.__TAURI__.core));
+}
+
+function getAboutAppTitle() {
+    if (!isTauriApp()) return lang('关于 Win12 网页版', 'about.name');
+    if (langcode == 'en') return 'About Win12-desktop';
+    if (langcode == 'zh-TW') return '關於 Win12-desktop';
+    return '关于 Win12-desktop';
+}
+
+function updateAboutAppEntrypoints() {
+    $('.about-app-title').text(getAboutAppTitle());
+}
+
+updateAboutAppEntrypoints();
 
 
 // 后端服务器
@@ -146,8 +164,13 @@ page.addEventListener('click', (event) => {
         hide_startmenu();
     }
 });
-//开始菜单收回
-
+// 开始菜单收回
+page.addEventListener('click', (event) => {
+    if ($('#search-win').hasClass('show') && !$(event.target).closest('#search-win').length) {
+        hide_search();
+    }
+});
+// 搜索收回
 
 // 上古代码，列表前的小竖线
 document.querySelectorAll('list.focs').forEach(li => {
@@ -184,6 +207,151 @@ function stop(e) {
     e.stopPropagation();
     return false;
 }
+
+let loginPasswordHasPassword = false;
+
+function win12FinishLogin() {
+    $('#login').css('opacity', '0');
+    $('#login-password').css('opacity', '0');
+    $('#login-error').css('opacity', '0');
+    $('#login-welc').css('opacity', '1');
+    setTimeout(() => {
+        $('#loginback').addClass('close');
+        setTimeout(() => {
+            $('#loginback').css('opacity', '0');
+        }, 500);
+        setTimeout(() => {
+            $('#loginback').css('display', 'none');
+        }, 2000);
+        if (use_music) {
+            document.querySelector('audio#startup-music').play();
+        }
+    }, 2000);
+}
+
+function setLoginError(text) {
+    $('#login-error').text(text);
+}
+
+async function initLoginPassword() {
+    if (window.win12Native && window.win12Native.isTauri() && (new URL(location.href)).searchParams.get('skip_login') !== '1') {
+        try {
+            const status = await window.win12Native.getLoginPasswordStatus();
+            loginPasswordHasPassword = !!(status && status.has_password);
+            if (loginPasswordHasPassword) {
+                $('#loginback').addClass('tauri-password');
+                $('#login-password').attr('placeholder', '密码');
+                $('#login-password').focus();
+            }
+            else {
+                $('#loginback').removeClass('tauri-password');
+            }
+        }
+        catch (e) {
+            setLoginError('无法读取本地密码状态');
+        }
+    }
+}
+
+async function win12LoginSubmit() {
+    if (!(window.win12Native && window.win12Native.isTauri())) {
+        win12FinishLogin();
+        return;
+    }
+
+    if (!loginPasswordHasPassword) {
+        win12FinishLogin();
+        return;
+    }
+
+    const password = $('#login-password').val();
+    if (!password) {
+        setLoginError('请输入密码');
+        $('#login-password').focus();
+        return;
+    }
+
+    $('#login').css('pointer-events', 'none');
+    setLoginError('正在验证');
+
+    try {
+        const result = await window.win12Native.verifyLoginPassword(password);
+        if (result && result.ok) {
+            $('#login-password').val('');
+            win12FinishLogin();
+            return;
+        }
+        setLoginError('密码错误');
+        $('#login-password').val('').focus();
+    }
+    catch (e) {
+        setLoginError(String(e));
+    }
+    finally {
+        $('#login').css('pointer-events', 'auto');
+    }
+}
+
+async function win12RefreshPasswordSettingStatus() {
+    if (!(window.win12Native && window.win12Native.isTauri())) {
+        $('#setting-password-status').text('仅 Tauri App 可用');
+        $('#setting-password-current').hide();
+        $('#setting-password-new').prop('disabled', true);
+        $('#setting-password-submit').addClass('disabled');
+        return;
+    }
+
+    try {
+        const status = await window.win12Native.getLoginPasswordStatus();
+        loginPasswordHasPassword = !!(status && status.has_password);
+        $('#setting-password-status').text(loginPasswordHasPassword ? '已设置密码' : '未设置密码');
+        $('#setting-password-current')[loginPasswordHasPassword ? 'show' : 'hide']();
+        $('#setting-password-current').val('');
+        $('#setting-password-new').val('').prop('disabled', false);
+        $('#setting-password-new').attr('placeholder', loginPasswordHasPassword ? '新密码（留空清除密码）' : '新密码');
+        $('#setting-password-submit').removeClass('disabled');
+    }
+    catch (e) {
+        $('#setting-password-status').text(String(e));
+    }
+}
+
+async function win12SetLoginPassword() {
+    if (!(window.win12Native && window.win12Native.isTauri())) {
+        $('#setting-password-status').text('仅 Tauri App 可用');
+        return;
+    }
+
+    const currentPassword = $('#setting-password-current').val();
+    const newPassword = $('#setting-password-new').val();
+    if (!loginPasswordHasPassword && !newPassword) {
+        $('#setting-password-status').text('请输入新密码');
+        $('#setting-password-new').focus();
+        return;
+    }
+    if (loginPasswordHasPassword && !currentPassword) {
+        $('#setting-password-status').text('请输入当前密码');
+        $('#setting-password-current').focus();
+        return;
+    }
+
+    $('#setting-password-submit').addClass('disabled');
+    const clearingPassword = loginPasswordHasPassword && !newPassword;
+    $('#setting-password-status').text(clearingPassword ? '正在清除' : '正在保存');
+
+    try {
+        await window.win12Native.setLoginPassword(loginPasswordHasPassword ? currentPassword : null, newPassword);
+        await win12RefreshPasswordSettingStatus();
+        $('#setting-password-status').text(clearingPassword ? '密码已清空' : '密码已保存');
+    }
+    catch (e) {
+        $('#setting-password-status').text(String(e));
+    }
+    finally {
+        $('#setting-password-submit').removeClass('disabled');
+    }
+}
+
 $('input,textarea,*[contenteditable=true]').on('contextmenu', (e) => {
     stop(e);
     return true;
@@ -279,7 +447,7 @@ const cms = {
                 return ['<i class="bi bi-pencil"></i> ' + lang('进入编辑模式', 'desktop.enteredit'), 'editMode();'];
             }
         },
-        ['<i class="bi bi-info-circle"></i> ' + lang('关于 Win12 网页版', 'about.name'), '$(\'#win-about>.about\').addClass(\'show\');$(\'#win-about>.update\').removeClass(\'show\');openapp(\'about\');if($(\'.window.about\').hasClass(\'min\'))minwin(\'about\');'],
+        ['<i class="bi bi-info-circle"></i> ' + getAboutAppTitle(), 'openapp(\'about\');'],
         ['<i class="bi bi-brush"></i> ' + lang('个性化', 'psnl'), 'openapp(\'setting\');$(\'#win-setting > div.menu > list > a.enable.appearance\')[0].click()']
     ],
     'desktop.icon': [
@@ -342,8 +510,8 @@ const cms = {
     ],
     'msgupdate': [
         ['<i class="bi bi-layout-text-window-reverse"></i> 查看详细', `openapp('about');if($('.window.about').hasClass('min'))
-        minwin('about');$('#win-about>.about').removeClass('show');$('#win-about>.update').addClass('show');
-        $('#win-about>.update>div>details:first-child').attr('open','open')`],
+        minwin('about');apps.about.page('update');
+        $('#win-about>.update.show>div>details:first-child').attr('open','open')`],
         ['<i class="bi bi-box-arrow-right"></i> 关闭', '$(\'.msg.update\').removeClass(\'show\')']
     ],
     'explorer.folder': [
@@ -486,7 +654,7 @@ function showcm(e, cl, arg) {
             $('#cm>list')[0].innerHTML = h;
             $('#cm').addClass('show-begin');
             $('#cm>.foc').focus();
-            // .foc是用来模拟焦点的，将焦点放在右键菜单上
+            // .foc 是用来模拟焦点的，将焦点放在右键菜单上
             setTimeout(() => {
                 $('#cm').addClass('show');
             }, 0);
@@ -697,28 +865,30 @@ const nts = {
         cnt: `<p class="tit">${lang('反馈', 'nts.feedback.name')}</p>
             <p>${lang('我们非常注重用户的体验与反馈', 'nts.feedback.txt')}</p>
             <list class="new">
-                <a class="a" onclick="window.open('https://github.com/win12-online/win12/issues','_blank');" win12_title="在浏览器新窗口打开链接" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)">${lang('在github上提交issue (需要github账户)', 'nts.feedback.github')}</a>
+                <a class="a" onclick="window.open('https://github.com/win12-online/win12/issues','_blank');" win12_title="在浏览器新窗口打开链接" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)">${lang('在 github 上提交 issue (需要 github 账户)', 'nts.feedback.github')}</a>
             </list>`,
         btn: [
             { type: 'main', text: lang(lang('关闭', 'close'), 'close'), js: 'closenotice();' },
         ]
     },
-    'widgets': {
-        cnt: `
-            <p class="tit">${lang('添加小组件', 'nts.addwg')}</p>
-            <list class="new">
-                <a class="a" onclick="closenotice(); widgets.widgets.add('calc');">${lang('计算器', 'calc.name')}</a>
-                <a class="a" onclick="closenotice(); widgets.widgets.add('weather');">${lang('天气', 'nts.addwg.weather')}</a>
-                <a class="a" onclick="closenotice(); widgets.widgets.add('monitor');">${lang('系统性能监视器', 'nts.addwg.monitor')}</a>
-            </list>`,
-        btn: [
-            { type: 'cancel', text: lang('取消', 'cancel'), js: 'closenotice();' }
-        ]
-    },
+'widgets': {
+    cnt: `
+        <p class="tit">${lang('添加小组件', 'nts.addwg')}</p>
+        <list class="new">
+            <a class="a" onclick="closenotice(); widgets.widgets.add('calc');">${lang('计算器', 'calc.name')}</a>
+            <a class="a" onclick="closenotice(); widgets.widgets.add('weather');">${lang('天气', 'nts.addwg.weather')}</a>
+            <a class="a" onclick="closenotice(); widgets.widgets.add('monitor');">${lang('系统性能监视器', 'nts.addwg.monitor')}</a>
+            <a class="a" onclick="closenotice(); widgets.widgets.add('nowplaying');">${lang('正在播放', 'nts.addwg.nowplaying')}</a>
+        </list>`,
+    btn: [
+        { type: 'cancel', text: lang('取消', 'cancel'), js: 'closenotice();' }
+    ]
+},
+
     'ZeroDivision': {//计算器报错窗口
-        // 甚至还报错我真的哭死，直接输入框显示error啥的不就完了。。
+        // 甚至还报错我真的哭死，直接输入框显示 error 啥的不就完了。。
         cnt: lang(`<p class="tit">错误</p>
-            <p>除数不得等于0</p>`, 'calc.error.zero'),
+            <p>除数不得等于 0</p>`, 'calc.error.zero'),
         btn: [
             { type: 'main', text: lang('确定', 'ok'), js: 'closenotice();' },
         ]
@@ -735,12 +905,12 @@ const nts = {
         cnt: `
         <p class="tit">切换监视器类型</p>
         <list class="new">
-            <a class="a" onclick="closenotice(); widgets.monitor.type = 'cpu';">CPU利用率</a>
+            <a class="a" onclick="closenotice(); widgets.monitor.type = 'cpu';">CPU 利用率</a>
             <a class="a" onclick="closenotice(); widgets.monitor.type = 'memory';">内存使用率</a>
             <a class="a" onclick="closenotice(); widgets.monitor.type = 'disk';">磁盘活动时间</a>
-            <a class="a" onclick="closenotice(); widgets.monitor.type = 'wifi-receive';">网络吞吐量-接收</a>
-            <a class="a" onclick="closenotice(); widgets.monitor.type = 'wifi-send';">网络吞吐量-发送</a>
-            <a class="a" onclick="closenotice(); widgets.monitor.type = 'gpu';">GPU利用率</a>
+            <a class="a" onclick="closenotice(); widgets.monitor.type = 'wifi-receive';">网络吞吐量 - 接收</a>
+            <a class="a" onclick="closenotice(); widgets.monitor.type = 'wifi-send';">网络吞吐量 - 发送</a>
+            <a class="a" onclick="closenotice(); widgets.monitor.type = 'gpu';">GPU 利用率</a>
         </list>`,
         btn: [
             { type: 'cancel', text: lang('取消', 'cancel'), js: 'closenotice();' }
@@ -753,6 +923,7 @@ const nts = {
                 <a class="a" onclick="closenotice(); widgets.widgets.addToDesktop('calc');">计算器</a>
                 <a class="a" onclick="closenotice(); widgets.widgets.addToDesktop('weather');">天气</a>
                 <a class="a" onclick="closenotice(); widgets.widgets.addToDesktop('monitor');">系统性能监视器</a>
+                <a class="a" onclick="closenotice(); widgets.widgets.addToDesktop('nowplaying');">正在播放</a>
             </list>`,
         btn: [
             { type: 'cancel', text: lang('取消', 'cancel'), js: 'closenotice();' }
@@ -777,11 +948,13 @@ const nts = {
     'about-copilot': {
         cnt: `
             <p class="tit">关于 Windows 12 Copilot</p>
-             <p>你可以使用此 AI 助手帮助你更快地完成工作，此AI助手基于 Qwen3-Max 模型 (有人用Win12工作?)<br>
+             <p>你可以使用此 AI 助手帮助你更快地完成工作，此 AI 助手基于 Deepseek v4 pro 模型 (有人用 Win12 工作？)<br>
             也请适当使用，不要谈论敏感、违规话题，<br>请有身为一个人类最基本的道德底线。<br>根据相关法律法规，我们不向欧盟用户提供服务。<br>
-            在此特别感谢云智api(yunzhiapi.cn)为本项目提供赞助！</p>
+            在此特别感谢云智 API(yunzhiapi.cn) 为本项目提供赞助！</p>
+            <a class="a" onclick="window.open('readme/legal/privacy-policy-copliot','_blank');" win12_title="在浏览器新窗口打开链接">《隐私政策》</a><br>
+            <a class="a" onclick="window.open('readme/legal/user-agreement-copliot','_blank');" win12_title="在浏览器新窗口打开链接">《用户协议》</a><br>
             <a class="a" onclick="window.open('https://status.win12.tech/status/win12/','_blank');" win12_title="在浏览器新窗口打开链接">状态监测</a><br>
-            <a class="a" onclick="window.open('https://www.yunzhiapi.cn/','_blank');" win12_title="在浏览器新窗口打开链接">云智API官网</a>
+            <a class="a" onclick="window.open('https://www.yunzhiapi.cn/','_blank');" win12_title="在浏览器新窗口打开链接">云智 API 官网</a>
         `,
         btn: [
             { type: 'main', text: lang('确定', 'ok'), js: 'closenotice();' },
@@ -956,6 +1129,13 @@ const nts = {
             { type: '', text: lang('取消','cancel'), js: 'closenotice();' }
         ]
     },
+    'error_aichat': {
+        cnt: lang(`<p class="tit">AI Chat 无法使用</p>
+            <p>暂时无法使用此功能，请转用语音输入球</p>`),
+        btn: [
+            { type: 'main', text: lang('确定', 'ok'), js: 'closenotice();' }
+        ]
+    },
 };
 function shownotice(name) {
     $('#notice>.cnt').html(nts[name].cnt);
@@ -995,6 +1175,9 @@ var shutdown_task = []; //关机任务，储存在这个数组里
 
 // 运行的指令
 function runcmd(cmd, inTerminal = false) {
+    var cmds = cmd.split(' ');
+    var commandName = cmds[0].toLowerCase();
+
     if (cmd.slice(0, 3) == 'cmd') {
         run_cmd = cmd;
         if (!inTerminal) {
@@ -1013,7 +1196,7 @@ function runcmd(cmd, inTerminal = false) {
             $('#win-terminal>.text-cmd').append(`
 ${lang('有关某个命令的详细信息，请键入 HELP 命令名', 'terminal.help.title')}
 DIR             ${lang('显示目录中的文件和子目录列表', 'terminal.help.dir')}
-LS              ${lang('显示目录中的文件和子目录列表 (DIR的别名)', 'terminal.help.ls')}
+LS              ${lang('显示目录中的文件和子目录列表 (DIR 的别名)', 'terminal.help.ls')}
 DEL             ${lang('删除一个或多个文件', 'terminal.help.del')}
 CD              ${lang('显示当前目录的名称或将其更改', 'terminal.help.cd')}
 CLS             ${lang('清除屏幕', 'terminal.help.cls')}
@@ -1023,7 +1206,7 @@ SHUTDOWN        ${lang('关闭计算机', 'terminal.help.shutdown')}
 CMD             ${lang('打开新的命令提示符窗口', 'terminal.help.cmd')}
 EXIT            ${lang('退出命令提示符程序', 'terminal.help.exit')}
 
-${lang('彩蛋命令:', 'terminal.help.easter')}
+${lang('彩蛋命令：', 'terminal.help.easter')}
 HELLO           ${lang('打个招呼', 'terminal.help.hello')}
 MATRIX          ${lang('黑客帝国特效', 'terminal.help.matrix')}
 SNOW            ${lang('下雪特效', 'terminal.help.snow')}
@@ -1031,6 +1214,37 @@ DANCE           ${lang('让窗口跳舞', 'terminal.help.dance')}
 STARWARS        ${lang('原力觉醒', 'terminal.help.starwars')}
 `);
         }
+        return true;
+    }
+    else if (commandName === 'ping' || commandName === 'ping6') {
+        if (!inTerminal) {
+            openapp('terminal');
+        }
+
+        const host = cmds.slice(1).join(' ').trim();
+        const ipv6 = commandName === 'ping6';
+        const terminalOutput = $('#win-terminal>.text-cmd');
+        const terminalInput = $('#win-terminal input');
+
+        if (!window.win12Native || !window.win12Native.isTauri()) {
+            terminalOutput.append(`${commandName} 仅在 桌面版 中支持使用\n`);
+            return true;
+        }
+
+        if (!host) {
+            terminalOutput.append(`用法: ${commandName} <host>\n`);
+            return true;
+        }
+
+        terminalInput.prop('disabled', true);
+        window.win12Native.pingHost(host, ipv6, (output) => {
+            terminalOutput[0].appendChild(document.createTextNode(output));
+        }).catch((error) => {
+            terminalOutput.append((error && error.message ? error.message : String(error)) + '\n');
+        }).finally(() => {
+            terminalInput.prop('disabled', false);
+            terminalInput.focus();
+        });
         return true;
     }
     else if (cmd === 'dir' || cmd === 'ls') {
@@ -1081,10 +1295,10 @@ ${new Date().toLocaleDateString()}  ${new Date().toLocaleTimeString()}    <DIR> 
     else if (cmd.toLowerCase() === 'hello') {
         if (inTerminal) {
             const greetings = [
-                '你好呀! 今天也是元气满满的一天呢! (◍•ᴗ•◍)',
+                '你好呀！今天也是元气满满的一天呢！(◍•ᴗ•◍)',
                 'Hello! 欢迎来到 Windows 12! ╰(*°▽°*)╯',
-                '嗨! 很高兴见到你! (｡♥‿♥｡)',
-                '你好! 我是 Windows 12 终端, 有什么可以帮你的吗? (❁´◡`❁)'
+                '嗨！很高兴见到你！(｡♥‿♥｡)',
+                '你好！我是 Windows 12 终端，有什么可以帮你的吗？(❁´◡`❁)'
             ];
             $('#win-terminal>.text-cmd').append(greetings[Math.floor(Math.random() * greetings.length)] + '\n');
         }
@@ -1134,7 +1348,7 @@ ${new Date().toLocaleDateString()}  ${new Date().toLocaleTimeString()}    <DIR> 
                 matrixContainer.html(matrixContent.join('\n'));
             }, 100);
 
-            // 10秒后停止动画并移除容器
+            // 10 秒后停止动画并移除容器
             setTimeout(() => {
                 clearInterval(interval);
                 setTimeout(() => {
@@ -1226,7 +1440,7 @@ ${new Date().toLocaleDateString()}  ${new Date().toLocaleTimeString()}    <DIR> 
                 }
             }, 200);
 
-            // 30秒后停止动画并缓慢消失
+            // 30 秒后停止动画并缓慢消失
             setTimeout(() => {
                 clearInterval(snowInterval);
                 // 让所有堆积的雪花缓慢消失
@@ -1281,7 +1495,7 @@ ${new Date().toLocaleDateString()}  ${new Date().toLocaleTimeString()}    <DIR> 
                         transform: danceSteps[danceCount % danceSteps.length].transform
                     });
 
-                    // 跳舞15次后停止
+                    // 跳舞 15 次后停止
                     if (danceCount >= 15) {
                         clearInterval(danceInterval);
                         win.css({
@@ -1298,38 +1512,38 @@ ${new Date().toLocaleDateString()}  ${new Date().toLocaleTimeString()}    <DIR> 
         if (inTerminal) {
             const d = new Date();
             $('#win-terminal>.text-cmd').append(`
-主机名:                 WIN12-WEB
-OS 名称:               Microsoft Windows 12 网页版
-OS 版本:               12.0.39035.7324
-OS 制造商:             Microsoft Corporation
-OS 配置:               主要工作站
-OS 构建类型:           Multiprocessor Free
-注册的所有人:          Web User
-注册的组织:            Web Organization
+主机名：WIN12-WEB
+OS 名称：Microsoft Windows 12 网页版
+OS 版本：12.0.39035.7324
+OS 制造商：Microsoft Corporation
+OS 配置：主要工作站
+OS 构建类型：Multiprocessor Free
+注册的所有人：Web User
+注册的组织：Web Organization
 产品 ID:               12345-67890-09876-54321
-初始安装日期:          ${d.toLocaleDateString()}
-系统启动时间:          ${d.toLocaleString()}
-系统制造商:            Web Browser
-系统型号:              Virtual Machine
-系统类型:              x64-based PC
-处理器:                AMD64 Family Web Browser
-BIOS 版本:             Web Browser Virtual BIOS
-Windows 目录:          C:\\Windows
-系统目录:              C:\\Windows\\System32
-启动设备:              \\Device\\HarddiskVolume1
-系统区域设置:          zh-cn;中文(中国)
-输入法区域设置:        zh-cn;中文(中国)
-时区:                  (UTC+08:00)北京，重庆，香港特别行政区，乌鲁木齐
-物理内存总量:          8,192 MB
-可用的物理内存:        4,096 MB
-虚拟内存: 最大值:      16,384 MB
-虚拟内存: 可用:        12,288 MB
-虚拟内存: 使用中:      4,096 MB
-页面文件位置:          C:\\pagefile.sys
-域:                    WORKGROUP
-登录服务器:            \\\\WIN12-WEB
-修补程序:              0 个修补程序已安装
-网卡:                  1 个 NIC 已安装
+初始安装日期：         ${d.toLocaleDateString()}
+系统启动时间：         ${d.toLocaleString()}
+系统制造商：Web Browser
+系统型号：Virtual Machine
+系统类型：x64-based PC
+处理器：AMD64 Family Web Browser
+BIOS 版本：Web Browser Virtual BIOS
+Windows 目录：C:\\Windows
+系统目录：C:\\Windows\\System32
+启动设备：             \\Device\\HarddiskVolume1
+系统区域设置：zh-cn;中文 (中国)
+输入法区域设置：zh-cn;中文 (中国)
+时区：                 (UTC+08:00) 北京，重庆，香港特别行政区，乌鲁木齐
+物理内存总量：8,192 MB
+可用的物理内存：4,096 MB
+虚拟内存：最大值：16,384 MB
+虚拟内存：可用：12,288 MB
+虚拟内存：使用中：4,096 MB
+页面文件位置：C:\\pagefile.sys
+域：WORKGROUP
+登录服务器：           \\\\WIN12-WEB
+修补程序：0 个修补程序已安装
+网卡：1 个 NIC 已安装
                       [01]: Ethernet Browser Adapter
 `);
         }
@@ -1348,7 +1562,7 @@ Windows 目录:          C:\\Windows
         run_cmd = cmd;
         // 将命令按空格分割成数组以便解析参数
         var cmds = cmd.split(' ');
-        // 检查命令是否为shutdown或shutdown.exe
+        // 检查命令是否为 shutdown 或 shutdown.exe
         if ((cmds[0] == 'shutdown') || (cmds[0] == 'shutdown.exe')) {
             // 如果没有参数，显示帮助信息
             if (cmds.length == 1) {
@@ -1364,7 +1578,7 @@ shutdown [-s] [-r] [-f] [-a] [-t time]
 -r:重启
 -f:注销
 -a:取消之前的操作
--t time:指定在 time秒 后操作
+-t time:指定在 time 秒 后操作
 
 其余不多做介绍了` + (inTerminal ? '' : `
 请按任意键继续.&nbsp;.&nbsp;.<input type="text" onkeydown="hidewin('terminal')"></input>`));
@@ -1390,7 +1604,7 @@ shutdown [-s] [-r] [-f] [-a] [-t time]
                     timeValue = parseInt(cmds[timeIndex + 1]);
                 } else {
                     // 时间参数无效时显示错误信息
-                    $('#win-terminal>.text-cmd').append(`错误: 无效的时间参数\n`);
+                    $('#win-terminal>.text-cmd').append(`错误：无效的时间参数\n`);
                     return true;
                 }
             }
@@ -1425,7 +1639,7 @@ shutdown [-s] [-r] [-f] [-a] [-t time]
                     shownotice('shutdown');
                 } else {
                     // 如果没有正在进行的关机任务，显示错误信息
-                    $('#win-terminal>.text-cmd').append(`错误: 没有正在进行的关机操作\n`);
+                    $('#win-terminal>.text-cmd').append(`错误：没有正在进行的关机操作\n`);
                 }
                 return true;
             }
@@ -1442,7 +1656,7 @@ shutdown [-s] [-r] [-f] [-a] [-t time]
             }
             else {
                 // 如果没有指定有效的操作类型，显示错误信息
-                $('#win-terminal>.text-cmd').append(`错误: 无效的操作参数\n`);
+                $('#win-terminal>.text-cmd').append(`错误：无效的操作参数\n`);
                 return true;
             }
 
@@ -1498,8 +1712,8 @@ shutdown [-s] [-r] [-f] [-a] [-t time]
             在遥远的未来，一个充满
             科技的银河系中...
 
-            Windows操作系统已经
-            进化到了第12代。
+            Windows 操作系统已经
+            进化到了第 12 代。
 
             然而，这个系统不仅仅
             是一个操作系统，它是
@@ -1527,7 +1741,7 @@ shutdown [-s] [-r] [-f] [-a] [-t time]
                 starWarsContainer.append(star);
             }
 
-            // 添加CSS动画
+            // 添加 CSS 动画
             const style = $(`<style>
                 @keyframes twinkle {
                     0% { opacity: 0.2; }
@@ -1548,7 +1762,7 @@ shutdown [-s] [-r] [-f] [-a] [-t time]
             </style>`);
             starWarsContainer.append(style);
 
-            // 30秒后清理
+            // 30 秒后清理
             setTimeout(() => {
                 starWarsContainer.fadeOut(2000, function () {
                     $(this).remove();
@@ -1563,38 +1777,38 @@ shutdown [-s] [-r] [-f] [-a] [-t time]
 
 // 语音球
 
-var voiceBall = document.getElementById("voiceBall");
-var nbFlag = true;
-var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-var isDragging = false;
+var voiceBall = document.getElementById("voiceBall"); 
+var nbFlag = true; 
+var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0; 
+var isDragging = false; 
 
-voiceBall.addEventListener("mousedown", dragMouseDown);
-voiceBall.addEventListener("mouseup", stopDrag);
+voiceBall.addEventListener("pointerdown", dragMouseDown); 
+voiceBall.addEventListener("pointerup", stopDrag); 
 
-function dragMouseDown(e) {
-    e.preventDefault();
-    pos3 = e.clientX;
-    pos4 = e.clientY;
-    document.addEventListener("mousemove", elementDrag);
-    isDragging = false;
-}
+function dragMouseDown(e) { 
+  e.preventDefault(); 
+  pos3 = e.clientX; 
+  pos4 = e.clientY; 
+  document.addEventListener("pointermove", elementDrag); 
+  isDragging = false; 
+} 
 
-function elementDrag(e) {
-    e.preventDefault();
-    pos1 = pos3 - e.clientX;
-    pos2 = pos4 - e.clientY;
-    pos3 = e.clientX;
-    pos4 = e.clientY;
-    voiceBall.style.top = (voiceBall.offsetTop - pos2) + "px";
-    voiceBall.style.left = (voiceBall.offsetLeft - pos1) + "px";
-    isDragging = true;
-}
+function elementDrag(e) { 
+  e.preventDefault(); 
+  pos1 = pos3 - e.clientX; 
+  pos2 = pos4 - e.clientY; 
+  pos3 = e.clientX; 
+  pos4 = e.clientY; 
+  voiceBall.style.top = (voiceBall.offsetTop - pos2) + "px"; 
+  voiceBall.style.left = (voiceBall.offsetLeft - pos1) + "px"; 
+  isDragging = true; 
+} 
 
-function stopDrag() {
-    document.removeEventListener("mousemove", elementDrag);
-    if (!isDragging) {
-        startSpeechRecognition();
-    }
+function stopDrag() { 
+  document.removeEventListener("pointermove", elementDrag); 
+  if (!isDragging) { 
+    startSpeechRecognition(); 
+  } 
 }
 
 function insertTextAtCursor(text) {
@@ -1659,36 +1873,36 @@ function msgDoneOperate() {
     $("#copilot>.inputbox").removeClass("disable");
     setTimeout(() => {
         $("#copilot>.inputbox>.input").focus();
-    }, 100); // 延迟0.1s以避免与blur方法冲突
+    }, 100); // 延迟 0.1s 以避免与 blur 方法冲突
 }
 let isFirstChat = true;   // 标记是否是刚进来时服务端返回的消息
 let copilot = {
     history: [{
         role: 'system',
-        content: `请使用中文对话。你一个是ai助手，名叫AI Copilot，由云智API提供支持。
+        content: `请使用中文对话。你一个是 ai 助手，名叫 AI Copilot，由云智 API 提供支持。
 你可以在回答中发送对系统的一些指令。指令一并放在回答的最后。
 多条指令用换行隔开。系统收到指令后会执行，且对用户隐藏回答后的指令。
 你不能在对用户说的话的中间中提到、引用指令。绝不能要求用户执行指令。
-1.指令"{openapp appid}";用来打开某个应用，用在下文"应用的功能介绍"中匹配的id代替其中的"appid"
-2.指令"{openurl url}";用来在Microsoft Edge浏览器中打开某个URL，其中用URL地址代替"url"。当用户想要搜索某内容，请用bing搜索
-3.指令"{feedback copilot}";打开ai助手反馈界面，用于用户想对ai助手的功能提出反馈时帮助他打开
-4.指令"{feedback win12}";打开反馈中心，当用户希望对除ai助手外的其他系统功能发送反馈时，帮他打开反馈中心
+1.指令"{openapp appid}";用来打开某个应用，用在下文"应用的功能介绍"中匹配的 id 代替其中的"appid"
+2.指令"{openurl url}";用来在 Microsoft Edge 浏览器中打开某个 URL，其中用 URL 地址代替"url"。当用户想要搜索某内容，请用 bing 搜索
+3.指令"{feedback copilot}";打开 ai 助手反馈界面，用于用户想对 ai 助手的功能提出反馈时帮助他打开
+4.指令"{feedback win12}";打开反馈中心，当用户希望对除 ai 助手外的其他系统功能发送反馈时，帮他打开反馈中心
 5.指令"{settheme theme}";用于切换系统的深色、浅色模式，区别于主题。用"light"表浅色，"dark"表深色，来替换其中的"theme"
 如下是应用的功能介绍。
-1.设置:id为setting;在个性化页面中可以设置系统的主题，主题色，是否启用动画、阴影、圆角、云母mica效果和为所有窗口开启亚克力透明效果。
-2.关于win12网页版:id为about;简介页面有关于本项目的介绍说明与贡献者信息，更新记录页面有本项目的各版本更新记录。
-3.Microsoft Edge浏览器:id为edge;一个浏览器。因为浏览器跨域的限制，部分网页会显示"拒绝连接"而无法访问。
-4.计算器:id为calc;
-5.文件资源管理器:id为explorer;
-6.任务管理器:id为taskmgr;
-7.cmd终端:id为terminal;
-8.记事本:id为notepad;
-9.python:id为python;
+1.设置:id 为 setting;在个性化页面中可以设置系统的主题，主题色，是否启用动画、阴影、圆角、云母 mica 效果和为所有窗口开启亚克力透明效果。
+2.关于 win12 网页版:id 为 about;简介页面有关于本项目的介绍说明与贡献者信息，更新记录页面有本项目的各版本更新记录。
+3.Microsoft Edge 浏览器:id 为 edge;一个浏览器。因为浏览器跨域的限制，部分网页会显示"拒绝连接"而无法访问。
+4.计算器:id 为 calc;
+5.文件资源管理器:id 为 explorer;
+6.任务管理器:id 为 taskmgr;
+7.cmd 终端:id 为 terminal;
+8.记事本:id 为 notepad;
+9.python:id 为 python;
 仅有以下关于此项目的信息。
-1.Windows 12 网页版是一个开源项目，由谭景元原创, 使用Html,css,js，在网络上模拟、创新操作系统
-2.项目的Github地址是https://github.com/tjy-gitnub/win12
-3.此项目使用EPL v2.0开源许可
-当用户询问更多项目信息时，帮助他打开"关于win12网页版"应用。
+1.Windows 12 网页版是一个开源项目，由谭景元原创，使用 Html,css,js，在网络上模拟、创新操作系统
+2.项目的 Github 地址是 https://github.com/tjy-gitnub/win12
+3.此项目使用 EPL v2.0 开源许可
+当用户询问更多项目信息时，帮助他打开"关于 win12 网页版"应用。
 比如这时用户说"请打开计算器"，你会回答什么？`
     }, {
         role: 'assistant',
@@ -1702,10 +1916,10 @@ let copilot = {
     }],
     init: () => {
         $('#copilot>.chat').html('');
-        $('#copilot>.chat').append(`<div class="line system"><p class="text">本 AI 助手基于Qwen3-max模型，目前支持以下操作：<br>
-        1.打开除webapp外大多应用<br>
+        $('#copilot>.chat').append(`<div class="line system"><p class="text">本 AI 助手基于 Deepseek v4 pro 模型，目前支持以下操作：<br>
+        1.打开除 webapp 外大多应用<br>
         2.在浏览器中打开链接、搜索<br>
-        3.发送对系统、AI助手的反馈<br>
+        3.发送对系统、AI 助手的反馈<br>
         4.切换颜色主题<br>
         需注意，根据相关法律法规，我们不向欧盟用户提供服务。</p></div>`);
         setTimeout(() => {
@@ -1725,24 +1939,75 @@ let copilot = {
 
         $('#copilot>.inputbox').addClass('disable');
 
+        // 敏感词过滤
+        $.ajax({
+            url: `https://yunzhiapi.cn/vip/win12/mgwbgl.php?msg=${encodeURIComponent(t)}`,
+            method: 'GET',
+            success: function (filteredText) {
+                if (filteredText !== t) {
+                    triggerBlockAction();
+                    return;
+                }
+                proceedSend();
+            },
+            error: function () {
+                proceedSend();
+            }
+        });
+
+
+        /*  ollama/llama-guard safety check - commented out to prevent unavailability issues
+        function proceedToSecondLayer() {
+            $.ajax({
+                url: 'llama-guard-api.freedom-323.workers.dev',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    model: 'llama-guard3:1b',
+                    messages: [{ role: 'user', content: t }],
+                    stream: false
+                }),
+                success: function (response) {
+                    if (response && response.message && response.message.content.includes('unsafe')) {
+                        triggerBlockAction();
+                        return; 
+                    }
+                    proceedSend();
+                },
+                error: function () {
+                    $('#copilot>.chat').append(`<div class="line system"><p class="text">安全检查服务暂时不可用，请稍后再试。</p></div>`);
+                    $('#copilot>.chat').scrollTop($('#copilot>.chat').scrollHeight);
+                    msgDoneOperate();
+                }
+            });
+        }
+        */
+
+        function triggerBlockAction() {
+            $('#copilot>.chat').append(`<div class="line system"><p class="text">针对这个问题我无法为你提供相应解答。你可以尝试提供其他话题，我会尽力为你提供支持和解答。</p></div>`);
+            $('#copilot>.chat').scrollTop($('#copilot>.chat').scrollHeight);
+            msgDoneOperate();
+        }
+
+        function proceedSend() {
         // 显示用户消息
         if (showusr) {
             $('#copilot>.chat').append(`<div class="line user"><p class="text">${t}</p></div>`);
         }
         copilot.history.push({ role: role, content: t });
         $('#copilot>.chat').scrollTop($('#copilot>.chat')[0].scrollHeight);
-        // 存储uid
+        // 存储 uid
         const uid = localStorage.getItem('copilot_uid') ||
             (() => {
                 const newUid = Math.floor(100000 + Math.random() * 900000); // 生成 100000-999999 的随机六位数
                 localStorage.setItem('copilot_uid', newUid.toString());
                 return newUid;
             })();
-        // 构建API请求URL
+        // 构建 API 请求 URL
         const encodedQuestion = encodeURIComponent(t);
-        const apiUrl = `https://yunzhiapi.cn/vip/win12/qwen3-max/index.php?question=${encodedQuestion}&system=${encodeURIComponent(copilot.history[0].content)}&uid=${uid}`;
+        const apiUrl = `https://yunzhiapi.cn/vip/win12/deepseek-v4-pro/index.php?question=${encodedQuestion}&system=${encodeURIComponent(copilot.history[0].content)}&uid=${uid}`;
 
-        // API请求
+        // API 请求
         $.ajax({
             url: apiUrl,
             method: 'GET',
@@ -1771,7 +2036,7 @@ let copilot = {
                             openapp('edge');
                             apps.edge.newtab();
                             apps.edge.goto(t);
-                            rt = rt.replace(i, `<div class="action"><p class="tit">打开URL</p><p class="detail">${decodeHtml(t)}</p></div>`);
+                            rt = rt.replace(i, `<div class="action"><p class="tit">打开 URL</p><p class="detail">${decodeHtml(t)}</p></div>`);
                         } else if (/{feedback win12}/.test(i)) {
                             shownotice('feedback');
                             rt = rt.replace(i, '<div class="action"><p class="tit">反馈</p><p class="detail">关于 Windows 12 网页版</p></div>');
@@ -1805,6 +2070,7 @@ let copilot = {
                 msgDoneOperate();
             }
         });
+        }
     },
     ana: (resp) => {
 
@@ -1834,7 +2100,7 @@ function loadtime() {
 loadtime();
 setTimeout(() => {
     loadtime(); setInterval(loadtime, 1000);
-}, 1000 - da.getMilliseconds());//修复时间不精准的问题。以前的误差：0-999毫秒；现在：几乎没有
+}, 1000 - da.getMilliseconds());//修复时间不精准的问题。以前的误差：0-999 毫秒；现在：几乎没有
 let d = new Date();
 let today = new Date().getDate();
 let start = 7 - ((d.getDate() - d.getDay()) % 7) + 1;
@@ -1875,6 +2141,12 @@ function geticon(name) {
     else return name + '.svg';
 }
 
+function syncTaskbarLayout() {
+    const count = $('#taskbar>a').length;
+    $('#taskbar').attr('count', count);
+    $('#taskbar').css('display', count == 0 ? 'none' : 'flex');
+    $('#taskbar').css('width', 4 + count * (34 + 4));
+}
 
 function openapp(name) {
     if (taskmgrTasks.findIndex(elt => elt.link == name) > -1 && apps.taskmgr.tasks.findIndex(elt => elt.link == name) == -1) {
@@ -1889,14 +2161,11 @@ function openapp(name) {
     }
     $('.window.' + name).addClass('load');
     showwin(name);
-    $('#taskbar').attr('count', Number($('#taskbar').attr('count')) + 1);
     $('#taskbar').append(`<a class="${name}" onclick="taskbarclick('${name}\')" win12_title="${$(`.window.${name}>.titbar>p`).text()}" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)" oncontextmenu="return showcm(event, 'taskbar', '${name}')"><img src="icon/${icon[name] || (name + '.svg')}"></a>`);
-    if ($('#taskbar').attr('count') == '1') {
-        $('#taskbar').css('display', 'flex');
-    }
+    syncTaskbarLayout();
     $('#taskbar>.' + name).addClass('foc');
     setTimeout(() => {
-        $('#taskbar').css('width', 4 + $('#taskbar').attr('count') * (34 + 4));
+        syncTaskbarLayout();
     }, 0);
     let tmp = name.replace(/\-(\w)/g, function (all, letter) {
         return letter.toUpperCase();
@@ -1918,7 +2187,7 @@ function openapp(name) {
 
 
 
-//打开任务栏按钮对应的widget
+//打开任务栏按钮对应的 widget
 
 // 为啥管这个东西叫 widget?? from stsc
 function openDockWidget(name) {
@@ -2024,7 +2293,7 @@ function openDockWidget(name) {
             }, 0);
         }
     } else {
-        console.err("openDockWidget()传递的name不正确!");
+        console.err("openDockWidget() 传递的 name 不正确！");
     }
 }
 
@@ -2036,6 +2305,11 @@ function hide_startmenu() {
     $('#start-menu').removeClass('show');
     $('#start-btn').removeClass('show');
     setTimeout(() => { $('#start-menu').removeClass('show-begin'); }, 200);
+}
+function hide_search() {
+    $('#search-win').removeClass('show');
+    $('#search-btn').removeClass('show');
+    setTimeout(() => { $('#search-win').removeClass('show-begin'); }, 200);
 }
 function hide_widgets() {
     $('#widgets').removeClass('show');
@@ -2147,12 +2421,32 @@ function dragBrightness(e) {
 }
 
 // 控制面板 电量监测
+function setBatteryTooltip(title) {
+    const el = $('.a.dock.control')[0];
+    if (el) {
+        el.setAttribute('win12_title', title);
+        el.setAttribute('title', title);
+    }
+}
+
+function getBatteryTooltip(level, charging) {
+    const percent = Math.round(level * 100);
+    const chargingText = charging ? lang('，正在充电', 'battery.charging') : '';
+    return `${lang('电量：', 'battery.level')}${percent}%${chargingText}`;
+}
+
+function setBatteryUnavailableTooltip() {
+    setBatteryTooltip(lang('无法获取电量', 'battery.unavailable'));
+}
+
 if (navigator.getBattery) {
     navigator.getBattery().then((battery) => {
-        // 检查battery对象和level属性是否存在且有效
+        // 检查 battery 对象和 level 属性是否存在且有效
         if (battery && typeof battery.level === 'number' && !isNaN(battery.level)) {
-            const batteryLevel = Math.max(0, Math.min(1, battery.level)); // 确保在0-1范围内
+            const batteryLevel = Math.max(0, Math.min(1, battery.level)); // 确保在 0-1 范围内
             const batteryWidth = 18 * batteryLevel + 5;
+
+            setBatteryTooltip(getBatteryTooltip(batteryLevel, battery.charging));
 
             const pathElement = $('.a.dock.control>svg>path')[0];
             if (pathElement) {
@@ -2161,12 +2455,15 @@ if (navigator.getBattery) {
             id="path2" fill="#000000"
         />`;
 
-                // 检查addEventListener是否存在
+                // 检查 addEventListener 是否存在
                 if (battery.addEventListener && typeof battery.addEventListener === 'function') {
                     battery.addEventListener('levelchange', () => {
                         if (battery && typeof battery.level === 'number' && !isNaN(battery.level)) {
                             const updatedLevel = Math.max(0, Math.min(1, battery.level));
                             const updatedWidth = 18 * updatedLevel + 5;
+
+                            setBatteryTooltip(getBatteryTooltip(updatedLevel, battery.charging));
+
                             const updatedPathElement = $('.a.dock.control>svg>path')[0];
                             if (updatedPathElement) {
                                 updatedPathElement.outerHTML = `<path
@@ -2178,11 +2475,16 @@ if (navigator.getBattery) {
                     });
                 }
             }
+        } else {
+            setBatteryUnavailableTooltip();
         }
     }).catch((error) => {
-        // 静默处理错误，电池API在某些浏览器中不可用是正常的
-        console.log('电池API不可用:', error);
+        // 静默处理错误，电池 API 在某些浏览器中不可用是正常的
+        console.log('电池 API 不可用：', error);
+        setBatteryUnavailableTooltip();
     });
+} else {
+    setBatteryUnavailableTooltip();
 }
 
 // 任务管理器 记录硬件运行时间
@@ -2286,7 +2588,7 @@ function setIcon() {
     </div>
     <div class="b" ondblclick="openapp('about');" ontouchstart="openapp('about');" oncontextmenu="return showcm(event,'desktop.icon',['about',-1]);" appname="about">
         <img src="icon/about.svg">
-        <p>${lang('关于 Win12 网页版', 'about.name')}</p>
+        <p>${getAboutAppTitle()}</p>
     </div>
     <div class="b" ondblclick="openapp('edge');" ontouchstart="openapp('edge');" oncontextmenu="return showcm(event,'desktop.icon',['edge',-1]);" appname="edge">
         <img src="icon/edge.svg">
@@ -2313,7 +2615,7 @@ function setIcon() {
     }
     if (Array.isArray(JSON.parse(localStorage.getItem('sys_setting')))) {
         var sys_setting_back = JSON.parse(localStorage.getItem('sys_setting'));
-        if (/^(1|0)+$/.test(sys_setting_back.join(''))/* 只含有0和1 */) {
+        if (/^(1|0)+$/.test(sys_setting_back.join(''))/* 只含有 0 和 1 */) {
             sys_setting = sys_setting_back;
             for (var i = 0; i < sys_setting.length; i++) {
                 document.getElementById('sys_setting_' + (i + 1))?.setAttribute("class", 'a checkbox' + (sys_setting[i] ? ' checked' : '')); //设置class属性
@@ -2368,6 +2670,7 @@ document.getElementsByTagName('body')[0].onload = () => {
         $('#loadback').css('display', 'none');
     }, 1000);
     apps.webapps.init();
+    initLoginPassword();
     //getdata
     if (localStorage.getItem('theme') == 'dark') {
         $(':root').addClass('dark');
@@ -2387,7 +2690,7 @@ document.getElementsByTagName('body')[0].onload = () => {
     setIcon();//加载桌面图标
 
     // 所以这个东西为啥要在开机的时候加载？
-    // 不应该在python.init里面吗？
+    // 不应该在 python.init 里面吗？
     //     (async function () {
     //         apps.python.pyodide = await loadPyodide();
     //         apps.python.pyodide.runPython(`
@@ -2461,10 +2764,14 @@ else {
     autoUpdate = (autoUpdate == 'true');
 }
 
-// PWA 应用
-if (!location.href.match(/((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])(?::(?:[0-9]|[1-9][0-9]{1,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5]))/) && !location.href.match('localhost') && !(new URL(location.href)).searchParams.get('develop')) {
+const urlParams = new URL(location.href).searchParams;
+if (urlParams.get('skip_login') !== '1') {
     $('#loginback').css('opacity', '1');
     $('#loginback').css('display', 'flex');
+}
+
+// PWA 应用
+if (!location.href.match(/((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])(?::(?:[0-9]|[1-9][0-9]{1,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5]))/) && !location.href.match('localhost') && !urlParams.get('develop')) {
     shownotice('about');
     navigator.serviceWorker.register('sw.js', { updateViaCache: 'none', scope: './' }).then(reg => {
 
@@ -2537,10 +2844,31 @@ function calcTimeString(second) {
 //监听全局按键
 function setupGlobalKey() {
     $(document).keydown(function (event) {
-        if (event.keyCode == 116/*F5被按下(刷新)*/) {
+        if (event.keyCode == 116/*F5 被按下 (刷新)*/) {
             event.preventDefault();/*取消默认刷新行为*/
             $('#desktop').css('opacity', '0'); setTimeout(() => { $('#desktop').css('opacity', '1'); }, 100); setIcon();
             return;
+        }
+
+        // 激活键：Meta / Meta + Ctrl / Alt
+        if ((event.metaKey && !event.altKey) || (!event.metaKey && event.altKey)) {
+        //按下激活键 + E，打开文件资源管理器（此电脑）
+            if ((event.key || '').toLowerCase() == 'e') {
+                event.preventDefault();
+                if (!event.repeat) {
+                    openapp('explorer');
+                    apps.explorer.reset();
+                }
+                return;
+            }
+            //按下激活键 + I，打开设置
+            if ((event.key || '').toLowerCase() == 'i') {
+                event.preventDefault();
+                if (!event.repeat) {
+                    openapp('setting');
+                }
+                return;
+            }
         }
 
         //按下徽标键
@@ -2558,14 +2886,22 @@ function isMobileDevice() {
     return /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 }
 
+let orientationDismissed = false;
+
 function checkOrientation() {
+    if (orientationDismissed) return;
     const container = document.getElementById('orientation-warning');
     const isPortrait = window.matchMedia("(orientation: portrait)").matches;
     if (isMobileDevice() && isPortrait) {
-        container.style.display = "flex"; // 显示提示
+        container.style.display = "flex";
     } else {
-        container.style.display = "none"; // 隐藏提示
+        container.style.display = "none";
     }
+}
+
+function dismissOrientation() {
+    orientationDismissed = true;
+    document.getElementById('orientation-warning').style.display = 'none';
 }
 
 // 监听屏幕方向变化

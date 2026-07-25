@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 
 <head>
     <meta charset="UTF-8">
@@ -86,38 +86,38 @@
                 var inputValue = event.target.value;
                 // 判断是否为搜索查询
                 if (isSearchQuery(inputValue)) {
-                    // 在Bing中搜索
+                    // 在 Bing 中搜索
                     searchInBing(inputValue);
                 } else {
-                    // 导航到指定URL
+                    // 导航到指定 URL
                     navigateToURL(inputValue);
                 }
             }
         }
     
         function isSearchQuery(value) {
-            // 正则用来验证大部分常见的URL格式，包括以"http://"、"https://"或"ftp://"开头的URL
+            // 正则用来验证大部分常见的 URL 格式，包括以"http://"、"https://"或"ftp://"开头的 URL
             var urlPattern = /^(((ht|f)tps?):\/\/)?([^!@#$%^&*?.\s-]([^!@#$%^&*?.\s]{0,63}[^!@#$%^&*?.\s])?\.)+[a-z]{2,6}\/?/;
-            // 判断是否为URL
+            // 判断是否为 URL
             return !urlPattern.test(value);
         }
     
         function searchInBing(query) {
             // 对查询进行编码
             var encodedQuery = encodeURIComponent(query);
-            // 在新标签页中打开Bing搜索
+            // 在新标签页中打开 Bing 搜索
             window.location = 'https://bing.com/search?q=' + encodedQuery;
             // 可能报错
             apps.edge.rename(query);
         }
     
         function navigateToURL(url) {
-            // 如果URL不包含协议前缀
+            // 如果 URL 不包含协议前缀
             if (!/^https?:\/\//.test(url)) {
-                // 添加默认的HTTP协议前缀
+                // 添加默认的 HTTP 协议前缀
                 url = 'http://' + url;
             }
-            // 导航到指定URL
+            // 导航到指定 URL
             window.location = url;
             // 可能报错
             apps.edge.rename(url); 
