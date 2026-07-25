@@ -2566,6 +2566,15 @@ function saveDesktop() {
         localStorage.setItem(key, value);
     });
 }
+//global
+const parentEl = $('#desktop')[0];
+let parentRect = parentEl.getBoundingClientRect();
+const cell = 83; // 单位尺寸
+const gap = 10; // 单位间隔
+const padding = 20; // 偏移
+const cols = Math.max(1, Math.floor((parentRect.width - padding * 2 + gap) / (cell + gap)));
+const rows = Math.max(1, Math.floor((parentRect.height - padding * 2 + gap) / (cell + gap)));
+
 function desktopMove(elt, e) {
     if (!edit_mode) return;// 编辑模式有效
     e = e || window.event;
@@ -2580,13 +2589,7 @@ function desktopMove(elt, e) {
     elt.style.height = `${rect.height}px`;
     elt.classList.add('moving');
     elt.classList.add('notrans');
-const parentEl = $('#desktop')[0];
-+     let parentRect = parentEl.getBoundingClientRect();
-+     const cell = 83; // 单位尺寸
-+     const gap = 10; // 单位间隔
-+     const padding = 20; // 偏移
-+     const cols = Math.max(1, Math.floor((parentRect.width - padding * 2 + gap) / (cell + gap)));
-+     const rows = Math.max(1, Math.floor((parentRect.height - padding * 2 + gap) / (cell + gap)));
+
     function moving(ev) {
         let clientX = ev.type.match('touch') ? ev.touches[0].clientX : ev.clientX;
         let clientY = ev.type.match('touch') ? ev.touches[0].clientY : ev.clientY;
@@ -2594,14 +2597,14 @@ const parentEl = $('#desktop')[0];
         let leftPx = clientX - deltaLeft;
         let topPx = clientY - deltaTop;
         // 与网格对齐
-        const parentRect = $('#desktop')[0].getBoundingClientRect();
-        const cell = 83; // 单位尺寸
-        const gap = 10; // 单位间隔
-        const padding = 20; // 偏移
+        //const parentRect = $('#desktop')[0].getBoundingClientRect();
+        //const cell = 83; // 单位尺寸
+        //const gap = 10; // 单位间隔
+        //const padding = 20; // 偏移
         let relLeft = leftPx - parentRect.left - padding;
         let relTop = topPx - parentRect.top - padding;
-        const cols = Math.max(1, Math.floor((parentRect.width - padding * 2 + gap) / (cell + gap)));
-        const rows = Math.max(1, Math.floor((parentRect.height - padding * 2 + gap) / (cell + gap)));
+        //const cols = Math.max(1, Math.floor((parentRect.width - padding * 2 + gap) / (cell + gap)));
+        //const rows = Math.max(1, Math.floor((parentRect.height - padding * 2 + gap) / (cell + gap)));
         let col = Math.round(relLeft / (cell + gap));
         let row = Math.round(relTop / (cell + gap));//近似是第几格
         if (col < 0) col = 0;
@@ -2619,7 +2622,7 @@ const parentEl = $('#desktop')[0];
         elt.classList.remove('moving');
         document.body.style.userSelect = '';
         // 将固定坐标转换为相对于桌面的绝对位置
-        const parentRect = $('#desktop')[0].getBoundingClientRect();
+        //const parentRect = $('#desktop')[0].getBoundingClientRect();
         const left = parseFloat(elt.style.left || 0) - parentRect.left;
         const top = parseFloat(elt.style.top || 0) - parentRect.top;
         elt.style.position = 'absolute';
