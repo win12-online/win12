@@ -847,8 +847,8 @@ function hidedescp(e) {
 
 const nts = {
     'about': {
-        cnt: lang(`<p class="tit">${isTauriApp() ? '关于 Windows12-desktop' : 'Windows 12 网页版'}</p>
-            <p>${isTauriApp() ? 'Windows12-desktop 是 Windows 12 网页版的桌面应用版本,' : 'Windows 12 网页版是一个开放源项目，'}<br />
+        cnt: lang(`<p class="tit">${isTauriApp() ? '关于 Win12-desktop' : 'Win12 网页版'}</p>
+            <p>${isTauriApp() ? 'Win12-desktop 是 Win12 网页版的桌面应用版本，' : 'Win12 网页版是一个开放源项目，'}<br />
             希望让用户在网络上预先体验 Windows 12,<br />
             内容可能与 Windows 12 正式版本不一致。<br />
             使用标准网络技术,例如 HTML, CSS 和 JS<br />
