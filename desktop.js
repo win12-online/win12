@@ -847,8 +847,8 @@ function hidedescp(e) {
 
 const nts = {
     'about': {
-        cnt: lang(`<p class="tit">${isTauriApp() ? 'Win12-desktop' : 'Windows 12 网页版'}</p>
-            <p>Windows 12 网页版是一个开放源项目,<br />
+        cnt: lang(`<p class="tit">${isTauriApp() ? '关于 Windows12-desktop' : 'Windows 12 网页版'}</p>
+            <p>${isTauriApp() ? 'Windows12-desktop 是 Windows 12 网页版的桌面应用版本,' : 'Windows 12 网页版是一个开放源项目,'}<br />
             希望让用户在网络上预先体验 Windows 12,<br />
             内容可能与 Windows 12 正式版本不一致。<br />
             使用标准网络技术,例如 HTML, CSS 和 JS<br />
@@ -2884,7 +2884,6 @@ if (urlParams.get('skip_login') !== '1') {
 }
 
 // 共用同一个开机提示；根据运行环境在 nts.about 中选择对应名称。
-shownotice('about');
 shownotice('about');
 // PWA 应用
 if (!location.href.match(/((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])(?::(?:[0-9]|[1-9][0-9]{1,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5]))/) && !location.href.match('localhost') && !urlParams.get('develop')) {
