@@ -481,7 +481,7 @@ const cms = {
         ['<i class="bi bi-folder2-open"></i> ' + lang('文件资源管理器', 'explorer.name'), 'openapp(\'explorer\')'],
         ['<i class="bi bi-search"></i> 搜索', `$('#search-btn').addClass('show');hide_startmenu();
         $('#search-win').addClass('show-begin');setTimeout(() => {$('#search-win').addClass('show');
-        $('#search-input').focus();}, 0);`],
+        $('#search-input').focus();},200);`],
         '<hr>',
         ['<i class="bi bi-power"></i> 关机', 'window.location=\'shutdown.html\''],
         ['<i class="bi bi-arrow-counterclockwise"></i> 重启', 'window.location=\'reload.html\''],
