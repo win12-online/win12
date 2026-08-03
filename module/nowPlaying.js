@@ -17,18 +17,32 @@
         });
     }
 
+    function openImportPicker(np) {
+        if (np && typeof np.pickFile === 'function') {
+            np.pickFile();
+            return;
+        }
+
+        const input =
+            document.querySelector('.wg.nowplaying:not(.template) .nowplaying-file') ||
+            document.querySelector('.nowplaying-file');
+
+        if (input) {
+            input.click();
+        }
+    }
+
+    function hasLoadedTrack(np) {
+        const audio = np && np.audio;
+        return !!(audio && (audio.currentSrc || audio.src));
+    }
+
     function runAction(action) {
-        var np = player();
+        const np = player();
         if (!np) return;
 
         if (action === 'import') {
-            if (typeof np.pickFile === 'function') {
-                np.pickFile();
-                return;
-            }
-
-            var input = document.querySelector('.wg.nowplaying:not(.template) .nowplaying-file');
-            if (input) input.click();
+            openImportPicker(np);
             return;
         }
 
@@ -37,8 +51,16 @@
             return;
         }
 
-        if (action === 'play' && typeof np.toggle === 'function') {
-            Promise.resolve(np.toggle()).finally(updatePlayIcon);
+        if (action === 'play') {
+            if (!hasLoadedTrack(np)) {
+                openImportPicker(np);
+                return;
+            }
+
+            if (typeof np.toggle === 'function') {
+                Promise.resolve(np.toggle()).finally(updatePlayIcon);
+            }
+
             return;
         }
 
