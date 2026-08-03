@@ -2407,6 +2407,45 @@ input-before {
 
 /*** 以下窗口相关 ***/
 
+.webgl-selector {
+    position: relative;
+    width: 100%;
+    margin-top: 8px;
+    color: var(--text);
+    outline: none;
+    z-index: 20;
+}
+
+.webgl-selector-options {
+    position: static;
+    z-index: auto;
+    display: flex;
+    gap: 5px;
+    width: 100%;
+    margin-top: 5px;
+    padding: 5px;
+    border: 1px solid #7f7f7f40;
+    border-radius: 10px;
+    background: var(--card);
+    box-shadow: none;
+}
+
+.webgl-selector-options a {
+    display: block;
+    flex: 1;
+    text-align: center;
+    padding: 8px 10px;
+    border-radius: 7px;
+    color: var(--text);
+    cursor: pointer;
+}
+
+.webgl-selector-options a:hover,
+.webgl-selector-options a.selected {
+    background: var(--hover);
+    color: var(--href);
+}
+
 .window {
     position: absolute;
     height: 80%;
