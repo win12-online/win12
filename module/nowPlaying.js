@@ -1,12 +1,9 @@
-// Now Playing taskbar pin interactions.
-// Kept separate from module/widget.js so the widget renderer and taskbar controls can be debugged independently.
-
 (function () {
-    function getPlayer() {
+    function player() {
         return typeof widgets !== 'undefined' && widgets && widgets.nowplaying ? widgets.nowplaying : null;
     }
 
-    function getDockPins() {
+    function pins() {
         return document.querySelectorAll('.wg.toolbar.nowplaying, .nowplaying.np-dock-nuclear');
     }
 
@@ -15,77 +12,75 @@
             if (!exceptMenu || menu !== exceptMenu) {
                 menu.classList.remove('show');
 
-                const trigger = menu.parentElement && menu.parentElement.querySelector(':scope > .np-dock-more');
-                if (trigger) {
-                    trigger.classList.remove('is-open');
-                    trigger.setAttribute('aria-expanded', 'false');
+                var dock = menu.closest('.nowplaying.np-dock-nuclear');
+                if (dock) {
+                    dock.querySelectorAll('.np-dock-hamburger, .np-dock-widget-more').forEach(function (button) {
+                        button.classList.remove('is-open');
+                        button.setAttribute('aria-expanded', 'false');
+                    });
                 }
             }
         });
     }
 
-    function makeButton(className, title) {
-        const button = document.createElement('button');
-        button.type = 'button';
-        button.className = className;
-        button.title = title;
-        return button;
-    }
-
     function makeIcon(className) {
-        const icon = document.createElement('i');
+        var icon = document.createElement('i');
         icon.className = className;
         return icon;
     }
 
-    function makeHamburgerButton() {
-        const button = makeButton('np-dock-more', 'Now Playing controls');
-        button.setAttribute('aria-label', 'Now Playing controls');
-        button.setAttribute('aria-expanded', 'false');
-
-        button.appendChild(document.createElement('span'));
-        button.appendChild(document.createElement('span'));
-        button.appendChild(document.createElement('span'));
-
+    function makeButton(className, label) {
+        var button = document.createElement('button');
+        button.type = 'button';
+        button.className = className;
+        button.title = label;
+        button.setAttribute('aria-label', label);
         return button;
     }
 
-    function makeMenuButton(sourceButton, action, iconClass, title) {
-        const button = sourceButton.cloneNode(false);
+    function makeHamburger() {
+        var button = makeButton('np-dock-hamburger', 'Now Playing controls');
+        button.setAttribute('aria-expanded', 'false');
+        button.appendChild(document.createElement('span'));
+        button.appendChild(document.createElement('span'));
+        button.appendChild(document.createElement('span'));
+        return button;
+    }
 
-        button.className = 'np-dock-menu-item';
-        button.type = 'button';
-        button.title = title;
-        button.setAttribute('aria-label', title);
+    function makeDots() {
+        var button = makeButton('np-dock-widget-more', 'Widget menu');
+        button.setAttribute('aria-expanded', 'false');
+        button.appendChild(makeIcon('bi bi-three-dots'));
+        return button;
+    }
+
+    function makeMenuButton(action, iconClass, label) {
+        var button = makeButton('np-dock-menu-item', label);
         button.setAttribute('data-np-action', action);
-        button.removeAttribute('id');
-        button.removeAttribute('onclick');
-        button.removeAttribute('aria-expanded');
-
         button.appendChild(makeIcon(iconClass));
-
         return button;
     }
 
     function ensureMenu() {
-        const player = getPlayer();
-        if (!player) return;
+        var np = player();
+        if (!np) return;
 
-        getDockPins().forEach(function (dock) {
+        pins().forEach(function (dock) {
             dock.classList.add('np-dock-nuclear');
 
-            Array.from(dock.querySelectorAll(':scope > .np-dock-more')).slice(1).forEach(function (node) {
-                node.remove();
-            });
+            var pill = dock.querySelector(':scope > .np-dock-pill') || dock;
+            var triggers = dock.querySelector(':scope > .np-dock-trigger-wrap');
 
-            Array.from(dock.querySelectorAll(':scope > .np-dock-menu')).slice(1).forEach(function (node) {
-                node.remove();
-            });
+            if (!triggers) {
+                triggers = document.createElement('div');
+                triggers.className = 'np-dock-trigger-wrap';
+                dock.appendChild(triggers);
+            }
 
-            let hamburger = dock.querySelector(':scope > .np-dock-more');
+            var hamburger = triggers.querySelector(':scope > .np-dock-hamburger');
             if (!hamburger) {
-                hamburger = makeHamburgerButton();
-                dock.appendChild(hamburger);
+                hamburger = makeHamburger();
+                triggers.appendChild(hamburger);
             }
 
             if (!hamburger.querySelector('span')) {
@@ -95,9 +90,13 @@
                 hamburger.appendChild(document.createElement('span'));
             }
 
-            hamburger.setAttribute('aria-label', 'Now Playing controls');
+            var dots = triggers.querySelector(':scope > .np-dock-widget-more');
+            if (!dots) {
+                dots = makeDots();
+                triggers.appendChild(dots);
+            }
 
-            let menu = dock.querySelector(':scope > .np-dock-menu');
+            var menu = dock.querySelector(':scope > .np-dock-menu');
             if (!menu) {
                 menu = document.createElement('div');
                 menu.className = 'np-dock-menu';
@@ -105,94 +104,101 @@
             }
 
             menu.textContent = '';
-            menu.appendChild(makeMenuButton(hamburger, 'import', 'bi bi-folder2-open', 'Import audio'));
-            menu.appendChild(makeMenuButton(hamburger, 'back', 'bi bi-skip-backward-fill', 'Back 10 seconds'));
-            menu.appendChild(makeMenuButton(hamburger, 'play', 'bi bi-play-fill', 'Play or pause'));
-            menu.appendChild(makeMenuButton(hamburger, 'forward', 'bi bi-skip-forward-fill', 'Forward 10 seconds'));
+            menu.appendChild(makeMenuButton('import', 'bi bi-folder2-open', 'Import audio'));
+            menu.appendChild(makeMenuButton('back', 'bi bi-skip-backward-fill', 'Back 10 seconds'));
+            menu.appendChild(makeMenuButton('play', 'bi bi-play-fill', 'Play or pause'));
+            menu.appendChild(makeMenuButton('forward', 'bi bi-skip-forward-fill', 'Forward 10 seconds'));
+
+            if (pill && pill !== dock) {
+                pill.classList.add('np-dock-pill-has-menu');
+            }
         });
 
         updatePlayIcon();
     }
 
     function updatePlayIcon() {
-        const player = getPlayer();
-        const audio = player && player.audio;
-        const isPlaying = audio && !audio.paused;
-        const iconClass = isPlaying ? 'bi bi-pause-fill' : 'bi bi-play-fill';
+        var np = player();
+        var audio = np && np.audio;
+        var playing = audio && !audio.paused;
+        var playClass = playing ? 'bi bi-pause-fill' : 'bi bi-play-fill';
 
         document.querySelectorAll('.nowplaying.np-dock-nuclear > .np-dock-menu [data-np-action="play"] i').forEach(function (icon) {
-            icon.className = iconClass;
+            icon.className = playClass;
         });
     }
 
     function runAction(action) {
-        const player = getPlayer();
-        if (!player) return;
+        var np = player();
+        if (!np) return;
 
         if (action === 'import') {
-            if (typeof player.pickFile === 'function') {
-                player.pickFile();
+            if (typeof np.pickFile === 'function') {
+                np.pickFile();
                 return;
             }
 
-            const fileInput = document.querySelector('.wg.nowplaying:not(.template) .nowplaying-file');
-            if (fileInput) fileInput.click();
+            var input = document.querySelector('.wg.nowplaying:not(.template) .nowplaying-file');
+            if (input) input.click();
             return;
         }
 
-        if (action === 'back' && typeof player.skip === 'function') {
-            player.skip(-10);
+        if (action === 'back' && typeof np.skip === 'function') {
+            np.skip(-10);
             return;
         }
 
-        if (action === 'play' && typeof player.toggle === 'function') {
-            Promise.resolve(player.toggle()).finally(updatePlayIcon);
+        if (action === 'play' && typeof np.toggle === 'function') {
+            Promise.resolve(np.toggle()).finally(updatePlayIcon);
             return;
         }
 
-        if (action === 'forward' && typeof player.skip === 'function') {
-            player.skip(10);
+        if (action === 'forward' && typeof np.skip === 'function') {
+            np.skip(10);
         }
     }
 
-    function installClickHandlers() {
-        if (window.__nowPlayingInteractionsInstalled) return;
-        window.__nowPlayingInteractionsInstalled = true;
+    function toggleMenu(button) {
+        var dock = button.closest('.nowplaying.np-dock-nuclear');
+        var menu = dock && dock.querySelector(':scope > .np-dock-menu');
+
+        if (!menu) return;
+
+        var open = !menu.classList.contains('show');
+        closeMenus(menu);
+
+        menu.classList.toggle('show', open);
+
+        dock.querySelectorAll('.np-dock-hamburger, .np-dock-widget-more').forEach(function (trigger) {
+            trigger.classList.toggle('is-open', open);
+            trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
+        });
+    }
+
+    function installEvents() {
+        if (window.__nowPlayingSeparateInteractionsInstalled) return;
+        window.__nowPlayingSeparateInteractionsInstalled = true;
 
         document.addEventListener('click', function (event) {
-            const hamburger = event.target.closest && event.target.closest('.nowplaying.np-dock-nuclear > .np-dock-more');
-            const menuItem = event.target.closest && event.target.closest('.nowplaying.np-dock-nuclear > .np-dock-menu .np-dock-menu-item');
-            const menu = event.target.closest && event.target.closest('.nowplaying.np-dock-nuclear > .np-dock-menu');
-            const dock = event.target.closest && event.target.closest('.nowplaying.np-dock-nuclear');
+            var trigger = event.target.closest && event.target.closest('.nowplaying.np-dock-nuclear .np-dock-hamburger, .nowplaying.np-dock-nuclear .np-dock-widget-more');
+            var item = event.target.closest && event.target.closest('.nowplaying.np-dock-nuclear > .np-dock-menu .np-dock-menu-item');
+            var menu = event.target.closest && event.target.closest('.nowplaying.np-dock-nuclear > .np-dock-menu');
+            var dock = event.target.closest && event.target.closest('.nowplaying.np-dock-nuclear');
 
-            if (hamburger) {
+            if (trigger) {
                 event.preventDefault();
                 event.stopPropagation();
                 event.stopImmediatePropagation();
-
-                const parentDock = hamburger.closest('.nowplaying.np-dock-nuclear');
-                const dockMenu = parentDock && parentDock.querySelector(':scope > .np-dock-menu');
-
-                if (dockMenu) {
-                    const shouldOpen = !dockMenu.classList.contains('show');
-                    closeMenus(dockMenu);
-
-                    dockMenu.classList.toggle('show', shouldOpen);
-                    hamburger.classList.toggle('is-open', shouldOpen);
-                    hamburger.setAttribute('aria-expanded', shouldOpen ? 'true' : 'false');
-                }
-
+                toggleMenu(trigger);
                 return;
             }
 
-            if (menuItem) {
+            if (item) {
                 event.preventDefault();
                 event.stopPropagation();
                 event.stopImmediatePropagation();
-
-                runAction(menuItem.getAttribute('data-np-action'));
+                runAction(item.getAttribute('data-np-action'));
                 updatePlayIcon();
-
                 return;
             }
 
@@ -206,7 +212,6 @@
                 event.preventDefault();
                 event.stopPropagation();
                 event.stopImmediatePropagation();
-
                 runAction('play');
                 return;
             }
@@ -215,42 +220,42 @@
         }, true);
     }
 
-    function patchPlayerHooks() {
-        const player = getPlayer();
-        if (!player || player.__nowPlayingInteractionsPatched) return;
+    function patchPlayer() {
+        var np = player();
+        if (!np || np.__nowPlayingSeparateInteractionsPatched) return;
 
-        player.__nowPlayingInteractionsPatched = true;
+        np.__nowPlayingSeparateInteractionsPatched = true;
 
-        const oldInit = player.init;
-        const oldRender = player.render;
+        var init = np.init;
+        var render = np.render;
 
-        if (typeof oldInit === 'function') {
-            player.init = function () {
-                oldInit.call(player);
+        if (typeof init === 'function') {
+            np.init = function () {
+                init.call(np);
                 ensureMenu();
             };
         }
 
-        if (typeof oldRender === 'function') {
-            player.render = function () {
-                oldRender.call(player);
+        if (typeof render === 'function') {
+            np.render = function () {
+                render.call(np);
                 ensureMenu();
             };
         }
     }
 
     function start() {
-        patchPlayerHooks();
-        installClickHandlers();
+        patchPlayer();
+        installEvents();
         ensureMenu();
 
         window.setTimeout(function () {
-            patchPlayerHooks();
+            patchPlayer();
             ensureMenu();
         }, 250);
 
         window.setTimeout(function () {
-            patchPlayerHooks();
+            patchPlayer();
             ensureMenu();
         }, 1000);
     }

@@ -1,6 +1,3 @@
-
-/* Isolated Now Playing widget and taskbar-pin styles. */
-
 .nowplaying.np-dock-nuclear {
     position: relative !important;
     top: 0 !important;
@@ -29,7 +26,7 @@
     max-height: 50px !important;
 }
 
-.nowplaying.np-dock-nuclear > :not(.np-dock-pill):not(.np-dock-more):not(.np-dock-menu) {
+.nowplaying.np-dock-nuclear > :not(.np-dock-pill):not(.np-dock-menu):not(.np-dock-trigger-wrap) {
     display: none !important;
     opacity: 0 !important;
     pointer-events: none !important;
@@ -42,7 +39,7 @@
     min-width: 260px !important;
     max-width: 260px !important;
     box-sizing: border-box !important;
-    padding: 6px 34px 6px 7px !important;
+    padding: 6px 60px 6px 7px !important;
     display: grid !important;
     grid-template-columns: 38px minmax(0, 1fr) 42px !important;
     grid-template-rows: 1fr !important;
@@ -99,11 +96,22 @@
     visibility: hidden !important;
 }
 
-.nowplaying.np-dock-nuclear > .np-dock-more {
+.nowplaying.np-dock-nuclear > .np-dock-trigger-wrap {
     position: absolute !important;
     top: 50% !important;
     right: 7px !important;
     transform: translateY(-50%) !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    z-index: 10080 !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    visibility: visible !important;
+}
+
+.nowplaying.np-dock-nuclear .np-dock-hamburger,
+.nowplaying.np-dock-nuclear .np-dock-widget-more {
     width: 24px !important;
     height: 24px !important;
     min-width: 24px !important;
@@ -112,20 +120,22 @@
     border-radius: 999px !important;
     padding: 0 !important;
     display: inline-flex !important;
-    flex-direction: column !important;
     align-items: center !important;
     justify-content: center !important;
-    gap: 3px !important;
     background: var(--hover) !important;
     color: var(--text) !important;
     opacity: 1 !important;
     pointer-events: auto !important;
     visibility: visible !important;
     cursor: pointer !important;
-    z-index: 10080 !important;
 }
 
-.nowplaying.np-dock-nuclear > .np-dock-more span {
+.nowplaying.np-dock-nuclear .np-dock-hamburger {
+    flex-direction: column !important;
+    gap: 3px !important;
+}
+
+.nowplaying.np-dock-nuclear .np-dock-hamburger span {
     width: 13px !important;
     height: 2px !important;
     border-radius: 999px !important;
@@ -134,16 +144,22 @@
     transition: transform 160ms ease, opacity 120ms ease !important;
 }
 
-.nowplaying.np-dock-nuclear > .np-dock-more.is-open span:nth-child(1) {
+.nowplaying.np-dock-nuclear .np-dock-hamburger.is-open span:nth-child(1) {
     transform: translateY(5px) rotate(45deg) !important;
 }
 
-.nowplaying.np-dock-nuclear > .np-dock-more.is-open span:nth-child(2) {
+.nowplaying.np-dock-nuclear .np-dock-hamburger.is-open span:nth-child(2) {
     opacity: 0 !important;
 }
 
-.nowplaying.np-dock-nuclear > .np-dock-more.is-open span:nth-child(3) {
+.nowplaying.np-dock-nuclear .np-dock-hamburger.is-open span:nth-child(3) {
     transform: translateY(-5px) rotate(-45deg) !important;
+}
+
+.nowplaying.np-dock-nuclear .np-dock-widget-more i {
+    display: inline-block !important;
+    font-size: 14px !important;
+    line-height: 1 !important;
 }
 
 .nowplaying.np-dock-nuclear > .np-dock-menu {
@@ -181,10 +197,8 @@
     border-radius: 10px !important;
     padding: 0 !important;
     display: inline-flex !important;
-    flex-direction: row !important;
     align-items: center !important;
     justify-content: center !important;
-    gap: 0 !important;
     background: transparent !important;
     color: var(--text) !important;
     opacity: 1 !important;
