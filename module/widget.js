@@ -933,3 +933,176 @@ function widgetsMove(elt, e) {
     window.setTimeout(installNowPlayingCreateFix, 1000);
 })();
 
+
+/* nowplaying-three-dot-menu-fix */
+(function () {
+    function getPlayer() {
+        return typeof widgets !== 'undefined' && widgets && widgets.nowplaying ? widgets.nowplaying : null;
+    }
+
+    function ensureThreeDotMenu() {
+        const player = getPlayer();
+        if (!player) return;
+
+        $('.wg.toolbar.nowplaying, .nowplaying.np-dock-nuclear').each(function () {
+            const dock = $(this);
+
+            dock.addClass('np-dock-nuclear');
+
+            dock.children('.np-dock-more').not(':first').remove();
+            dock.children('.np-dock-menu').not(':first').remove();
+
+            let more = dock.children('.np-dock-more').first();
+            if (!more.length) {
+                more = $('<button class="np-dock-more" type="button" title="Now Playing controls"><i class="bi bi-three-dots"></i></button>');
+                dock.append(more);
+            }
+
+            let menu = dock.children('.np-dock-menu').first();
+            if (!menu.length) {
+                menu = $('<div class="np-dock-menu"></div>');
+                dock.append(menu);
+            }
+
+            menu.empty();
+            menu.append('<button class="np-dock-menu-item" type="button" data-np-action="import" title="Import audio"><i class="bi bi-folder2-open"></i></button>');
+            menu.append('<button class="np-dock-menu-item" type="button" data-np-action="back" title="Back 10 seconds"><i class="bi bi-skip-backward-fill"></i></button>');
+            menu.append('<button class="np-dock-menu-item" type="button" data-np-action="play" title="Play or pause"><i class="bi bi-play-fill"></i></button>');
+            menu.append('<button class="np-dock-menu-item" type="button" data-np-action="forward" title="Forward 10 seconds"><i class="bi bi-skip-forward-fill"></i></button>');
+        });
+
+        updatePlayIcon();
+    }
+
+    function updatePlayIcon() {
+        const player = getPlayer();
+        const audio = player && player.audio;
+        const isPlaying = audio && !audio.paused;
+
+        $('.nowplaying.np-dock-nuclear > .np-dock-menu [data-np-action="play"] i')
+            .attr('class', isPlaying ? 'bi bi-pause-fill' : 'bi bi-play-fill');
+    }
+
+    function closeMenus(exceptMenu) {
+        $('.nowplaying.np-dock-nuclear > .np-dock-menu.show').each(function () {
+            if (!exceptMenu || this !== exceptMenu) {
+                this.classList.remove('show');
+            }
+        });
+    }
+
+    function runMenuAction(action) {
+        const player = getPlayer();
+        if (!player) return;
+
+        if (action === 'import' && typeof player.pickFile === 'function') {
+            player.pickFile();
+        }
+
+        if (action === 'back' && typeof player.skip === 'function') {
+            player.skip(-10);
+        }
+
+        if (action === 'play' && typeof player.toggle === 'function') {
+            Promise.resolve(player.toggle()).finally(updatePlayIcon);
+        }
+
+        if (action === 'forward' && typeof player.skip === 'function') {
+            player.skip(10);
+        }
+    }
+
+    if (!window.__nowPlayingThreeDotMenuFixInstalled) {
+        window.__nowPlayingThreeDotMenuFixInstalled = true;
+
+        document.addEventListener('click', function (event) {
+            const more = event.target.closest && event.target.closest('.nowplaying.np-dock-nuclear > .np-dock-more');
+            const item = event.target.closest && event.target.closest('.nowplaying.np-dock-nuclear > .np-dock-menu .np-dock-menu-item');
+            const menu = event.target.closest && event.target.closest('.nowplaying.np-dock-nuclear > .np-dock-menu');
+            const dock = event.target.closest && event.target.closest('.nowplaying.np-dock-nuclear');
+
+            if (more) {
+                event.preventDefault();
+                event.stopPropagation();
+                event.stopImmediatePropagation();
+
+                const parentDock = more.closest('.nowplaying.np-dock-nuclear');
+                const dockMenu = parentDock && parentDock.querySelector(':scope > .np-dock-menu');
+
+                if (dockMenu) {
+                    const shouldOpen = !dockMenu.classList.contains('show');
+                    closeMenus(dockMenu);
+                    dockMenu.classList.toggle('show', shouldOpen);
+                }
+
+                return;
+            }
+
+            if (item) {
+                event.preventDefault();
+                event.stopPropagation();
+                event.stopImmediatePropagation();
+
+                const action = item.getAttribute('data-np-action');
+                runMenuAction(action);
+
+                if (action === 'import' || action === 'play') {
+                    closeMenus();
+                }
+
+                return;
+            }
+
+            if (menu) {
+                event.stopPropagation();
+                event.stopImmediatePropagation();
+                return;
+            }
+
+            if (dock) {
+                event.preventDefault();
+                event.stopPropagation();
+                event.stopImmediatePropagation();
+
+                runMenuAction('play');
+                return;
+            }
+
+            closeMenus();
+        }, true);
+    }
+
+    function patchRenderHooks() {
+        const player = getPlayer();
+        if (!player || player.__threeDotMenuFixPatched) return;
+
+        player.__threeDotMenuFixPatched = true;
+
+        const oldInit = player.init;
+        const oldRender = player.render;
+
+        if (typeof oldInit === 'function') {
+            player.init = function () {
+                oldInit.call(player);
+                ensureThreeDotMenu();
+            };
+        }
+
+        if (typeof oldRender === 'function') {
+            player.render = function () {
+                oldRender.call(player);
+                ensureThreeDotMenu();
+            };
+        }
+    }
+
+    patchRenderHooks();
+    ensureThreeDotMenu();
+
+    window.setTimeout(function () {
+        patchRenderHooks();
+        ensureThreeDotMenu();
+    }, 250);
+})();
+/* end-nowplaying-three-dot-menu-fix */
+
