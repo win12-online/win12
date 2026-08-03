@@ -2537,6 +2537,7 @@ Micrȯsoft Windows [版本 12.0.39035.7324]
     },
     edge: {
         init: () => {
+            browser.configure(localStorage.getItem('win12.browser.mode') || 'hybrid');
             $('#win-edge>iframe').remove();
             apps.edge.tabs = [];
             apps.edge.len = 0;
@@ -2550,6 +2551,9 @@ Micrȯsoft Windows [版本 12.0.39035.7324]
         reloadElt: '<loading class="reloading"><svg viewBox="0 0 16 16"><circle cx="8px" cy="8px" r="5px"></circle><circle cx="8px" cy="8px" r="5px"></circle></svg></loading>',
         max: false,
         fuls: false,
+        externalUrl: null,
+        externalUrls: Object.create(null),
+        externalWindows: Object.create(null),
         b1: false, b2: false, b3: false,
         newtab: () => {
             m_tab.newtab('edge', '新建标签页');
@@ -2571,6 +2575,36 @@ Micrȯsoft Windows [版本 12.0.39035.7324]
             };
             m_tab.tab('edge', apps.edge.tabs.length - 1);
             apps.edge.checkHistory(apps.edge.tabs[apps.edge.now][0]);
+        },
+        setExternalStatus: (message, error = false) => {
+            const status = $('#edge-external-status');
+            status.text(message).css({ display: 'block', color: error ? '#c42b1c' : '' });
+            $('#win-edge>iframe.show').hide();
+        },
+        updateExternalTitle: (tab, title) => {
+            const item = apps.edge.tabs.find(entry => entry[0] === tab);
+            if (!item || !title) return;
+            item[1] = title;
+            m_tab.settabs('edge');
+        },
+        updateExternalUrl: (tab, url) => {
+            const index = apps.edge.tabs.findIndex(entry => entry[0] === tab);
+            if (index === apps.edge.now && url) $('#win-edge>.tool>input.url').val(url);
+        },
+        closeExternalWindow: (tab) => {
+            const window = apps.edge.externalWindows[tab];
+            if (window) {
+                window.close().catch(() => {});
+                delete apps.edge.externalWindows[tab];
+            }
+            delete apps.edge.externalUrls[tab];
+        },
+        closeAllExternalWindows: () => {
+            Object.keys(apps.edge.externalWindows).forEach(tab => apps.edge.closeExternalWindow(tab));
+        },
+        clearExternalStatus: () => {
+            $('#edge-external-status').hide().text('');
+            $('#win-edge>iframe.show').show();
         },
         fullscreen: () => {
             if (!apps.edge.max) {
@@ -2624,10 +2658,35 @@ Micrȯsoft Windows [版本 12.0.39035.7324]
         },
         tab: (c) => {
             $('#win-edge>iframe.show').removeClass('show');
-            $('#win-edge>iframe.' + apps.edge.tabs[c][0]).addClass('show');
-            $('#win-edge>.tool>input.url').val($('#win-edge>iframe.' + apps.edge.tabs[c][0]).attr('src') == 'mainpage.html' ? '' : $('#win-edge>iframe.' + apps.edge.tabs[c][0]).attr('src'));
+            const activeTab = apps.edge.tabs[c][0];
+            const activeIframe = $('#win-edge>iframe.' + activeTab);
+            const activeExternal = apps.edge.externalWindows[activeTab];
+            activeIframe.addClass('show');
+            if (activeExternal) {
+                activeIframe.hide();
+                $('#edge-external-status').text('当前标签页使用独立 WebView 渲染').show();
+                $('#win-edge>.tool>input.url').val(apps.edge.externalUrls[activeTab] || '');
+            } else {
+                activeIframe.show();
+                $('#edge-external-status').hide().text('');
+            }
+            if (!activeExternal) $('#win-edge>.tool>input.url').val(activeIframe.attr('src') === 'mainpage.html' ? '' : activeIframe.attr('src'));
             $('#win-edge>.tool>input.rename').removeClass('show');
             apps.edge.checkHistory(apps.edge.tabs[apps.edge.now][0]);
+            Object.entries(apps.edge.externalWindows).forEach(([tab, webview]) => {
+                if (tab === activeTab) {
+                    webview.show().catch(() => {
+                        delete apps.edge.externalWindows[tab];
+                    });
+                    webview.setFocus().catch(() => {
+                        delete apps.edge.externalWindows[tab];
+                    });
+                } else {
+                    webview.hide().catch(() => {
+                        delete apps.edge.externalWindows[tab];
+                    });
+                }
+            });
         },
         c_rename: (c) => {
             m_tab.tab('edge', c);
@@ -2661,6 +2720,53 @@ Micrȯsoft Windows [版本 12.0.39035.7324]
             }
         },
         goto: (u, clear = true) => {
+            const input = String(u || '').trim();
+            const target = /^https?:\/\//i.test(input) ? input :
+                (/^mainpage\.html$/.test(input) ? input :
+                    (/^[^\s/]+\.[^\s/]+/.test(input) ? 'http://' + input :
+                        'https://bing.com/search?q=' + encodeURIComponent(input)));
+            const targetType = browser.classify(target);
+
+            // In hybrid/external mode external pages are rendered by the
+            // system Edge app. Win12 keeps only a launch/status placeholder;
+            // it does not mirror the external page's history in its iframe.
+            const useDesktopExternalWebview = browser.mode !== 'embedded' &&
+                window.win12Native?.isTauri?.();
+            if (targetType === 'external' && useDesktopExternalWebview) {
+                const tab = apps.edge.tabs[apps.edge.now][0];
+                apps.edge.closeExternalWindow(tab);
+                apps.edge.externalUrl = target;
+                apps.edge.externalUrls[tab] = target;
+                $('#win-edge>.tool>input.url').val(target);
+                const contentRect = $('#win-edge>iframe.show')[0]?.getBoundingClientRect();
+                apps.edge.setExternalStatus('正在启动系统 Microsoft Edge…\n' + target);
+                browser.openExternal(target, {
+                    label: 'edge-' + tab,
+                    title: 'Win12 Edge',
+                    parent: 'main',
+                    bounds: contentRect && {
+                        x: contentRect.left,
+                        y: contentRect.top,
+                        width: contentRect.width,
+                        height: contentRect.height
+                    },
+                    onDestroyed: (label) => {
+                        const destroyedTab = label.replace(/^edge-/, '');
+                        delete apps.edge.externalWindows[destroyedTab];
+                    },
+                    onTitle: (title) => apps.edge.updateExternalTitle(tab, title),
+                    onUrl: (url) => apps.edge.updateExternalUrl(tab, url)
+                }).then((webview) => {
+                    apps.edge.externalWindows[tab] = webview;
+                    apps.edge.setExternalStatus('外部网页已在 Win12 Edge 窗口中打开\n' + target);
+                    apps.edge.setExternalStatus('当前标签页使用独立 WebView 渲染');
+                }).catch((error) => {
+                    apps.edge.setExternalStatus('无法打开外部网页\n' + (error?.message || error), true);
+                });
+                return;
+            }
+
+            apps.edge.closeExternalWindow(apps.edge.tabs[apps.edge.now][0]);
             if (wifiStatus == false) {
                 m_tab.rename('edge', u);
                 $('#win-edge>iframe.show').attr('src', '.data/disconnected' + (isDark ? '_dark' : '') + '.html');

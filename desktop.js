@@ -107,6 +107,56 @@ function isTauriApp() {
     return !!((window.win12Native && window.win12Native.isTauri && window.win12Native.isTauri()) || (window.__TAURI__ && window.__TAURI__.core));
 }
 
+// Tauri's WebView does not reliably create a new window for external links.
+// Route HTTP(S) links through the Win12 Edge app instead, so links from both
+// static markup and dynamically-created app content behave consistently.
+function isExternalHttpUrl(value) {
+    if (!value) return false;
+    try {
+        const url = new URL(value, window.location.href);
+        return (url.protocol === 'http:' || url.protocol === 'https:') &&
+            url.origin !== window.location.origin;
+    } catch (_) {
+        return false;
+    }
+}
+
+function openExternalInWin12Browser(value) {
+    if (!isTauriApp() || !isExternalHttpUrl(value)) return false;
+
+    const url = new URL(value, window.location.href).href;
+    openapp('edge');
+    window.setTimeout(() => {
+        if (apps.edge && typeof apps.edge.newtab === 'function' &&
+            typeof apps.edge.goto === 'function') {
+            apps.edge.newtab();
+            apps.edge.goto(url);
+        }
+    }, 300);
+    return true;
+}
+
+// Capture normal anchors, including anchors added after startup. Keep links
+// inside the Win12 app and same-origin navigation unchanged.
+document.addEventListener('click', (event) => {
+    if (!isTauriApp() || event.defaultPrevented || event.button !== 0) return;
+    const anchor = event.target.closest && event.target.closest('a[href]');
+    if (!anchor || anchor.hasAttribute('download')) return;
+    const href = anchor.href;
+    if (!isExternalHttpUrl(href)) return;
+    event.preventDefault();
+    event.stopPropagation();
+    openExternalInWin12Browser(href);
+}, true);
+
+// A number of existing links call window.open directly. Preserve the native
+// behavior outside Tauri, but use the in-app browser for desktop external URLs.
+const nativeWindowOpen = window.open.bind(window);
+window.open = function (url, ...args) {
+    if (openExternalInWin12Browser(url)) return null;
+    return nativeWindowOpen(url, ...args);
+};
+
 function getAboutAppTitle() {
     if (!isTauriApp()) return lang('关于 Win12 网页版', 'about.name');
     if (langcode == 'en') return 'About Win12-desktop';

@@ -102,6 +102,9 @@ let m_tab={
             $(`.window.${appn}>.titbar>.tabs>.tab.${_id}`).addClass('left');
         }
         setTimeout(() => {
+            if (appn === 'edge' && apps.edge.closeExternalWindow) {
+                apps.edge.closeExternalWindow(app.tabs[c][0]);
+            }
             $(`#win-${appn}>iframe.${app.tabs[c][0]}`).remove();
             app.tabs.splice(c, 1);
             m_tab.settabs(appn);

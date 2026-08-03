@@ -28,6 +28,9 @@ function showwin(name) {
 }
 
 function hidewin(name, arg = 'window') {
+    if (name == 'edge' && apps.edge && apps.edge.closeAllExternalWindows) {
+        apps.edge.closeAllExternalWindows();
+    }
     $('.window.' + name).removeClass('notrans');
     $('.window.' + name).removeClass('max');
     $('.window.' + name).removeClass('show');
