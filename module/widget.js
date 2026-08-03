@@ -869,3 +869,180 @@ function widgetsMove(elt, e) {
     /* end-nowplaying-dock-pin-interaction-fix */
 })();
 
+
+/* nowplaying-pin-click-fix */
+(function () {
+    function getNowPlaying() {
+        return typeof widgets !== 'undefined' && widgets && widgets.nowplaying ? widgets.nowplaying : null;
+    }
+
+    function ensureDockPinControls() {
+        const player = getNowPlaying();
+        if (!player) return;
+
+        $('.wg.toolbar.nowplaying, .nowplaying.np-dock-nuclear').each(function () {
+            const dock = $(this);
+
+            dock.addClass('np-dock-nuclear');
+            dock.attr('data-nowplaying-pin-ready', 'true');
+
+            dock.children('.np-dock-more').not(':first').remove();
+            dock.children('.np-dock-menu').not(':first').remove();
+
+            let more = dock.children('.np-dock-more').first();
+            if (!more.length) {
+                more = $('<button class="np-dock-more" type="button" title="Now Playing options"><i class="bi bi-three-dots"></i></button>');
+                dock.append(more);
+            }
+
+            let menu = dock.children('.np-dock-menu').first();
+            if (!menu.length) {
+                menu = $('<div class="np-dock-menu"></div>');
+                dock.append(menu);
+            }
+
+            menu.empty();
+            menu.append('<button class="np-dock-menu-item" type="button" data-np-action="import" title="Import song"><i class="bi bi-folder2-open"></i></button>');
+            menu.append('<button class="np-dock-menu-item" type="button" data-np-action="back" title="Back 10 seconds"><i class="bi bi-skip-backward-fill"></i></button>');
+            menu.append('<button class="np-dock-menu-item" type="button" data-np-action="play" title="Play or pause"><i class="bi bi-play-fill"></i></button>');
+            menu.append('<button class="np-dock-menu-item" type="button" data-np-action="forward" title="Forward 10 seconds"><i class="bi bi-skip-forward-fill"></i></button>');
+        });
+    }
+
+    function updatePlayIcons() {
+        const player = getNowPlaying();
+        const audio = player && player.audio;
+        const playing = audio && !audio.paused;
+
+        $('.nowplaying.np-dock-nuclear [data-np-action="play"] i')
+            .attr('class', playing ? 'bi bi-pause-fill' : 'bi bi-play-fill');
+    }
+
+    function closeDockMenus(exceptMenu) {
+        $('.nowplaying.np-dock-nuclear > .np-dock-menu.show').each(function () {
+            if (!exceptMenu || this !== exceptMenu) {
+                $(this).removeClass('show');
+            }
+        });
+    }
+
+    if (!window.__nowPlayingPinClickFixInstalled) {
+        window.__nowPlayingPinClickFixInstalled = true;
+
+        document.addEventListener('click', function (event) {
+            const more = event.target.closest && event.target.closest('.nowplaying.np-dock-nuclear > .np-dock-more');
+            const item = event.target.closest && event.target.closest('.nowplaying.np-dock-nuclear .np-dock-menu-item');
+            const menu = event.target.closest && event.target.closest('.nowplaying.np-dock-nuclear > .np-dock-menu');
+            const dock = event.target.closest && event.target.closest('.nowplaying.np-dock-nuclear');
+
+            if (more) {
+                event.preventDefault();
+                event.stopPropagation();
+                event.stopImmediatePropagation();
+
+                const parentDock = more.closest('.nowplaying.np-dock-nuclear');
+                const dockMenu = parentDock && parentDock.querySelector(':scope > .np-dock-menu');
+
+                if (dockMenu) {
+                    const shouldShow = !dockMenu.classList.contains('show');
+                    closeDockMenus(dockMenu);
+                    dockMenu.classList.toggle('show', shouldShow);
+                }
+
+                return;
+            }
+
+            if (item) {
+                event.preventDefault();
+                event.stopPropagation();
+                event.stopImmediatePropagation();
+
+                const player = getNowPlaying();
+                const action = item.getAttribute('data-np-action');
+
+                if (player) {
+                    if (action === 'import' && typeof player.pickFile === 'function') {
+                        player.pickFile();
+                    }
+
+                    if (action === 'play' && typeof player.toggle === 'function') {
+                        Promise.resolve(player.toggle()).finally(updatePlayIcons);
+                    }
+
+                    if (action === 'back' && typeof player.skip === 'function') {
+                        player.skip(-10);
+                    }
+
+                    if (action === 'forward' && typeof player.skip === 'function') {
+                        player.skip(10);
+                    }
+                }
+
+                if (action === 'import' || action === 'play') {
+                    closeDockMenus();
+                }
+
+                return;
+            }
+
+            if (menu) {
+                event.stopPropagation();
+                event.stopImmediatePropagation();
+                return;
+            }
+
+            if (dock) {
+                event.preventDefault();
+                event.stopPropagation();
+                event.stopImmediatePropagation();
+
+                const player = getNowPlaying();
+                if (player && typeof player.toggle === 'function') {
+                    Promise.resolve(player.toggle()).finally(updatePlayIcons);
+                }
+
+                return;
+            }
+
+            closeDockMenus();
+        }, true);
+    }
+
+    function patchPlayerHooks() {
+        const player = getNowPlaying();
+        if (!player || player.__pinClickFixHooksPatched) return;
+
+        player.__pinClickFixHooksPatched = true;
+
+        const oldInit = player.init;
+        const oldRender = player.render;
+
+        if (typeof oldInit === 'function') {
+            player.init = function () {
+                oldInit.call(player);
+                ensureDockPinControls();
+                updatePlayIcons();
+            };
+        }
+
+        if (typeof oldRender === 'function') {
+            player.render = function () {
+                oldRender.call(player);
+                ensureDockPinControls();
+                updatePlayIcons();
+            };
+        }
+    }
+
+    patchPlayerHooks();
+    ensureDockPinControls();
+    updatePlayIcons();
+
+    window.setTimeout(function () {
+        patchPlayerHooks();
+        ensureDockPinControls();
+        updatePlayIcons();
+    }, 250);
+})();
+/* end-nowplaying-pin-click-fix */
+

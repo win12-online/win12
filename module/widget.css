@@ -897,3 +897,34 @@
 }
 /* end-nowplaying-dock-pin-interaction-fix */
 
+
+/* nowplaying-pin-click-fix */
+.nowplaying.np-dock-nuclear {
+    position: relative !important;
+    overflow: visible !important;
+    pointer-events: auto !important;
+}
+
+.nowplaying.np-dock-nuclear > .np-dock-more,
+.nowplaying.np-dock-nuclear > .np-dock-menu,
+.nowplaying.np-dock-nuclear .np-dock-menu-item {
+    pointer-events: auto !important;
+}
+
+.nowplaying.np-dock-nuclear > .np-dock-menu {
+    display: none !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+.nowplaying.np-dock-nuclear > .np-dock-menu.show {
+    display: flex !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+}
+
+.nowplaying.np-dock-nuclear .np-dock-menu-item {
+    cursor: pointer !important;
+}
+/* end-nowplaying-pin-click-fix */
+
