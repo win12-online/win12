@@ -993,16 +993,14 @@
 /* end-nowplaying-taskbar-visual-fix */
 
 
-/* nowplaying-three-dot-menu-fix */
-
-/* The taskbar pin owns one visible three-dot menu button. */
+/* nowplaying-hamburger-menu-fix */
 .nowplaying.np-dock-nuclear {
     position: relative !important;
     overflow: visible !important;
     pointer-events: auto !important;
 }
 
-/* Hide exposed controls on the pin itself. They belong in the three-dot menu. */
+/* Hide exposed controls on the pin itself. */
 .nowplaying.np-dock-nuclear .np-dock-controls,
 .nowplaying.np-dock-nuclear .np-dock-import,
 .nowplaying.np-dock-nuclear .np-dock-back,
@@ -1017,7 +1015,7 @@
     visibility: hidden !important;
 }
 
-/* Keep only the three-dot trigger visible on the pin. */
+/* Hamburger trigger. */
 .nowplaying.np-dock-nuclear > .np-dock-more {
     position: absolute !important;
     top: 50% !important;
@@ -1046,11 +1044,11 @@
     display: inline-block !important;
     opacity: 1 !important;
     visibility: visible !important;
-    font-size: 14px !important;
+    font-size: 16px !important;
     line-height: 1 !important;
 }
 
-/* The three-dot menu is closed by default. */
+/* Menu is closed by default. */
 .nowplaying.np-dock-nuclear > .np-dock-menu {
     position: absolute !important;
     bottom: calc(100% + 8px) !important;
@@ -1068,7 +1066,7 @@
     box-shadow: 0 8px 24px color-mix(in srgb, black 26%, transparent) !important;
 }
 
-/* The menu opens only when JS adds .show. */
+/* Menu opens only when .show is applied. */
 .nowplaying.np-dock-nuclear > .np-dock-menu.show {
     display: flex !important;
     opacity: 1 !important;
@@ -1076,11 +1074,14 @@
     visibility: visible !important;
 }
 
-/* Menu buttons are allowed to display even though pin controls are hidden. */
+/* The cloned hamburger buttons become the actual menu controls. */
 .nowplaying.np-dock-nuclear > .np-dock-menu.show .np-dock-menu-item {
+    position: static !important;
+    transform: none !important;
     width: 30px !important;
     height: 30px !important;
     min-width: 30px !important;
+    max-width: 30px !important;
     border: 0 !important;
     border-radius: 10px !important;
     padding: 0 !important;
@@ -1093,6 +1094,7 @@
     pointer-events: auto !important;
     visibility: visible !important;
     cursor: pointer !important;
+    box-shadow: none !important;
 }
 
 .nowplaying.np-dock-nuclear > .np-dock-menu.show .np-dock-menu-item:hover {
@@ -1103,7 +1105,8 @@
     display: inline-block !important;
     opacity: 1 !important;
     visibility: visible !important;
+    font-size: 15px !important;
+    line-height: 1 !important;
 }
-
-/* end-nowplaying-three-dot-menu-fix */
+/* end-nowplaying-hamburger-menu-fix */
 

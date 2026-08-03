@@ -934,17 +934,47 @@ function widgetsMove(elt, e) {
 })();
 
 
-/* nowplaying-three-dot-menu-fix */
+/* nowplaying-hamburger-menu-fix */
 (function () {
     function getPlayer() {
         return typeof widgets !== 'undefined' && widgets && widgets.nowplaying ? widgets.nowplaying : null;
     }
 
-    function ensureThreeDotMenu() {
+    function getDockPins() {
+        return $('.wg.toolbar.nowplaying, .nowplaying.np-dock-nuclear');
+    }
+
+    function closeMenus(exceptMenu) {
+        $('.nowplaying.np-dock-nuclear > .np-dock-menu.show').each(function () {
+            if (!exceptMenu || this !== exceptMenu) {
+                this.classList.remove('show');
+            }
+        });
+    }
+
+    function createMenuButton(sourceButton, action, iconClass, title) {
+        const button = sourceButton.clone(false, false);
+
+        button
+            .removeClass('np-dock-more')
+            .addClass('np-dock-menu-item')
+            .attr('type', 'button')
+            .attr('data-np-action', action)
+            .attr('title', title)
+            .removeAttr('id')
+            .removeAttr('onclick');
+
+        button.empty();
+        button.append($('<i></i>').attr('class', iconClass));
+
+        return button;
+    }
+
+    function ensureMenu() {
         const player = getPlayer();
         if (!player) return;
 
-        $('.wg.toolbar.nowplaying, .nowplaying.np-dock-nuclear').each(function () {
+        getDockPins().each(function () {
             const dock = $(this);
 
             dock.addClass('np-dock-nuclear');
@@ -952,23 +982,32 @@ function widgetsMove(elt, e) {
             dock.children('.np-dock-more').not(':first').remove();
             dock.children('.np-dock-menu').not(':first').remove();
 
-            let more = dock.children('.np-dock-more').first();
-            if (!more.length) {
-                more = $('<button class="np-dock-more" type="button" title="Now Playing controls"><i class="bi bi-three-dots"></i></button>');
-                dock.append(more);
+            let hamburger = dock.children('.np-dock-more').first();
+
+            if (!hamburger.length) {
+                hamburger = $('<button></button>')
+                    .addClass('np-dock-more')
+                    .attr('type', 'button')
+                    .attr('title', 'Now Playing controls');
+
+                dock.append(hamburger);
             }
 
+            hamburger.empty();
+            hamburger.append($('<i></i>').attr('class', 'bi bi-list'));
+
             let menu = dock.children('.np-dock-menu').first();
+
             if (!menu.length) {
-                menu = $('<div class="np-dock-menu"></div>');
+                menu = $('<div></div>').addClass('np-dock-menu');
                 dock.append(menu);
             }
 
             menu.empty();
-            menu.append('<button class="np-dock-menu-item" type="button" data-np-action="import" title="Import audio"><i class="bi bi-folder2-open"></i></button>');
-            menu.append('<button class="np-dock-menu-item" type="button" data-np-action="back" title="Back 10 seconds"><i class="bi bi-skip-backward-fill"></i></button>');
-            menu.append('<button class="np-dock-menu-item" type="button" data-np-action="play" title="Play or pause"><i class="bi bi-play-fill"></i></button>');
-            menu.append('<button class="np-dock-menu-item" type="button" data-np-action="forward" title="Forward 10 seconds"><i class="bi bi-skip-forward-fill"></i></button>');
+            menu.append(createMenuButton(hamburger, 'import', 'bi bi-folder2-open', 'Import audio'));
+            menu.append(createMenuButton(hamburger, 'back', 'bi bi-skip-backward-fill', 'Back 10 seconds'));
+            menu.append(createMenuButton(hamburger, 'play', 'bi bi-play-fill', 'Play or pause'));
+            menu.append(createMenuButton(hamburger, 'forward', 'bi bi-skip-forward-fill', 'Forward 10 seconds'));
         });
 
         updatePlayIcon();
@@ -983,15 +1022,7 @@ function widgetsMove(elt, e) {
             .attr('class', isPlaying ? 'bi bi-pause-fill' : 'bi bi-play-fill');
     }
 
-    function closeMenus(exceptMenu) {
-        $('.nowplaying.np-dock-nuclear > .np-dock-menu.show').each(function () {
-            if (!exceptMenu || this !== exceptMenu) {
-                this.classList.remove('show');
-            }
-        });
-    }
-
-    function runMenuAction(action) {
+    function runAction(action) {
         const player = getPlayer();
         if (!player) return;
 
@@ -1012,21 +1043,21 @@ function widgetsMove(elt, e) {
         }
     }
 
-    if (!window.__nowPlayingThreeDotMenuFixInstalled) {
-        window.__nowPlayingThreeDotMenuFixInstalled = true;
+    if (!window.__nowPlayingHamburgerMenuFixInstalled) {
+        window.__nowPlayingHamburgerMenuFixInstalled = true;
 
         document.addEventListener('click', function (event) {
-            const more = event.target.closest && event.target.closest('.nowplaying.np-dock-nuclear > .np-dock-more');
-            const item = event.target.closest && event.target.closest('.nowplaying.np-dock-nuclear > .np-dock-menu .np-dock-menu-item');
+            const hamburger = event.target.closest && event.target.closest('.nowplaying.np-dock-nuclear > .np-dock-more');
+            const menuItem = event.target.closest && event.target.closest('.nowplaying.np-dock-nuclear > .np-dock-menu .np-dock-menu-item');
             const menu = event.target.closest && event.target.closest('.nowplaying.np-dock-nuclear > .np-dock-menu');
             const dock = event.target.closest && event.target.closest('.nowplaying.np-dock-nuclear');
 
-            if (more) {
+            if (hamburger) {
                 event.preventDefault();
                 event.stopPropagation();
                 event.stopImmediatePropagation();
 
-                const parentDock = more.closest('.nowplaying.np-dock-nuclear');
+                const parentDock = hamburger.closest('.nowplaying.np-dock-nuclear');
                 const dockMenu = parentDock && parentDock.querySelector(':scope > .np-dock-menu');
 
                 if (dockMenu) {
@@ -1038,13 +1069,13 @@ function widgetsMove(elt, e) {
                 return;
             }
 
-            if (item) {
+            if (menuItem) {
                 event.preventDefault();
                 event.stopPropagation();
                 event.stopImmediatePropagation();
 
-                const action = item.getAttribute('data-np-action');
-                runMenuAction(action);
+                const action = menuItem.getAttribute('data-np-action');
+                runAction(action);
 
                 if (action === 'import' || action === 'play') {
                     closeMenus();
@@ -1064,7 +1095,7 @@ function widgetsMove(elt, e) {
                 event.stopPropagation();
                 event.stopImmediatePropagation();
 
-                runMenuAction('play');
+                runAction('play');
                 return;
             }
 
@@ -1072,11 +1103,11 @@ function widgetsMove(elt, e) {
         }, true);
     }
 
-    function patchRenderHooks() {
+    function patchPlayerHooks() {
         const player = getPlayer();
-        if (!player || player.__threeDotMenuFixPatched) return;
+        if (!player || player.__hamburgerMenuFixPatched) return;
 
-        player.__threeDotMenuFixPatched = true;
+        player.__hamburgerMenuFixPatched = true;
 
         const oldInit = player.init;
         const oldRender = player.render;
@@ -1084,25 +1115,25 @@ function widgetsMove(elt, e) {
         if (typeof oldInit === 'function') {
             player.init = function () {
                 oldInit.call(player);
-                ensureThreeDotMenu();
+                ensureMenu();
             };
         }
 
         if (typeof oldRender === 'function') {
             player.render = function () {
                 oldRender.call(player);
-                ensureThreeDotMenu();
+                ensureMenu();
             };
         }
     }
 
-    patchRenderHooks();
-    ensureThreeDotMenu();
+    patchPlayerHooks();
+    ensureMenu();
 
     window.setTimeout(function () {
-        patchRenderHooks();
-        ensureThreeDotMenu();
+        patchPlayerHooks();
+        ensureMenu();
     }, 250);
 })();
-/* end-nowplaying-three-dot-menu-fix */
+/* end-nowplaying-hamburger-menu-fix */
 
