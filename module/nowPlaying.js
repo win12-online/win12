@@ -1,5 +1,5 @@
 // Now Playing taskbar-pin interactions.
-// Adds a dedicated hidden import input and a proper taskbar-pin ... menu.
+// Visible ... button is inserted inside the visible taskbar pin pill.
 
 (function () {
     const IMPORT_INPUT_ID = 'NowPlaying.ImportMusic';
@@ -126,32 +126,30 @@
         pins().forEach(function (dock) {
             dock.classList.add('np-dock-nuclear');
 
-            // Remove old hamburger/menu wrappers if earlier attempts created them.
+            const pill = dock.querySelector(':scope > .np-dock-pill') || dock;
+
+            // Remove old attempts so only one visible button exists.
             dock.querySelectorAll(':scope > .np-dock-hamburger, :scope > .np-dock-trigger-wrap').forEach(function (node) {
                 node.remove();
             });
 
-            // Keep one ... button as a direct child of the taskbar pin.
-            Array.from(dock.querySelectorAll(':scope > .np-dock-widget-more')).slice(1).forEach(function (node) {
+            dock.querySelectorAll(':scope > .np-dock-widget-more').forEach(function (node) {
                 node.remove();
             });
 
-            let openButton = dock.querySelector(':scope > .np-dock-widget-more');
+            pill.querySelectorAll(':scope > .np-dock-widget-more').forEach(function (node) {
+                node.remove();
+            });
 
-            if (!openButton) {
-                openButton = document.createElement('button');
-                openButton.type = 'button';
-                dock.appendChild(openButton);
-            }
-
+            let openButton = document.createElement('button');
+            openButton.type = 'button';
             openButton.className = 'np-dock-widget-more ' + OPEN_MENU_CLASS;
             openButton.title = 'Now Playing menu';
             openButton.setAttribute('aria-label', 'Now Playing menu');
             openButton.setAttribute('aria-expanded', 'false');
-            openButton.textContent = '';
             openButton.appendChild(makeIcon('bi bi-three-dots'));
+            pill.appendChild(openButton);
 
-            // Keep one menu as a direct child of the taskbar pin.
             Array.from(dock.querySelectorAll(':scope > .np-dock-menu')).slice(1).forEach(function (node) {
                 node.remove();
             });
@@ -180,7 +178,7 @@
                 menu.classList.remove('show');
 
                 const dock = menu.closest('.nowplaying.np-dock-nuclear');
-                const button = dock && dock.querySelector(':scope > .np-dock-widget-more');
+                const button = dock && dock.querySelector('.np-dock-widget-more');
                 if (button) {
                     button.classList.remove('is-open');
                     button.setAttribute('aria-expanded', 'false');
@@ -228,11 +226,11 @@
     }
 
     function installClickHandler() {
-        if (window.__nowPlayingDotsMenuInstalled) return;
-        window.__nowPlayingDotsMenuInstalled = true;
+        if (window.__nowPlayingVisibleDotsInstalled) return;
+        window.__nowPlayingVisibleDotsInstalled = true;
 
         document.addEventListener('click', function (event) {
-            const openButton = event.target.closest && event.target.closest('.nowplaying.np-dock-nuclear > .np-dock-widget-more');
+            const openButton = event.target.closest && event.target.closest('.nowplaying.np-dock-nuclear .np-dock-widget-more');
             const menuItem = event.target.closest && event.target.closest('.nowplaying.np-dock-nuclear > .np-dock-menu .np-dock-menu-item');
             const menu = event.target.closest && event.target.closest('.nowplaying.np-dock-nuclear > .np-dock-menu');
 
@@ -285,9 +283,9 @@
 
     function patchPlayer() {
         const np = player();
-        if (!np || np.__dotsMenuPatched) return;
+        if (!np || np.__visibleDotsMenuPatched) return;
 
-        np.__dotsMenuPatched = true;
+        np.__visibleDotsMenuPatched = true;
 
         const init = np.init;
         const render = np.render;

@@ -1,4 +1,4 @@
-/* Direct Now Playing taskbar-pin controls plus default hidden ... menu. */
+/* Direct Now Playing taskbar-pin controls plus visible ... menu button. */
 
 .nowplaying.np-dock-nuclear {
     position: relative !important;
@@ -28,7 +28,7 @@
     max-height: 52px !important;
 }
 
-.nowplaying.np-dock-nuclear > :not(.np-dock-pill):not(.np-dock-widget-more):not(.np-dock-menu) {
+.nowplaying.np-dock-nuclear > :not(.np-dock-pill):not(.np-dock-menu) {
     display: none !important;
     opacity: 0 !important;
     pointer-events: none !important;
@@ -125,7 +125,7 @@
     cursor: pointer !important;
 }
 
-.nowplaying.np-dock-nuclear > .np-dock-widget-more {
+.nowplaying.np-dock-nuclear .np-dock-pill > .np-dock-widget-more {
     position: absolute !important;
     top: 50% !important;
     right: 7px !important;
@@ -149,7 +149,7 @@
     z-index: 10080 !important;
 }
 
-.nowplaying.np-dock-nuclear > .np-dock-widget-more i {
+.nowplaying.np-dock-nuclear .np-dock-pill > .np-dock-widget-more i {
     display: inline-block !important;
     opacity: 1 !important;
     visibility: visible !important;
@@ -212,7 +212,7 @@
     line-height: 1 !important;
 }
 
-/* User-requested class token support. Dots in class names are literal class-token characters. */
+/* User-requested class token support. */
 [class~="NowPlaying.TaskbarPin.OpenMenu.shown"] {
     display: inline-flex !important;
 }
