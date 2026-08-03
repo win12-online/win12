@@ -1,4 +1,4 @@
-/* Direct Now Playing taskbar-pin controls plus visible ... menu button. */
+/* Direct Now Playing taskbar-pin controls plus normal widget ... menu. */
 
 .nowplaying.np-dock-nuclear {
     position: relative !important;
@@ -163,10 +163,12 @@
     right: 0 !important;
     top: auto !important;
     z-index: 10090 !important;
+    min-width: 150px !important;
     display: none !important;
     opacity: 0 !important;
     pointer-events: none !important;
     visibility: hidden !important;
+    flex-direction: column !important;
     gap: 4px !important;
     padding: 6px !important;
     border-radius: 14px !important;
@@ -182,22 +184,23 @@
 }
 
 .nowplaying.np-dock-nuclear > .np-dock-menu.show .np-dock-menu-item {
-    width: 30px !important;
+    width: 100% !important;
     height: 30px !important;
-    min-width: 30px !important;
-    max-width: 30px !important;
+    min-width: 0 !important;
     border: 0 !important;
     border-radius: 10px !important;
-    padding: 0 !important;
-    display: inline-flex !important;
+    padding: 0 9px !important;
+    display: flex !important;
     align-items: center !important;
-    justify-content: center !important;
+    justify-content: flex-start !important;
+    gap: 8px !important;
     background: transparent !important;
     color: var(--text) !important;
     opacity: 1 !important;
     pointer-events: auto !important;
     visibility: visible !important;
     cursor: pointer !important;
+    text-align: left !important;
 }
 
 .nowplaying.np-dock-nuclear > .np-dock-menu.show .np-dock-menu-item:hover {
@@ -210,6 +213,14 @@
     visibility: visible !important;
     font-size: 15px !important;
     line-height: 1 !important;
+}
+
+.nowplaying.np-dock-nuclear > .np-dock-menu.show .np-dock-menu-label {
+    display: inline-block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    white-space: nowrap !important;
+    font-size: 12px !important;
 }
 
 /* User-requested class token support. */

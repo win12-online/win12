@@ -1,5 +1,6 @@
 // Now Playing taskbar-pin interactions.
-// Visible ... button is inserted inside the visible taskbar pin pill.
+// Playback controls stay directly in the taskbar pin.
+// The ... menu is the normal widget menu: widget menu, desktop, import music.
 
 (function () {
     const IMPORT_INPUT_ID = 'NowPlaying.ImportMusic';
@@ -76,6 +77,12 @@
         button.setAttribute('aria-label', title);
         button.setAttribute('data-np-action', action);
         button.appendChild(makeIcon(iconClass));
+
+        const label = document.createElement('span');
+        label.className = 'np-dock-menu-label';
+        label.textContent = title;
+        button.appendChild(label);
+
         return button;
     }
 
@@ -85,12 +92,12 @@
         const playing = audio && !audio.paused;
         const cls = playing ? 'bi bi-pause-fill' : 'bi bi-play-fill';
 
-        document.querySelectorAll('.nowplaying.np-dock-nuclear .np-dock-play i, .wg.toolbar.nowplaying .np-play i, .nowplaying.np-dock-nuclear > .np-dock-menu [data-np-action="play"] i').forEach(function (icon) {
+        document.querySelectorAll('.nowplaying.np-dock-nuclear .np-dock-play i, .wg.toolbar.nowplaying .np-play i').forEach(function (icon) {
             icon.className = cls;
         });
     }
 
-    function runAction(action) {
+    function runPlaybackAction(action) {
         const np = player();
         if (!np) return;
 
@@ -122,13 +129,53 @@
         }
     }
 
+    function moveToWidgetMenu() {
+        if (typeof widgets === 'undefined' || !widgets || !widgets.widgets) return;
+
+        if (typeof widgets.widgets.remove === 'function') {
+            widgets.widgets.remove('nowplaying');
+        }
+
+        if (typeof widgets.widgets.add === 'function') {
+            widgets.widgets.add('nowplaying');
+        }
+    }
+
+    function pinToDesktop() {
+        if (typeof widgets === 'undefined' || !widgets || !widgets.widgets) return;
+
+        if (typeof widgets.widgets.remove === 'function') {
+            widgets.widgets.remove('nowplaying');
+        }
+
+        if (typeof widgets.widgets.addToDesktop === 'function') {
+            widgets.widgets.addToDesktop('nowplaying');
+        }
+    }
+
+    function runMenuAction(action) {
+        if (action === 'widget-menu') {
+            moveToWidgetMenu();
+            return;
+        }
+
+        if (action === 'desktop') {
+            pinToDesktop();
+            return;
+        }
+
+        if (action === 'import') {
+            openImportPicker();
+        }
+    }
+
     function ensureDotsMenu() {
         pins().forEach(function (dock) {
             dock.classList.add('np-dock-nuclear');
 
             const pill = dock.querySelector(':scope > .np-dock-pill') || dock;
 
-            // Remove old attempts so only one visible button exists.
+            // Remove old hamburger/wrapper attempts.
             dock.querySelectorAll(':scope > .np-dock-hamburger, :scope > .np-dock-trigger-wrap').forEach(function (node) {
                 node.remove();
             });
@@ -141,11 +188,11 @@
                 node.remove();
             });
 
-            let openButton = document.createElement('button');
+            const openButton = document.createElement('button');
             openButton.type = 'button';
             openButton.className = 'np-dock-widget-more ' + OPEN_MENU_CLASS;
-            openButton.title = 'Now Playing menu';
-            openButton.setAttribute('aria-label', 'Now Playing menu');
+            openButton.title = 'Widget menu';
+            openButton.setAttribute('aria-label', 'Widget menu');
             openButton.setAttribute('aria-expanded', 'false');
             openButton.appendChild(makeIcon('bi bi-three-dots'));
             pill.appendChild(openButton);
@@ -163,10 +210,10 @@
 
             menu.className = 'np-dock-menu ' + MENU_CLASS;
             menu.textContent = '';
-            menu.appendChild(makeMenuButton('import', 'bi bi-folder2-open', 'Import audio'));
-            menu.appendChild(makeMenuButton('back', 'bi bi-skip-backward-fill', 'Back 10 seconds'));
-            menu.appendChild(makeMenuButton('play', 'bi bi-play-fill', 'Play or pause'));
-            menu.appendChild(makeMenuButton('forward', 'bi bi-skip-forward-fill', 'Forward 10 seconds'));
+
+            menu.appendChild(makeMenuButton('widget-menu', 'bi bi-grid-3x3-gap', 'Add to widgets'));
+            menu.appendChild(makeMenuButton('desktop', 'bi bi-display', 'Add to desktop'));
+            menu.appendChild(makeMenuButton('import', 'bi bi-folder2-open', 'Import music'));
         });
 
         updatePlayIcon();
@@ -226,8 +273,8 @@
     }
 
     function installClickHandler() {
-        if (window.__nowPlayingVisibleDotsInstalled) return;
-        window.__nowPlayingVisibleDotsInstalled = true;
+        if (window.__nowPlayingWidgetMenuDotsInstalled) return;
+        window.__nowPlayingWidgetMenuDotsInstalled = true;
 
         document.addEventListener('click', function (event) {
             const openButton = event.target.closest && event.target.closest('.nowplaying.np-dock-nuclear .np-dock-widget-more');
@@ -252,8 +299,8 @@
                 event.stopPropagation();
                 event.stopImmediatePropagation();
 
-                runAction(menuItem.getAttribute('data-np-action'));
-                updatePlayIcon();
+                runMenuAction(menuItem.getAttribute('data-np-action'));
+                closeMenus();
                 return;
             }
 
@@ -268,10 +315,10 @@
                 event.stopPropagation();
                 event.stopImmediatePropagation();
 
-                if (importButton) runAction('import');
-                if (backButton) runAction('back');
-                if (playButton) runAction('play');
-                if (forwardButton) runAction('forward');
+                if (importButton) runPlaybackAction('import');
+                if (backButton) runPlaybackAction('back');
+                if (playButton) runPlaybackAction('play');
+                if (forwardButton) runPlaybackAction('forward');
 
                 updatePlayIcon();
                 return;
@@ -283,9 +330,9 @@
 
     function patchPlayer() {
         const np = player();
-        if (!np || np.__visibleDotsMenuPatched) return;
+        if (!np || np.__widgetMenuDotsPatched) return;
 
-        np.__visibleDotsMenuPatched = true;
+        np.__widgetMenuDotsPatched = true;
 
         const init = np.init;
         const render = np.render;
