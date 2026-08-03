@@ -664,7 +664,7 @@
 }
 
 /* Anything not part of the replacement is hidden. */
-.nowplaying.np-dock-nuclear > :not(.np-dock-pill):not(.np-dock-more):not(.np-dock-menu) {
+.nowplaying.np-dock-nuclear > :not(.np-dock-pill):not(.np-dock-more):not(.np-dock-menu):not(.np-dock-hamburger):not(.np-dock-widget-more) {
     display: none !important;
     opacity: 0 !important;
     pointer-events: none !important;

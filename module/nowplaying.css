@@ -26,7 +26,7 @@
     max-height: 50px !important;
 }
 
-.nowplaying.np-dock-nuclear > :not(.np-dock-pill):not(.np-dock-menu):not(.np-dock-trigger-wrap) {
+.nowplaying.np-dock-nuclear > :not(.np-dock-pill):not(.np-dock-menu):not(.np-dock-hamburger):not(.np-dock-widget-more) {
     display: none !important;
     opacity: 0 !important;
     pointer-events: none !important;
@@ -96,22 +96,11 @@
     visibility: hidden !important;
 }
 
-.nowplaying.np-dock-nuclear > .np-dock-trigger-wrap {
+.nowplaying.np-dock-nuclear > .np-dock-hamburger,
+.nowplaying.np-dock-nuclear > .np-dock-widget-more {
     position: absolute !important;
     top: 50% !important;
-    right: 7px !important;
     transform: translateY(-50%) !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    gap: 4px !important;
-    z-index: 10080 !important;
-    opacity: 1 !important;
-    pointer-events: auto !important;
-    visibility: visible !important;
-}
-
-.nowplaying.np-dock-nuclear .np-dock-hamburger,
-.nowplaying.np-dock-nuclear .np-dock-widget-more {
     width: 24px !important;
     height: 24px !important;
     min-width: 24px !important;
@@ -128,14 +117,20 @@
     pointer-events: auto !important;
     visibility: visible !important;
     cursor: pointer !important;
+    z-index: 10080 !important;
 }
 
-.nowplaying.np-dock-nuclear .np-dock-hamburger {
+.nowplaying.np-dock-nuclear > .np-dock-hamburger {
+    right: 35px !important;
     flex-direction: column !important;
     gap: 3px !important;
 }
 
-.nowplaying.np-dock-nuclear .np-dock-hamburger span {
+.nowplaying.np-dock-nuclear > .np-dock-widget-more {
+    right: 7px !important;
+}
+
+.nowplaying.np-dock-nuclear > .np-dock-hamburger span {
     width: 13px !important;
     height: 2px !important;
     border-radius: 999px !important;
@@ -144,19 +139,19 @@
     transition: transform 160ms ease, opacity 120ms ease !important;
 }
 
-.nowplaying.np-dock-nuclear .np-dock-hamburger.is-open span:nth-child(1) {
+.nowplaying.np-dock-nuclear > .np-dock-hamburger.is-open span:nth-child(1) {
     transform: translateY(5px) rotate(45deg) !important;
 }
 
-.nowplaying.np-dock-nuclear .np-dock-hamburger.is-open span:nth-child(2) {
+.nowplaying.np-dock-nuclear > .np-dock-hamburger.is-open span:nth-child(2) {
     opacity: 0 !important;
 }
 
-.nowplaying.np-dock-nuclear .np-dock-hamburger.is-open span:nth-child(3) {
+.nowplaying.np-dock-nuclear > .np-dock-hamburger.is-open span:nth-child(3) {
     transform: translateY(-5px) rotate(-45deg) !important;
 }
 
-.nowplaying.np-dock-nuclear .np-dock-widget-more i {
+.nowplaying.np-dock-nuclear > .np-dock-widget-more i {
     display: inline-block !important;
     font-size: 14px !important;
     line-height: 1 !important;

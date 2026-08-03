@@ -14,7 +14,7 @@
 
                 var dock = menu.closest('.nowplaying.np-dock-nuclear');
                 if (dock) {
-                    dock.querySelectorAll('.np-dock-hamburger, .np-dock-widget-more').forEach(function (button) {
+                    dock.querySelectorAll(':scope > .np-dock-hamburger, :scope > .np-dock-widget-more').forEach(function (button) {
                         button.classList.remove('is-open');
                         button.setAttribute('aria-expanded', 'false');
                     });
@@ -23,42 +23,45 @@
         });
     }
 
-    function makeIcon(className) {
-        var icon = document.createElement('i');
-        icon.className = className;
-        return icon;
+    function icon(className) {
+        var node = document.createElement('i');
+        node.className = className;
+        return node;
     }
 
-    function makeButton(className, label) {
-        var button = document.createElement('button');
-        button.type = 'button';
-        button.className = className;
-        button.title = label;
-        button.setAttribute('aria-label', label);
-        return button;
+    function button(className, label) {
+        var node = document.createElement('button');
+        node.type = 'button';
+        node.className = className;
+        node.title = label;
+        node.setAttribute('aria-label', label);
+        node.setAttribute('aria-expanded', 'false');
+        return node;
     }
 
-    function makeHamburger() {
-        var button = makeButton('np-dock-hamburger', 'Now Playing controls');
-        button.setAttribute('aria-expanded', 'false');
-        button.appendChild(document.createElement('span'));
-        button.appendChild(document.createElement('span'));
-        button.appendChild(document.createElement('span'));
-        return button;
+    function hamburger() {
+        var node = button('np-dock-hamburger', 'Now Playing controls');
+        node.appendChild(document.createElement('span'));
+        node.appendChild(document.createElement('span'));
+        node.appendChild(document.createElement('span'));
+        return node;
     }
 
-    function makeDots() {
-        var button = makeButton('np-dock-widget-more', 'Widget menu');
-        button.setAttribute('aria-expanded', 'false');
-        button.appendChild(makeIcon('bi bi-three-dots'));
-        return button;
+    function dots() {
+        var node = button('np-dock-widget-more', 'Widget menu');
+        node.appendChild(icon('bi bi-three-dots'));
+        return node;
     }
 
-    function makeMenuButton(action, iconClass, label) {
-        var button = makeButton('np-dock-menu-item', label);
-        button.setAttribute('data-np-action', action);
-        button.appendChild(makeIcon(iconClass));
-        return button;
+    function menuButton(action, iconClass, label) {
+        var node = document.createElement('button');
+        node.type = 'button';
+        node.className = 'np-dock-menu-item';
+        node.title = label;
+        node.setAttribute('aria-label', label);
+        node.setAttribute('data-np-action', action);
+        node.appendChild(icon(iconClass));
+        return node;
     }
 
     function ensureMenu() {
@@ -68,31 +71,40 @@
         pins().forEach(function (dock) {
             dock.classList.add('np-dock-nuclear');
 
-            var triggers = dock.querySelector(':scope > .np-dock-trigger-wrap');
+            Array.from(dock.querySelectorAll(':scope > .np-dock-hamburger')).slice(1).forEach(function (node) {
+                node.remove();
+            });
 
-            if (!triggers) {
-                triggers = document.createElement('div');
-                triggers.className = 'np-dock-trigger-wrap';
-                dock.appendChild(triggers);
+            Array.from(dock.querySelectorAll(':scope > .np-dock-widget-more')).slice(1).forEach(function (node) {
+                node.remove();
+            });
+
+            Array.from(dock.querySelectorAll(':scope > .np-dock-menu')).slice(1).forEach(function (node) {
+                node.remove();
+            });
+
+            var hamburgerButton = dock.querySelector(':scope > .np-dock-hamburger');
+            if (!hamburgerButton) {
+                hamburgerButton = hamburger();
+                dock.appendChild(hamburgerButton);
             }
 
-            var hamburger = triggers.querySelector(':scope > .np-dock-hamburger');
-            if (!hamburger) {
-                hamburger = makeHamburger();
-                triggers.appendChild(hamburger);
+            if (!hamburgerButton.querySelector('span')) {
+                hamburgerButton.textContent = '';
+                hamburgerButton.appendChild(document.createElement('span'));
+                hamburgerButton.appendChild(document.createElement('span'));
+                hamburgerButton.appendChild(document.createElement('span'));
             }
 
-            if (!hamburger.querySelector('span')) {
-                hamburger.textContent = '';
-                hamburger.appendChild(document.createElement('span'));
-                hamburger.appendChild(document.createElement('span'));
-                hamburger.appendChild(document.createElement('span'));
+            var dotsButton = dock.querySelector(':scope > .np-dock-widget-more');
+            if (!dotsButton) {
+                dotsButton = dots();
+                dock.appendChild(dotsButton);
             }
 
-            var dots = triggers.querySelector(':scope > .np-dock-widget-more');
-            if (!dots) {
-                dots = makeDots();
-                triggers.appendChild(dots);
+            if (!dotsButton.querySelector('i')) {
+                dotsButton.textContent = '';
+                dotsButton.appendChild(icon('bi bi-three-dots'));
             }
 
             var menu = dock.querySelector(':scope > .np-dock-menu');
@@ -103,10 +115,10 @@
             }
 
             menu.textContent = '';
-            menu.appendChild(makeMenuButton('import', 'bi bi-folder2-open', 'Import audio'));
-            menu.appendChild(makeMenuButton('back', 'bi bi-skip-backward-fill', 'Back 10 seconds'));
-            menu.appendChild(makeMenuButton('play', 'bi bi-play-fill', 'Play or pause'));
-            menu.appendChild(makeMenuButton('forward', 'bi bi-skip-forward-fill', 'Forward 10 seconds'));
+            menu.appendChild(menuButton('import', 'bi bi-folder2-open', 'Import audio'));
+            menu.appendChild(menuButton('back', 'bi bi-skip-backward-fill', 'Back 10 seconds'));
+            menu.appendChild(menuButton('play', 'bi bi-play-fill', 'Play or pause'));
+            menu.appendChild(menuButton('forward', 'bi bi-skip-forward-fill', 'Forward 10 seconds'));
         });
 
         updatePlayIcon();
@@ -116,10 +128,10 @@
         var np = player();
         var audio = np && np.audio;
         var playing = audio && !audio.paused;
-        var playClass = playing ? 'bi bi-pause-fill' : 'bi bi-play-fill';
+        var className = playing ? 'bi bi-pause-fill' : 'bi bi-play-fill';
 
-        document.querySelectorAll('.nowplaying.np-dock-nuclear > .np-dock-menu [data-np-action="play"] i').forEach(function (icon) {
-            icon.className = playClass;
+        document.querySelectorAll('.nowplaying.np-dock-nuclear > .np-dock-menu [data-np-action="play"] i').forEach(function (node) {
+            node.className = className;
         });
     }
 
@@ -153,8 +165,8 @@
         }
     }
 
-    function toggleMenu(button) {
-        var dock = button.closest('.nowplaying.np-dock-nuclear');
+    function toggleMenu(trigger) {
+        var dock = trigger.closest('.nowplaying.np-dock-nuclear');
         var menu = dock && dock.querySelector(':scope > .np-dock-menu');
 
         if (!menu) return;
@@ -163,18 +175,18 @@
         closeMenus(menu);
         menu.classList.toggle('show', open);
 
-        dock.querySelectorAll('.np-dock-hamburger, .np-dock-widget-more').forEach(function (trigger) {
-            trigger.classList.toggle('is-open', open);
-            trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
+        dock.querySelectorAll(':scope > .np-dock-hamburger, :scope > .np-dock-widget-more').forEach(function (button) {
+            button.classList.toggle('is-open', open);
+            button.setAttribute('aria-expanded', open ? 'true' : 'false');
         });
     }
 
     function installEvents() {
-        if (window.__nowPlayingSeparateInteractionsInstalled) return;
-        window.__nowPlayingSeparateInteractionsInstalled = true;
+        if (window.__nowPlayingDirectButtonsInstalled) return;
+        window.__nowPlayingDirectButtonsInstalled = true;
 
         document.addEventListener('click', function (event) {
-            var trigger = event.target.closest && event.target.closest('.nowplaying.np-dock-nuclear .np-dock-hamburger, .nowplaying.np-dock-nuclear .np-dock-widget-more');
+            var trigger = event.target.closest && event.target.closest('.nowplaying.np-dock-nuclear > .np-dock-hamburger, .nowplaying.np-dock-nuclear > .np-dock-widget-more');
             var item = event.target.closest && event.target.closest('.nowplaying.np-dock-nuclear > .np-dock-menu .np-dock-menu-item');
             var menu = event.target.closest && event.target.closest('.nowplaying.np-dock-nuclear > .np-dock-menu');
             var dock = event.target.closest && event.target.closest('.nowplaying.np-dock-nuclear');
@@ -216,9 +228,9 @@
 
     function patchPlayer() {
         var np = player();
-        if (!np || np.__nowPlayingSeparateInteractionsPatched) return;
+        if (!np || np.__nowPlayingDirectButtonsPatched) return;
 
-        np.__nowPlayingSeparateInteractionsPatched = true;
+        np.__nowPlayingDirectButtonsPatched = true;
 
         var init = np.init;
         var render = np.render;
