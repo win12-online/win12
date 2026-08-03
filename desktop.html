@@ -1,4 +1,4 @@
-<!-- Win12 网页版是一个开放源项目，
+﻿<!-- Win12 网页版是一个开放源项目，
 	希望让用户在网络上预先体验 Windows 12,
 	内容可能与 Windows 12 正式版本不一致。
 	使用标准网络技术，例如 HTML、CSS 和 JavaScript，
@@ -605,7 +605,70 @@ toggletheme() 切换主题
 							</div>
 						</div>
 					</div>
-					<div class="weather">
+					                    <!-- WIN12_NOWPLAYING_WIDGET_PATCH -->
+                    <div class="nowplaying">
+                        <div class="wg nowplaying template">
+                            <div class="titbar">
+                                <a win12_title="更多" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)" class="a more notip" onclick="$('.wg.nowplaying>.titbar>.menu').toggleClass('show')">
+                                    <i class="bi bi-three-dots"></i>
+                                </a>
+                                <div class="menu">
+                                    <a class="a move" win12_title="移动" onmouseenter="showdescp(event)" onclick="hidedescp(event); if (!edit_mode) { editMode(); }" onmouseleave="hidedescp(event)">
+                                        <i class="bi bi-arrows-move"></i>
+                                    </a>
+                                    <a class="a addtotb" win12_title="Pin to taskbar" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)" onclick="hidedescp(event); widgets.widgets.remove('nowplaying'); widgets.widgets.addToToolbar('nowplaying');">
+                                        <i class="bi bi-pin-angle"></i>
+                                    </a>
+                                    <a class="a addtodt" win12_title="添加到桌面" onmouseenter="showdescp(event)" onclick="hidedescp(event); widgets.widgets.remove('nowplaying'); widgets.widgets.addToDesktop('nowplaying');" onmouseleave="hidedescp(event)">
+                                        <i class="bi bi-box-arrow-in-right"></i>
+                                    </a>
+                                    <a class="a delete" win12_title="删除" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)" onclick="hidedescp(event); $('.wg.nowplaying>.titbar>.menu').removeClass('show'); widgets.widgets.remove('nowplaying');">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="content" onmousedown="widgetsMove(this.parentElement, event);" ontouchstart="widgetsMove(this.parentElement, event);">
+                                <div class="np-cover">
+                                    <i class="bi bi-music-note-beamed"></i>
+                                </div>
+
+                                <div class="np-main">
+                                    <div class="np-meta">
+                                        <p class="np-label" data-i18n="nts.addwg.nowplaying"></p>
+                                        <p class="np-title"></p>
+                                        <p class="np-artist"></p>
+                                    </div>
+
+                                    <div class="np-controls">
+                                        <a class="a button np-back" onclick="widgets.nowplaying.skip(-10)" win12_title="后退 10 秒">
+                                            <i class="bi bi-skip-backward-fill"></i>
+                                        </a>
+                                        <a class="a button np-play" onclick="widgets.nowplaying.toggle()" win12_title="播放 / 暂停">
+                                            <i class="bi bi-play-fill"></i>
+                                        </a>
+                                        <a class="a button np-forward" onclick="widgets.nowplaying.skip(10)" win12_title="前进 10 秒">
+                                            <i class="bi bi-skip-forward-fill"></i>
+                                        </a>
+                                        <a class="a button np-import" onclick="widgets.nowplaying.pickFile()" win12_title="导入音频">
+                                            <i class="bi bi-folder-plus"></i>
+                                        </a>
+                                    </div>
+
+                                    <div class="np-progress-wrap">
+                                        <input class="nowplaying-progress" type="range" min="0" max="100" value="0">
+                                        <div class="np-time">
+                                            <span class="np-current">0:00</span>
+                                            <span class="np-duration">0:00</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <input class="nowplaying-file" type="file" accept="audio/*" hidden>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="weather">
 						<div class="wg weather template">
 							<div class="titbar">
 								<a win12_title="更多" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)" class="a more notip" onclick="$('.wg.weather>.titbar>.menu').toggleClass('show')"><i class="bi bi-three-dots"></i></a>
@@ -2297,9 +2360,9 @@ toggletheme() 切换主题
 				<a class="a" onclick="apps.edge.reload()">
 					<i class="bi bi-arrow-clockwise"></i>
 				</a>
-				<input type="text" onpointerdown="this.select();" onkeyup="if(event.keyCode==13&&$(this).val().trim()!=''){apps.edge.goto($(this).val().trim())}"
+				<input type="text" onpointerdown="this.select();" onkeyup="if(event.keyCode==13&&$(this).val()!=''){apps.edge.goto($(this).val())}"
 					placeholder="在必应中搜索，或输入一个网址" class="url" spellcheck="false" id="edge-path" data-i18n-attr="placeholder" data-i18n-key="edge.schbing">
-				<input type="text" onkeyup="if(event.keyCode==13&&$(this).val().trim()!=''){m_tab.rename('edge',$(this).val().trim());}"
+				<input type="text" onkeyup="if(event.keyCode==13&&$(this).val()!=''){m_tab.rename('edge',$(this).val());}"
 					placeholder="为标签页命名" class="rename" spellcheck="false"  data-i18n-attr="placeholder" data-i18n-key="edge.rename">
 				<a class="a">
 					<i class="bi bi-info-circle" win12_title="浏览器只能访问允许嵌套的网站。由于规则限制无法获取网页标题，请右键标签页手动命名"></i>
@@ -3302,3 +3365,4 @@ toggletheme() 切换主题
 </body>
 
 </html>
+
