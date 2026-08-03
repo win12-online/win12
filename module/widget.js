@@ -870,179 +870,165 @@ function widgetsMove(elt, e) {
 })();
 
 
-/* nowplaying-pin-click-fix */
+/* nowplaying-menu-controls-fix */
 (function () {
-    function getNowPlaying() {
-        return typeof widgets !== 'undefined' && widgets && widgets.nowplaying ? widgets.nowplaying : null;
+    function play*r() {
+        return typeof widget* !== 'undefined' && widgets ? widg*ts.nowplaying : null;
     }
 
-    function ensureDockPinControls() {
-        const player = getNowPlaying();
-        if (!player) return;
+    f*nction dockPins() {
+        return*$('.wg.toolbar.nowplaying, .nowpla*ing.np-dock-nuclear');
+    }
 
-        $('.wg.toolbar.nowplaying, .nowplaying.np-dock-nuclear').each(function () {
-            const dock = $(this);
-
-            dock.addClass('np-dock-nuclear');
-            dock.attr('data-nowplaying-pin-ready', 'true');
-
-            dock.children('.np-dock-more').not(':first').remove();
-            dock.children('.np-dock-menu').not(':first').remove();
-
-            let more = dock.children('.np-dock-more').first();
-            if (!more.length) {
-                more = $('<button class="np-dock-more" type="button" title="Now Playing options"><i class="bi bi-three-dots"></i></button>');
-                dock.append(more);
-            }
-
-            let menu = dock.children('.np-dock-menu').first();
-            if (!menu.length) {
-                menu = $('<div class="np-dock-menu"></div>');
-                dock.append(menu);
-            }
-
-            menu.empty();
-            menu.append('<button class="np-dock-menu-item" type="button" data-np-action="import" title="Import song"><i class="bi bi-folder2-open"></i></button>');
-            menu.append('<button class="np-dock-menu-item" type="button" data-np-action="back" title="Back 10 seconds"><i class="bi bi-skip-backward-fill"></i></button>');
-            menu.append('<button class="np-dock-menu-item" type="button" data-np-action="play" title="Play or pause"><i class="bi bi-play-fill"></i></button>');
-            menu.append('<button class="np-dock-menu-item" type="button" data-np-action="forward" title="Forward 10 seconds"><i class="bi bi-skip-forward-fill"></i></button>');
+    *unction closeMenus(except) {
+     *  $('.nowplaying.np-dock-nuclear >*.np-dock-menu.show').each(function*() {
+            if (!except || th*s !== except) {
+                th*s.classList.remove('show');
+      *     }
         });
     }
 
-    function updatePlayIcons() {
-        const player = getNowPlaying();
-        const audio = player && player.audio;
-        const playing = audio && !audio.paused;
+    func*ion ensureControls() {
+        con*t np = player();
+        if (!np) *eturn;
 
-        $('.nowplaying.np-dock-nuclear [data-np-action="play"] i')
-            .attr('class', playing ? 'bi bi-pause-fill' : 'bi bi-play-fill');
-    }
+        dockPins().each(fu*ction () {
+            const dock * $(this);
+            dock.addClas*('np-dock-nuclear');
 
-    function closeDockMenus(exceptMenu) {
-        $('.nowplaying.np-dock-nuclear > .np-dock-menu.show').each(function () {
-            if (!exceptMenu || this !== exceptMenu) {
-                $(this).removeClass('show');
+            *ock.children('.np-dock-more').not(*:first').remove();
+            doc*.children('.np-dock-menu').not(':f*rst').remove();
+
+            let m*re = dock.children('.np-dock-more'*.first();
+            if (!more.le*gth) {
+                more = $('<*utton class="np-dock-more" type="b*tton" title="Now Playing controls"*<i class="bi bi-three-dots"></i></*utton>');
+                dock.app*nd(more);
             }
+
+         *  let menu = dock.children('.np-do*k-menu').first();
+            if (*menu.length) {
+                men* = $('<div class="np-dock-menu"></*iv>');
+                dock.append*menu);
+            }
+
+            *enu.empty();
+            menu.appe*d('<button class="np-dock-menu-ite*" type="button" data-np-action="im*ort" title="Import song"><i class=*bi bi-folder2-open"></i></button>'*;
+            menu.append('<button*class="np-dock-menu-item" type="bu*ton" data-np-action="back" title="*ack 10 seconds"><i class="bi bi-sk*p-backward-fill"></i></button>');
+*           menu.append('<button cl*ss="np-dock-menu-item" type="butto*" data-np-action="play" title="Pla* or pause"><i class="bi bi-play-fi*l"></i></button>');
+            me*u.append('<button class="np-dock-m*nu-item" type="button" data-np-act*on="forward" title="Forward 10 sec*nds"><i class="bi bi-skip-forward-*ill"></i></button>');
         });
+*        updatePlayIcon();
     }
 
-    if (!window.__nowPlayingPinClickFixInstalled) {
-        window.__nowPlayingPinClickFixInstalled = true;
+ *  function updatePlayIcon() {
+    *   const np = player();
+        co*st audio = np && np.audio;
+       *const playing = audio && !audio.pa*sed;
 
-        document.addEventListener('click', function (event) {
-            const more = event.target.closest && event.target.closest('.nowplaying.np-dock-nuclear > .np-dock-more');
-            const item = event.target.closest && event.target.closest('.nowplaying.np-dock-nuclear .np-dock-menu-item');
-            const menu = event.target.closest && event.target.closest('.nowplaying.np-dock-nuclear > .np-dock-menu');
-            const dock = event.target.closest && event.target.closest('.nowplaying.np-dock-nuclear');
+        $('.nowplaying.np-do*k-nuclear [data-np-action="play"] *')
+            .attr('class', play*ng ? 'bi bi-pause-fill' : 'bi bi-p*ay-fill');
+    }
+
+    function run*ction(action) {
+        const np =*player();
+        if (!np) return;*
+        if (action === 'import' &* typeof np.pickFile === 'function'* {
+            np.pickFile();
+    *   }
+
+        if (action === 'play* && typeof np.toggle === 'function*) {
+            Promise.resolve(np*toggle()).finally(updatePlayIcon);*        }
+
+        if (action === *back' && typeof np.skip === 'funct*on') {
+            np.skip(-10);
+ *      }
+
+        if (action === 'f*rward' && typeof np.skip === 'func*ion') {
+            np.skip(10);
+ *      }
+    }
+
+    if (!window.__n*wPlayingMenuControlsFix) {
+       *window.__nowPlayingMenuControlsFix*= true;
+
+        document.addEvent*istener('click', function (event) *
+            const more = event.ta*get.closest && event.target.closes*('.nowplaying.np-dock-nuclear > .n*-dock-more');
+            const it*m = event.target.closest && event.*arget.closest('.nowplaying.np-dock*nuclear .np-dock-menu-item');
+    *       const menu = event.target.c*osest && event.target.closest('.no*playing.np-dock-nuclear > .np-dock*menu');
+            const dock = e*ent.target.closest && event.target*closest('.nowplaying.np-dock-nucle*r');
 
             if (more) {
-                event.preventDefault();
-                event.stopPropagation();
-                event.stopImmediatePropagation();
+    *           event.preventDefault();*                event.stopPropagat*on();
+                event.stopIm*ediatePropagation();
 
-                const parentDock = more.closest('.nowplaying.np-dock-nuclear');
-                const dockMenu = parentDock && parentDock.querySelector(':scope > .np-dock-menu');
+            *   const parentDock = more.closest*'.nowplaying.np-dock-nuclear');
+  *             const dockMenu = pare*tDock && parentDock.querySelector(*:scope > .np-dock-menu');
 
-                if (dockMenu) {
-                    const shouldShow = !dockMenu.classList.contains('show');
-                    closeDockMenus(dockMenu);
-                    dockMenu.classList.toggle('show', shouldShow);
-                }
+       *        if (dockMenu) {
+          *         const shouldOpen = !dockM*nu.classList.contains('show');
+   *                closeMenus(dockMen*);
+                    dockMenu.cl*ssList.toggle('show', shouldOpen);*                }
 
-                return;
+               *return;
             }
 
-            if (item) {
-                event.preventDefault();
-                event.stopPropagation();
-                event.stopImmediatePropagation();
+           *if (item) {
+                event.*reventDefault();
+                e*ent.stopPropagation();
+           *    event.stopImmediatePropagation*);
 
-                const player = getNowPlaying();
-                const action = item.getAttribute('data-np-action');
+                runAction(item*getAttribute('data-np-action'));
 
-                if (player) {
-                    if (action === 'import' && typeof player.pickFile === 'function') {
-                        player.pickFile();
-                    }
-
-                    if (action === 'play' && typeof player.toggle === 'function') {
-                        Promise.resolve(player.toggle()).finally(updatePlayIcons);
-                    }
-
-                    if (action === 'back' && typeof player.skip === 'function') {
-                        player.skip(-10);
-                    }
-
-                    if (action === 'forward' && typeof player.skip === 'function') {
-                        player.skip(10);
-                    }
+*               const parentMenu = *tem.closest('.np-dock-menu');
+    *           if (parentMenu && item.*etAttribute('data-np-action') !== *back' && item.getAttribute('data-n*-action') !== 'forward') {
+       *            parentMenu.classList.r*move('show');
                 }
 
-                if (action === 'import' || action === 'play') {
-                    closeDockMenus();
-                }
-
-                return;
-            }
+ *              return;
+            *
 
             if (menu) {
-                event.stopPropagation();
-                event.stopImmediatePropagation();
-                return;
+        *       event.stopPropagation();
+  *             event.stopImmediatePr*pagation();
+                return*
             }
 
-            if (dock) {
-                event.preventDefault();
-                event.stopPropagation();
-                event.stopImmediatePropagation();
+            if (do*k) {
+                event.prevent*efault();
+                event.st*pPropagation();
+                ev*nt.stopImmediatePropagation();
 
-                const player = getNowPlaying();
-                if (player && typeof player.toggle === 'function') {
-                    Promise.resolve(player.toggle()).finally(updatePlayIcons);
-                }
-
-                return;
-            }
-
-            closeDockMenus();
-        }, true);
+  *             runAction('play');
+  *             return;
+            }*
+            closeMenus();
+       *}, true);
     }
 
-    function patchPlayerHooks() {
-        const player = getNowPlaying();
-        if (!player || player.__pinClickFixHooksPatched) return;
+    const np = pl*yer();
+    if (np && !np.__menuCon*rolsPatched) {
+        np.__menuCo*trolsPatched = true;
 
-        player.__pinClickFixHooksPatched = true;
-
-        const oldInit = player.init;
-        const oldRender = player.render;
+        const oldInit = np.init;
+        const oldRender = np.render;
 
         if (typeof oldInit === 'function') {
-            player.init = function () {
-                oldInit.call(player);
-                ensureDockPinControls();
-                updatePlayIcons();
+            np.init = function () {
+                oldInit.call(np);
+                ensureControls();
             };
         }
 
         if (typeof oldRender === 'function') {
-            player.render = function () {
-                oldRender.call(player);
-                ensureDockPinControls();
-                updatePlayIcons();
+            np.render = function () {
+                oldRender.call(np);
+                ensureControls();
             };
         }
     }
 
-    patchPlayerHooks();
-    ensureDockPinControls();
-    updatePlayIcons();
-
-    window.setTimeout(function () {
-        patchPlayerHooks();
-        ensureDockPinControls();
-        updatePlayIcons();
-    }, 250);
+    ensureControls();
+    window.setTimeout(ensureControls, 250);
 })();
-/* end-nowplaying-pin-click-fix */
+/* end-nowplaying-menu-controls-fix */
 
