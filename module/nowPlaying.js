@@ -1,6 +1,6 @@
 // Now Playing taskbar-pin interactions.
-// Playback controls stay directly in the taskbar pin.
-// The ... menu is the normal widget menu: widget menu, desktop, import music.
+// Direct playback controls stay in the pin.
+// The ... menu is the widget actions menu and stays open until explicitly closed.
 
 (function () {
     const IMPORT_INPUT_ID = 'NowPlaying.ImportMusic';
@@ -76,11 +76,13 @@
         button.title = title;
         button.setAttribute('aria-label', title);
         button.setAttribute('data-np-action', action);
-        button.appendChild(makeIcon(iconClass));
 
+        const icon = makeIcon(iconClass);
         const label = document.createElement('span');
         label.className = 'np-dock-menu-label';
         label.textContent = title;
+
+        button.appendChild(icon);
         button.appendChild(label);
 
         return button;
@@ -169,13 +171,13 @@
         }
     }
 
-    function ensureDotsMenu() {
+    function ensureMenu() {
         pins().forEach(function (dock) {
             dock.classList.add('np-dock-nuclear');
 
             const pill = dock.querySelector(':scope > .np-dock-pill') || dock;
+            const wasOpen = !!dock.querySelector(':scope > .np-dock-menu.show');
 
-            // Remove old hamburger/wrapper attempts.
             dock.querySelectorAll(':scope > .np-dock-hamburger, :scope > .np-dock-trigger-wrap').forEach(function (node) {
                 node.remove();
             });
@@ -193,13 +195,14 @@
             openButton.className = 'np-dock-widget-more ' + OPEN_MENU_CLASS;
             openButton.title = 'Widget menu';
             openButton.setAttribute('aria-label', 'Widget menu');
-            openButton.setAttribute('aria-expanded', 'false');
+            openButton.setAttribute('aria-expanded', wasOpen ? 'true' : 'false');
             openButton.appendChild(makeIcon('bi bi-three-dots'));
-            pill.appendChild(openButton);
 
-            Array.from(dock.querySelectorAll(':scope > .np-dock-menu')).slice(1).forEach(function (node) {
-                node.remove();
-            });
+            if (wasOpen) {
+                openButton.classList.add('is-open');
+            }
+
+            pill.appendChild(openButton);
 
             let menu = dock.querySelector(':scope > .np-dock-menu');
 
@@ -208,12 +211,15 @@
                 dock.appendChild(menu);
             }
 
-            menu.className = 'np-dock-menu ' + MENU_CLASS;
-            menu.textContent = '';
+            menu.className = 'np-dock-menu ' + MENU_CLASS + (wasOpen ? ' show' : '');
 
-            menu.appendChild(makeMenuButton('widget-menu', 'bi bi-grid-3x3-gap', 'Add to widgets'));
-            menu.appendChild(makeMenuButton('desktop', 'bi bi-display', 'Add to desktop'));
-            menu.appendChild(makeMenuButton('import', 'bi bi-folder2-open', 'Import music'));
+            if (!menu.dataset.nowPlayingMenuBuilt) {
+                menu.textContent = '';
+                menu.appendChild(makeMenuButton('widget-menu', 'bi bi-grid-3x3-gap', 'Add to widgets'));
+                menu.appendChild(makeMenuButton('desktop', 'bi bi-display', 'Add to desktop'));
+                menu.appendChild(makeMenuButton('import', 'bi bi-folder2-open', 'Import music'));
+                menu.dataset.nowPlayingMenuBuilt = 'true';
+            }
         });
 
         updatePlayIcon();
@@ -267,7 +273,7 @@
     }
 
     function ensureDirectControls() {
-        ensureDotsMenu();
+        ensureMenu();
         bindHiddenInput();
         updatePlayIcon();
     }
