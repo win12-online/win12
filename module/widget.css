@@ -823,6 +823,7 @@
     overflow: visible !important;
 }
 
+/* Hide exposed dock-pin controls outside the three-dot menu. */
 .nowplaying.np-dock-nuclear .np-dock-controls,
 .nowplaying.np-dock-nuclear .np-dock-import,
 .nowplaying.np-dock-nuclear .np-dock-back,
@@ -836,32 +837,33 @@
     pointer-events: none !important;
 }
 
+/* Keep the three-dot trigger visible. */
 .nowplaying.np-dock-nuclear > .np-dock-more {
     display: inline-flex !important;
     opacity: 1 !important;
     pointer-events: auto !important;
 }
 
+/* Menu is closed by default. */
 .nowplaying.np-dock-nuclear > .np-dock-menu {
     display: none !important;
     opacity: 0 !important;
     pointer-events: none !important;
 }
 
+/* Menu controls are visible only when opened. */
 .nowplaying.np-dock-nuclear > .np-dock-menu.show {
     display: flex !important;
     opacity: 1 !important;
     pointer-events: auto !important;
 }
 
-.nowplaying.np-dock-nuclear > .np-dock-menu .np-dock-menu-item,
 .nowplaying.np-dock-nuclear > .np-dock-menu.show .np-dock-menu-item {
     display: inline-flex !important;
     opacity: 1 !important;
     pointer-events: auto !important;
 }
 
-.nowplaying.np-dock-nuclear > .np-dock-menu .np-dock-menu-item i,
 .nowplaying.np-dock-nuclear > .np-dock-menu.show .np-dock-menu-item i {
     display: inline-block !important;
     opacity: 1 !important;
