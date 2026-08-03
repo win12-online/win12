@@ -1,35 +1,25 @@
-// Now Playing direct taskbar-pin controls.
-// This file intentionally does not create hamburger or menu buttons.
+// Now Playing taskbar-pin interactions.
+// Dedicated hidden input: #NowPlaying.ImportMusic
 
 (function () {
     function player() {
         return typeof widgets !== 'undefined' && widgets && widgets.nowplaying ? widgets.nowplaying : null;
     }
 
-    function updatePlayIcon() {
-        var np = player();
-        var audio = np && np.audio;
-        var playing = audio && !audio.paused;
-        var cls = playing ? 'bi bi-pause-fill' : 'bi bi-play-fill';
+    function hiddenInput() {
+        let input = document.getElementById('NowPlaying.ImportMusic');
 
-        document.querySelectorAll('.nowplaying.np-dock-nuclear .np-dock-play i, .wg.toolbar.nowplaying .np-play i').forEach(function (icon) {
-            icon.className = cls;
-        });
-    }
-
-    function openImportPicker(np) {
-        if (np && typeof np.pickFile === 'function') {
-            np.pickFile();
-            return;
+        if (!input) {
+            input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'audio/*,.mp3,.wav,.ogg,.m4a,.flac';
+            input.className = 'NowPlaying.Widget.TaskbarPin.import.hidden';
+            input.id = 'NowPlaying.ImportMusic';
+            input.hidden = true;
+            document.body.appendChild(input);
         }
 
-        const input =
-            document.querySelector('.wg.nowplaying:not(.template) .nowplaying-file') ||
-            document.querySelector('.nowplaying-file');
-
-        if (input) {
-            input.click();
-        }
+        return input;
     }
 
     function hasLoadedTrack(np) {
@@ -37,12 +27,49 @@
         return !!(audio && (audio.currentSrc || audio.src));
     }
 
+    function openImportPicker() {
+        hiddenInput().click();
+    }
+
+    function loadSelectedFile(file) {
+        const np = player();
+        if (!np || !file) return;
+
+        if (typeof np.loadFile === 'function') {
+            np.loadFile(file);
+            return;
+        }
+
+        if (!np.audio) {
+            np.audio = new Audio();
+        }
+
+        np.audio.src = URL.createObjectURL(file);
+        np.title = file.name || 'Local audio file';
+        np.artist = 'Local audio file';
+
+        if (typeof np.render === 'function') {
+            np.render();
+        }
+    }
+
+    function updatePlayIcon() {
+        const np = player();
+        const audio = np && np.audio;
+        const playing = audio && !audio.paused;
+        const cls = playing ? 'bi bi-pause-fill' : 'bi bi-play-fill';
+
+        document.querySelectorAll('.nowplaying.np-dock-nuclear .np-dock-play i, .wg.toolbar.nowplaying .np-play i').forEach(function (icon) {
+            icon.className = cls;
+        });
+    }
+
     function runAction(action) {
         const np = player();
         if (!np) return;
 
         if (action === 'import') {
-            openImportPicker(np);
+            openImportPicker();
             return;
         }
 
@@ -53,7 +80,7 @@
 
         if (action === 'play') {
             if (!hasLoadedTrack(np)) {
-                openImportPicker(np);
+                openImportPicker();
                 return;
             }
 
@@ -69,30 +96,46 @@
         }
     }
 
+    function bindHiddenInput() {
+        const input = hiddenInput();
+
+        if (input.dataset.nowPlayingBound === 'true') return;
+
+        input.dataset.nowPlayingBound = 'true';
+
+        input.addEventListener('change', function () {
+            const file = input.files && input.files[0];
+
+            if (file) {
+                loadSelectedFile(file);
+            }
+
+            input.value = '';
+        });
+    }
+
     function ensureDirectControls() {
         document.querySelectorAll('.wg.toolbar.nowplaying, .nowplaying.np-dock-nuclear').forEach(function (dock) {
             dock.classList.add('np-dock-nuclear');
 
-            // Remove menu-only UI if older scripts created it.
             dock.querySelectorAll(':scope > .np-dock-menu, :scope > .np-dock-more, :scope > .np-dock-hamburger, :scope > .np-dock-widget-more, :scope > .np-dock-trigger-wrap').forEach(function (node) {
                 node.remove();
             });
-
-            // If the nuclear renderer exists, it already owns the real buttons.
-            // If not, use the toolbar widget controls already in the widget content.
         });
 
+        bindHiddenInput();
         updatePlayIcon();
     }
 
-    if (!window.__nowPlayingDirectControlsInstalled) {
-        window.__nowPlayingDirectControlsInstalled = true;
+    function installClickHandler() {
+        if (window.__nowPlayingHiddenImportInstalled) return;
+        window.__nowPlayingHiddenImportInstalled = true;
 
         document.addEventListener('click', function (event) {
-            var importButton = event.target.closest && event.target.closest('.nowplaying.np-dock-nuclear .np-dock-import, .wg.toolbar.nowplaying .np-import');
-            var backButton = event.target.closest && event.target.closest('.nowplaying.np-dock-nuclear .np-dock-back, .wg.toolbar.nowplaying .np-back');
-            var playButton = event.target.closest && event.target.closest('.nowplaying.np-dock-nuclear .np-dock-play, .wg.toolbar.nowplaying .np-play');
-            var forwardButton = event.target.closest && event.target.closest('.nowplaying.np-dock-nuclear .np-dock-forward, .wg.toolbar.nowplaying .np-forward');
+            const importButton = event.target.closest && event.target.closest('.nowplaying.np-dock-nuclear .np-dock-import, .wg.toolbar.nowplaying .np-import');
+            const backButton = event.target.closest && event.target.closest('.nowplaying.np-dock-nuclear .np-dock-back, .wg.toolbar.nowplaying .np-back');
+            const playButton = event.target.closest && event.target.closest('.nowplaying.np-dock-nuclear .np-dock-play, .wg.toolbar.nowplaying .np-play');
+            const forwardButton = event.target.closest && event.target.closest('.nowplaying.np-dock-nuclear .np-dock-forward, .wg.toolbar.nowplaying .np-forward');
 
             if (importButton || backButton || playButton || forwardButton) {
                 event.preventDefault();
@@ -110,13 +153,13 @@
     }
 
     function patchPlayer() {
-        var np = player();
-        if (!np || np.__directControlsPatched) return;
+        const np = player();
+        if (!np || np.__hiddenImportPatched) return;
 
-        np.__directControlsPatched = true;
+        np.__hiddenImportPatched = true;
 
-        var init = np.init;
-        var render = np.render;
+        const init = np.init;
+        const render = np.render;
 
         if (typeof init === 'function') {
             np.init = function () {
@@ -134,7 +177,9 @@
     }
 
     function start() {
+        bindHiddenInput();
         patchPlayer();
+        installClickHandler();
         ensureDirectControls();
 
         window.setTimeout(function () {
