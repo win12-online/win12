@@ -68,7 +68,6 @@
         pins().forEach(function (dock) {
             dock.classList.add('np-dock-nuclear');
 
-            var pill = dock.querySelector(':scope > .np-dock-pill') || dock;
             var triggers = dock.querySelector(':scope > .np-dock-trigger-wrap');
 
             if (!triggers) {
@@ -108,10 +107,6 @@
             menu.appendChild(makeMenuButton('back', 'bi bi-skip-backward-fill', 'Back 10 seconds'));
             menu.appendChild(makeMenuButton('play', 'bi bi-play-fill', 'Play or pause'));
             menu.appendChild(makeMenuButton('forward', 'bi bi-skip-forward-fill', 'Forward 10 seconds'));
-
-            if (pill && pill !== dock) {
-                pill.classList.add('np-dock-pill-has-menu');
-            }
         });
 
         updatePlayIcon();
@@ -166,7 +161,6 @@
 
         var open = !menu.classList.contains('show');
         closeMenus(menu);
-
         menu.classList.toggle('show', open);
 
         dock.querySelectorAll('.np-dock-hamburger, .np-dock-widget-more').forEach(function (trigger) {
