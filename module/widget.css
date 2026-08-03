@@ -331,7 +331,6 @@
     font-siz
 } */
 
-/* WIN12_NOWPLAYING_WIDGET_PATCH */
 
 /* Full widget panel + desktop widget */
 .wg.nowplaying.menu,
@@ -625,13 +624,6 @@
 }
 
 
-/* WIN12_NOWPLAYING_DOCK_NUCLEAR_POSITION_FIX */
-
-#taskbar,
-.dock,
-.toolbar {
-    overflow: visible !important;
-}
 
 #taskbar-preview.nowplaying,
 #taskbar-preview[data-app="nowplaying"],
@@ -824,5 +816,84 @@
     pointer-events: auto !important;
 }
 
-/* END_WIN12_NOWPLAYING_DOCK_NUCLEAR_POSITION_FIX */
+
+/* nowplaying-dock-pin-interaction-fix */
+.nowplaying.np-dock-nuclear {
+    position: relative !important;
+    overflow: visible !important;
+    pointer-events: auto !important;
+}
+
+.nowplaying.np-dock-nuclear > .titbar,
+.nowplaying.np-dock-nuclear > .content,
+.nowplaying.np-dock-nuclear > .loadback,
+.nowplaying.np-dock-nuclear > .resize-bar {
+    display: none !important;
+}
+
+.nowplaying.np-dock-nuclear > .np-dock-more {
+    position: absolute !important;
+    top: -12px !important;
+    right: -12px !important;
+    width: 24px !important;
+    height: 24px !important;
+    min-width: 24px !important;
+    max-width: 24px !important;
+    border: 0 !important;
+    border-radius: 999px !important;
+    padding: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: color-mix(in srgb, var(--card) 98%, transparent) !important;
+    color: var(--text) !important;
+    box-shadow: 0 4px 14px color-mix(in srgb, black 24%, transparent) !important;
+    z-index: 10080 !important;
+    pointer-events: auto !important;
+}
+
+.nowplaying.np-dock-nuclear > .np-dock-more i {
+    font-size: 14px !important;
+    line-height: 1 !important;
+}
+
+.nowplaying.np-dock-nuclear > .np-dock-menu {
+    position: absolute !important;
+    top: 16px !important;
+    right: -12px !important;
+    z-index: 10090 !important;
+    display: none !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    gap: 4px !important;
+    padding: 6px !important;
+    border-radius: 14px !important;
+    background: color-mix(in srgb, var(--card) 98%, transparent) !important;
+    box-shadow: 0 8px 24px color-mix(in srgb, black 26%, transparent) !important;
+}
+
+.nowplaying.np-dock-nuclear > .np-dock-menu.show {
+    display: flex !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+}
+
+.nowplaying.np-dock-nuclear .np-dock-menu-item {
+    width: 30px !important;
+    height: 30px !important;
+    min-width: 30px !important;
+    border: 0 !important;
+    border-radius: 10px !important;
+    padding: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: transparent !important;
+    color: var(--text) !important;
+}
+
+.nowplaying.np-dock-nuclear .np-dock-menu-item:hover {
+    background: var(--hover) !important;
+}
+/* end-nowplaying-dock-pin-interaction-fix */
 
