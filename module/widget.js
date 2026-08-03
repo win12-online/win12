@@ -934,38 +934,58 @@ function widgetsMove(elt, e) {
 })();
 
 
-/* nowplaying-hamburger-menu-fix */
+/* nowplaying-isolated-menu-fix */
 (function () {
     function getPlayer() {
         return typeof widgets !== 'undefined' && widgets && widgets.nowplaying ? widgets.nowplaying : null;
     }
 
-    function getDockPins() {
-        return $('.wg.toolbar.nowplaying, .nowplaying.np-dock-nuclear');
+    function dockPins() {
+        return document.querySelectorAll('.wg.toolbar.nowplaying, .nowplaying.np-dock-nuclear');
     }
 
     function closeMenus(exceptMenu) {
-        $('.nowplaying.np-dock-nuclear > .np-dock-menu.show').each(function () {
-            if (!exceptMenu || this !== exceptMenu) {
-                this.classList.remove('show');
+        document.querySelectorAll('.nowplaying.np-dock-nuclear > .np-dock-menu.show').forEach(function (menu) {
+            if (!exceptMenu || menu !== exceptMenu) {
+                menu.classList.remove('show');
+                const trigger = menu.parentElement && menu.parentElement.querySelector(':scope > .np-dock-more');
+                if (trigger) trigger.classList.remove('is-open');
             }
         });
     }
 
-    function createMenuButton(sourceButton, action, iconClass, title) {
-        const button = sourceButton.clone(false, false);
+    function makeButton(className, title) {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = className;
+        button.title = title;
+        return button;
+    }
 
-        button
-            .removeClass('np-dock-more')
-            .addClass('np-dock-menu-item')
-            .attr('type', 'button')
-            .attr('data-np-action', action)
-            .attr('title', title)
-            .removeAttr('id')
-            .removeAttr('onclick');
+    function makeIcon(className) {
+        const icon = document.createElement('i');
+        icon.className = className;
+        return icon;
+    }
 
-        button.empty();
-        button.append($('<i></i>').attr('class', iconClass));
+    function makeHamburger() {
+        const button = makeButton('np-dock-more', 'Now Playing controls');
+        button.appendChild(document.createElement('span'));
+        button.appendChild(document.createElement('span'));
+        button.appendChild(document.createElement('span'));
+        return button;
+    }
+
+    function makeMenuButton(sourceButton, action, iconClass, title) {
+        const button = sourceButton.cloneNode(false);
+
+        button.className = 'np-dock-menu-item';
+        button.type = 'button';
+        button.title = title;
+        button.setAttribute('data-np-action', action);
+        button.removeAttribute('id');
+        button.removeAttribute('onclick');
+        button.appendChild(makeIcon(iconClass));
 
         return button;
     }
@@ -974,40 +994,42 @@ function widgetsMove(elt, e) {
         const player = getPlayer();
         if (!player) return;
 
-        getDockPins().each(function () {
-            const dock = $(this);
+        dockPins().forEach(function (dock) {
+            dock.classList.add('np-dock-nuclear');
 
-            dock.addClass('np-dock-nuclear');
+            Array.from(dock.querySelectorAll(':scope > .np-dock-more')).slice(1).forEach(function (node) {
+                node.remove();
+            });
 
-            dock.children('.np-dock-more').not(':first').remove();
-            dock.children('.np-dock-menu').not(':first').remove();
+            Array.from(dock.querySelectorAll(':scope > .np-dock-menu')).slice(1).forEach(function (node) {
+                node.remove();
+            });
 
-            let hamburger = dock.children('.np-dock-more').first();
-
-            if (!hamburger.length) {
-                hamburger = $('<button></button>')
-                    .addClass('np-dock-more')
-                    .attr('type', 'button')
-                    .attr('title', 'Now Playing controls');
-
-                dock.append(hamburger);
+            let hamburger = dock.querySelector(':scope > .np-dock-more');
+            if (!hamburger) {
+                hamburger = makeHamburger();
+                dock.appendChild(hamburger);
             }
 
-            hamburger.empty();
-            hamburger.append($('<i></i>').attr('class', 'bi bi-list'));
-
-            let menu = dock.children('.np-dock-menu').first();
-
-            if (!menu.length) {
-                menu = $('<div></div>').addClass('np-dock-menu');
-                dock.append(menu);
+            if (!hamburger.querySelector('span')) {
+                hamburger.textContent = '';
+                hamburger.appendChild(document.createElement('span'));
+                hamburger.appendChild(document.createElement('span'));
+                hamburger.appendChild(document.createElement('span'));
             }
 
-            menu.empty();
-            menu.append(createMenuButton(hamburger, 'import', 'bi bi-folder2-open', 'Import audio'));
-            menu.append(createMenuButton(hamburger, 'back', 'bi bi-skip-backward-fill', 'Back 10 seconds'));
-            menu.append(createMenuButton(hamburger, 'play', 'bi bi-play-fill', 'Play or pause'));
-            menu.append(createMenuButton(hamburger, 'forward', 'bi bi-skip-forward-fill', 'Forward 10 seconds'));
+            let menu = dock.querySelector(':scope > .np-dock-menu');
+            if (!menu) {
+                menu = document.createElement('div');
+                menu.className = 'np-dock-menu';
+                dock.appendChild(menu);
+            }
+
+            menu.textContent = '';
+            menu.appendChild(makeMenuButton(hamburger, 'import', 'bi bi-folder2-open', 'Import audio'));
+            menu.appendChild(makeMenuButton(hamburger, 'back', 'bi bi-skip-backward-fill', 'Back 10 seconds'));
+            menu.appendChild(makeMenuButton(hamburger, 'play', 'bi bi-play-fill', 'Play or pause'));
+            menu.appendChild(makeMenuButton(hamburger, 'forward', 'bi bi-skip-forward-fill', 'Forward 10 seconds'));
         });
 
         updatePlayIcon();
@@ -1017,25 +1039,36 @@ function widgetsMove(elt, e) {
         const player = getPlayer();
         const audio = player && player.audio;
         const isPlaying = audio && !audio.paused;
+        const iconClass = isPlaying ? 'bi bi-pause-fill' : 'bi bi-play-fill';
 
-        $('.nowplaying.np-dock-nuclear > .np-dock-menu [data-np-action="play"] i')
-            .attr('class', isPlaying ? 'bi bi-pause-fill' : 'bi bi-play-fill');
+        document.querySelectorAll('.nowplaying.np-dock-nuclear > .np-dock-menu [data-np-action="play"] i').forEach(function (icon) {
+            icon.className = iconClass;
+        });
     }
 
     function runAction(action) {
         const player = getPlayer();
         if (!player) return;
 
-        if (action === 'import' && typeof player.pickFile === 'function') {
-            player.pickFile();
+        if (action === 'import') {
+            if (typeof player.pickFile === 'function') {
+                player.pickFile();
+                return;
+            }
+
+            const fileInput = document.querySelector('.wg.nowplaying:not(.template) .nowplaying-file');
+            if (fileInput) fileInput.click();
+            return;
         }
 
         if (action === 'back' && typeof player.skip === 'function') {
             player.skip(-10);
+            return;
         }
 
         if (action === 'play' && typeof player.toggle === 'function') {
             Promise.resolve(player.toggle()).finally(updatePlayIcon);
+            return;
         }
 
         if (action === 'forward' && typeof player.skip === 'function') {
@@ -1043,8 +1076,8 @@ function widgetsMove(elt, e) {
         }
     }
 
-    if (!window.__nowPlayingHamburgerMenuFixInstalled) {
-        window.__nowPlayingHamburgerMenuFixInstalled = true;
+    if (!window.__nowPlayingIsolatedMenuFixInstalled) {
+        window.__nowPlayingIsolatedMenuFixInstalled = true;
 
         document.addEventListener('click', function (event) {
             const hamburger = event.target.closest && event.target.closest('.nowplaying.np-dock-nuclear > .np-dock-more');
@@ -1064,6 +1097,7 @@ function widgetsMove(elt, e) {
                     const shouldOpen = !dockMenu.classList.contains('show');
                     closeMenus(dockMenu);
                     dockMenu.classList.toggle('show', shouldOpen);
+                    hamburger.classList.toggle('is-open', shouldOpen);
                 }
 
                 return;
@@ -1074,12 +1108,8 @@ function widgetsMove(elt, e) {
                 event.stopPropagation();
                 event.stopImmediatePropagation();
 
-                const action = menuItem.getAttribute('data-np-action');
-                runAction(action);
-
-                if (action === 'import' || action === 'play') {
-                    closeMenus();
-                }
+                runAction(menuItem.getAttribute('data-np-action'));
+                updatePlayIcon();
 
                 return;
             }
@@ -1094,7 +1124,6 @@ function widgetsMove(elt, e) {
                 event.preventDefault();
                 event.stopPropagation();
                 event.stopImmediatePropagation();
-
                 runAction('play');
                 return;
             }
@@ -1105,9 +1134,9 @@ function widgetsMove(elt, e) {
 
     function patchPlayerHooks() {
         const player = getPlayer();
-        if (!player || player.__hamburgerMenuFixPatched) return;
+        if (!player || player.__isolatedMenuFixPatched) return;
 
-        player.__hamburgerMenuFixPatched = true;
+        player.__isolatedMenuFixPatched = true;
 
         const oldInit = player.init;
         const oldRender = player.render;
@@ -1135,5 +1164,5 @@ function widgetsMove(elt, e) {
         ensureMenu();
     }, 250);
 })();
-/* end-nowplaying-hamburger-menu-fix */
+/* end-nowplaying-isolated-menu-fix */
 

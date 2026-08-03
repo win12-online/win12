@@ -1,0 +1,207 @@
+
+/* Isolated Now Playing widget and taskbar-pin styles. */
+
+.nowplaying.np-dock-nuclear {
+    position: relative !important;
+    top: 0 !important;
+    margin-bottom: 0 !important;
+    width: 260px !important;
+    min-width: 260px !important;
+    max-width: 260px !important;
+    height: 50px !important;
+    min-height: 50px !important;
+    max-height: 50px !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    border: 0 !important;
+    pointer-events: auto !important;
+}
+
+.nowplaying.np-dock-nuclear:hover,
+.nowplaying.np-dock-nuclear:focus-within {
+    width: 260px !important;
+    min-width: 260px !important;
+    max-width: 260px !important;
+    height: 50px !important;
+    min-height: 50px !important;
+    max-height: 50px !important;
+}
+
+.nowplaying.np-dock-nuclear > :not(.np-dock-pill):not(.np-dock-more):not(.np-dock-menu) {
+    display: none !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    visibility: hidden !important;
+}
+
+.nowplaying.np-dock-nuclear > .np-dock-pill {
+    width: 260px !important;
+    height: 50px !important;
+    min-width: 260px !important;
+    max-width: 260px !important;
+    box-sizing: border-box !important;
+    padding: 6px 34px 6px 7px !important;
+    display: grid !important;
+    grid-template-columns: 38px minmax(0, 1fr) 42px !important;
+    grid-template-rows: 1fr !important;
+    grid-template-areas: "cover title time" !important;
+    gap: 8px !important;
+    align-items: center !important;
+    border-radius: 15px !important;
+    overflow: hidden !important;
+    background: color-mix(in srgb, var(--card) 96%, transparent) !important;
+    box-shadow: 0 5px 16px color-mix(in srgb, black 20%, transparent) !important;
+    position: relative !important;
+    z-index: 10002 !important;
+}
+
+.nowplaying.np-dock-nuclear .np-dock-cover {
+    grid-area: cover !important;
+    width: 36px !important;
+    height: 36px !important;
+    border-radius: 10px !important;
+    font-size: 18px !important;
+}
+
+.nowplaying.np-dock-nuclear .np-dock-title {
+    grid-area: title !important;
+    min-width: 0 !important;
+    font-size: 12px !important;
+    line-height: 1.15 !important;
+    overflow: hidden !important;
+    white-space: nowrap !important;
+    text-overflow: ellipsis !important;
+}
+
+.nowplaying.np-dock-nuclear .np-dock-time {
+    grid-area: time !important;
+    min-width: 38px !important;
+    max-width: 42px !important;
+    font-size: 10px !important;
+    text-align: right !important;
+    white-space: nowrap !important;
+    color: var(--text2) !important;
+}
+
+.nowplaying.np-dock-nuclear .np-dock-controls,
+.nowplaying.np-dock-nuclear .np-dock-import,
+.nowplaying.np-dock-nuclear .np-dock-back,
+.nowplaying.np-dock-nuclear .np-dock-play,
+.nowplaying.np-dock-nuclear .np-dock-forward,
+.nowplaying.np-dock-nuclear .np-dock-slider,
+.nowplaying.np-dock-nuclear input[type="range"],
+.nowplaying.np-dock-nuclear .button {
+    display: none !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    visibility: hidden !important;
+}
+
+.nowplaying.np-dock-nuclear > .np-dock-more {
+    position: absolute !important;
+    top: 50% !important;
+    right: 7px !important;
+    transform: translateY(-50%) !important;
+    width: 24px !important;
+    height: 24px !important;
+    min-width: 24px !important;
+    max-width: 24px !important;
+    border: 0 !important;
+    border-radius: 999px !important;
+    padding: 0 !important;
+    display: inline-flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 3px !important;
+    background: var(--hover) !important;
+    color: var(--text) !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    visibility: visible !important;
+    cursor: pointer !important;
+    z-index: 10080 !important;
+}
+
+.nowplaying.np-dock-nuclear > .np-dock-more span {
+    width: 13px !important;
+    height: 2px !important;
+    border-radius: 999px !important;
+    background: currentColor !important;
+    display: block !important;
+    transition: transform 160ms ease, opacity 120ms ease !important;
+}
+
+.nowplaying.np-dock-nuclear > .np-dock-more.is-open span:nth-child(1) {
+    transform: translateY(5px) rotate(45deg) !important;
+}
+
+.nowplaying.np-dock-nuclear > .np-dock-more.is-open span:nth-child(2) {
+    opacity: 0 !important;
+}
+
+.nowplaying.np-dock-nuclear > .np-dock-more.is-open span:nth-child(3) {
+    transform: translateY(-5px) rotate(-45deg) !important;
+}
+
+.nowplaying.np-dock-nuclear > .np-dock-menu {
+    position: absolute !important;
+    bottom: calc(100% + 8px) !important;
+    right: 0 !important;
+    top: auto !important;
+    z-index: 10090 !important;
+    display: none !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    visibility: hidden !important;
+    gap: 4px !important;
+    padding: 6px !important;
+    border-radius: 14px !important;
+    background: color-mix(in srgb, var(--card) 98%, transparent) !important;
+    box-shadow: 0 8px 24px color-mix(in srgb, black 26%, transparent) !important;
+}
+
+.nowplaying.np-dock-nuclear > .np-dock-menu.show {
+    display: flex !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    visibility: visible !important;
+}
+
+.nowplaying.np-dock-nuclear > .np-dock-menu.show .np-dock-menu-item {
+    position: static !important;
+    transform: none !important;
+    width: 30px !important;
+    height: 30px !important;
+    min-width: 30px !important;
+    max-width: 30px !important;
+    border: 0 !important;
+    border-radius: 10px !important;
+    padding: 0 !important;
+    display: inline-flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0 !important;
+    background: transparent !important;
+    color: var(--text) !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    visibility: visible !important;
+    cursor: pointer !important;
+    box-shadow: none !important;
+}
+
+.nowplaying.np-dock-nuclear > .np-dock-menu.show .np-dock-menu-item:hover {
+    background: var(--hover) !important;
+}
+
+.nowplaying.np-dock-nuclear > .np-dock-menu.show .np-dock-menu-item i {
+    display: inline-block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    font-size: 15px !important;
+    line-height: 1 !important;
+}
