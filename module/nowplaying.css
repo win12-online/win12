@@ -1,12 +1,12 @@
-/* Direct Now Playing taskbar-pin controls. No hamburger, no menu. */
+/* Direct Now Playing taskbar-pin controls plus default hidden ... menu. */
 
 .nowplaying.np-dock-nuclear {
     position: relative !important;
     top: 0 !important;
     margin-bottom: 0 !important;
-    width: 320px !important;
-    min-width: 320px !important;
-    max-width: 320px !important;
+    width: 348px !important;
+    min-width: 348px !important;
+    max-width: 348px !important;
     height: 52px !important;
     min-height: 52px !important;
     max-height: 52px !important;
@@ -20,15 +20,15 @@
 
 .nowplaying.np-dock-nuclear:hover,
 .nowplaying.np-dock-nuclear:focus-within {
-    width: 320px !important;
-    min-width: 320px !important;
-    max-width: 320px !important;
+    width: 348px !important;
+    min-width: 348px !important;
+    max-width: 348px !important;
     height: 52px !important;
     min-height: 52px !important;
     max-height: 52px !important;
 }
 
-.nowplaying.np-dock-nuclear > :not(.np-dock-pill) {
+.nowplaying.np-dock-nuclear > :not(.np-dock-pill):not(.np-dock-widget-more):not(.np-dock-menu) {
     display: none !important;
     opacity: 0 !important;
     pointer-events: none !important;
@@ -36,12 +36,12 @@
 }
 
 .nowplaying.np-dock-nuclear > .np-dock-pill {
-    width: 320px !important;
+    width: 348px !important;
     height: 52px !important;
-    min-width: 320px !important;
-    max-width: 320px !important;
+    min-width: 348px !important;
+    max-width: 348px !important;
     box-sizing: border-box !important;
-    padding: 6px 8px !important;
+    padding: 6px 38px 6px 7px !important;
     display: grid !important;
     grid-template-columns: 38px minmax(0, 1fr) 42px 120px !important;
     grid-template-rows: 1fr !important;
@@ -84,7 +84,6 @@
     color: var(--text2) !important;
 }
 
-/* Hide slider on taskbar pin, but keep the actual control buttons integrated in the pill. */
 .nowplaying.np-dock-nuclear .np-dock-slider,
 .nowplaying.np-dock-nuclear input[type="range"] {
     display: none !important;
@@ -126,35 +125,102 @@
     cursor: pointer !important;
 }
 
-.nowplaying.np-dock-nuclear .np-dock-import:hover,
-.nowplaying.np-dock-nuclear .np-dock-back:hover,
-.nowplaying.np-dock-nuclear .np-dock-play:hover,
-.nowplaying.np-dock-nuclear .np-dock-forward:hover {
-    background: color-mix(in srgb, var(--hover) 70%, var(--theme-1) 30%) !important;
+.nowplaying.np-dock-nuclear > .np-dock-widget-more {
+    position: absolute !important;
+    top: 50% !important;
+    right: 7px !important;
+    transform: translateY(-50%) !important;
+    width: 24px !important;
+    height: 24px !important;
+    min-width: 24px !important;
+    max-width: 24px !important;
+    border: 0 !important;
+    border-radius: 999px !important;
+    padding: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: var(--hover) !important;
+    color: var(--text) !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    visibility: visible !important;
+    cursor: pointer !important;
+    z-index: 10080 !important;
 }
 
-.nowplaying.np-dock-nuclear .np-dock-import i,
-.nowplaying.np-dock-nuclear .np-dock-back i,
-.nowplaying.np-dock-nuclear .np-dock-play i,
-.nowplaying.np-dock-nuclear .np-dock-forward i {
+.nowplaying.np-dock-nuclear > .np-dock-widget-more i {
     display: inline-block !important;
     opacity: 1 !important;
     visibility: visible !important;
-    font-size: 13px !important;
+    font-size: 14px !important;
     line-height: 1 !important;
 }
 
-/* If the toolbar DOM uses the original widget classes instead of the nuclear renderer, show those too. */
-.wg.toolbar.nowplaying .np-controls {
-    display: inline-flex !important;
-    opacity: 1 !important;
-    visibility: visible !important;
-    pointer-events: auto !important;
+.nowplaying.np-dock-nuclear > .np-dock-menu {
+    position: absolute !important;
+    bottom: calc(100% + 8px) !important;
+    right: 0 !important;
+    top: auto !important;
+    z-index: 10090 !important;
+    display: none !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    visibility: hidden !important;
+    gap: 4px !important;
+    padding: 6px !important;
+    border-radius: 14px !important;
+    background: color-mix(in srgb, var(--card) 98%, transparent) !important;
+    box-shadow: 0 8px 24px color-mix(in srgb, black 26%, transparent) !important;
 }
 
-.wg.toolbar.nowplaying .np-controls .button {
-    display: inline-grid !important;
+.nowplaying.np-dock-nuclear > .np-dock-menu.show {
+    display: flex !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    visibility: visible !important;
+}
+
+.nowplaying.np-dock-nuclear > .np-dock-menu.show .np-dock-menu-item {
+    width: 30px !important;
+    height: 30px !important;
+    min-width: 30px !important;
+    max-width: 30px !important;
+    border: 0 !important;
+    border-radius: 10px !important;
+    padding: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: transparent !important;
+    color: var(--text) !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    visibility: visible !important;
+    cursor: pointer !important;
+}
+
+.nowplaying.np-dock-nuclear > .np-dock-menu.show .np-dock-menu-item:hover {
+    background: var(--hover) !important;
+}
+
+.nowplaying.np-dock-nuclear > .np-dock-menu.show .np-dock-menu-item i {
+    display: inline-block !important;
     opacity: 1 !important;
     visibility: visible !important;
-    pointer-events: auto !important;
+    font-size: 15px !important;
+    line-height: 1 !important;
+}
+
+/* User-requested class token support. Dots in class names are literal class-token characters. */
+[class~="NowPlaying.TaskbarPin.OpenMenu.shown"] {
+    display: inline-flex !important;
+}
+
+[class~="NowPlaying.TaskbarPin.Menu.Hidden"] {
+    display: none !important;
+}
+
+[class~="NowPlaying.TaskbarPin.Menu.Hidden"].show {
+    display: flex !important;
 }
