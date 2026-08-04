@@ -1,4 +1,4 @@
-﻿'use strict';
+'use strict';
 
 /*
 
@@ -481,7 +481,7 @@ const cms = {
         ['<i class="bi bi-folder2-open"></i> ' + lang('文件资源管理器', 'explorer.name'), 'openapp(\'explorer\')'],
         ['<i class="bi bi-search"></i> 搜索', `$('#search-btn').addClass('show');hide_startmenu();
         $('#search-win').addClass('show-begin');setTimeout(() => {$('#search-win').addClass('show');
-        $('#search-input').focus();}, 0);`],
+        $('#search-input').focus();},200);`],
         '<hr>',
         ['<i class="bi bi-power"></i> 关机', 'window.location=\'shutdown.html\''],
         ['<i class="bi bi-arrow-counterclockwise"></i> 重启', 'window.location=\'reload.html\''],
@@ -847,8 +847,8 @@ function hidedescp(e) {
 
 const nts = {
     'about': {
-        cnt: lang(`<p class="tit">Windows 12 网页版</p>
-            <p>Windows 12 网页版是一个开放源项目,<br />
+        cnt: lang(`<p class="tit">${isTauriApp() ? '关于 Win12-desktop' : 'Win12 网页版'}</p>
+            <p>${isTauriApp() ? 'Win12-desktop 是 Win12 网页版的桌面应用版本，' : 'Win12 网页版是一个开放源项目，'}<br />
             希望让用户在网络上预先体验 Windows 12,<br />
             内容可能与 Windows 12 正式版本不一致。<br />
             使用标准网络技术,例如 HTML, CSS 和 JS<br />
@@ -864,6 +864,7 @@ const nts = {
     'feedback': {
         cnt: `<p class="tit">${lang('反馈', 'nts.feedback.name')}</p>
             <p>${lang('我们非常注重用户的体验与反馈', 'nts.feedback.txt')}</p>
+            <p><a class="a" onclick="window.open('https://nerimity.com/i/w2lvf','_blank');" win12_title="在浏览器新窗口打开链接" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)">${lang('欢迎通过 Nerimity 向我们寻求帮助或提交反馈', 'nts.feedback.txt1')}</a></p>
             <list class="new">
                 <a class="a" onclick="window.open('https://github.com/win12-online/win12/issues','_blank');" win12_title="在浏览器新窗口打开链接" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)">${lang('在 github 上提交 issue (需要 github 账户)', 'nts.feedback.github')}</a>
             </list>`,
@@ -878,7 +879,6 @@ const nts = {
                 <a class="a" onclick="closenotice(); widgets.widgets.add('calc');">${lang('计算器', 'calc.name')}</a>
                 <a class="a" onclick="closenotice(); widgets.widgets.add('weather');">${lang('天气', 'nts.addwg.weather')}</a>
                 <a class="a" onclick="closenotice(); widgets.widgets.add('monitor');">${lang('系统性能监视器', 'nts.addwg.monitor')}</a>
-                <a class="a" onclick="closenotice(); widgets.widgets.add('nowplaying');">${lang('正在播放', 'nts.addwg.nowplaying')}</a>
             </list>`,
         btn: [
             { type: 'cancel', text: lang('取消', 'cancel'), js: 'closenotice();' }
@@ -922,7 +922,6 @@ const nts = {
                 <a class="a" onclick="closenotice(); widgets.widgets.addToDesktop('calc');">计算器</a>
                 <a class="a" onclick="closenotice(); widgets.widgets.addToDesktop('weather');">天气</a>
                 <a class="a" onclick="closenotice(); widgets.widgets.addToDesktop('monitor');">系统性能监视器</a>
-                <a class="a" onclick="closenotice(); widgets.widgets.addToDesktop('nowplaying');">${lang('正在播放', 'nts.addwg.nowplaying')}</a>
             </list>`,
         btn: [
             { type: 'cancel', text: lang('取消', 'cancel'), js: 'closenotice();' }
@@ -950,8 +949,8 @@ const nts = {
              <p>你可以使用此 AI 助手帮助你更快地完成工作，此 AI 助手基于 Deepseek v4 pro 模型 (有人用 Win12 工作？)<br>
             也请适当使用，不要谈论敏感、违规话题，<br>请有身为一个人类最基本的道德底线。<br>根据相关法律法规，我们不向欧盟用户提供服务。<br>
             在此特别感谢云智 API(yunzhiapi.cn) 为本项目提供赞助！</p>
-            <a class="a" onclick="window.open('readme/legal/privacy-policy-copliot','_blank');" win12_title="在浏览器新窗口打开链接">《隐私政策》</a><br>
-            <a class="a" onclick="window.open('readme/legal/user-agreement-copliot','_blank');" win12_title="在浏览器新窗口打开链接">《用户协议》</a><br>
+            <a class="a" onclick="window.open('https://win12-online.github.io/win12/readme/legal/privacy-policy-copliot','_blank');" win12_title="在浏览器新窗口打开链接">《隐私政策》</a><br>
+            <a class="a" onclick="window.open('https://win12-online.github.io/win12/readme/legal/user-agreement-copliot','_blank');" win12_title="在浏览器新窗口打开链接">《用户协议》</a><br>
             <a class="a" onclick="window.open('https://status.win12.tech/status/win12/','_blank');" win12_title="在浏览器新窗口打开链接">状态监测</a><br>
             <a class="a" onclick="window.open('https://www.yunzhiapi.cn/','_blank');" win12_title="在浏览器新窗口打开链接">云智 API 官网</a>
         `,
@@ -2885,9 +2884,10 @@ if (urlParams.get('skip_login') !== '1') {
     $('#loginback').css('display', 'flex');
 }
 
+// 共用同一个开机提示；根据运行环境在 nts.about 中选择对应名称。
+shownotice('about');
 // PWA 应用
 if (!location.href.match(/((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])(?::(?:[0-9]|[1-9][0-9]{1,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5]))/) && !location.href.match('localhost') && !urlParams.get('develop')) {
-    shownotice('about');
     navigator.serviceWorker.register('sw.js', { updateViaCache: 'none', scope: './' }).then(reg => {
 
         reg.update();
@@ -3061,9 +3061,6 @@ window.addEventListener("orientationchange", checkOrientation);
 let previewTimeout;
 
 function showTaskbarPreview(name, event) {
-      // WIN12_DISABLE_NOWPLAYING_TASKBAR_PREVIEW
-      if (name == 'nowplaying') { $('#taskbar-preview').removeClass('show'); return; }
-      // END_WIN12_DISABLE_NOWPLAYING_TASKBAR_PREVIEW
     clearTimeout(previewTimeout);
 
     const preview = document.getElementById('taskbar-preview');
@@ -3150,10 +3147,3 @@ $(document).on('mouseenter', '#taskbar-preview', function () {
 $(document).on('mouseleave', '#taskbar-preview', function () {
     hideTaskbarPreview();
 });
-
-
-
-
-
-
-

@@ -83,7 +83,10 @@
             // 如果按下的是回车键
             if (event.keyCode === 13) {
                 // 获取输入框的值
-                var inputValue = event.target.value;
+                var inputValue = event.target.value.trim();
+                if (inputValue === '') {
+                    return; // 如果输入为空，则不执行任何操作
+                }
                 // 判断是否为搜索查询
                 if (isSearchQuery(inputValue)) {
                     // 在 Bing 中搜索
