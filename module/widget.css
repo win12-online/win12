@@ -251,6 +251,21 @@
     font-size: 19px;
 }
 
+.wg.music163 {
+    height: 150px;
+    width: 280px;
+}
+
+.wg>.titbar>.more:hover>.bi {
+    background: var(--hover);
+}
+
+.wg.music163>.content>.text {
+    padding-top: 10px;
+    text-align: center;
+    padding-top: 10px;
+}
+
 .wg.monitor {
     grid-column: auto / span 3;
     grid-row: auto / span 1;
