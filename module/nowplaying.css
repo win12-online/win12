@@ -1,4 +1,4 @@
-/* Now Playing taskbar-pin controls plus normal widget ... menu. No !important required. */
+/* Now Playing taskbar-pin controls plus normal widget ... menu. */
 
 .nowplaying.np-dock-nuclear {
     position: relative;
@@ -44,7 +44,6 @@
     padding: 6px 38px 6px 7px;
     display: grid;
     grid-template-columns: 38px minmax(0, 1fr) 42px 120px;
-    grid-template-rows: 1fr;
     grid-template-areas: "cover title time controls";
     gap: 8px;
     align-items: center;
@@ -56,12 +55,21 @@
     z-index: 10002;
 }
 
-.nowplaying.np-dock-nuclear .np-dock-cover {
+.nowplaying.np-dock-nuclear .np-dock-cover,
+.wg.toolbar.nowplaying .np-cover {
     grid-area: cover;
     width: 36px;
     height: 36px;
     border-radius: 10px;
     font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at 30% 20%, #ffffff55, transparent 30%),
+        linear-gradient(135deg, var(--theme-1), var(--theme-2));
+    color: #fff;
 }
 
 .nowplaying.np-dock-nuclear .np-dock-title {
@@ -149,19 +157,10 @@
     z-index: 10080;
 }
 
-.nowplaying.np-dock-nuclear .np-dock-pill > .np-dock-widget-more i {
-    display: inline-block;
-    opacity: 1;
-    visibility: visible;
-    font-size: 14px;
-    line-height: 1;
-}
-
 .nowplaying.np-dock-nuclear > .np-dock-menu {
     position: absolute;
     bottom: calc(100% + 8px);
     right: 0;
-    top: auto;
     z-index: 10090;
     min-width: 150px;
     display: flex;
@@ -191,7 +190,6 @@
 .nowplaying.np-dock-nuclear > .np-dock-menu .np-dock-menu-item {
     width: 100%;
     height: 30px;
-    min-width: 0;
     border: 0;
     border-radius: 10px;
     padding: 0 9px;
@@ -201,9 +199,6 @@
     gap: 8px;
     background: transparent;
     color: var(--text);
-    opacity: 1;
-    pointer-events: auto;
-    visibility: visible;
     cursor: pointer;
     text-align: left;
 }
@@ -212,120 +207,7 @@
     background: var(--hover);
 }
 
-.nowplaying.np-dock-nuclear > .np-dock-menu .np-dock-menu-item i {
-    display: inline-block;
-    opacity: 1;
-    visibility: visible;
-    font-size: 15px;
-    line-height: 1;
-}
-
 .nowplaying.np-dock-nuclear > .np-dock-menu .np-dock-menu-label {
-    display: inline-block;
-    opacity: 1;
-    visibility: visible;
     white-space: nowrap;
     font-size: 12px;
 }
-
-/* User-requested class token support. */
-[class~="NowPlaying.TaskbarPin.OpenMenu.shown"] {
-    display: inline-flex;
-}
-
-[class~="NowPlaying.TaskbarPin.Menu.Hidden"] {
-    opacity: 0;
-    pointer-events: none;
-    visibility: hidden;
-}
-
-[class~="NowPlaying.TaskbarPin.Menu.Hidden"].show {
-    opacity: 1;
-    pointer-events: auto;
-    visibility: visible;
-}
-
-
-/* nowplaying-final-visual-polish */
-
-/* Keep the taskbar pin anchored so the bottom does not jump up/down. */
-.nowplaying.np-dock-nuclear {
-    top: 0;
-    bottom: auto;
-    margin-top: 0;
-    margin-bottom: 0;
-    transform: none;
-    vertical-align: middle;
-}
-
-.nowplaying.np-dock-nuclear:hover,
-.nowplaying.np-dock-nuclear:focus-within {
-    top: 0;
-    margin-top: 0;
-    margin-bottom: 0;
-    transform: none;
-}
-
-/* Make the visible pin stable even when the menu opens. */
-.nowplaying.np-dock-nuclear > .np-dock-pill {
-    position: relative;
-    transform: none;
-    contain: layout paint;
-}
-
-/* Album-art placeholder background and containment. */
-.nowplaying.np-dock-nuclear .np-dock-cover,
-.wg.toolbar.nowplaying .np-cover {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    flex: 0 0 auto;
-    background:
-        radial-gradient(circle at 30% 20%, #ffffff55, transparent 30%),
-        linear-gradient(135deg, var(--theme-1), var(--theme-2));
-    color: #fff;
-    box-shadow:
-        inset 0 1px 0 #ffffff55,
-        0 6px 14px color-mix(in srgb, black 22%, transparent);
-}
-
-.nowplaying.np-dock-nuclear .np-dock-cover i,
-.wg.toolbar.nowplaying .np-cover i {
-    display: block;
-    width: 1em;
-    height: 1em;
-    line-height: 1;
-    font-size: 18px;
-    text-align: center;
-    color: currentColor;
-    transform: none;
-    margin: 0;
-}
-
-/* If an img ever gets used as cover art, keep it contained too. */
-.nowplaying.np-dock-nuclear .np-dock-cover img,
-.wg.toolbar.nowplaying .np-cover img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-}
-
-/* Keep the menu out of document flow and animate upward without moving the pin. */
-.nowplaying.np-dock-nuclear > .np-dock-menu {
-    position: absolute;
-    bottom: calc(100% + 8px);
-    top: auto;
-    right: 0;
-    margin: 0;
-    transform: translate3d(0, 10px, 0);
-    will-change: opacity, transform;
-}
-
-.nowplaying.np-dock-nuclear > .np-dock-menu.show {
-    transform: translate3d(0, 0, 0);
-}
-
-/* end-nowplaying-final-visual-polish */
-

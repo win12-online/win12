@@ -1,6 +1,4 @@
 // Now Playing taskbar-pin interactions.
-// Direct playback controls stay in the pin.
-// The ... menu is the widget actions menu and stays open until explicitly closed.
 
 (function () {
     const IMPORT_INPUT_ID = 'NowPlaying.ImportMusic';
@@ -50,17 +48,13 @@
             return;
         }
 
-        if (!np.audio) {
-            np.audio = new Audio();
-        }
+        if (!np.audio) np.audio = new Audio();
 
         np.audio.src = URL.createObjectURL(file);
         np.title = file.name || 'Local audio file';
         np.artist = 'Local audio file';
 
-        if (typeof np.render === 'function') {
-            np.render();
-        }
+        if (typeof np.render === 'function') np.render();
     }
 
     function makeIcon(className) {
@@ -77,12 +71,11 @@
         button.setAttribute('aria-label', title);
         button.setAttribute('data-np-action', action);
 
-        const icon = makeIcon(iconClass);
         const label = document.createElement('span');
         label.className = 'np-dock-menu-label';
         label.textContent = title;
 
-        button.appendChild(icon);
+        button.appendChild(makeIcon(iconClass));
         button.appendChild(label);
 
         return button;
@@ -132,43 +125,21 @@
     }
 
     function moveToWidgetMenu() {
-        if (typeof widgets === 'undefined' || !widgets || !widgets.widgets) return;
-
-        if (typeof widgets.widgets.remove === 'function') {
-            widgets.widgets.remove('nowplaying');
-        }
-
-        if (typeof widgets.widgets.add === 'function') {
-            widgets.widgets.add('nowplaying');
-        }
+        if (!widgets || !widgets.widgets) return;
+        if (typeof widgets.widgets.remove === 'function') widgets.widgets.remove('nowplaying');
+        if (typeof widgets.widgets.add === 'function') widgets.widgets.add('nowplaying');
     }
 
     function pinToDesktop() {
-        if (typeof widgets === 'undefined' || !widgets || !widgets.widgets) return;
-
-        if (typeof widgets.widgets.remove === 'function') {
-            widgets.widgets.remove('nowplaying');
-        }
-
-        if (typeof widgets.widgets.addToDesktop === 'function') {
-            widgets.widgets.addToDesktop('nowplaying');
-        }
+        if (!widgets || !widgets.widgets) return;
+        if (typeof widgets.widgets.remove === 'function') widgets.widgets.remove('nowplaying');
+        if (typeof widgets.widgets.addToDesktop === 'function') widgets.widgets.addToDesktop('nowplaying');
     }
 
     function runMenuAction(action) {
-        if (action === 'widget-menu') {
-            moveToWidgetMenu();
-            return;
-        }
-
-        if (action === 'desktop') {
-            pinToDesktop();
-            return;
-        }
-
-        if (action === 'import') {
-            openImportPicker();
-        }
+        if (action === 'widget-menu') return moveToWidgetMenu();
+        if (action === 'desktop') return pinToDesktop();
+        if (action === 'import') return openImportPicker();
     }
 
     function ensureMenu() {
@@ -177,14 +148,6 @@
 
             const pill = dock.querySelector(':scope > .np-dock-pill') || dock;
             const wasOpen = !!dock.querySelector(':scope > .np-dock-menu.show');
-
-            dock.querySelectorAll(':scope > .np-dock-hamburger, :scope > .np-dock-trigger-wrap').forEach(function (node) {
-                node.remove();
-            });
-
-            dock.querySelectorAll(':scope > .np-dock-widget-more').forEach(function (node) {
-                node.remove();
-            });
 
             pill.querySelectorAll(':scope > .np-dock-widget-more').forEach(function (node) {
                 node.remove();
@@ -198,14 +161,11 @@
             openButton.setAttribute('aria-expanded', wasOpen ? 'true' : 'false');
             openButton.appendChild(makeIcon('bi bi-three-dots'));
 
-            if (wasOpen) {
-                openButton.classList.add('is-open');
-            }
+            if (wasOpen) openButton.classList.add('is-open');
 
             pill.appendChild(openButton);
 
             let menu = dock.querySelector(':scope > .np-dock-menu');
-
             if (!menu) {
                 menu = document.createElement('div');
                 dock.appendChild(menu);
@@ -243,12 +203,10 @@
     function toggleMenu(openButton) {
         const dock = openButton.closest('.nowplaying.np-dock-nuclear');
         const menu = dock && dock.querySelector(':scope > .np-dock-menu');
-
         if (!menu) return;
 
         const shouldOpen = !menu.classList.contains('show');
         closeMenus(menu);
-
         menu.classList.toggle('show', shouldOpen);
         openButton.classList.toggle('is-open', shouldOpen);
         openButton.setAttribute('aria-expanded', shouldOpen ? 'true' : 'false');
@@ -256,26 +214,14 @@
 
     function bindHiddenInput() {
         const input = hiddenInput();
-
         if (input.dataset.nowPlayingBound === 'true') return;
-
         input.dataset.nowPlayingBound = 'true';
 
         input.addEventListener('change', function () {
             const file = input.files && input.files[0];
-
-            if (file) {
-                loadSelectedFile(file);
-            }
-
+            if (file) loadSelectedFile(file);
             input.value = '';
         });
-    }
-
-    function ensureDirectControls() {
-        ensureMenu();
-        bindHiddenInput();
-        updatePlayIcon();
     }
 
     function installClickHandler() {
@@ -304,7 +250,6 @@
                 event.preventDefault();
                 event.stopPropagation();
                 event.stopImmediatePropagation();
-
                 runMenuAction(menuItem.getAttribute('data-np-action'));
                 closeMenus();
                 return;
@@ -337,7 +282,6 @@
     function patchPlayer() {
         const np = player();
         if (!np || np.__widgetMenuDotsPatched) return;
-
         np.__widgetMenuDotsPatched = true;
 
         const init = np.init;
@@ -346,14 +290,18 @@
         if (typeof init === 'function') {
             np.init = function () {
                 init.call(np);
-                ensureDirectControls();
+                ensureMenu();
+                bindHiddenInput();
+                updatePlayIcon();
             };
         }
 
         if (typeof render === 'function') {
             np.render = function () {
                 render.call(np);
-                ensureDirectControls();
+                ensureMenu();
+                bindHiddenInput();
+                updatePlayIcon();
             };
         }
     }
@@ -362,17 +310,12 @@
         bindHiddenInput();
         patchPlayer();
         installClickHandler();
-        ensureDirectControls();
+        ensureMenu();
 
         window.setTimeout(function () {
             patchPlayer();
-            ensureDirectControls();
+            ensureMenu();
         }, 250);
-
-        window.setTimeout(function () {
-            patchPlayer();
-            ensureDirectControls();
-        }, 1000);
     }
 
     if (document.readyState === 'loading') {
