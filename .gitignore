@@ -1,0 +1,18 @@
+web.config
+.vscode/
+.idea/
+
+.claude/
+
+.DS_Store
+
+.prettierrc
+.prettierignore
+
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+.env*
+!.env.example

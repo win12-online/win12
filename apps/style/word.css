@@ -1,0 +1,262 @@
+@font-face {
+    font-family: StoreIcons;
+    src: url("../icons/msstore/icons.ttf");
+}
+
+#win-word {
+    display: flex;
+    height: 100%;
+}
+
+#win-word>.app-left{
+    max-width: 125px;
+    min-width: 125px;
+    height: 100%;
+    margin-right: 5px;
+    margin-left: 5px;
+}
+
+#win-word>.app-main {
+    width: 100%;
+    height: 100%;
+    background-color: var(--card);
+    border-radius: 8px 0 0 0;
+}
+
+#win-word>.app-main>* {
+    margin-left: 24px;
+}
+
+#win-word>.app-main>.input {
+    width: 512px !important;
+    margin-bottom: 12px;
+}
+
+#win-word>.app-left>.focs>.home {
+    height: 125px !important;
+    padding: 0px !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin-bottom: 8px;
+}
+
+#win-word>.app-left>.focs>.back {
+    height: 75px !important;
+    padding: 0px !important;
+    display: none;
+    justify-content: last;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 8px;
+}
+
+#win-word>.app-left>.focs>.check {
+    background-color: var(--hover) !important;
+}
+
+#win-word>.app-left>.focs>.home>*{
+    display: block;
+    max-width: 125px;
+    min-width: 125px;
+    font-size:24px;
+    text-align: center;
+    margin: 0;
+}
+
+#win-word>.app-left>.focs>.back>*{
+    display: block;
+    font-size:24px;
+    margin-left: 12px;
+}
+
+#win-word>.app-left>.focs{
+    height: 100% !important;
+}
+
+#win-word>.app-main {
+    padding: 12px 12px 0 12px;
+}
+
+#win-word>.app-main>.card-list {
+    width: 100%;
+    display: flex;
+    gap: 8px;
+}
+
+#win-word>.app-main>.card-list>.card {
+    height: 250px !important;
+    padding: 0px !important;
+    width: 150px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    color: var(--text);
+    transition: 80ms !important;
+    border-radius: 16px;
+}
+
+#win-word>.app-main>.card-list>.card:hover {
+    background-color: var(--hover) !important;
+}
+
+#win-word>.app-main>.card-list>.card>img {
+    height: 175px !important;
+    width: 125px !important;
+    border-radius: var(--radius-xl);
+    margin: 12.5px;
+    background-color: var(--contextmeu);
+}
+
+.office-icon {
+    font-family: StoreIcons;
+}
+
+.window.word>.pages>.home {
+    height: 100%;
+    position: absolute;
+    left: 150%;
+    opacity: 0;
+    visibility: hidden;
+    width: 100%;
+    transition: all 0.25s cubic-bezier(0,1,0,1), visibility 0.25s cubic-bezier(0,1,0,1) ,  opacity 0.5s cubic-bezier(0,1,0,1);
+}
+
+.window.word>.pages>*.show {
+    height: 100%;
+    left: 0 !important;
+    right: 0 !important;
+    position: relative !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+.window.word>.pages>.edit {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 150%;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.25s cubic-bezier(0,1,0,1), visibility 0.25s cubic-bezier(0,1,0,1) ,  opacity 0.5s cubic-bezier(0,1,0,1);
+}
+
+.window.word>.pages>.edit>.content {
+    overflow:auto;
+    width: 100%;
+    height: calc(100% - 225px);
+}
+
+.window.word>.pages>.edit>.content>.doc {
+    aspect-ratio: 1/1.414;
+    width: 60%;
+    background-color: var(--contextmeu);
+    color: var(--text);
+    margin: auto;
+    padding: 64px;
+    border:none;
+    outline:none;
+    margin-bottom: 24px;
+    overflow: hidden;
+}
+
+.window.word>.pages>.edit>.content>.doc>.table {
+    width: 100%;
+    min-height: 300px;
+    max-height: 900px;
+    height: auto;
+}
+
+.window.word>.pages>.edit>.content>.doc>.table>tr {
+    min-height: 300px;
+}
+
+.window.word>.pages>.edit>.content>.doc>.square {
+    height: 100px;
+    width: 100px;
+    background-color: #646464;
+}
+
+.window.word>.pages>.edit>.ribbon {
+    height: 150px;
+    width: 100%;
+}
+
+.window.word>.pages>.edit>.ribbon>.tab {
+    height: 28px;
+    margin-top: 8px;
+    margin-left: 8px;
+    margin-bottom: 8px;
+    width: 100%;
+    display: flex;
+    gap: 8px;
+}
+
+.window.word>.pages>.edit>.ribbon>.tab>.tab-selected {
+    background-color: #2c579b;
+    height: 2.5px;
+    width: 24px;
+    border-radius: var(--radius-xl);
+    position:absolute;
+    left: 62px;
+    top: 32px;
+}
+
+.window.word>.pages>.edit>.ribbon>.tab>a {
+    border-radius: var(--radius-xl);
+    transition: all 80ms;
+    padding: 4px;
+}
+
+.window.word>.pages>.edit>.ribbon>.tab>a:hover {
+    background-color: #88888836;
+}
+
+
+.window.word>.pages>.edit>.ribbon>.items {
+    box-shadow: 0px 2.5px 2.5px #88888836;
+    height: 100px;
+    width: calc(100% - 16px);
+    margin: auto;
+    border-radius: var(--radius-xl);
+    background-color: var(--card);
+    display: flex;
+    gap: 4px;
+    align-items: center;
+}
+
+.window.word>.pages>.edit>.ribbon>.items>.item {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 64px;
+    border-radius: var(--radius-xl);
+    transition: all 0.1s;
+}
+
+.window.word>.pages>.edit>.ribbon>.items>.item:hover {
+    background-color: #88888836;
+}
+
+.window.word>.pages>.edit>.ribbon>.items>.item>p {
+    width: calc(100% - 12px);
+    text-align: center;
+    font-size:medium;
+}
+
+.window.word>.pages>.edit>.ribbon>.items>.item>i {
+    text-align: center;
+    font-size: xx-large !important;
+}
+
+.window.word>.pages>.edit>.ribbon>.tab>h3 {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.window.word>.pages {
+    height: 100%;
+}

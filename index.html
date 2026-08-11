@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Win12 网页版</title>
+  <script>
+    // 本地打开（localhost / 127.0.0.1 / file://）时不要跳到线上站，直接进本地启动页。
+    // 原本这里是无条件的 meta refresh + location.replace，
+    // 导致本地起服务后访问根路径会被直接弹到官方站，没法调试本地改动。
+    // 线上部署的行为完全不变。
+    (function () {
+      var h = location.hostname;
+      var isLocal = h === 'localhost' || h === '127.0.0.1' || h === '::1' || h === '';
+      location.replace(isLocal ? './boot.html' : 'https://win12-online.github.io');
+    })();
+  </script>
+  <noscript>
+    <meta http-equiv="refresh" content="0; url=https://win12-online.github.io">
+  </noscript>
+</head>
+
+<body>
+  <p>正在跳转到 <a href="https://win12-online.github.io">https://win12-online.github.io</a> …</p>
+  <p><a href="./boot.html">如果没有自动跳转，点这里进入本地版本</a></p>
+</body>
+
+</html>

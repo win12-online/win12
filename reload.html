@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="zh-CN" style="height:100%;">
+<head>
+    <style>
+        body {
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            height: 100%;
+            width: 100%;
+            padding: 0;
+            margin: 0;
+        }
+
+        loading>svg>circle:first-child {
+            stroke: #fff;
+            fill: none;
+            stroke-width: 2px;
+            stroke-linecap: round;
+            animation: spin-infinite 2.5s linear 0s infinite normal none running;
+            transform-origin: 50% 50%;
+        }
+
+        loading>svg>circle:last-child {
+            fill: #00000000
+        }
+
+        loading>svg {
+            background-color: #00000000;
+            border-radius: 50%
+        }
+
+        @keyframes spin-infinite {
+            0% {
+                stroke-dasharray: .01px, 43.97px;
+                tansform: rotate(0deg)
+            }
+
+            50% {
+                stroke-dasharray: 21.99px, 21.99px;
+                transform: rotate(450deg)
+            }
+
+            to {
+                stroke-dasharray: .01px, 43.97px;
+                transform: rotate(3turn)
+            }
+        }
+    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>正在重启...</title>
+</head>
+<body onload="
+setTimeout(()=>{
+    location.href='boot.html';
+},3000);">
+    <loading id="ld">
+        <svg width="50px" height="50px" viewBox="0 0 16 16">
+            <circle cx="8px" cy="8px" r="7px"></circle>
+            <circle cx="8px" cy="8px" r="6px"></circle>
+        </svg>
+    </loading>
+    <p id="ldt" style="text-align:center;color:#fff;font-size:20px">
+        正在重启
+    </p>
+</body>
+</html>

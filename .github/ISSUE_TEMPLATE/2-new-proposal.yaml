@@ -1,0 +1,48 @@
+name: New Proposal / 提出建议
+description: Please provide us with your valuable suggestions / 请向我们提出宝贵的建议
+title: '[建议] '
+body:
+  - type: markdown
+    id: introduction
+    attributes:
+      value: |
+        欢迎向 Windows12 网页版 提出建议。您的建议将帮助本项目变得更好。
+        Welcome to submit suggestions to Windows12 Online. Your suggestions will help this project become better.
+  - type: checkboxes
+    id: prerequisites
+    attributes:
+      label: 先决条件 (Prerequisites)
+      options:
+        - label: |
+            我已确认这个问题没有在[其他 issues](https://github.com/win12-online/win12/issues) 中提出过。
+            I am sure that this problem has NEVER been discussed in [other issues](https://github.com/win12-online/win12/issues).
+          required: true
+        - label: |
+            我确认我正在使用官方地址 (win12.tech)。
+            I confirm that I am using the official url (win12.tech).
+          required: true
+        - label: |
+            我确保我遵守行为准则
+            I have followed the code of conduct
+          required: true
+  - type: textarea
+    id: name
+    attributes:
+      label: 描述
+      description: 请简述您的建议 Please briefly describe your proposal
+    validations:
+      required: true
+  - type: textarea
+    id: upstream
+    attributes:
+      label: 方案
+      description: 请简述您建议的实现方案 Please briefly describe your proposed implementation
+    validations:
+      required: true
+  - type: textarea
+    id: more_info
+    attributes:
+      label: 备注 (Note)
+      description: 其他补充信息 Additional information
+    validations:
+      required: false

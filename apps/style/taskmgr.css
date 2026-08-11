@@ -1,0 +1,421 @@
+@font-face {
+    font-family: t-icon;
+    src: url('../icons/taskmgr/icons.ttf');
+}
+
+.t-icon {
+    font-family: t-icon;
+}
+
+#win-taskmgr {
+    display: grid;
+    grid-template-columns: 280px auto;
+    transition: grid-template-columns 200ms;
+
+    /* 左侧菜单 */
+    &>.menu {
+
+        /* 选项卡列表 */
+        &>list.focs {
+            margin: 0px 15px 0px 5px;
+            position: relative;
+            height: 100%;
+
+            &>a {
+                padding: 5px 20px;
+                font-size: 15px;
+                display: flex;
+                gap: 10px;
+                margin-bottom: 3px;
+                overflow: hidden;
+
+                &>p {
+                    overflow-x: auto;
+                    display: flex;
+                    align-items: center;
+                }
+
+                &.check {
+                    background-color: var(--hover);
+                }
+            }
+        }
+
+        /* 折叠按钮 */
+        &>.fold {
+            padding: 5px 20px;
+            margin-left: 5px;
+            display: block;
+            border-radius: var(--radius-lg);
+            max-width: 58px;
+            margin-bottom: 3px;
+            transition: 80ms, transform 400ms cubic-bezier(0.14, 1.02, 0.17, 0.03) !important;
+
+            &:hover {
+                color: var(--text);
+                background-color: var(--hover-half);
+                text-decoration: none;
+                box-shadow: 0 1px 2px var(--s3d);
+            }
+
+            &:active {
+                transform: scale(0.93);
+                filter: opacity(0.75);
+            }
+        }
+    }
+
+    /* 右侧内容区 */
+    &>.main {
+        max-height: 100%;
+        min-height: 0px;
+        background-color: var(--bg70);
+        padding: 15px;
+        border-radius: 10px 0px 0px 0px;
+
+        /* 页面 */
+        &>.cnt {
+            transition: transform 400ms cubic-bezier(0.05, 0.96, 0.11, 1), opacity 300ms, height 0ms;
+            transform: translate(0, 50%);
+            opacity: 0;
+            height: 0px;
+            padding: 0px;
+            overflow: hidden;
+
+            &>.tit {
+                font-size: 1.2em;
+            }
+
+            &.show {
+                height: 100%;
+                transform: none !important;
+                opacity: 1;
+                overflow-y: auto;
+                min-height: 0px;
+            }
+
+            /* 进程页面 */
+            &.processes {
+                &.show {
+                    display: flex;
+                    flex-direction: column;
+                }
+
+                /* 表格 */
+                &>table {
+                    width: 100%;
+                    border-spacing: 0px;
+                    table-layout: fixed;
+
+                    & th {
+                        font-weight: normal !important;
+                        font-size: 0.78em;
+                        vertical-align: bottom;
+                        /* border-left: 1px solid black; */
+                        border-right: 1px solid var(--hr);
+                        border-bottom: 1px solid var(--hr);
+                        color: var(--text2);
+                        padding: 0px 10px;
+                        position: relative;
+
+                        &>i {
+                            position: absolute;
+                            left: 6%;
+                            top: 10%;
+                        }
+
+                        &>.value {
+                            font-size: 1.45em !important;
+                            color: var(--text) !important;
+                        }
+
+                        &.align-right {
+                            text-align: right;
+                            width: 95px;
+                            transition: background-color 80ms;
+                        }
+
+                        &.power {
+                            width: 120px;
+                        }
+                    }
+
+                    & td {
+                        border-right: 1px solid var(--hr);
+                        padding: 4px 10px;
+                        height: 25px;
+                        /* line-height: 2; */
+
+                        &>* {
+                            display: inline-block;
+                        }
+
+                        & .icon {
+                            width: 21px;
+                            height: 21px;
+                            vertical-align: -5px;
+                            margin: 0px 8px;
+                            background-size: contain;
+                            background-position: 50% 50%;
+                            background-repeat: no-repeat;
+                            display: inline-block;
+                        }
+
+                        &>.text {
+                            text-overflow: ellipsis;
+                            overflow: hidden;
+                            line-clamp: 1;
+                            -webkit-line-clamp: 1;
+                            display: -webkit-inline-box;
+                            -webkit-box-orient: vertical;
+                            vertical-align: -5px;
+                            /* width: 100%; */
+                        }
+                    }
+
+                    & tr.select {
+                        background-color: var(--hover);
+                    }
+                }
+            }
+        }
+    }
+}
+
+#win-taskmgr>.main>.cnt.processes>table th.align-right:hover {
+    background-color: var(--hover);
+}
+
+#win-taskmgr>.main>.cnt.processes>table tr:not(.title):hover {
+    background-color: var(--hover);
+}
+
+#win-taskmgr>.main>.cnt.processes>table tr {
+    transition: background-color 200ms;
+}
+
+#win-taskmgr>.main>.cnt.processes>table tr.notrans {
+    transition: none !important;
+}
+
+#win-taskmgr>.main>.cnt.performance>.content {
+    display: grid;
+    grid-template-columns: 320px auto;
+    height: 100%;
+    min-height: 0px;
+}
+
+#win-taskmgr>.main>.cnt.performance>.content>.select-menu {
+    margin-right: 20px;
+    max-height: 100%;
+    overflow: auto;
+}
+
+#win-taskmgr>.main>.cnt.performance>.content>.select-menu>* {
+    border-radius: var(--radius-2xl);
+    padding: 12px;
+    margin: 10px 0px;
+    transition: 80ms, transform 400ms cubic-bezier(0.14, 1.02, 0.17, 0.03) !important;
+    display: grid;
+    grid-template-columns: 120px auto;
+    gap: 10px;
+}
+
+#win-taskmgr>.main>.cnt.performance>.content>.select-menu>*:hover {
+    background-color: var(--hover-half);
+}
+
+#win-taskmgr>.main>.cnt.performance>.content>.select-menu>*:active {
+    transform: scale(0.95);
+}
+
+#win-taskmgr>.main>.cnt.performance>.content>.select-menu>*>.right>.tit {
+    font-size: 1.4em;
+}
+
+#win-taskmgr>.main>.cnt.performance>.content>.select-menu>*>.right>.data>* {
+    display: -webkit-inline-box;
+    box-orient: vertical;
+    -webkit-box-orient: vertical;
+    line-clamp: 1;
+    -webkit-line-clamp: 1;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+#win-taskmgr>.main>.cnt.performance>.content>.select-menu>*>.left {
+    height: 100%;
+}
+
+#win-taskmgr>.main>.cnt.performance>.content>.select-menu>*>.left>* {
+    height: 100%;
+    width: 100%;
+    border: 1px solid;
+}
+
+#win-taskmgr>.main>.cnt.performance>.content>.select-menu>*>.left>.graph-view-cpu {
+    border-color: var(--href);
+}
+
+#win-taskmgr>.main>.cnt.performance>.content>.select-menu>*>.left>.graph-view-memory {
+    border-color: #660099;
+}
+
+#win-taskmgr>.main>.cnt.performance>.content>.select-menu>*>.left>.graph-view-disk {
+    border-color: #008000;
+}
+
+#win-taskmgr>.main>.cnt.performance>.content>.select-menu>*>.left>.graph-view-wifi {
+    border-color: #8e5829;
+}
+
+#win-taskmgr>.main>.cnt.performance>.content>.select-menu>*>.left>.graph-view-ethernet {
+    border-color: #d35e3b;
+}
+
+#win-taskmgr>.main>.cnt.performance>.content>.select-menu>*>.left>.graph-view-gpu {
+    border-color: var(--href);
+}
+
+#win-taskmgr>.main>.cnt.performance>.content>.select-menu>.check {
+    background-color: var(--hover);
+}
+
+#win-taskmgr>.main>.cnt.performance>.content>.performance-graph {
+    max-height: 100%;
+    overflow: auto;
+}
+
+#win-taskmgr>.main>.cnt.performance>.content>.performance-graph>* {
+    transition: transform 300ms cubic-bezier(0, 0, 0, 1), opacity 300ms 50ms, height 0ms;
+    transform: translate(0, 50%);
+    opacity: 0;
+    height: 0px;
+    overflow-y: hidden;
+}
+
+#win-taskmgr>.main>.cnt.performance>.content>.performance-graph>.show {
+    /* display: grid !important; */
+    /* grid-template-rows: max-content auto max-content; */
+    height: 100%;
+    transform: none !important;
+    opacity: 1;
+    overflow-y: visible;
+    display: flex;
+    flex-direction: column;
+}
+
+#win-taskmgr>.main>.cnt.performance>.content>.performance-graph>*>.tit {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#win-taskmgr>.main>.cnt.performance>.content>.performance-graph>*>.graph-msg {
+    display: flex;
+    justify-content: space-between;
+    color: var(--text2);
+    font-size: 0.8em;
+}
+
+#win-taskmgr>.main>.cnt.performance>.content>.performance-graph>*>.graph-msg.top {
+    margin-top: 10px;
+}
+
+#win-taskmgr>.main>.cnt.performance>.content>.performance-graph>*>.graph-msg.bottom {
+    margin-bottom: 10px;
+}
+
+#win-taskmgr>.main>.cnt.performance>.content>.performance-graph>*>.graph,
+#win-taskmgr>.main>.cnt.performance>.content>.performance-graph>*>.graph2 {
+    /* margin: 20px 0px; */
+    position: relative;
+    min-height: 120px;
+    height: 100%;
+}
+
+#win-taskmgr>.main>.cnt.performance>.content>.performance-graph>*>.minor {
+    height: 50px !important;
+    min-height: 50px !important;
+}
+
+#win-taskmgr>.main>.cnt.performance>.content>.performance-graph>*>.graph>*,
+#win-taskmgr>.main>.cnt.performance>.content>.performance-graph>*>.graph2>*,
+#win-taskmgr>.main>.cnt.performance>.content>.performance-graph .graph-gpu svg {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+}
+
+#win-taskmgr>.main>.cnt.performance>.content>.performance-graph>*>.tit>.left-name {
+    font-size: 2em;
+    display: inline-block;
+}
+
+#win-taskmgr>.main>.cnt.performance>.content>.performance-graph>*>.tit>.right-message {
+    display: inline-block;
+}
+
+#win-taskmgr>.main>.cnt.performance>.content>.performance-graph>*>.information {
+    display: grid;
+    grid-template-columns: auto 300px;
+    gap: 20px;
+    font-size: 0.85em;
+}
+
+#win-taskmgr>.main>.cnt.performance>.content>.performance-graph>*>.information>.left {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: flex-start;
+}
+
+#win-taskmgr>.main>.cnt.performance>.content>.performance-graph>*>.information>.left>*>.top {
+    font-size: 0.8em;
+    color: var(--text2);
+}
+
+#win-taskmgr>.main>.cnt.performance>.content>.performance-graph>*>.information>.left>*>.value {
+    font-size: 1.44em;
+}
+
+#win-taskmgr>.main>.cnt.performance>.content>.performance-graph>*>.information>.right>table>tbody>tr>td:first-child {
+    color: var(--text2);
+    padding-right: 20px;
+    white-space: nowrap;
+}
+
+#win-taskmgr>.main>.cnt.performance>.content>.performance-graph>.graph-gpu>.graphs {
+    position: relative;
+    display: grid;
+    grid-template-columns: 50% 50%;
+    grid-template-rows: 50% 50%;
+    height: 100%;
+    min-height: 350px;
+    gap: 10px;
+}
+
+#win-taskmgr>.main>.cnt.performance>.content>.performance-graph>.graph-gpu>.graphs>* {
+    display: flex;
+    flex-direction: column;
+}
+
+#win-taskmgr>.main>.cnt.performance>.content>.performance-graph>.graph-gpu>.graphs>*>.title-gpu {
+    margin-bottom: 10px;
+}
+
+#win-taskmgr>.main>.cnt.performance>.content>.performance-graph>.graph-gpu>.graphs>*>.chart {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+#win-taskmgr>.main>.cnt.performance>.content>.performance-graph>.graph-gpu>.graphs>* canvas {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+}

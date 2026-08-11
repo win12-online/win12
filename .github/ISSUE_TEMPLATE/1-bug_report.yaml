@@ -1,0 +1,65 @@
+name: Bug report / 故障报告
+description: Please report any vulnerabilities you discover during use to us / 请向我们汇报您在使用过程中发现的漏洞
+title: '[Bug]'
+body:
+  - type: markdown
+    id: introduction
+    attributes:
+      value: |
+        请使用此模板来报告 bug，并尽可能多地提供信息。
+        Please use this template while reporting a bug and provide as much info as possible.
+  - type: checkboxes
+    id: prerequisites
+    attributes:
+      label: 先决条件 (Prerequisites)
+      options:
+        - label: |
+            我已确认这个问题没有在[其他 issues](https://github.com/win12-online/win12/issues) 中提出过。
+            I am sure that this problem has NEVER been discussed in [other issues](https://github.com/win12-online/win12/issues).
+          required: true
+        - label: |
+            我确认我正在使用官方地址 (win12.tech)。
+            I confirm that I am using the official url (win12.tech).
+          required: true
+        - label: |
+            我确保我遵守行为准则
+            I have followed the code of conduct
+          required: true
+        - label: |
+            我已查看了常见问题解答(#735)
+            I have reviewed the Frequently Asked Questions (#735)
+          required: true
+  - type: textarea
+    id: what_happened
+    attributes:
+      label: 发生了什么（What happened）
+    validations:
+      required: true
+  - type: textarea
+    id: expected_behavior
+    attributes:
+      label: 期望的现象（What you expected to happen）
+    validations:
+      required: true
+  - type: textarea
+    id: how_to_reproduce
+    attributes:
+      label: 如何重现此问题（How to reproduce it）
+    validations:
+      required: true
+  - type: input
+    id: os_version
+    attributes:
+      label: 操作系统（OS Version）
+  - type: input
+    id: browser
+    attributes:
+      label: 浏览器（Browser version）
+  - type: textarea
+    id: other_env
+    attributes:
+      label: 其他环境（Other environments）
+  - type: textarea
+    id: others
+    attributes:
+      label: 其他需要说明的事项（Anything else we need to know）

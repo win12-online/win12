@@ -1,0 +1,981 @@
+<!-- Win12 网页版是一个开放源项目，
+	希望让用户在网络上预先体验 Windows 12,
+	内容可能与 Windows 12 正式版本不一致。
+	使用标准网络技术，例如 HTML、CSS 和 JavaScript，
+	此项目绝不附属于微软，且不应与微软操作系统或产品混淆，
+	这也不是 Windows365 cloud PC
+	本项目中微软、Windows 和其他示范产品是微软公司的商标 -->
+<!--------禁止格式化本文档！ -------->
+<!-----No Formatting the Code! ---->
+<!-- 编辑前务必认真阅读，有不合规范之 pr，视情况或要求整改或不予合并 -->
+<!-- 开发须知：
+
+旨为统一代码风格，增加其可读性，也为他人开发便利，以下内容所有开发者、贡献者务必严格遵守，感谢配合！
+
+对于 HTML 文件的规定
+1. 绝对严格禁止格式化本 html 文档，否则坚决拒绝合并
+2. 对于 id 属性，除必须外一般不使用 id 属性，尽量以 class 替代。若必须使用，切记：
+	1. 若非 body 下直接的子元素，原则上不设置 id。若确需，参见下方条目 3
+	2. 所取 id 必须有意义，且不可有与其他 id 重复者
+	3. 对于非 body>* 元素，坚决不得以单个单词作为 id。请按照“父元素标志词-(...)-id 名称”进行命名。如：taskmgr-search, setting-search 等
+3. 对于 class 属性：
+	1. 仅对必要的元素分配 class
+	2. 所取的名字必须要有意义
+	3. 使用 css 选择器时，确保所选元素准确定位且无其他匹配，以 id 选择器开头来选择为佳
+4. 对于压行，可在保证可读性前提下自由处置，参考规范：
+	1. 对于文件中的 svg 图像，压为一行
+	2. 对于连续 3 个以上的连续结束标签，视情况压为一行
+	3. 对于较短的多个并列雷同的项，每项视情况压为一行，如 list 中的内容
+	4. 对于不更改、无具体意义的内容，可视情况处置
+
+一些全局性可用的内容，供使用和统一风格：
+.a 可点击元素，可用于各种元素。用于 <a> 可去除下划线、颜色等。
+	与 .jump 合用于设置了 href 属性的 <a> 链接
+.button 经典按钮，常与 .a 合用
+list 列表>
+	<a> 列表项，常与.a 合用
+	.text 文本内容，不可点击
+.buttons 按钮组>
+	.submit 确认，常与.a 合用
+	.cancel 取消，常与.a 合用
+.act 经典点击动画
+.input 输入框
+其他自行研究
+
+有以下 js 函数可用：
+setData(key, value) 本地存储信息。注意管理，谨慎使用
+localStorage.getItem(key) 与前者配合使用，以读取存储信息
+
+stop(event) 停止事件向父级传递事件（停止冒泡），event 变量照抄。可使祖先元素接受不到发生的对应事件。
+
+showcm(event, id, arg) 显示右键菜单，使用方法：oncontextmenu="return showcm(event,'标识',arg);"，
+	参考 desktop.js 中 cms 中的写法，需提前在 cms 中定义提示内容及其标识符。showcm 带有 stop(event), 无需另加
+openapp(name) 打开窗口，用法：openapp('程序（窗口）名称')，
+	程序（窗口）名称就是想要显示的窗口.window 的另一个类名，须设置 apps[程序（窗口）名称] 对象和 init 方法
+shownotice(name) 打开提示窗口，用法：shownotice('提示内容标识符')，
+	参考 desktop.js 中 nts 中的写法，需提前在 nts 对象中定义提示内容及其标识符
+closenotice() 与前者配合，关闭提示窗口
+showwin(name) 显示窗口，除特殊用途外不建议使用，用法：showwin('窗口名称')，注意：窗口名称就是想要显示的窗口.window 的另一个类名
+hidewin(name) 关闭窗口，用法：hidewin('程序（窗口）名称')，注意：程序（窗口）名称就是想要显示的窗口.window 的另一个类名
+toggletheme() 切换主题
+
+关于 App 添加：
+
+壹 常规 app
+	1. 界面与 (伪) 后端的开发，js 在 module/apps.js 中，css 和资源文件在 apps/style 和 apps/icons 中
+	2. 绘制图标，存储于 icon 中，注意后缀名，参考 data/app-icons.js 中 @icon 的说明
+	3. 在开始菜单 (@#startmenu-l>list) 中添加你的应用
+
+贰 webapp，即使用 iframe 嵌套网页的应用：
+	1. 确保目标网页不阻止跨域嵌套，允许 iframe 嵌套
+	2. html 内容参考 @.window.bilibili.webapp
+	3. 在 module/apps.js 中写 createWebapp('你的 appid', '目标网址')，参考 @apps[bilibili]
+	4. 在 module/apps.js 中 @apps[webapps] 里补充 appid
+
+叁 文件布局（数据与代码已分离，改东西前先看这里）
+	data/languages.js      语言代码表 langc
+	data/app-icons.js      图标映射 icon、不可最大化 nomax、不可最小化 nomin
+	data/context-menus.js  右键菜单注册表 cms（配合 showcm 使用）
+	data/notices.js        通知/对话框注册表 nts（配合 shownotice 使用）
+	data/dock-panels.js    任务栏弹出面板注册表 dps
+	data/tasks.js          任务管理器进程表 taskmgrTasks
+	scripts/i18n-boot.js   lang() / isTauriApp() 等启动期函数
+	scripts/edge-address.js Edge 地址栏输入分类与 URL 归一化
+	scripts/startup.js     本地模块就绪后启动 shell，不等待可选 CDN
+	scripts/terminal-eggs.js 终端彩蛋（matrix / snow / dance / starwars）
+	module/shared.js       apps.js 内部的共享实现（createHistoryStack / createWebapp）
+	styles/tokens.css      设计令牌（圆角尺度、时长、缓动）
+
+肆 脚本加载顺序是承重的，改 desktop.html 末尾的 script 顺序前务必读懂：
+	languages → i18n-boot → app-icons → context-menus → notices → dock-panels
+	→ tasks → edge-address → shared → apps → tauri_api → desktop.js → window → widget → tab → startup
+	原因：cms 与 nts 的值里写着 ${lang(...)} 和 ${isTauriApp()}，
+	在对象字面量**求值时**就会执行，所以必须晚于 i18n-boot；
+	而 desktop.js 的登录完成流程会通过 shownotice('about') 读取 nts，
+	所以 notices 仍必须早于 desktop.js。
+
+伍 CSS 主题的坑：:root 里 25 个变量中有 22 个是主题相关的（:root.dark 会覆盖）。
+	不要拿 --text / --bg / --hr 去替换硬编码的 #000 / #fff / #ccc ——
+	那会改变暗色模式下的表现。主题无关、可放心引用的只有 --theme-1 / --theme-2 / --href。
+
+陆 改完请跑回归：node tools/regress/run.mjs
+	它会对比纯净 main 与当前工作树的行为快照（29 个窗口、右键菜单、对话框、
+	终端命令、逐元素计算样式、localStorage），任何非预期差异都会列出来。
+
+欢迎补充~
+-->
+<!DOCTYPE html>
+<html lang="zh-CN" class="mica" style="touch-action: auto">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta name="format-detection" content="telephone=no" />
+
+	<link rel="stylesheet" href="./desktop.css">
+	<link rel="stylesheet" href="bootstrap-icons.css">
+	<!-- Apps style -->
+	<link rel="stylesheet" href="apps/style/setting.css">
+	<link rel="stylesheet" href="apps/style/explorer.css">
+	<link rel="stylesheet" href="apps/style/calc.css">
+	<link rel="stylesheet" href="apps/style/about.css">
+	<link rel="stylesheet" href="apps/style/notepad.css">
+	<link rel="stylesheet" href="apps/style/terminal.css">
+	<link rel="stylesheet" href="apps/style/edge.css">
+	<link rel="stylesheet" href="apps/style/camera.css">
+	<link rel="stylesheet" href="apps/style/pythonEditor.css">
+	<link rel="stylesheet" href="apps/style/run.css">
+	<link rel="stylesheet" href="apps/style/whiteboard.css">
+	<link rel="stylesheet" href="apps/style/imgviewer.css">
+	<link rel="stylesheet" href="apps/style/code-editor.css">
+	<link rel="stylesheet" href="apps/style/mediaplayer.css">
+	<link rel="stylesheet" href="apps/style/defender.css">
+	<link rel="stylesheet" href="apps/style/taskmgr.css">
+	<link rel="stylesheet" href="apps/style/msstore.css">
+	<link rel="stylesheet" href="apps/style/word.css">
+	<link rel="stylesheet" href="apps/style/copilot.css">
+	<link rel="stylesheet" href="apps/style/recognition.css">
+	
+	
+	<link rel="manifest" href="pwa/manifest.json">
+	<link rel="shortcut icon" href="./pwa/logo.png" type="image/x-icon">
+	<link rel="stylesheet" href="apps/style/login.css">
+	<!-- 模块 -->
+	<link rel="stylesheet" href="module/widget.css">
+	<link rel="stylesheet" href="module/tab.css">
+
+	
+	<!-- 风水宝地，不可移动 -->
+	<script src="./scripts/jq.min.js"></script>
+	<script src="./scripts/jquery.i18n.properties.js"></script>
+
+	<base target="_blank">
+
+	<title>Win12 网页版</title>
+	<meta name="description" content="Win12 网页版是一个在线体验 Windows 12 操作系统的开源项目, 使用 HTML、CSS 和 JavaScript 模拟 Windows 12 操作系统的界面与交互。">
+</head>
+
+
+<body>
+	<audio src="media/startup.mp3" id="startup-music"></audio>
+	<div id="loadback" style="background-color:#000;width:100%;height:100%;z-index:105;position:absolute;transition:opacity 200ms, visibility 0s 200ms;cursor: none;/*加载界面隐藏鼠标指针*/">
+		<style>
+			#loadback.hide {
+				opacity: 0;
+				visibility: hidden;
+			}
+			loading>svg>circle:last-child {
+				stroke: #fff;
+				fill: none;
+				stroke-width: 2px;
+				stroke-linecap: round;
+				animation: spin-infinite 2.5s linear 0s infinite normal none running;
+				transform-origin: 50% 50%;
+				transition: all .2s ease-in-out 0s;
+			}
+			loading>svg {
+				background-color: #00000000;
+				border-radius: 50%;
+			}
+			@keyframes spin-infinite {
+				0% {
+					stroke-dasharray: .01px, 43.97px;
+					transform: rotate(0deg)
+				}
+				50% {
+					stroke-dasharray: 21.99px, 21.99px;
+					transform: rotate(450deg)
+				}
+				to {
+					stroke-dasharray: .01px, 43.97px;
+					transform: rotate(3turn)
+				}
+			}
+		</style>
+		<svg id="loadbacksvg" viewBox="21,18,320,315" style="transition: 1s;opacity: 0;position: absolute;left: calc(50% - 125px);top:20%;" width="250" height="250" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" overflow="hidden"><defs><filter id="fx0" x="-10%" y="-10%" width="120%" height="120%" filterUnits="userSpaceOnUse" primitiveUnits="userSpaceOnUse"><feComponentTransfer color-interpolation-filters="sRGB"><feFuncR type="discrete" tableValues="0 0"/><feFuncG type="discrete" tableValues="0 0"/><feFuncB type="discrete" tableValues="0 0"/><feFuncA type="linear" slope="0.4" intercept="0"/></feComponentTransfer><feGaussianBlur stdDeviation="5.81006 5.77778"/></filter><filter id="fx1" x="-10%" y="-10%" width="120%" height="120%" filterUnits="userSpaceOnUse" primitiveUnits="userSpaceOnUse"><feComponentTransfer color-interpolation-filters="sRGB"><feFuncR type="discrete" tableValues="0 0"/><feFuncG type="discrete" tableValues="0 0"/><feFuncB type="discrete" tableValues="0 0"/><feFuncA type="linear" slope="0.4" intercept="0"/></feComponentTransfer><feGaussianBlur stdDeviation="5.77778 5.77778"/></filter><filter id="fx2" x="-10%" y="-10%" width="120%" height="120%" filterUnits="userSpaceOnUse" primitiveUnits="userSpaceOnUse"><feComponentTransfer color-interpolation-filters="sRGB"><feFuncR type="discrete" tableValues="0 0"/><feFuncG type="discrete" tableValues="0 0"/><feFuncB type="discrete" tableValues="0 0"/><feFuncA type="linear" slope="0.4" intercept="0"/></feComponentTransfer><feGaussianBlur stdDeviation="7.36593 7.36776"/></filter><filter id="fx3" x="-10%" y="-10%" width="120%" height="120%" filterUnits="userSpaceOnUse" primitiveUnits="userSpaceOnUse"><feComponentTransfer color-interpolation-filters="sRGB"><feFuncR type="discrete" tableValues="0 0"/><feFuncG type="discrete" tableValues="0 0"/><feFuncB type="discrete" tableValues="0 0"/><feFuncA type="linear" slope="0.521569" intercept="0"/></feComponentTransfer><feGaussianBlur stdDeviation="6 6"/></filter><clipPath id="clip4"><rect x="468" y="169" width="362" height="356"/></clipPath><clipPath id="clip5"><rect x="-6.53632" y="-6.5" width="101.061" height="108"/></clipPath><clipPath id="clip6"><rect x="0" y="0" width="90" height="95"/></clipPath><linearGradient x1="525.053" y1="357.279" x2="645.947" y2="458.721" gradientUnits="userSpaceOnUse" spreadMethod="reflect" id="fill7"><stop offset="0" stop-color="#775CFE"/><stop offset="0.18" stop-color="#775CFE"/><stop offset="0.83" stop-color="#2473DC"/><stop offset="1" stop-color="#2473DC"/></linearGradient><clipPath id="clip8"><rect x="-6.5" y="-6.5" width="125" height="115"/></clipPath><clipPath id="clip9"><rect x="0" y="0" width="112" height="105"/></clipPath><linearGradient x1="511.623" y1="213.086" x2="642.377" y2="368.914" gradientUnits="userSpaceOnUse" spreadMethod="reflect" id="fill10"><stop offset="0" stop-color="#C45DD5"/><stop offset="0.18" stop-color="#C45DD5"/><stop offset="0.69" stop-color="#A266E4"/><stop offset="1" stop-color="#A266E4"/></linearGradient><clipPath id="clip11"><rect x="-7.53336" y="-7.53522" width="128.067" height="124.08"/></clipPath><clipPath id="clip12"><rect x="0" y="0" width="113" height="107"/></clipPath><linearGradient x1="617.245" y1="376.897" x2="771.755" y2="466.103" gradientUnits="userSpaceOnUse" spreadMethod="reflect" id="fill13"><stop offset="0" stop-color="#61A2F9"/><stop offset="0.18" stop-color="#61A2F9"/><stop offset="0.91" stop-color="#3159D7"/><stop offset="1" stop-color="#3159D7"/></linearGradient><clipPath id="clip14"><rect x="-6.5" y="-6.5" width="130" height="137"/></clipPath><clipPath id="clip15"><rect x="0" y="0" width="118" height="124"/></clipPath><linearGradient x1="643.458" y1="199.26" x2="791.542" y2="375.74" gradientUnits="userSpaceOnUse" spreadMethod="reflect" id="fill16"><stop offset="0" stop-color="#8A66FE"/><stop offset="0.19" stop-color="#8A66FE"/><stop offset="1" stop-color="#2473DC"/></linearGradient></defs><g clip-path="url(#clip4)" transform="translate(-468 -169)"><g clip-path="url(#clip5)" filter="url(#fx0)" transform="matrix(1.98889 0 0 2 499 310)"><g clip-path="url(#clip6)" transform="translate(2.84217e-14 0)"><path d="M71.8132 77.0858 26.981 77.0858C22.0288 77.0858 18.0143 73.1038 18.0143 68.1917L18.0143 19.9983C27.6747 18.8595 31.5867 17.632 40.5532 18.2527 49.5197 18.8734 62.1334 21.5426 71.8132 23.7225L71.8132 77.0858Z" fill="#FF0000" fill-rule="evenodd"/></g></g><path d="M639 467 549.834 467C539.984 467 532 459.036 532 449.212L532 352.825C551.213 350.547 558.994 348.093 576.827 349.334 594.661 350.575 619.748 355.914 639 360.273L639 467Z" fill="url(#fill7)" fill-rule="evenodd"/><g clip-path="url(#clip8)" filter="url(#fx1)" transform="matrix(2 0 0 2 468 189)"><g clip-path="url(#clip9)"><path d="M17.9142 86.9142 17.9142 29.4144C17.9142 23.063 23.0408 17.9142 29.3649 17.9142L87.6795 17.9142C91.3242 35.2574 94.0833 41.1006 93.9062 52.6006 93.729 64.1006 89.0466 75.4763 86.6168 86.9142 70.0706 84.6993 65.4194 82.6717 53.5245 82.4844 41.5652 82.296 29.7843 85.4376 17.9142 86.9142Z" fill="#FF0000" fill-rule="evenodd"/></g></g><path d="M501 360 501 245C501 232.298 511.253 222 523.901 222L640.531 222C647.82 256.686 653.338 268.373 652.984 291.373 652.63 314.373 643.265 337.124 638.405 360 605.313 355.57 596.01 351.515 572.221 351.14 548.302 350.764 524.74 357.047 501 360Z" fill="url(#fill10)" fill-rule="evenodd"/><g clip-path="url(#clip11)" filter="url(#fx2)" transform="matrix(1.99115 0 0 1.99065 579 312)"><g clip-path="url(#clip12)"><path d="M90.4862 22.6918 90.4862 74.1822C90.4862 79.8698 85.8764 84.4806 80.1899 84.4806L28.7099 84.4806C25.6989 69.2628 22.7773 68.0805 22.6877 54.0451 22.5938 39.3223 26.7026 33.1429 28.7099 22.6918L90.4862 22.6918Z" fill="#FF0000" fill-rule="evenodd"/></g></g><path d="M762 360 762 462.5C762 473.822 752.821 483 741.499 483L638.994 483C632.999 452.707 627.181 450.353 627.003 422.414 626.816 393.105 634.997 380.805 638.994 360L762 360Z" fill="url(#fill13)" fill-rule="evenodd"/><g clip-path="url(#clip14)" filter="url(#fx3)" transform="matrix(2 0 0 2 594 169)"><g clip-path="url(#clip15)"><path d="M18.7308 18.4142 86.1097 18.4142C93.5523 18.4142 99.5858 24.4663 99.5858 31.932L99.5858 99.5195C79.053 102.327 71.9105 106.654 58.5202 105.134L18.7308 99.5195C21.1161 80.9213 23.4541 75.8406 23.5014 62.3231 23.5527 47.6868 20.321 33.0505 18.7308 18.4142Z" fill="#FF0000" fill-rule="evenodd"/></g></g><path d="M639 203 769.833 203C784.285 203 796 214.752 796 229.248L796 360.486C756.13 365.937 742.262 374.34 716.261 371.389L639 360.486C643.632 324.373 648.171 314.508 648.263 288.26 648.363 259.84 642.088 231.42 639 203Z" fill="url(#fill16)" fill-rule="evenodd"/></g></svg>
+		<loading id="loadbackloading" style="transition:1s;opacity:0;">
+			<svg style="position:absolute;left:calc(50% - 25px);top:72%;" width="50px" height="50px" viewBox="0 0 16 16">
+				<circle cx="8px" cy="8px" r="7px"></circle>
+			</svg>
+			<p id="loadbackupdate" style="position:absolute;top:calc(72% + 55px);left:0;width:100%;text-align:center;color:#fff;font-size: 25px;display:none;" data-i18n="updating">休对故人思故国，且将新火试新茶<br>正在更新</p>
+		</loading>
+		<script>
+			setTimeout(() => {
+				$('#loadbacksvg')[0].style.opacity = 1;
+				$('#loadbackloading')[0].style.opacity = 1;
+			}, 100);
+		</script>
+	</div>
+	<div class="container" id="orientation-warning" role="dialog" aria-modal="true" aria-labelledby="orientation-title" tabindex="-1">
+        <div class="image-container">
+            <img src="icon/ls.svg" alt="半透明图标" class="svg translucent">
+            <img src="icon/ls.svg" alt="旋转图标" class="svg rotating">
+        </div>
+        <div id="orientation-title" data-i18n="cover-hp">横屏以获得最佳体验</div>
+        <button class="orientation-close-btn" onclick="dismissOrientation();" data-i18n="cover-hp-close">继续使用竖屏</button>
+    </div>
+	<div id="loginback" role="dialog" aria-modal="true" aria-label="登录" tabindex="-1">
+		<div class="user"></div>
+		<div class="name">Administrator</div>
+		
+		<input id="login-password" type="password" autocomplete="current-password" placeholder="密码" onkeydown="if(event.keyCode==13){win12LoginSubmit();}">
+		<div id="login-error"></div>
+		<button id="login" type="button" onclick="win12LoginSubmit();" data-i18n="login">
+			登录
+		</button>
+		<div id="login-welc" style="opacity: 0;">
+			<loading>
+				<svg width="50px" height="50px" viewBox="0 0 16 16">
+					<circle cx="8px" cy="8px" r="6px"></circle>
+				</svg>
+			</loading>
+			<p style="font-size: 22px;
+            color: #fff;
+			margin-top: 5px;
+            text-align: center;" data-i18n="welcome">欢迎</p>
+		</div>
+		<list class="langselect new">
+			<span class="text" style="font-size: 22px;"><i class="bi bi-globe2"></i></span>
+			<a class="a def" onclick="
+				if(navigator.language in langc)
+					localStorage.setItem('lang',langc[navigator.language]);
+				else
+					localStorage.setItem('lang','en-US');
+				window.location.href='';">Default language of the browser</a>
+			<a class="a zh-CN" onclick="localStorage.setItem('lang','zh-CN');window.location.href='';">简体中文</a>
+			<a class="a zh-TW" onclick="localStorage.setItem('lang','zh-TW');window.location.href='';">繁體中文</a>
+			<a class="a en" onclick="localStorage.setItem('lang','en');window.location.href='';">English</a>
+		</list>
+		<a class="power" onclick="$(this).addClass('show')">
+			<!-- <i class="bi bi-translate" onclick="
+				if(localStorage.getItem('lang')&&localStorage.getItem('lang')=='en'){
+					setData('lang','zh_cn');
+				}else{
+					setData('lang','en');
+				}
+				window.location.href='';
+				" win12_title="Toggle language"></i> -->
+			<i class="bi bi-power" onclick="setTimeout(() => {window.location='shutdown.html';}, 200);" win12_title="关机"></i>
+			<i class="bi bi-arrow-counterclockwise" onclick="setTimeout(() => {window.location='reload.html';}, 200);" win12_title="重启"></i>
+		</a>
+	</div>
+
+
+	<div id="voiceBall" class="draggable no-drag" style="top: 80%;left: 80%;">
+        <div class="rainbow-container-main">
+            <div class="rainbow-container">
+                <div class="green"></div>
+                <div class="pink"></div>
+                <div class="blue"></div>
+            </div>
+        </div>
+    </div>
+
+
+	<div id="start-menu">
+		<!-- 开始菜单 -->
+		<div id="startmenu-l">
+			<div id="startmenu-user">
+				<svg viewBox="0,0,257,344" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" overflow="hidden"><defs><clipPath id="user-clip0"><rect x="382" y="195" width="257" height="344" /></clipPath><linearGradient x1="351.462" y1="233.56" x2="669.496" y2="500.422" gradientUnits="userSpaceOnUse" spreadMethod="reflect" id="user-fill1"><stop offset="0" stop-color="#A964C8" /><stop offset="0.35" stop-color="#A964C8" /><stop offset="0.87" stop-color="#2D8AD5" /><stop offset="1" stop-color="#2D8AD5" /></linearGradient><linearGradient x1="351.462" y1="233.56" x2="669.496" y2="500.422" gradientUnits="userSpaceOnUse" spreadMethod="reflect" id="user-fill2"><stop offset="0" stop-color="#A964C8" /><stop offset="0.35" stop-color="#A964C8" /><stop offset="0.87" stop-color="#2D8AD5" /><stop offset="1" stop-color="#2D8AD5" /></linearGradient></defs><g clip-path="url(#user-clip0)" transform="translate(-382 -195)"><path d="M637.755 433.872C642.215 515.221 579.577 537.983 508.011 537.983 436.444 537.983 376.676 507.833 383.513 437.11 383.109 425.234 389.59 414.133 398.634 409.891 413.82 402.768 444.753 402.936 507.484 402.997 570.214 403.058 609.164 402.279 621.521 407.947 633.878 413.614 638.011 424.609 637.755 433.872Z" fill="url(#user-fill1)" fill-rule="evenodd" /><path d="M422 285C422 235.847 461.623 196 510.5 196 559.377 196 599 235.847 599 285 599 334.153 559.377 374 510.5 374 461.623 374 422 334.153 422 285Z" fill="url(#user-fill2)" fill-rule="evenodd" /></g></svg>
+			</div>
+			<p style="width: 100%;text-align: center;margin: -50px 0 20px 0;font-size: 30px;">Administrator</p>
+			<input type="text" class="input" win12_title="搜索" placeholder="在这里输入你要搜索的内容" onfocus="hide_startmenu();
+				$('#search-btn').addClass('show');
+				$('#search-win').addClass('show-begin');
+				setTimeout(() => {
+					$('#search-win').addClass('show');
+				}, 0);
+				$('#search-input').focus();" data-i18n-attr="placeholder" data-i18n-key="sch-ph">
+			<input-before class="bi bi-search"></input-before>
+			<list>
+				<p class="text" data-i18n="stmenu-avlb">可用</p>
+				<a oncontextmenu="return showcm(event, 'smlapp', ['setting', '设置'])" onclick="openapp('setting');hide_startmenu();">
+					<img src="icon/setting.svg">
+					<p data-i18n="setting.name">设置</p>
+				</a>
+				<a oncontextmenu="return showcm(event, 'smlapp', ['explorer', '文件资源管理器'])" onclick="openapp('explorer');hide_startmenu();">
+					<img src="icon/explorer.svg">
+					<p data-i18n="explorer.name">文件资源管理器</p>
+				</a>
+				<a oncontextmenu="return showcm(event, 'smlapp', ['calc', '计算器'])" onclick="openapp('calc');hide_startmenu();">
+					<img src="icon/calc.svg">
+					<p data-i18n="calc.name">计算器</p>
+				</a>
+				<a oncontextmenu="return showcm(event, 'smlapp', ['run', '运行'])" onclick="openapp('run');hide_startmenu();">
+					<img src="icon/run.svg">
+					<p data-i18n="run.name">运行</p>
+				</a>
+				<a oncontextmenu="return showcm(event, 'smlapp', ['about', getAboutAppTitle()])" onclick="openapp('about');hide_startmenu();">
+					<img src="icon/about.svg">
+					<p class="about-app-title" data-i18n="about.name">关于 Win12 网页版</p>
+				</a>
+				<a oncontextmenu="return showcm(event, 'smlapp', ['taskmgr', '任务管理器'])" onclick="openapp('taskmgr');hide_startmenu();">
+					<img src="icon/taskmgr.png">
+					<p data-i18n="taskmgr.name">任务管理器</p>
+				</a>
+				<a oncontextmenu="return showcm(event, 'smlapp', ['notepad', '记事本'])" onclick="openapp('notepad');hide_startmenu();">
+					<img src="icon/notepad.svg">
+					<p data-i18n="notepad.name">记事本</p>
+				</a>
+				<a oncontextmenu="return showcm(event, 'smlapp', ['copilot', 'AI Chat'])" onclick="shownotice('error_aichat')">
+					<img src="icon/copilot.svg">
+					<p>AI Chat</p>
+				</a>
+				<a oncontextmenu="return showcm(event, 'smlapp', ['edge', 'Microsoft Edge'])" onclick="openapp('edge');hide_startmenu();">
+					<img src="icon/edge.svg">
+					<p data-i18n="edge.name">Microsoft Edge</p>
+				</a>
+				<a oncontextmenu="return showcm(event, 'smlapp', ['msstore', 'Microsoft Store'])" onclick="openapp('msstore');hide_startmenu();">
+					<img src="icon/msstore.svg">
+					<p>Microsoft Store</p>
+				</a>
+				<a oncontextmenu="return showcm(event, 'smlapp', ['camera', '相机'])" onclick="apps.camera.notice();hide_startmenu()">
+					<img src="icon/camera.svg">
+					<p data-i18n="camera.name">相机</p>
+				</a>
+				<a oncontextmenu="return showcm(event, 'smlapp', ['pythonEditor', 'Python Editor'])" onclick="openapp('pythonEditor');hide_startmenu()">
+					<img src="icon/pythonEditor.svg">
+					<p>Python Editor</p>
+				</a>
+				<a oncontextmenu="return showcm(event, 'smlapp', ['python', 'Python 3.11.2'])" onclick="openapp('python');hide_startmenu()">
+					<img src="icon/python.svg">
+					<p>Python 3.11.2</p>
+				</a>
+				<a oncontextmenu="return showcm(event, 'smlapp', ['terminal', '终端'])" onclick="openapp('terminal');hide_startmenu();">
+					<img src="icon/terminal.svg">
+					<p data-i18n="terminal.name">终端</p>
+				</a>
+				<a oncontextmenu="return showcm(event, 'smlapp', ['whiteboard', 'Whiteboard'])" onclick="openapp('whiteboard');hide_startmenu();">
+					<img src="icon/whiteboard.svg">
+					<p>Whiteboard</p>
+				</a>
+				<a oncontextmenu="return showcm(event, 'smlapp', ['defender', 'Windows 安全中心'])" onclick="openapp('defender');hide_startmenu();">
+					<img src="icon/defender.svg">
+					<p data-i18n="defender.name">Windows 安全中心</p>
+				</a>
+				<a oncontextmenu="return showcm(event, 'smlapp', ['word', 'Word Preview'])" onclick="openapp('word');hide_startmenu();">
+					<img src="icon/word.svg">
+					<p data-i18n="word.name">Word Preview</p>
+				</a>
+				<p class="text" data-i18n="stmenu-webapp">Web 应用</p>
+				<a oncontextmenu="return showcm(event, 'smlapp', ['minesweeper', 'Windows 12 minesweeper'])" onclick="openapp('minesweeper');hide_startmenu()">
+					 <img src="icon/minesweeper.svg">
+				  <p>扫雷</p>
+			    </a>
+				<a oncontextmenu="return showcm(event, 'smlapp', ['bilibili', '哔哩哔哩'])" onclick="openapp('bilibili');hide_startmenu();">
+					<img src="icon/bilibili.png">
+					<p data-i18n="bilibili.name">哔哩哔哩</p>
+				</a>
+				<a oncontextmenu="return showcm(event, 'smlapp', ['vscode', 'Visual Studio Code'])" onclick="openapp('vscode');hide_startmenu();">
+					<img src="icon/vscode.png">
+					<p>Visual Studio Code</p>
+				</a>
+				<a oncontextmenu="return showcm(event, 'smlapp', ['wsa', '适用于 Android™️ 的 Windows 子系统'])" onclick="openapp('wsa');hide_startmenu();">
+					<img src="icon/wsa.png">
+					<p data-i18n="wsa.name">适用于 Android™ 的 Windows 子系统</p>
+				</a>
+				<a oncontextmenu="return showcm(event, 'smlapp', ['windows12', 'Windows 12'])" onclick="openapp('windows12');hide_startmenu();">
+					<img src="icon/logo.svg">
+					<p>Windows 12</p>
+				</a>
+			</list>
+		</div>
+		<div id="startmenu-r">
+			<div class="row1">
+				<div class="folder">
+					<a class="a sm-app enable"
+						onclick="openapp('explorer');apps.explorer.goto('C:/用户/Administrator/文档');hide_startmenu();">
+						<img src="icon/folder/docs.svg">
+						<p data-i18n="folder.doc">文档</p>
+					</a>
+					<a class="a sm-app enable"
+						onclick="openapp('explorer');apps.explorer.goto('C:/用户/Administrator/图片');hide_startmenu();">
+						<img src="icon/folder/pics.svg">
+						<p data-i18n="folder.pic">图片</p>
+					</a>
+					<a class="a sm-app enable"
+						onclick="openapp('explorer');apps.explorer.goto('C:/用户/Administrator/音乐');hide_startmenu();">
+						<img src="icon/folder/music.svg">
+						<p data-i18n="folder.mus">音乐</p>
+					</a>
+				</div>
+				<div class="tool">
+					<p style="font-size: 30px;margin: 12px 5px 2px 0;line-height:1;" class="time">12:00</p>
+					<p class="date" style="opacity: 0.5;">星期一，2368 年 13 月 34 日</p>
+					<div class="pw">
+						<a class="a btn btn-icon big" win12_title="切换全屏" onclick="
+							if($('#start-menu').hasClass('max')){
+								$('#start-menu>#startmenu-r>.row1>.tool>.pw>.btn-icon.big').html('<i class=\'bi bi-arrows-angle-expand\'></i>');
+								$('#start-menu').removeClass('max');
+							}else{
+								$('#start-menu>#startmenu-r>.row1>.tool>.pw>.btn-icon.big').html('<i class=\'bi bi-arrows-angle-contract\'></i>');
+								$('#start-menu').addClass('max');
+							}
+							stop(event)
+						">
+							<i class="bi bi-arrows-angle-expand"></i>
+						</a>
+						<a class="a btn btn-icon power" win12_title="电源" onclick="$(this).toggleClass('show');">
+							<span class="bi bi-power"></span>
+							<i class="bi bi-power" onclick="$('#start-menu').removeClass('show');
+							setTimeout(() => {window.location='shutdown.html';},200);" win12_title="关机"></i>
+							<i class="bi bi-arrow-counterclockwise" onclick="$('#start-menu').removeClass('show');
+							setTimeout(() => {window.location='reload.html';},200);" win12_title="重启"></i>
+						</a>
+						
+					</div>
+				</div>
+			</div>
+			<div class="pinned">
+				<!-- 已固定 卡片 -->
+				<div class="title">
+					<p data-i18n="stmenu-pinned">已固定</p>
+					<div>
+						<a class="a more-btn"><span data-i18n="stmenu-allapp">所有应用</span> <i class="bi bi-chevron-right"></i></a>
+					</div>
+				</div>
+				<div class="apps">
+					<a class="a sm-app enable calc" onclick="openapp('calc');hide_startmenu();" oncontextmenu="return showcm(event,'smapp',['calc','计算器'])">
+						<img src="icon/calc.svg">
+						<p data-i18n="calc.name">计算器</p>
+					</a>
+					<a class="a sm-app enable camera" onclick="apps.camera.notice();hide_startmenu();" oncontextmenu="return showcm(event,'smapp',['camera', '相机'])">
+						<img src="icon/camera.svg">
+						<p data-i18n="camera.name">相机</p>
+					</a>
+					<a class="a sm-app enable" onclick="shownotice('feedback');">
+						<img src="icon/feedback.svg">
+						<p data-i18n="feedback.name">反馈中心</p>
+					</a>
+					<a class="a sm-app enable about" onclick="openapp('about');hide_startmenu();" oncontextmenu="return showcm(event,'smapp',['about', getAboutAppTitle()])">
+						<img src="icon/about.svg">
+						<p class="about-app-title" data-i18n="about.name">关于 Win12 网页版</p>
+					</a>
+					<a class="a sm-app enable explorer" onclick="openapp('explorer');hide_startmenu();" oncontextmenu="return showcm(event,'smapp',['explorer','文件资源管理器'])">
+						<img src="icon/explorer.svg">
+						<p data-i18n="explorer.name">文件资源管理器</p>
+					</a>
+					<a class="a sm-app enable notepad" onclick="openapp('notepad');hide_startmenu();" oncontextmenu="return showcm(event,'smapp',['notepad','记事本'])">
+						<img src="icon/notepad.svg">
+						<p data-i18n="notepad.name">记事本</p>
+					</a>
+					<a class="a sm-app enable setting" onclick="openapp('setting');hide_startmenu();" oncontextmenu="return showcm(event,'smapp',['setting','设置'])">
+						<img src="icon/setting.svg">
+						<p data-i18n="setting.name">设置 </p>
+					</a>
+					<a class="a sm-app enable defender" onclick="openapp('defender');hide_startmenu();" oncontextmenu="return showcm(event,'smapp',['defender','Windows 安全中心'])">
+						<img src="icon/defender.svg">
+						<p data-i18n="defender.name">Windows 安全中心</p>
+					</a>
+					<a class="a sm-app enable msstore" onclick="openapp('msstore');hide_startmenu();" oncontextmenu="return showcm(event, 'smapp', ['msstore', 'Microsoft Store'])">
+						<img src="icon/msstore.svg">
+						<p>Microsoft Store</p>
+					</a>
+					<a class="a sm-app enable edge" onclick="openapp('edge');hide_startmenu();" oncontextmenu="return showcm(event,'smapp',['edge','Microsoft Edge'])">
+						<img src="icon/edge.svg">
+						<p data-i18n="edge.name">Microsoft Edge</p>
+					</a>
+					<a class="a sm-app enable windows12" onclick="openapp('windows12');hide_startmenu();" oncontextmenu="return showcm(event,'smapp',['windows12','Windows 12'])">
+						<img src="icon/logo.svg">
+						<p>Windows 12</p>
+					</a>
+					<a class="a sm-app enable terminal" onclick="openapp('terminal');hide_startmenu();" oncontextmenu="return showcm(event,'smapp',['terminal','终端'])">
+						<img src="icon/terminal.svg">
+						<p data-i18n="terminal.name">终端</p>
+					</a>
+				</div>
+			</div>
+			<div class="tuijian">
+				<div class="title">
+					<p data-i18n="stmenu-tj">推荐的项目</p>
+					<div>
+						<a class="a more-btn" onclick="openapp('explorer');apps.explorer.goto('C:/用户/Administrator/推荐的项目');hide_startmenu();"><span data-i18n="more">更多</span> <i class="bi bi-chevron-right"></i></a>
+					</div>
+				</div>
+				<div class="apps">
+					<a class="a tj-obj act"><img src="icon/files/ppt.png"><div><p data-i18n="stmenu-tj-f1">科学地使用瓶盖.pptx</p><p data-i18n="stmenu-tj-t1">5 分钟前</p></div></a>
+					<a class="a tj-obj act"><img src="icon/files/img.png"><div><p data-i18n="stmenu-tj-f2">可口可乐瓶盖.jpg</p><p data-i18n="stmenu-tj-t2">7 分钟前</p></div></a>
+					<a class="a tj-obj act"><img src="icon/files/img.png"><div><p data-i18n="stmenu-tj-f3">瓶盖构造图.jpg</p><p data-i18n="stmenu-tj-t3">16 分钟前</p></div></a>
+					<a class="a tj-obj act" onclick="openapp('word');apps.word.edit();hide_startmenu();"><img src="icon/files/word.png"><div><p data-i18n="stmenu-tj-f4">瓶盖的构造及作用.docx</p><p data-i18n="stmenu-tj-t4">24 分钟前</p></div></a>
+					<a class="a tj-obj act"><img src="icon/files/excel.png"><div><p data-i18n="stmenu-tj-f5">可口可乐瓶盖厚度.xlsx</p><p data-i18n="stmenu-tj-t5">35 分钟前</p></div></a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="search-win">
+		<!-- 搜索框 -->
+		<input type="text" class="input" placeholder="在这里输入你要搜索的内容" id="search-input"
+			oninput="apps.search.search(this.value.length)" data-i18n-attr="placeholder" data-i18n-key="sch-ph">
+		<input-before class="bi bi-search"></input-before>
+		<div class="tab">
+			<a class="now" data-i18n="all">全部</a><a data-i18n="sch-app">应用</a><a data-i18n="sch-doc">文档</a><a data-i18n="sch-web">网页</a>
+			<a data-i18n="sch-setting">设置</a>
+			<a data-i18n="sch-folder">文件夹</a><a data-i18n="sch-photo">照片</a>
+		</div>
+		<div class="ans">
+			<div class="list">
+				<list>
+					<p class="text" data-i18n="sch-tj">推荐</p>
+					<a onclick="openapp('setting');$('#search-btn').removeClass('show');
+					$('#search-win').removeClass('show');
+					setTimeout(() => {
+						$('#search-win').removeClass('show-begin');
+					}, 200);">
+						<img src="icon/setting.svg">
+						<p data-i18n="setting.name">设置</p>
+					</a>
+					<a onclick="openapp('about');$('#search-btn').removeClass('show');
+					$('#search-win').removeClass('show');
+					setTimeout(() => {
+						$('#search-win').removeClass('show-begin');
+					}, 200);">
+						<img src="icon/about.svg">
+						<p class="about-app-title" data-i18n="about.name">关于 Win12 网页版</p>
+					</a>
+				</list>
+			</div>
+			<div class="view">
+				<div class="fname">
+					<i class="bi bi-search"></i>
+					<p class="name"></p>
+					<p class="type"></p>
+				</div>
+				<hr>
+				<div class="option">
+					<list>
+						<a class="a" data-i18n="sch-open">打开</a>
+						<a class="a" data-i18n="sch-opfl">打开文件所在位置</a>
+						<a class="a" data-i18n="sch-cpp">复制路径</a>
+					</list>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="widgets">
+		<div class="widgets">
+			<div class="bar">
+				<p class="tit" data-i18n="widget">小组件</p>
+				<button onclick="shownotice('widgets')" class="a act btn btn-icon big"
+					style="background: linear-gradient(100deg, var(--theme-1), var(--theme-2));color:#fff;"
+					win12_title="添加"><i class="bi bi-plus-lg"></i></button>
+			</div>
+			<div class="content">
+				<div class="template">
+					<div class="calc">
+						<div class="wg calc template">
+							<div class="titbar">
+								<a win12_title="更多" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)" class="a more notip" onclick="$('.wg.calc>.titbar>.menu').toggleClass('show')"><i class="bi bi-three-dots"></i></a>
+								<div class="menu">
+									<a win12_title="打开应用" class="a img openapp" onclick="$('.wg.calc>.titbar>.menu').removeClass('show');hide_widgets();openapp('calc')" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)">
+										<img src="icon/calc.svg">
+									</a>
+									<a class="a move" win12_title="移动" onmouseenter="showdescp(event)" onclick=" hidedescp(event); if (!edit_mode) { editMode(); }" onmouseleave="hidedescp(event)"><i class="bi bi-arrows-move"></i></a>
+									<a class="a addtodt" win12_title="添加到桌面" onmouseenter="showdescp(event)" onclick="hidedescp(event); widgets.widgets.remove('calc'); widgets.widgets.addToDesktop('calc');" onmouseleave="hidedescp(event)"><i class="bi bi-box-arrow-in-right"></i></a>
+									<a class="a delete" win12_title="删除" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)" onclick="hidedescp(event); $('.wg.calc>.titbar>.menu').removeClass('show'); widgets.widgets.remove('calc');"><i class="bi bi-trash"></i></a>
+								</div>
+							</div>
+							<div class="content" onmousedown="widgetsMove(this.parentElement, event);" ontouchstart="widgetsMove(this.parentElement, event);">
+								<div class="container">
+									<input id="calc-input-widgets" readonly="true" value="0" onkeydown="
+									switch (event.key) {
+										case '+':
+											widgetCalculator.func_key(1);
+											widgetCalculator.check($('*:not(.template)>*>.wg.calc>.content>.jia')[0]);
+											break;
+										case '-':
+											widgetCalculator.func_key(2);
+											widgetCalculator.check($('*:not(.template)>*>.wg.calc>.content>.jian')[0]);
+											break;
+										case '*':
+											widgetCalculator.func_key(3);
+											widgetCalculator.check($('*:not(.template)>*>.wg.calc>.content>.cheng')[0]);
+											break;
+										case '/':
+											widgetCalculator.func_key(4);
+											widgetCalculator.check($('*:not(.template)>*>.wg.calc>.content>.chu')[0]);
+											break;
+										case '=':
+											widgetCalculator.eq();
+											break;
+										case 'Enter':
+											widgetCalculator.eq();
+											break;
+										case 'Backspace':
+											widgetCalculator.backspace();
+											break;
+										case '.':
+											widgetCalculator.point();
+											break;
+									}
+									if (!isNaN(event.key)) {
+										widgetCalculator.number_key(Number(event.key));
+									}
+								"></input>
+								</div>
+								<a style="grid-area: pow;" class="b" onclick="widgetCalculator.square()">𝑥²</a>
+								<a style="grid-area: sqrt;" class="b" onclick="widgetCalculator.squareRoot()">√𝑥</a>
+								<a style="grid-area: c;" class="b" onclick="widgetCalculator.clear_num()">C</a>
+								<a style="grid-area: jia;" class="b u jia" onclick="widgetCalculator.func_key(1); widgetCalculator.check(this);">+</a>
+								<a style="grid-area: n7;" class="b" onclick="widgetCalculator.number_key(7);">7</a>
+								<a style="grid-area: n8;" class="b" onclick="widgetCalculator.number_key(8);">8</a>
+								<a style="grid-area: n9;" class="b" onclick="widgetCalculator.number_key(9);">9</a>
+								<a style="grid-area: jian;" class="b u jian" onclick="widgetCalculator.func_key(2); widgetCalculator.check(this);">-</a>
+								<a style="grid-area: n4;" class="b" onclick="widgetCalculator.number_key(4);">4</a>
+								<a style="grid-area: n5;" class="b" onclick="widgetCalculator.number_key(5);">5</a>
+								<a style="grid-area: n6;" class="b" onclick="widgetCalculator.number_key(6);">6</a>
+								<a style="grid-area: cheng;" class="b u hceng" onclick="widgetCalculator.func_key(3); widgetCalculator.check(this);">×</a>
+								<a style="grid-area: n1;" class="b" onclick="widgetCalculator.number_key(1);">1</a>
+								<a style="grid-area: n2;" class="b" onclick="widgetCalculator.number_key(2);">2</a>
+								<a style="grid-area: n3;" class="b" onclick="widgetCalculator.number_key(3);">3</a>
+								<a style="grid-area: chu;" class="b u chu" onclick="widgetCalculator.func_key(4); widgetCalculator.check(this);">÷</a>
+								<a style="grid-area: dot;" class="b" onclick="widgetCalculator.point()">.</a>
+								<a style="grid-area: n0;" class="b" onclick="widgetCalculator.number_key(0);">0</a>
+								<a style="grid-area: back;" class="b" onclick="widgetCalculator.backspace()"><i class="bi bi-backspace"></i></a>
+								<a style="grid-area: ans;" class="b ans u" onclick="if(!widgetCalculator.eq()){widgetCalculator.clear_num(); shownotice('ZeroDivision')}">=</a>
+							</div>
+						</div>
+					</div>
+					<div class="weather">
+						<div class="wg weather template">
+							<div class="titbar">
+								<a win12_title="更多" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)" class="a more notip" onclick="$('.wg.weather>.titbar>.menu').toggleClass('show')"><i class="bi bi-three-dots"></i></a>
+								<div class="menu">
+									<a class="a move" win12_title="移动" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)" onclick="hidedescp(event); if (!edit_mode) { editMode() }; "><i class="bi bi-arrows-move"></i></a>
+									<a class="a addtotb" win12_title="添加到任务栏" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)" onclick="hidedescp(event); widgets.widgets.remove('weather'); widgets.widgets.addToToolbar('weather'); "><i class="bi bi-menu-app"></i></a>
+									<a class="a addtodt" win12_title="添加到桌面" onmouseenter="showdescp(event)" onclick="hidedescp(event); widgets.widgets.remove('weather'); widgets.widgets.addToDesktop('weather'); " onmouseleave="hidedescp(event)"><i class="bi bi-box-arrow-in-right"></i></a>
+									<a class="a delete" win12_title="删除" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)" onclick="hidedescp(event); $('.wg.weather>.titbar>.menu').removeClass('show'); widgets.widgets.remove('weather'); "><i class="bi bi-trash"></i></a>
+								</div>
+							</div>
+							<div class="content" onmousedown="widgetsMove(this.parentElement, event);" ontouchstart="widgetsMove(this.parentElement, event);">
+								<img class="img" />
+								<div class="text">
+									<p class="temperature">--℃</p>
+									<p class="detail">-- 体感温度 --℃</p>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="monitor">
+						<div class="wg monitor template">
+							<div class="titbar">
+								<a win12_title="更多" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)" class="a more notip" onclick="$('.wg.monitor>.titbar>.menu').toggleClass('show')"><i class="bi bi-three-dots"></i></a>
+								<div class="menu">
+									<a win12_title="打开应用" class="a img openapp" onclick="$('.wg.calc>.titbar>.menu').removeClass('show');hide_widgets();openapp('taskmgr')" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)">
+										<img src="icon/taskmgr.png">
+									</a>
+									<a class="a chose" win12_title="切换监视器类型" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)" onclick="showdescp(event); shownotice('widgets.monitor'); "><i class="bi bi-arrow-left-right"></i></a>
+									<a class="a move" win12_title="移动" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)" onclick="showdescp(event); if (!edit_mode) { editMode(); } "><i class="bi bi-arrows-move"></i></a>
+									<a class="a addtotb" win12_title="添加到任务栏" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)" onclick="showdescp(event); widgets.widgets.remove('monitor'); widgets.widgets.addToToolbar('monitor'); "><i class="bi bi-menu-app"></i></a>
+									<a class="a addtodt" win12_title="添加到桌面" onmouseenter="showdescp(event)" onclick="showdescp(event); widgets.widgets.remove('monitor'); widgets.widgets.addToDesktop('monitor'); " onmouseleave="hidedescp(event)"><i class="bi bi-box-arrow-in-right"></i></a>
+									<a class="a delete" win12_title="删除" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)" onclick="showdescp(event); $('.wg.monitor>.titbar>.menu').removeClass('show'); widgets.widgets.remove('monitor'); "><i class="bi bi-trash"></i></a>
+								</div>
+							</div>
+							<div class="content" onmousedown="widgetsMove(this.parentElement, event);" ontouchstart="widgetsMove(this.parentElement, event);">
+								<div class="container">
+									<svg width="60px" height="60px">
+										<circle cx="30px" cy="30px" r="26px"></circle>
+										<circle cx="30px" cy="-30px" r="26px"></circle>
+									</svg>
+									<div class="text">
+										<div class="value">50%</div>
+									</div>
+								</div>
+								<div class="text">
+									<p class="type">内存</p>
+									<p class="value">50%</p>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="grid">
+
+				</div>
+			</div>
+		</div>
+		<span class="hr"></span>
+		<div class="news">
+			<div class="bar">
+				<p class="tit" data-i18n="widget-news">新闻</p>
+				<div>
+					<span style="color: #7f7f7f;margin-right: 5px;margin-top: 2px;" data-i18n="widget-news-res">我们不对新闻内容负责</span>
+					<button onclick="shownotice('widgets.news.source')" class="a act btn btn-icon big"
+						style="background: linear-gradient(100deg, var(--theme-1), var(--theme-2));color:#fff;"
+						win12_title="切换新闻源"><i class="bi bi-arrow-repeat"></i></button>
+				</div>
+			</div>
+			<div class="full-tip">
+				<loading>
+					<svg width="30px" height="30px" viewBox="0 0 16 16">
+						<circle cx="8px" cy="8px" r="7px" style="stroke:#7f7f7f50;fill:none;stroke-width:3px;"></circle>
+						<circle cx="8px" cy="8px" r="7px" style="stroke:#2983cc;stroke-width:3px;"></circle>
+					</svg>
+				</loading>
+				<p class="tit"></p>
+				<p class="desc"></p>
+				<p class="info"></p>
+			</div>
+			<div class="content">
+				<div class="card top-news"></div>
+				<div class="news-all"></div>
+			</div>
+		</div>
+	</div>
+	<div id="copilot">
+		<div class="titbar">
+			<p class="text">Windows 12 Copilot</p>
+			<div class="alr">
+				<span class="btn about" onclick="shownotice('about-copilot')">
+					<i class="bi bi-info-circle"></i>
+				</span>
+				<span class="btn hide" onclick="$('#copilot').removeClass('show')">
+					<i class="bi bi-chevron-bar-right"></i>
+				</span>
+			</div>
+		</div>
+		<div class="chat">
+			<a class="a btn button" onclick="copilot.init()" style="display: inline-block;margin-top: 10px;" data-i18n="copilot.start">开始对话</a>
+			<p style="margin-top: 10px;" data-i18n="copilot.p">使用前请先点击右上 "<i class="bi bi-info-circle"></i>" 查看使用注意事项</p>
+		</div>
+		<div class="inputbox disable">
+			<input type="text" class="input" onkeydown="if(event.keyCode==13){copilot.send($(this).val());$(this).val('');this.blur()}">
+			<a class="a send btn" onclick="copilot.send($('#copilot>.inputbox>.input').val());$('#copilot>.inputbox>.input').val('');" data-i18n="copilot.send">发送</a>
+		</div>
+	</div>
+	<div id="control">
+		<div class="cont">
+			<div class="top">
+				<div class="btn1">
+					<div class="icon active" onclick="controlStatus.call(this, 'wifi')">
+						<icon class="s-icon"></icon>
+					</div>
+					<div class="tit">WLAN</div>
+				</div>
+				<div class="btn2">
+					<div class="icon active" onclick="controlStatus.call(this)">
+						<icon class="s-icon"></icon>
+					</div>
+					<div class="tit" data-i18n="ctrl-blue">蓝牙</div>
+				</div>
+				<div class="btn3">
+					<div class="icon" onclick="controlStatus.call(this, 'fly')">
+						<icon class="s-icon"></icon>
+					</div>
+					<div class="tit" data-i18n="ctrl-air">飞行模式</div>
+				</div>
+				<div class="btn4">
+					<div class="icon" onclick="controlStatus.call(this, 'dark')">
+						<icon class="s-icon"></icon>
+					</div>
+					<div class="tit" data-i18n="ctrl-eye">护眼模式</div>
+				</div>
+				<div class="btn5">
+					<div class="icon" onclick="controlStatus.call(this)">
+						<icon class="s-icon"></icon>
+					</div>
+					<div class="tit" data-i18n="ctrl-hotspot">移动热点</div>
+				</div>
+				<div class="btn6">
+					<div class="icon" onclick="controlStatus.call(this)">
+						<icon class="s-icon"></icon>
+					</div>
+					<div class="tit" data-i18n="ctrl-acc">辅助功能</div>
+				</div>
+			</div>
+			<div class="bottom">
+				<div class="brightness">
+					<div class="icon">
+						<icon class="s-icon"></icon>
+					</div>
+					<div class="range-container" onmousedown="dragBrightness(event)" ontouchstart="dragBrightness(event)">
+						<div class="after"></div>
+						<div class="slider-btn"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="datebox">
+		<div class="tit">
+			<p class="time">12:29:19</p>
+			<p class="date">星期一，2022 年 09 月 22 日</p>
+			<p id="lunar"></p>
+			<hr>
+		</div>
+		<div class="cont">
+			<div class="head" data-i18n="data-week">
+				<p>一</p><p>二</p><p>三</p><p>四</p><p>五</p><p>六</p><p>日</p>
+			</div>
+			<div class="body">
+			</div>
+		</div>
+	</div>
+	<div id="dock-box">
+		<!-- Dock(任务) 栏 -->
+		<div class="dock dock-start">
+			<button type="button" class="dock-btn" id="start-btn" aria-label="开始菜单" aria-controls="start-menu" win12_title="开始 (Ctrl+Win)" onclick="openDockWidget('start-menu')" oncontextmenu="return showcm(event,'winx',null)">
+				<!-- 开始按钮 -->
+				<svg class="menu" aria-hidden="true" focusable="false" viewBox="0,0,440,439" xmlns="http://www.w3.org/2000/svg"
+					xmlns:xlink="http://www.w3.org/1999/xlink" overflow="hidden">
+					<defs>
+						<clipPath id="clip-start1">
+							<rect x="134" y="59" width="440" height="439" />
+						</clipPath>
+					</defs>
+					<g clip-path="url(#clip-start1)" transform="translate(-134 -59)">
+						<path
+							d="M233.479 67.5001 475.521 67.5001C525.767 67.5001 566.5 108.233 566.5 158.479L566.5 490.5 142.5 490.5 142.5 158.479C142.5 108.233 183.233 67.5001 233.479 67.5001Z"
+							stroke="#7F7F7F" stroke-width="14.6667" stroke-linecap="round" stroke-miterlimit="8"
+							fill="#A6A6A6" fill-rule="evenodd" style="fill: var(--bg70);" />
+						<path d="M208.5 132.5 334.716 132.5" stroke="#888" stroke-width="14.6667" stroke-linecap="round"
+							stroke-miterlimit="8" fill="none" fill-rule="evenodd" />
+						<path d="M208.5 175.5 386.34 175.5" stroke="#888" stroke-width="14.6667" stroke-linecap="round"
+							stroke-miterlimit="8" fill="none" fill-rule="evenodd" />
+						<path d="M208.5 221.5 271.608 221.5" stroke="#888" stroke-width="14.6667" stroke-linecap="round"
+							stroke-miterlimit="8" fill="none" fill-rule="evenodd" />
+					</g>
+				</svg>
+				<img src="icon/logo.svg" class="ico" alt="">
+			</button>
+			<button type="button" class="dock-btn" id="search-btn" aria-label="搜索" aria-controls="search-win" data-i18n-attr="aria-label" data-i18n-key="sch-ph" win12_title="搜索" onclick="openDockWidget('search-win')">
+				<!--搜索按钮-->
+				<svg class="out" width="26" height="26" viewBox="0,0,228,229" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" overflow="hidden"><defs><clipPath id="clip-search-out-0"><rect x="548" y="268" width="228" height="229"/></clipPath><linearGradient x1="738.799" y1="300.076" x2="608.064" y2="486.786" gradientUnits="userSpaceOnUse" spreadMethod="reflect" id="fill-search-out-1"><stop offset="0" stop-color="#A6A6A6"/><stop offset="0.18" stop-color="#A6A6A6"/><stop offset="0.91" stop-color="#595959"/><stop offset="1" stop-color="#595959"/></linearGradient></defs><g clip-path="url(#clip-search-out-0)" transform="translate(-548 -268)"><path d="M640 268.696C690.41 268.696 731.276 309.574 731.276 360 731.276 378.91 725.529 396.477 715.687 411.049L713.816 413.318 771.4 470.903C777.068 476.571 777.068 485.761 771.4 491.429 765.732 497.097 756.542 497.097 750.874 491.429L693.292 433.847 691.033 435.711C676.465 445.556 658.904 451.305 640 451.304 589.59 451.305 548.724 410.426 548.724 360 548.724 309.574 589.59 268.696 640 268.696Z" fill="url(#fill-search-out-1)" fill-rule="evenodd"/></g></svg>
+				<svg class="in" width="20" height="20" viewBox="0,0,134,134" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" overflow="hidden"><defs><clipPath id="clip-search-in-0"><rect x="573" y="293" width="134" height="134"/></clipPath><linearGradient x1="611.068" y1="280.509" x2="668.932" y2="439.491" gradientUnits="userSpaceOnUse" spreadMethod="reflect" id="fill-search-in-1"><stop offset="0" stop-color="#82CDF6"/><stop offset="0.18" stop-color="#82CDF6"/><stop offset="0.91" stop-color="#4297D6"/><stop offset="1" stop-color="#4297D6"/></linearGradient><image width="132" height="132" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIQAAACECAMAAABmmnOVAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAFZUExURQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAKhZnwEAAABzdFJOUwABAgMEBQYHCAkKCwwNDg8QERITFBUWFxgZGhscHR4fICEiIyQlJicoKSorLC0uLzAxMjM0NTY3ODk6Ozw9Pj9AQUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVpbXF1eX2BhYmNkZWZnaGlqa2xtbm9wcXJv0gLZAAAACXBIWXMAAA7DAAAOwwHHb6hkAAARAklEQVR4XsWb91caWRTH2TQbFjoMvUlHmoKggihiw94Su8ZojInZ/P8/7Pfe9wZI1wjZ7zm7x8AM8zm3vpl5V/OHGvSMlde3tk5OLm9vzw8P19ZWpuMurfzyL2gotvjm5u7D+5vr63dXV28vLy+ELi/fnm6VRwflYd3TQKh2/unu9j0uf3lxfnZ6cnJ8fHR0yDo6Oj4+OT0735vy98vDu6CRscYtCG6uAXB2enx0+PrgYH9/b3d3h7S7u7u3v3/w+vDo+OTNbLgrBnkVnD+/B8G7txdnJ8e4/t7u9tbmxsb6+lpDaG1tfX1jc2sbLAdvjjYn3S/lqZ3Si+zV548f3l8TwdGbg72drY31xurK8tLiYr2+sLBQq+F/9fri0vLKagMo27v7rw83o8/l6Z2QPn94//HDzbvL85Oj1/u725vrjZWl+kJtvlqdrZTL5RlWuVyZna3O1xbqS8uraxtbO3sHy4kR+RNPVV/pw/3H25ury7Pjw4Pd7Y211eXFhflqpTwzVSoWJwuFPDSRzxcKk8ViaWqmXKnO1epLK431rZ397Uyf/JmnqDd3+vnj7fXVxSmMsLO5trpUr83NlqdLxUJ+YjyXzaTT6RQpnc5kstnceL4wCZJKdX5hcaWxsbW7En0yRnDj308fbhhhb3ujsVyvVSszU8XCRC6bTo0lE/FYLEqK4L9YPJ5IjqXSGZBMFqfLs/MLSytrmzszLvljfybT7O393ft3cAQhrC4tzFVmSpP58Wx6DJePhEOjwUAg4Gfhj2BwNBSORGOJZCqTnSiAo1qDOTY3Mnr5g38g7y15QiCsA6Fani7mxzOpJAHg+n6f1+N2u11C+Mvj9fr8gWAoHI0nxjK5icnSzOx8fbmxsW6XP/lYaafv7u9urs5P3jBCrVqempzIppPxKABwfbfL6XDYFUWxSSmK3e5wOl0ery8wGorEEqnMeL44XZlbWG6sJ/+oijrXvnz6cP327OhgB44AQqkwnhlLgMDv87iduLzNarGYTSaTUZXJZLZYrDbF7gCIPxiKxJOp7MTkVGWuvrJWMMsffoTGkBTv313ADFtry3DEFCHEo6Ggz+NyEgAubzTo9TqdbkSVTqc3GIxGM0CIA/YIRxPAKE7Pzi+uVr3ypx+qZ8V7uEKYYWVxvjI1SQiR0YDP7XIoVhgAALqR4eHhoaGhQVVDQ8PDQNEbjCYzOJxumIMwcvniTLW2tBr+R/78g9Rb+XL/4fry9BBmWKrNTk9OMILfCwKbRQLg4toBqL+pgQGtVguWYQIBhwIOXzAUTaZzhVJ5rr4aeyUv8AAN1b58uiVX7G6uLs6VS/ksI3icdiZgAC0u3tfX+436+vrAIkDAYbEqhBGOJTPjk9OzC8vJBxcu48q/YDg/PthZX1mozsATyWgoACsQAmxABAP9AOiBXrWLPgAJcwgMs9Xu9PhHI/FUNj9VmV9KD8mL/EavDv/9+P7q/Ohge225NjtVyKbi4aDP7VAsJoMeRlAJcNGXpBdS/I+XjAKLMAfcYrTY7C5vAD7JTBRn5urFF/Iyv9QQ7EAM+1uNpflyaYLMAE8Qgo4IyAkwAF/8udAzSP4pYAQIccAcRrPN4YJP4qlcYbpaTz3AI701ssMZMSzOzRTH04kImcFmNurhB9UGhEDXpMu3qwUCDsYYGtYZTAgNjz8UG8sWpmYX4r9d7Dwrf4EdzpAWq/Xq9GQuFQsFYAYrmYERWkYQl/2nTeITJgGHxIBT2Bhu3yhcki9Var/N1CLyAr7Y2wQDwiEZHZVmGB7UEgKM0CSQl5ZnauQ/mYNIyBw9PYQhjeENhhPpCVAE5Bk/0dj9PfICviCGfDYZCXpdMAM8oR0gBOEGuoi8pDxPSn5IYgxwkDXgEzaGJ4DAGC+Wq055/A/lPLn/oDJM5zPEgIikaGAzfIfwnV3lxyRhDXilp1cYg1ziDzHF5C9au3bt8931xfHBVoPskEFIepw2M0cDmwEIRMAI8pSfqokBp/T2IUBH9CarHRQxokj2yMO+1/SXjzeXJwfbjUVmCAc8DuGK/iYCXf/3BCw6UGCoxjBa7C7fKFFUfhoW8btP79+evtlZW5qbRkxGmMEwgohkBnIEIzyMQaV4Jij6mhSwxURpWpEHfaPeWwTE2eHu+vL8zCTFpMdhgx2QmL0UkJJBHvwgqRSMgfhkCooL5MjUjyvnLAUEknOlVi7mmAG+oHBQzfBYBjVOVWMgS1oUUz90SPD2483bk4Ot1YXZ0ngqirz4hoF+Tx77YDEEU7xAsrItKDrDiUyhaJLHtKl34/726gwBgaCcSMdGvU4bxcPTGL6iYFsM60xW1ItIMjcZ+7585/69u0al3FiamylkEiGfSzFTPDyRQaiNYnAYmerwBKNj46XvSlYfMgPZuYWAoKAMuBVLB+ygiikoMMgWepPN6R2NpScK38Zm6TMyg5whAgJBadShPnSGoWmLlz3I1BGDWXEhLLIFj/xWSn+KMnW8t7E8j2odD/kQEPph1IcOMbR5pG9ApEgADkl/fS+Sp6h8vb26UIEzwn43B0QHGVQKqhdIVIQFOST/VVQMH36kErG+hMwYE84YGRpAx+oYQ4uCw8JsY4cke+WXpBwMcfp6axVRqTpjSEtB2TmGJoUIC4sdGZIaby/eVx9vLlCvUSLGxygzzAY1IDrHwBRIEeqpCAur0xuKZ9LyKyj4+cPVKaUnSkR81OuwGHWUnR1mEBRNhyjuQGQsZ5BfaTTzSA1ExGK1BEP4XQplRl/vKwqITjKAghyCmgWHGCk245nm/enIOWoEUqNWJkN4HFSm0L1VQ8ijOiJhCsoQik2YohmaY/fvL4/3N5AaZAhEpW6ozRnyoM6o5RDEJpvCIr9poGsc7jQWKDVGvXaLYViUiM4ztGXIkN7EUSE7+sDnW7TwzeW5adSIgIvSUxqi4wyAoAwhUyBNOSqyopfGPt1cHO2u1SvFLLonUmNEpGcXGFRTUFSIBImmxLKieifCciafjgbdlBrUPNkQ/H1H1W4KrhVJN39+AG9QWJbGk2Gfy4buKVOjGxCtqIAp0MeCsRB9alG9QWHJ+SlqBIUln9ZhkSkoQQYGdVhY+CNjA/gweXd99oa9kYpSoWrPT3FahyVNgbKJDuINJSgoFm+vODemyBtOtM/BATU/xUmdljAFZ6lZ8QRjFBS7qFQo2bPFLLxBRYLWU2wIcU7HxRDoY/3kD5c/gkrx4uL6gitVIR1DbpjbioQ8qdPiBGEIyg9fKPJMY6AE3VqZR6USJbvb3pCm4FJhMGNZEe/V+KiLU4LmEmEfrahQqbpqCEgERa8s3dFhTYpDgsol9Q2sZrrtDYhMIeuVzemLGDUzVCWaIYG+gZLdxfwUEv6Q/SOkaNbQQUWViFDz0lEDZUN0G0Itmp5Rj2ZDxCVW2WE/Vwm1b3QX4hmKJlcKVG6PZgdxublMjYM6KKoEQkIs6+QJ3ZBMUix4TYor4NMcoF4iOYq5BK1w0UHRvLodEgLipSxXAb/miFoo18ugx25uQcjDuyPYmdsHp4c/oDnnoo0WGsP9BnUvlKruJigJphA9jGpmUPOWFvt1ytC/DPGc0wM56hvVvOXFBCCiAkJmqDy4W2pBoJsHNWe4/0OtwtLOj1UV34r/PQjkKCD8mjfcQ8WKRoXodly2Q2BJ4dXs/f8Qbs0mQci13f8E4dKsCoiJFO6E/ycIh2blB5b4m4GJZY1DU+LsIAg00b8NoR2iFDVrEpeoE4CgOiEh/mqxAoRO42EIWTH/DwiHV6vRidVdIcMLq79UttUGRr3D4evRvHhzvE8NjLsoQ1AX7ToEL63Eot+DazXobhitHOsJauW8qPkrEOpKl3a6zIqVVS4ZwqJGrKy6nh4cEuKeWHHRDpMorTHlnSjfkos1pji6S1IhhnRmxT2MD0y02pY3YLTQlYWiqw4RELTaRq3i53drR1wyUShQrXjJj6DoblTwaltmqHiyXDze40cksaDnb9wPQyIuxc2P08gfjYqHRblEiB8favu7DQEGNSSMNpfYPdpP6SEik26Im0HBX3ZBCDeCUG+I5Z7NWfVpkbgPHOjrbs0kCPXRgMWhbgELt56boVzRiw5+iCm/7bgkhHxIom70GdykoKBHqV6HlZ4pd+0pJosZeDGB+y+l+XJ0svmoBv6g904iSeW3nZZqCHjDbG+973DTWrdMjZTvBNWi2R0K9gbXbHrnQQ8xpbb58R2S1Oe08suOrtUrIKiVitaX7e/AYgfsjxS9/+rmQ35hB1mpKDfa958NLre/7uCn/AKi4xQCgosEwtL61YvqhPqEHU2MS4Vqik5TqIYQzevrXd0jK/QuEPWKn6eqpbsLFBSVFJZcJKzf7IxM7a7Rk5KEeLzd9oy9sxD4vVZ+Kjr5qaq+nU0OTZjCbtGLl2CdhxDOkIXK6vhuq390p4HSTS+gnPTepSsJIhnIGUgNhZZUX6t3hlopmQIFS9YKppDfd0DsCxGVlBqmH8w8uDYaC5ViDglCLwTFu/KOVixiYGdQVOLOq61YtpTZWJ6bztOeHt5GAodQsegYhWQQUYmFxLdRKdSz3qijdicjARdtGxgU+yc6RcEMzag0WpSfDKD411fmxdai9t0snaEQdqCoFNsnbD8d10ryJqsUmmnLIZ2haDKIXU5m5ecTMP2FVRmbtI+Ddzipew/lEX+opi9e9VJmGK2GX+xZNleXySG8owXVG3lKwflkijaGfg4Ic/temu/kXREOQYZgzUth0QGPtOIBiUEMPw8IoTA7RO4wEhRP9UiLgRKDtnp9Xyq/1j8xckg2GQ6gh/CmM0qRp1C0xwOqFAXlb3/pVZL2pWYSCE6iEB5BpjLGH4AIBBkPSE6zTfdMfvUL9aXr1al8Oh7yu5hisB+Z2qJ4BAYfLlzBuaklX9h+lRgtvSjVZ0sTKaSIoNBSvSCXPNYYzMA9i32BeNCbbaYH2IE0mFqolMaRIj63Xe5Obe5WJgx52O/EBBQNHJKUF2SH327kV9UXr1WKoAghLuSe6b5e2kBPxniIU/iQVjTwXmXkJtZSD/KF0MtwrSwpaNc0kkQa43kTQx75QzFBO4Pcta2MPNAXUoH5cjGHuPB7aJyAJxqI4kEYKkHTDBSSejD8rj58J2cetkjHwwGeL2lOFIgIbXpFSJ6iWkACcDBQcdDyTn6r+Q/mnPXJcnGCRky8LruVN/SL2Qo53UEc7SAtCQQQwArsCWEGwy/7xc/UE5jmYZtRBIZNjDbwlInAUDkgeXFI/Fs1Ao/ciFEXi23kESH5lYxTU4XcWCwcYGPwvA1bQ8wcCZAWC18dYhsgFEBAQz+EoChPmK8eDBQnx9MJGINGbsw0/EQDYDx9JTlI4uJ0eVyfCcgGYgyLrGDX/XyS4iEyxUoTWRgj6CWf8AyWmEMTHOoYlir6AAQqgk5vNFsV0w/X1Y/RS2emQMbgaTRYw6jX0TxcayCOBtCa4qE4Gs9rzqIptuFOzFRrPel8NkXTibCGYiVztCYD+4lFlRwPpEHFEZ3BaIYjrE/0REv9zqQckvS6aT7QzBOKACESGIWFP7Q0KTnM44k0J6k4rCOPmEj8rZ4pmVwLQ53V1OvUaU0S/lJHRk08MaoMPbTXPVTPDd4kDc6Ggn6v2yXmZmlu1WgADMlA86owAI2sKg6nYhh4XKN4oHotgVQqGYsQBw/wgsRmpRleksViseLyit3hdDnNQw9u2Y9Xv8kdGksQR4AmqV0uJ7NAdrvdQVPMbo9iHOxkJPxYPQb3aCwejfBQud/n83o9JK/X6/M6umqCb/VyyGj3eD3BwGgYFcTrcDjMuoE/aw8azX8p1DsCWPfRswAAAABJRU5ErkJggg==" preserveAspectRatio="none" id="img2"></image><clipPath id="clip-search-in-3"><rect x="574" y="294" width="132" height="132"/></clipPath></defs><g clip-path="url(#clip-search-in-0)" transform="translate(-573 -293)"><path d="M574 360C574 323.549 603.549 294 640 294 676.451 294 706 323.549 706 360 706 396.451 676.451 426 640 426 603.549 426 574 396.451 574 360Z" fill="url(#fill-search-in-1)" fill-rule="evenodd"/><g clip-path="url(#clip-search-in-3)"><use width="100%" height="100%" xlink:href="#img2" transform="translate(574 294)"></use></g></g></svg>
+			</button>
+			<button type="button" class="dock-btn" id="widgets-btn" aria-label="小组件" aria-controls="widgets" data-i18n-attr="aria-label" data-i18n-key="widget" win12_title="小组件" onclick="news.setup(); openDockWidget('widgets')">
+				<!--小组件按钮-->
+				<svg viewBox="0,0,260,260" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" overflow="hidden" class="wid1"><defs><clipPath id="clip-wid1-0"><rect x="510" y="230" width="260" height="260"/></clipPath><linearGradient x1="551.891" y1="207.391" x2="728.109" y2="512.609" gradientUnits="userSpaceOnUse" spreadMethod="reflect" id="fill-wid1-1"><stop offset="0" stop-color="#7AB1FA"/><stop offset="0.18" stop-color="#7AB1FA"/><stop offset="0.91" stop-color="#4C6EDC"/><stop offset="1" stop-color="#4C6EDC"/></linearGradient></defs><g clip-path="url(#clip-wid1-0)" transform="translate(-510 -230)"><path d="M511 274.001C511 250.252 530.252 231 554.001 231L725.999 231C749.748 231 769 250.252 769 274.001L769 445.999C769 469.748 749.748 489 725.999 489L554.001 489C530.252 489 511 469.748 511 445.999Z" fill="url(#fill-wid1-1)" fill-rule="evenodd"/></g></svg>
+				<svg viewBox="0,0,175,206" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" overflow="hidden" class="wid2"><defs><filter id="fx0" x="-10%" y="-10%" width="120%" height="120%" filterUnits="userSpaceOnUse" primitiveUnits="userSpaceOnUse"><feComponentTransfer color-interpolation-filters="sRGB"><feFuncR type="discrete" tableValues="0 0"/><feFuncG type="discrete" tableValues="0 0"/><feFuncB type="discrete" tableValues="0 0"/><feFuncA type="linear" slope="0.4" intercept="0"/></feComponentTransfer><feGaussianBlur stdDeviation="5.81042 5.77778"/></filter><filter id="fx1" x="-10%" y="-10%" width="120%" height="120%" filterUnits="userSpaceOnUse" primitiveUnits="userSpaceOnUse"><feComponentTransfer color-interpolation-filters="sRGB"><feFuncR type="discrete" tableValues="0 0"/><feFuncG type="discrete" tableValues="0 0"/><feFuncB type="discrete" tableValues="0 0"/><feFuncA type="linear" slope="0.4" intercept="0"/></feComponentTransfer><feGaussianBlur stdDeviation="4 4"/></filter><filter id="fx2" x="-10%" y="-10%" width="120%" height="120%" filterUnits="userSpaceOnUse" primitiveUnits="userSpaceOnUse"><feComponentTransfer color-interpolation-filters="sRGB"><feFuncR type="discrete" tableValues="0 0"/><feFuncG type="discrete" tableValues="0 0"/><feFuncB type="discrete" tableValues="0 0"/><feFuncA type="linear" slope="0.4" intercept="0"/></feComponentTransfer><feGaussianBlur stdDeviation="4 4"/></filter><filter id="fx3" x="-10%" y="-10%" width="120%" height="120%" filterUnits="userSpaceOnUse" primitiveUnits="userSpaceOnUse"><feComponentTransfer color-interpolation-filters="sRGB"><feFuncR type="discrete" tableValues="0 0"/><feFuncG type="discrete" tableValues="0 0"/><feFuncB type="discrete" tableValues="0 0"/><feFuncA type="linear" slope="0.4" intercept="0"/></feComponentTransfer><feGaussianBlur stdDeviation="4 4"/></filter><clipPath id="clip-wid2-4"><rect x="615" y="214" width="175" height="206"/></clipPath><clipPath id="clip-wid2-5"><rect x="-6.53674" y="-6.5" width="101.068" height="115"/></clipPath><clipPath id="clip-wid2-6"><rect x="0" y="0" width="89" height="104"/></clipPath><linearGradient x1="644.325" y1="249.245" x2="754.675" y2="380.755" gradientUnits="userSpaceOnUse" spreadMethod="reflect" id="fill-wid2-7"><stop offset="0" stop-color="#775CFE"/><stop offset="0.43" stop-color="#775CFE"/><stop offset="0.83" stop-color="#2473DC"/><stop offset="1" stop-color="#2473DC"/></linearGradient><clipPath id="clip-wid2-8"><rect x="-5" y="-5" width="67" height="42"/></clipPath><clipPath id="clip-wid2-9"><rect x="0" y="0" width="57" height="35"/></clipPath><clipPath id="clip-wid2-10"><rect x="-5" y="-5" width="103" height="42"/></clipPath><clipPath id="clip-wid2-11"><rect x="0" y="0" width="93" height="35"/></clipPath><clipPath id="clip-wid2-12"><rect x="-5" y="-5" width="80" height="42"/></clipPath><clipPath id="clip-wid2-13"><rect x="0" y="0" width="72" height="35"/></clipPath></defs><g clip-path="url(#clip-wid2-4)" transform="translate(-615 -214)"><g clip-path="url(#clip-wid2-5)" filter="url(#fx0)" transform="matrix(1.98876 0 0 2 614 213)"><g clip-path="url(#clip-wid2-6)"><path d="M18.2408 33.043C18.2408 24.8162 24.9475 18.1472 33.2208 18.1472L56.0574 18.1472C64.3306 18.1472 71.0374 24.8162 71.0374 33.043L71.0374 71.2513C71.0374 79.4781 64.3306 86.1472 56.0574 86.1472L33.2208 86.1472C24.9475 86.1472 18.2408 79.4781 18.2408 71.2513Z" fill="#FF0000" fill-rule="evenodd"/></g></g><path d="M647 276.792C647 260.338 660.338 247 676.792 247L722.208 247C738.662 247 752 260.338 752 276.792L752 353.208C752 369.662 738.662 383 722.208 383L676.792 383C660.338 383 647 369.662 647 353.208Z" fill="url(#fill-wid2-7)" fill-rule="evenodd"/><g clip-path="url(#clip-wid2-8)" filter="url(#fx1)" transform="translate(649 260)"><g clip-path="url(#clip-wid2-9)"><path d="M17.3857 17.3857 39.7776 17.3858" stroke="#FFFFFF" stroke-width="9" stroke-linecap="round" stroke-miterlimit="8" fill="none" fill-rule="evenodd"/></g></g><path d="M664.5 275.5 686.892 275.5" stroke="#FFFFFF" stroke-width="8.66667" stroke-linecap="round" stroke-miterlimit="8" fill="none" fill-rule="evenodd"/><g clip-path="url(#clip-wid2-10)" filter="url(#fx2)" transform="translate(649 282)"><g clip-path="url(#clip-wid2-11)"><path d="M17.3857 17.3857 75.9099 17.3858" stroke="#FFFFFF" stroke-width="9" stroke-linecap="round" stroke-miterlimit="8" fill="none" fill-rule="evenodd"/></g></g><path d="M664.5 297.5 723.024 297.5" stroke="#FFFFFF" stroke-width="8.66667" stroke-linecap="round" stroke-miterlimit="8" fill="none" fill-rule="evenodd"/><g clip-path="url(#clip-wid2-12)" filter="url(#fx3)" transform="translate(649 305)"><g clip-path="url(#clip-wid2-13)"><path d="M17.3857 17.3857 54.5358 17.3858" stroke="#FFFFFF" stroke-width="9" stroke-linecap="round" stroke-miterlimit="8" fill="none" fill-rule="evenodd"/></g></g><path d="M664.5 320.5 701.65 320.5" stroke="#FFFFFF" stroke-width="8.66667" stroke-linecap="round" stroke-miterlimit="8" fill="none" fill-rule="evenodd"/></g></svg>
+				<svg viewBox="0,0,174,298" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" overflow="hidden" class="wid3"><defs><filter id="fx0" x="-10%" y="-10%" width="120%" height="120%" filterUnits="userSpaceOnUse" primitiveUnits="userSpaceOnUse"><feComponentTransfer color-interpolation-filters="sRGB"><feFuncR type="discrete" tableValues="0 0"/><feFuncG type="discrete" tableValues="0 0"/><feFuncB type="discrete" tableValues="0 0"/><feFuncA type="linear" slope="0.4" intercept="0"/></feComponentTransfer><feGaussianBlur stdDeviation="5.81079 5.7971"/></filter><filter id="fx1" x="-10%" y="-10%" width="120%" height="120%" filterUnits="userSpaceOnUse" primitiveUnits="userSpaceOnUse"><feComponentTransfer color-interpolation-filters="sRGB"><feFuncR type="discrete" tableValues="0 0"/><feFuncG type="discrete" tableValues="0 0"/><feFuncB type="discrete" tableValues="0 0"/><feFuncA type="linear" slope="0.4" intercept="0"/></feComponentTransfer><feGaussianBlur stdDeviation="4 4"/></filter><filter id="fx2" x="-10%" y="-10%" width="120%" height="120%" filterUnits="userSpaceOnUse" primitiveUnits="userSpaceOnUse"><feComponentTransfer color-interpolation-filters="sRGB"><feFuncR type="discrete" tableValues="0 0"/><feFuncG type="discrete" tableValues="0 0"/><feFuncB type="discrete" tableValues="0 0"/><feFuncA type="linear" slope="0.4" intercept="0"/></feComponentTransfer><feGaussianBlur stdDeviation="4 4"/></filter><filter id="fx3" x="-10%" y="-10%" width="120%" height="120%" filterUnits="userSpaceOnUse" primitiveUnits="userSpaceOnUse"><feComponentTransfer color-interpolation-filters="sRGB"><feFuncR type="discrete" tableValues="0 0"/><feFuncG type="discrete" tableValues="0 0"/><feFuncB type="discrete" tableValues="0 0"/><feFuncA type="linear" slope="0.4" intercept="0"/></feComponentTransfer><feGaussianBlur stdDeviation="4 4"/></filter><clipPath id="clip-wid3-4"><rect x="498" y="214" width="174" height="298"/></clipPath><clipPath id="clip-wid3-5"><rect x="-6.53714" y="-6.52174" width="98.0572" height="162.04"/></clipPath><clipPath id="clip-wid3-6"><rect x="0" y="0" width="88" height="150"/></clipPath><linearGradient x1="668.609" y1="288.246" x2="496.391" y2="432.754" gradientUnits="userSpaceOnUse" spreadMethod="reflect" id="fill-wid3-7"><stop offset="0" stop-color="#C45DD5"/><stop offset="0.18" stop-color="#C45DD5"/><stop offset="0.69" stop-color="#A266E4"/><stop offset="1" stop-color="#A266E4"/></linearGradient><clipPath id="clip-wid3-8"><rect x="-5" y="-5" width="86" height="42"/></clipPath><clipPath id="clip-wid3-9"><rect x="0" y="0" width="77" height="35"/></clipPath><clipPath id="clip-wid3-10"><rect x="-5" y="-5" width="67" height="42"/></clipPath><clipPath id="clip-wid3-11"><rect x="0" y="0" width="58" height="35"/></clipPath><clipPath id="clip-wid3-12"><rect x="-5" y="-5" width="92" height="42"/></clipPath><clipPath id="clip-wid3-13"><rect x="0" y="0" width="85" height="35"/></clipPath></defs><g clip-path="url(#clip-wid3-4)" transform="translate(-498 -214)"><g clip-path="url(#clip-wid3-5)" filter="url(#fx0)" transform="matrix(1.98864 0 0 1.99333 498 214)"><g clip-path="url(#clip-wid3-6)" transform="translate(2.84217e-14 -1.42109e-14)"><path d="M18.0166 36.3921C18.0166 26.2201 26.2821 17.9741 36.4781 17.9741L51.3493 17.9741C61.5454 17.9741 69.8109 26.2201 69.8109 36.3921L69.8109 113.436C69.8109 123.608 61.5454 131.854 51.3493 131.854L36.4781 131.854C26.2821 131.854 18.0166 123.608 18.0166 113.436Z" fill="#FF0000" fill-rule="evenodd"/></g></g><path d="M531 283.713C531 263.437 547.437 247 567.713 247L597.287 247C617.563 247 634 263.437 634 283.713L634 437.287C634 457.563 617.563 474 597.287 474L567.713 474C547.437 474 531 457.563 531 437.287Z" fill="url(#fill-wid3-7)" fill-rule="evenodd"/><g clip-path="url(#clip-wid3-8)" filter="url(#fx1)" transform="translate(534 259)"><g clip-path="url(#clip-wid3-9)"><path d="M17.3857 17.3857 59.5683 17.3858" stroke="#FFFFFF" stroke-width="9" stroke-linecap="round" stroke-miterlimit="8" fill="none" fill-rule="evenodd"/></g></g><path d="M549.5 274.5 591.683 274.5" stroke="#FFFFFF" stroke-width="8.66667" stroke-linecap="round" stroke-miterlimit="8" fill="none" fill-rule="evenodd"/><g clip-path="url(#clip-wid3-10)" filter="url(#fx2)" transform="translate(534 281)"><g clip-path="url(#clip-wid3-11)"><path d="M17.3857 17.3857 40.3525 17.3858" stroke="#FFFFFF" stroke-width="9" stroke-linecap="round" stroke-miterlimit="8" fill="none" fill-rule="evenodd"/></g></g><path d="M549.5 296.5 572.467 296.5" stroke="#FFFFFF" stroke-width="8.66667" stroke-linecap="round" stroke-miterlimit="8" fill="none" fill-rule="evenodd"/><g clip-path="url(#clip-wid3-12)" filter="url(#fx3)" transform="translate(534 302)"><g clip-path="url(#clip-wid3-13)"><path d="M17.3857 17.3857 67.3293 17.3858" stroke="#FFFFFF" stroke-width="9" stroke-linecap="round" stroke-miterlimit="8" fill="none" fill-rule="evenodd"/></g></g><path d="M549.5 317.5 599.444 317.5" stroke="#FFFFFF" stroke-width="8.66667" stroke-linecap="round" stroke-miterlimit="8" fill="none" fill-rule="evenodd"/></g></svg>
+				<svg viewBox="0,0,141,113" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" overflow="hidden" class="wid4"><defs><filter id="fx0" x="-10%" y="-10%" width="120%" height="120%" filterUnits="userSpaceOnUse" primitiveUnits="userSpaceOnUse"><feComponentTransfer color-interpolation-filters="sRGB"><feFuncR type="discrete" tableValues="0 0"/><feFuncG type="discrete" tableValues="0 0"/><feFuncB type="discrete" tableValues="0 0"/><feFuncA type="linear" slope="0.4" intercept="0"/></feComponentTransfer><feGaussianBlur stdDeviation="5.77778 5.77778"/></filter><filter id="fx1" x="-10%" y="-10%" width="120%" height="120%" filterUnits="userSpaceOnUse" primitiveUnits="userSpaceOnUse"><feComponentTransfer color-interpolation-filters="sRGB"><feFuncR type="discrete" tableValues="0 0"/><feFuncG type="discrete" tableValues="0 0"/><feFuncB type="discrete" tableValues="0 0"/><feFuncA type="linear" slope="0.4" intercept="0"/></feComponentTransfer><feGaussianBlur stdDeviation="4 4"/></filter><clipPath id="clip-wid4-2"><rect x="629" y="380" width="141" height="113"/></clipPath><clipPath id="clip-wid4-3"><rect x="-6" y="-3" width="154" height="121"/></clipPath><clipPath id="clip-wid4-4"><rect x="0" y="0" width="143" height="115"/></clipPath><linearGradient x1="670.387" y1="386.075" x2="728.613" y2="486.925" gradientUnits="userSpaceOnUse" spreadMethod="reflect" id="fill-wid4-5"><stop offset="0" stop-color="#D854CB"/><stop offset="0.13" stop-color="#D854CB"/><stop offset="1" stop-color="#A266E4"/></linearGradient><clipPath id="clip-wid4-6"><rect x="-5" y="-5" width="105" height="69"/></clipPath><clipPath id="clip-wid4-7"><rect x="0" y="0" width="98" height="63"/></clipPath></defs><g clip-path="url(#clip-wid4-2)" transform="translate(-629 -380)"><g clip-path="url(#clip-wid4-3)" filter="url(#fx0)" transform="translate(628 379)"><g clip-path="url(#clip-wid4-4)"><path d="M18.97 46.5177C18.97 31.4582 31.1781 19.25 46.2377 19.25L96.7623 19.25C111.822 19.25 124.03 31.4582 124.03 46.5177L124.03 68.4823C124.03 83.5418 111.822 95.75 96.7623 95.75L46.2377 95.75C31.1781 95.75 18.97 83.5418 18.97 68.4823Z" fill="#FF0000" fill-rule="evenodd"/></g></g><path d="M648 425.733C648 410.969 659.969 399 674.733 399L724.267 399C739.031 399 751 410.969 751 425.733L751 447.267C751 462.031 739.031 474 724.267 474L674.733 474C659.969 474 648 462.031 648 447.267Z" fill="url(#fill-wid4-5)" fill-rule="evenodd"/><g clip-path="url(#clip-wid4-6)" filter="url(#fx1)" transform="translate(653 407)"><g clip-path="url(#clip-wid4-7)"><path d="M17.3857 45.3857C24.6516 31.6825 31.9177 17.9794 39.5617 17.3963 47.2057 16.8131 56.4457 40.5542 63.2497 41.887 70.0537 43.2198 79.3357 31.3285 80.3857 25.3933" stroke="#FFFFFF" stroke-width="9" stroke-linecap="round" stroke-miterlimit="8" fill="none" fill-rule="evenodd"/></g></g><path d="M668.5 450.5C675.766 436.797 683.032 423.094 690.676 422.511 698.32 421.928 707.56 445.669 714.364 447.001 721.168 448.334 730.45 436.443 731.5 430.508" stroke="#FFFFFF" stroke-width="8.66667" stroke-linecap="round" stroke-miterlimit="8" fill="none" fill-rule="evenodd"/></g></svg>
+			</button>
+			<button type="button" class="dock-btn" aria-label="Copilot" aria-controls="copilot" onclick="$('#copilot').toggleClass('show');$(this).toggleClass('show')" id="copilot-btn">
+				<!--copilot 按钮-->
+			<img src="icon/copilot.svg" alt=""></button>
+		</div>
+		<div class="dock" id="taskbar" style="display: none;" count="0">
+		</div>
+		<div id="toolbar">
+
+		</div>
+		<button type="button" class="a dock theme" aria-label="切换主题" data-i18n-attr="aria-label" data-i18n-key="desktop.tgltheme" win12_title="切换主题" onclick="toggletheme()">
+			<!--切换主题-->
+			<svg viewBox="0,0,307,307" class="light" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" overflow="hidden"><defs><clipPath id="theme-light-clip0"><rect x="79" y="77" width="307" height="307" /></clipPath><linearGradient x1="128.499" y1="49.9991" x2="337.501" y2="412.001" gradientUnits="userSpaceOnUse" spreadMethod="reflect" id="theme-light-fill1"><stop offset="0" stop-color="#FFC567" /><stop offset="0.18" stop-color="#FFC567" /><stop offset="0.8" stop-color="#EE54F2" /></linearGradient></defs><g clip-path="url(#theme-light-clip0)" transform="translate(-79 -77)"><path d="M80 231C80 146.5 148.5 78 233 78 317.5 78 386 146.5 386 231 386 315.5 317.5 384 233 384 148.5 384 80 315.5 80 231Z" fill="url(#theme-light-fill1)" fill-rule="evenodd" /></g></svg>
+			<svg viewBox="0,0,275,294" class="dark" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" overflow="hidden"><defs><clipPath id="theme-dark-clip0"><rect x="525" y="230" width="275" height="294" /></clipPath><linearGradient x1="599.492" y1="203.887" x2="725.508" y2="550.113" gradientUnits="userSpaceOnUse" spreadMethod="reflect" id="theme-dark-fill1"><stop offset="0" stop-color="#2474B6" /><stop offset="0.42" stop-color="#2474B6" /><stop offset="0.98" stop-color="#FFD966" /><stop offset="1" stop-color="#FFD966" /></linearGradient></defs><g clip-path="url(#theme-dark-clip0)" transform="translate(-525 -230)"><path d="M635.002 236.062C638.664 240.491 639.245 246.694 636.469 251.721 625.869 271.094 620.334 292.809 620.372 314.869 620.372 388.255 680.469 447.679 754.537 447.679 764.199 447.679 773.604 446.675 782.643 444.759 788.307 443.538 794.156 445.809 797.493 450.526 801.036 455.459 800.803 462.148 796.925 466.824 767.803 502.434 724.103 523.073 677.976 523 593.458 523 525 455.217 525 371.701 525 308.846 563.757 254.933 618.942 232.083 624.588 229.708 631.132 231.329 635.002 236.062Z" fill="url(#theme-dark-fill1)" fill-rule="evenodd" /></g></svg>
+		</button>
+		<button type="button" class="a dock control" id="battery" aria-label="控制中心" aria-controls="control" win12_title="电量获取中..." data-i18n-attr="win12_title" data-i18n-key="battery.loading" onclick="openDockWidget('control')">
+			<!--控制-->
+			<svg viewBox="1 7 29 15" width="28px" height="14px" version="1.1" id="svg4" class="battery-icon">
+				<path
+					d="M 4 7 C 2.3550302 7 1 8.3550302 1 10 L 1 19 C 1 20.64497 2.3550302 22 4 22 L 24 22 C 25.64497 22 27 20.64497 27 19 L 27 10 C 27 8.3550302 25.64497 7 24 7 L 4 7 z M 4 9 L 24 9 C 24.56503 9 25 9.4349698 25 10 L 25 19 C 25 19.56503 24.56503 20 24 20 L 4 20 C 3.4349698 20 3 19.56503 3 19 L 3 10 C 3 9.4349698 3.4349698 9 4 9 z M 5 11 L 5 18 L 23 18 L 23 11 L 5 11 z M 28 12 L 28 17 L 29 17 C 29.552 17 30 16.552 30 16 L 30 13 C 30 12.448 29.552 12 29 12 L 28 12 z"
+					id="path2" />
+			</svg>
+			<icon class="s-icon"></icon>
+			<icon class="s-icon"></icon>
+		</button>
+		<button type="button" class="a dock date" aria-label="日期和时间" aria-controls="datebox" onclick="openDockWidget('datebox'); getLunar();">
+			<!--日期-->
+			<p class="time">12:34:56</p>
+			<p class="date">2022/10/01</p>
+			<i class="bi bi-chevron-down"></i>
+		</button>
+	</div>
+	<div id="open-dock">
+		<i class="bi bi-arrow-bar-up"></i>
+	</div>
+	<div id="desktop">
+		<h1>无法处理桌面图标，请使用相对正常的浏览器访问。</h1>
+		<h1>Cannot process desktop icons, please use a relatively normal browser to access</h1>
+		<span class="selection">
+		</span>
+		<p style="background-color: rgba(11,45,14,0);z-index:1;position: absolute;top:0px;left:0px;height:100%;width:100%" oncontextmenu="return showcm(event,'desktop');"></p>
+	</div>
+	<!-- 右键菜单 -->
+	<div id="cm" tabindex="-1">
+		<input class="foc">
+		<list class="new">
+		</list>
+	</div>
+	<!-- 下拉菜单 -->
+	<div id="dp">
+		<list>
+		</list>
+	</div>
+	<!-- 悬停提示 -->
+	<div id="descp">
+
+	</div>
+
+	<div id="desktop-widgets">
+		<div class="widgets-move"></div>
+	</div>
+	<div id="desktop-editbar-container">
+		<div id="desktop-editbar">
+			<div onclick="shownotice('widgets.desktop');"><i class="bi bi-plus"></i> <span data-i18n="editmd-add">添加小组件</span></div>
+			<div onclick="openapp('setting');$('#win-setting > div.menu > list > a.enable.appearance')[0].click();"><i class="bi bi-brush"></i> <span data-i18n="psnl">个性化</span></div>
+			<div onclick="editMode();" win12_title="退出编辑模式"><i class="bi bi-x-lg"></i></div>
+		</div>
+	</div>
+	<p id="translater" style="display: none;"></p>
+	<!-- 提示窗 -->
+	<div id="notice-back" aria-hidden="true" inert>
+		<div id="notice" role="dialog" aria-modal="true" tabindex="-1">
+			<div class="cnt">
+				<p class="tit">快跑！</p>
+				<p>你的电脑即将爆炸</p>
+			</div>
+			<div class="btns">
+				<button type="button" class="a btn main" onclick="closenotice()">确定</button>
+			</div>
+		</div>
+	</div>
+	<!-- 29 个应用窗口的标记见 data/window-templates.js，由 scripts/mount-windows.js 在此处注入 -->
+	<div id="window-mount"></div>
+
+	<!-- 数据与引导层，全部早于 desktop.js。顺序是承重的；startup 在本地模块就绪后启动 shell，
+	     不等待后面的可选 CDN 脚本： -->
+	<!--   languages → i18n-boot（定义 lang/isTauriApp）→ 依赖它们求值的三张表 -->
+	<script defer src="data/languages.js"></script>
+	<!-- 窗口标记必须最早注入：
+	     ① 早于 i18n-boot.js —— loadlang() 的回调只遍历一次 [data-i18n]，窗口没进 DOM 就拿不到翻译
+	     ② 早于 module/window.js —— 它在解析期把 .window 与 .window>.titbar 按下标配对绑定拖拽 -->
+	<script defer src="data/window-templates.js"></script>
+	<script defer src="scripts/mount-windows.js"></script>
+	<script defer src="scripts/i18n-boot.js"></script>
+	<script defer src="data/app-icons.js"></script>
+	<script defer src="data/context-menus.js"></script>
+	<script defer src="data/notices.js"></script>
+	<script defer src="data/dock-panels.js"></script>
+	<script defer src="scripts/terminal-eggs.js"></script>
+	<script defer src="scripts/terminal.js"></script>
+	<script defer src="data/tasks.js"></script>
+	<script defer src="scripts/utils.js"></script>
+
+	<script defer src="scripts/edge-bookmarks.js"></script>
+	<script defer src="scripts/edge-address.js"></script>
+	<script defer src="module/shared.js"></script>
+	<script defer src="module/apps.js"></script>
+	<script defer src="tauri/tauri_api.js"></script>
+	<script defer src="desktop.js"></script>
+	<script defer src="module/window.js"></script>
+	<script defer src="module/widget.js"></script>
+	<script defer src="module/tab.js"></script>
+
+	<script defer src="scripts/news.js"></script>
+	<script defer src="scripts/lunar.js"></script>
+	<script defer src="scripts/startup.js"></script>
+	<script defer src="https://unpkg.com/pyodide@0.23.4/pyodide.js" async></script>
+	<script defer src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.23.0/ace.min.js"></script>
+	<script defer src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.23.0/ext-language_tools.min.js"></script>
+	<script defer src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.23.0/ext-error_marker.min.js"></script>
+	<script defer src='https://cdnjs.cloudflare.com/ajax/libs/big.js/6.2.1/big.min.js'></script>
+	<script defer src="./scripts/calculator_kernel.js"></script>
+	<script defer src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js'></script>
+	<script defer src='https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js'></script>
+	<script defer src='https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.8/purify.min.js'></script>
+	<script type="module" src="tauri/battery_power.js"></script>
+
+</body>
+
+</html>

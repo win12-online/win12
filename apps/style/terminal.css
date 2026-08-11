@@ -1,0 +1,66 @@
+.window.terminal-apps {
+    --text: #ddd;
+    --bg: #000000;
+    --bg50: #00000060;
+    --bg70: radial-gradient(rgba(26, 31, 53, 0.96) 25%, rgba(32, 32, 32, 0.96) 100%);
+    --shadow: #000000a0;
+    --card: #72727240;
+    --hover: #aaaaaa40;
+    --hover-half: #ffffff20;
+    --hover-b: #eeeeee0f;
+    --bggrey: #444;
+    --fill:#54545470;
+    --mm: #ffffff50;
+    --contextmeu: #252525bb;
+    --bar: #7272722a;
+    --hr:#333;
+    --unfoc:#202020;
+    --msg:#303030d0;
+    --bd:#ffffff06;
+    --s3d:#11111160;
+    --mica: linear-gradient(140deg,#2d161c,#102d53);
+}
+
+.window.terminal-apps.max>.content {
+    padding-bottom: 55px !important;
+}
+
+.window.terminal-apps>.content {
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    padding-bottom: 10px;
+}
+
+.window.terminal-apps>.content>pre {
+    color: #ddd;
+    margin: 0px 15px;
+    font-family: "Consolas", "Monaco", "monospace", system-ui;
+    user-select: text;
+    font-size: 16px;
+}
+
+.window.terminal-apps>.content * {
+    white-space: break-spaces;
+}
+
+.window.terminal-apps>.content *::selection {
+    background: #ddd;
+    background-clip: content-box;
+    color: #333;
+}
+
+.window.terminal-apps>.content>pre>input {
+    background: none;
+    border: none;
+    outline: none;
+    padding: 0;
+    color: #eee;
+    cursor: default;
+    width: 100%;
+}
+
+.window.terminal-apps>pre>input::selection {
+    background: #ddd;
+    background-clip: content-box;
+    color: #333;
+}

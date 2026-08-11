@@ -1,0 +1,157 @@
+@font-face {
+    font-family: 'dos';
+    src: url(../../fonts/dos.ttf);
+}
+
+body {
+    background-color: #aaaaaa;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+}
+
+
+* {
+    font-family: 'dos', monospace;
+    padding: 0px;
+    margin: 0px;
+    border: 0px;
+    cursor: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    box-sizing: border-box;
+}
+
+::-webkit-scrollbar {
+    display: none;
+}
+
+.tit {
+    font-size: 1.2rem;
+    text-align: center;
+    background-color: #4ba7a8;
+    list-style-type: none;
+    margin: 0px;
+    padding: 5px;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+.pages {
+    background-color: #0100a2;
+    padding: 5px;
+}
+
+a {
+    text-decoration: none;
+}
+
+.tab {
+    font-size: 110%;
+    color: #aaaaaa;
+    background-color: #0100a2;
+    margin: 5px;
+    padding: 5px;
+}
+
+.tab.foc {
+    color: #ffffff !important;
+}
+
+.tab.show {
+    color: #0100a2;
+    background-color: #aaaaaa;
+}
+
+.option {
+    color: #0100a2;
+    background-color: #aaaaaa;
+    padding: 0 10px;
+}
+
+.page {
+    margin: 20px;
+    padding: 20px;
+    border: 3.5px solid #000;
+    height: 100%;
+    display: none;
+    overflow-y: auto;
+}
+
+.page.show {
+    display: block !important;
+}
+
+.exit {
+    color: #0100a2;
+    padding: 5px;
+}
+
+.confirm-button {
+    background-color: #ffffff;
+    color: #000000;
+}
+
+#mainPage>.table,
+#advancedPage>.table,
+#bootPage>.table,
+#securityPage>.table {
+    display: grid;
+    grid-template-columns: auto auto;
+    gap: 10px;
+    width: fit-content;
+}
+
+#confirmContainer {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+
+#exit_confirm {
+    width: calc(30% + 50px);
+    height: calc(15% + 70px);
+    background-color: #ffffff;
+    padding: 20px 10px;
+    box-shadow: rgb(0, 0, 0) 8px 16px 0px 0px;
+}
+
+#confirm {
+    border: 3.5px solid #000;
+    height: 100%;
+    padding: 20px 10px;
+    text-align: center;
+    display: grid;
+    grid-template-rows: auto auto;
+}
+
+#confirm>*:first-child {
+    align-self: flex-start;
+}
+
+#confirm>*:last-child {
+    align-self: flex-end;
+}
+
+.submenu {
+    padding-left: 20px;
+    display: grid;
+    grid-template-columns: auto auto;
+    gap: 5px;
+    margin-bottom: 15px;
+}

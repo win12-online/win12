@@ -1,0 +1,332 @@
+@keyframes shine {
+    0% {
+        border-color: var(--caret);
+    }
+    49% {
+        border-color: var(--caret);
+    }
+    51% {
+        border-color: transparent;
+    }
+    98% {
+        border-color: transparent;
+    }
+    100% {
+        border-color: var(--caret);
+    }
+}
+
+.wg {
+    border-radius: var(--radius-2xl);
+    box-shadow: 1px 2px 5px var(--shadow);
+    overflow: hidden;
+    transition: 200ms;
+}
+
+:root.corner_squ .wg {
+    corner-shape: squircle;
+    border-radius: var(--radius-pill);
+}
+
+.wg>.titbar {
+    display: flex;
+    flex-direction: row-reverse;
+}
+
+.wg>.titbar>.more {
+    border-radius: var(--radius-circle);
+    width: 25px;
+    height: 25px;
+    /* background-color: var(--bggrey); */
+    /* box-shadow: 2px 2px 5px var(--shadow); */
+    margin: 3px 3px 0 0;
+    text-align: center;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.wg>.titbar>.more>.bi {
+    display: block;
+}
+
+.wg>.titbar>.more:hover>.bi {
+    background: var(--hover);
+}
+
+.wg>.titbar>.menu {
+    transition: 200ms cubic-bezier(0.9, 0, 0.1, 1);
+    max-width: 0;
+    box-shadow: 2px 2px 5px var(--shadow);
+    overflow: hidden;
+    margin: 3px 3px 0 3px;
+    background-color: var(--bggrey);
+    border-radius: 12.5px;
+    height: 25px;
+    flex-grow: 1;
+    display: flex;
+    max-width: fit-content;
+    transform: scaleX(0);
+    transform-origin: right;
+}
+
+.wg>.titbar>.menu.show {
+    transform: scaleX(1);
+}
+
+.wg>.titbar>.menu>.a {
+    width: 25px;
+    height: 100%;
+}
+
+.wg>.titbar>.menu>.a>.bi {
+    margin-left: 4px;
+}
+
+.wg>.titbar>.menu>.a:first-child>.bi {
+    margin-left: 8px;
+}
+
+.wg>.titbar>.menu>.a:first-child,
+.wg>.titbar>.menu>.a:last-child {
+    width: 28px;
+}
+
+.wg>.titbar>.menu>.a.img>img {
+    width: 18px;
+    height: 18px;
+    margin: 3.5px 0 3.5px 6px;
+}
+
+.wg>.titbar>.menu>.a:hover {
+    background-color: var(--hover);
+}
+
+.wg>.content {
+    width: 100%;
+    height: 100%;
+    margin-top: -28px;
+}
+
+.wg.toolbar {
+    border-radius: var(--radius-xl);
+    height: 100%;
+    background-color: var(--contextmeu);
+    backdrop-filter: blur(20px) saturate(1.5);
+    -webkit-backdrop-filter: blur(20px) saturate(1.5);
+    box-shadow: 0 1px 2px #44444460, 0px 3px 25px 1px var(--shadow);
+    margin: 0 3px;
+}
+
+.wg.toolbar>.titbar>.more {
+    width: 18px;
+    height: 18px;
+    font-size: 13px;
+    opacity: 0;
+}
+
+.wg.toolbar:hover>.titbar>.more {
+    opacity: 1;
+}
+
+.wg.toolbar>.titbar>.menu>.a.addtotb {
+    display: none;
+}
+
+.wg.desktop>.titbar>.menu>.a.addtodt {
+    display: none;
+}
+
+.wg.calc {
+    grid-column: auto / span 2;
+    grid-row: auto / span 3;
+}
+
+.wg.calc>.content {
+    display: grid;
+    grid-template-areas:
+        "input input input input"
+        "pow sqrt c jia"
+        "n7 n8 n9 jian"
+        "n4 n5 n6 cheng"
+        "n1 n2 n3 chu"
+        "dot n0 back ans";
+    grid-template-columns: repeat(4, 25%);
+    grid-template-rows: 25% repeat(5, 15%);
+    gap: 0px;
+}
+
+.wg.calc>.content .checked {
+    background-color: var(--mm) !important;
+}
+
+.wg.calc>.content>.container>input {
+    border: none;
+    outline: none;
+    background-color: #00000000;
+    font-size: 30px;
+    text-align: end;
+    color: var(--text);
+    width: 98%;
+    border-right: 2px solid transparent;
+}
+
+.wg.calc>.content>.container {
+    display: flex;
+    grid-area: input;
+    width: 100%;
+    align-items: flex-end;
+}
+
+.wg.calc>.content>.container>input:focus {
+    animation-name: shine;
+    animation-duration: 1s;
+    border-color: var(--caret);
+    animation-iteration-count: infinite;
+}
+
+.wg.calc>.content>.b {
+    margin: 5px 5px;
+    font-size: 25px;
+    margin: 0;
+    border: 1px solid var(--hr);
+    text-align: center;
+    transition: 50ms;
+    background: var(--card);
+}
+
+.wg.calc>.content>.b.ans {
+    border: none;
+    background-image: linear-gradient(120deg, var(--theme-1), var(--theme-2));
+    filter: opacity(0.7);
+}
+
+.wg.calc>.content>.b.ans:hover {
+    filter: none;
+}
+
+.wg.calc>.content>.b:hover {
+    background-color: var(--mm);
+}
+
+.wg.weather {
+    grid-column: auto / span 3;
+    grid-row: auto / span 1;
+}
+
+.wg.weather>.content {
+    display: flex;
+}
+
+.wg.weather.menu>.content>.img, .wg.weather.desktop>.content>.img {
+    width: 70px;
+    height: 100%;
+    padding: 5px;
+    background-size: cover;
+    margin: 0 10px;
+}
+
+.wg.weather.menu>.content>.text>.temperature, .wg.weather.desktop>.content>.text>.temperature {
+    font-size: 30px;
+    margin: 8px 0;
+}
+
+.wg.weather>.content>.text {
+    padding-top: 10px;
+    line-height: 1;
+}
+
+.wg.toolbar.weather>.content>.img {
+    width: 30px;
+    height: 100%;
+    margin: 0 5px 0 10px;
+}
+
+.wg.toolbar.weather>.content>.text {
+    font-size: 9px;
+    padding-top: 5px;
+    margin-right: 10px;
+}
+
+.wg.toolbar.weather>.content>.text>.temperature {
+    font-size: 19px;
+}
+
+.wg.monitor {
+    grid-column: auto / span 3;
+    grid-row: auto / span 1;
+}
+
+.wg.monitor>.content>.text>.type {
+    font-size: 1.4em;
+}
+
+.wg.monitor>.content {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    align-items: center;
+}
+
+.wg.monitor>.content>.container {
+    width: 60px;
+    height: 60px;
+    position: relative;
+    margin-left: 13px;
+}
+
+.wg.monitor>.content>.container>.text {
+    font-size: 0.9em;
+}
+
+.wg.monitor>.content>.container>svg>circle:first-child {
+    fill: none;
+    stroke: var(--hover-b);
+    stroke-width: 6px;
+}
+
+.wg.monitor>.content>.container>svg>circle:last-child {
+    stroke: #fff;
+    fill: none;
+    stroke-width: 2px;
+    transform: rotate(90deg);
+    stroke-width: 6px;
+    stroke-linecap: round;
+}
+
+.wg.monitor>.content>.container>div.text {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    top: 0px;
+    left: 0px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.wg.monitor.toolbar>.content {
+    font-size: 0.7em;
+    gap: 10px;
+    min-width: 180px;
+    line-height: 1.1;
+}
+
+.wg.monitor.toolbar>.content>.container, .wg.monitor.toolbar>.content>.container>svg, .wg.monitor.toolbar>.content>.container>.text {
+    height: 40px;
+    width: 40px;
+}
+
+.wg.monitor.toolbar>.content>.container>svg>circle {
+    cx: 20px;
+    cy: 20px;
+    r: 15px;
+    stroke-width: 5px;
+}
+
+.wg.monitor.toolbar>.content>.container>svg>circle:last-child {
+    cy: -20px !important;
+}
+
+/* .wg.monitor.toolbar>.content>.text {
+    font-siz
+} */

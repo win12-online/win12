@@ -1,0 +1,65 @@
+#win-whiteboard>canvas {
+    background-color: #ffffff88;
+}
+
+:root.dark #win-whiteboard>canvas {
+    background-color: #aaaaaa88;
+}
+
+.window.whiteboard.max>#win-whiteboard>.toolbar {
+    bottom: 60px;
+}
+
+.window.whiteboard.max>#win-whiteboard>.toolbar>.tools {
+    border-radius: 10px !important;
+}
+
+#win-whiteboard>.toolbar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    bottom: 0px;
+    width: 100%;
+    transition: bottom 200ms;
+}
+
+#win-whiteboard>.toolbar>.tools {
+    display: flex;
+    border-radius: 10px 10px 0px 0px;
+    justify-content: space-evenly;
+    box-shadow: 0px 0px 10px 3px #00000066;
+    padding: 0px 15px 0px 15px;
+    overflow: hidden;
+    transition: border-radius 200ms;
+    background-color: #ffffff88;
+}
+
+:root.dark #win-whiteboard>.toolbar>.tools {
+    background-color: #aaaaaa88;
+}
+
+#win-whiteboard>.toolbar>.tools>* {
+    margin: 3px 3px 0px 3px;
+    transition: background-color 70ms, top 100ms;
+    border-radius: 10px 10px 0px 0px;
+    position: relative;
+    top: 13.5px;
+}
+
+#win-whiteboard>.toolbar>.tools>.active {
+    top: 6px;
+    background-color: #00000020;
+}
+
+#win-whiteboard>.toolbar>.tools>.eraser,
+#win-whiteboard>.toolbar>.tools>.delete {
+    width: 76px;
+    display: flex;
+    justify-content: center;
+    padding-top: 5px;
+}
+
+#win-whiteboard>.toolbar>.tools>*:not(.active):hover {
+    background-color: #00000015;
+}

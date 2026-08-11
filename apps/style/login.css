@@ -1,0 +1,180 @@
+#loginback {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background-image: url('../../img/login.jpg'); 
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    transition: filter 500ms, background-color 500ms, opacity 1500ms ease-in-out;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    display: none;
+    z-index: 101;
+}
+
+#login {
+    appearance: none;
+    background-color: #eeeeee40;
+    width: 100px;
+    padding: 5.5px 8px;
+    color: #fff;
+    border-radius: var(--radius-md);
+    font-size: 15.8px;
+    text-align: center;
+    border: 3px solid #00000000;
+    transition: 50ms;
+    margin-bottom: -40px;
+    z-index: 1;
+    cursor: pointer;
+    font-family: inherit;
+    line-height: 1.5;
+}
+
+#login:hover {
+    border-color: #ffffff50;
+    transition: 50ms;
+}
+
+#login:active {
+    filter: brightness(2);
+    scale: 0.97;
+    border-color: #00000000;
+    background-color: #eeeeee70;
+    transition: 80ms;
+}
+
+#login:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+}
+
+#login-password {
+    display: none;
+    width: 220px;
+    margin-bottom: 10px;
+    padding: 7px 10px;
+    color: #fff;
+    background-color: #eeeeee40;
+    border: 2px solid #ffffff50;
+    border-radius: var(--radius-md);
+    outline: none;
+    text-align: center;
+}
+
+#login-password::placeholder {
+    color: #ffffffaa;
+}
+
+#login-error {
+    display: none;
+    min-height: 18px;
+    margin-bottom: 8px;
+    color: #fff;
+    font-size: 14px;
+    text-shadow: 0 1px 3px #000;
+}
+
+#loginback.tauri-password #login-password,
+#loginback.tauri-password #login-error {
+    display: block;
+}
+
+:root.corner_squ #login {
+    corner-shape: squircle;
+    border-radius: var(--radius-3xl);
+}
+
+#login-welc{
+    height: 100px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#loginback>div.user {
+    width: 150px;
+    height: 150px;
+    border-radius: 100%;
+    background-image: url("../../icon/user.svg");
+    background-size: 65% 65%;
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+    margin-bottom: 10px;
+    background-color: #ddd;
+    transition: filter 500ms;
+    margin-top: -35px;
+}
+
+#loginback>div.name {
+    color: #fefefe;
+    font-size: 30px;
+    font-family: Arial, Helvetica, sans-serif;
+    margin-bottom: 15px;
+    transition: color 500ms;
+}
+
+#loginback.close,
+#loginback.close>div.user {
+    filter: brightness(0);
+    /* backdrop-filter: brightness(0); */
+}
+
+#loginback.close>div.name,
+#loginback.close #login-after {
+    color: #000 !important;
+}
+
+#loginback.close {
+    background-color: black;
+}
+
+#loginback .power {
+    display: flex;
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    /* width: 165px; */
+    /* justify-content: space-evenly; */
+    color: #fff;
+    align-items: center;
+}
+
+#loginback .power>* {
+    cursor: pointer;
+    transition: 100ms;
+    font-size: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 7px;
+    border-radius: var(--radius-lg);
+}
+
+#loginback .power>*:hover {
+    background-color: #ffffff30;
+}
+
+#loginback .power>*:active {
+    opacity: 0.7;
+}
+
+#loginback>.langselect{
+    position: absolute;
+    bottom: 80px;
+    right: 10px;
+}
+
+#loginback>.langselect>*{
+    padding: 4px 18px;
+    color: #fff;
+}
+#loginback>.langselect>.selected{
+    pointer-events: none;
+    font-weight: bold;
+}

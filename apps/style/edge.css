@@ -1,0 +1,123 @@
+.window.edge.max>#win-edge {
+    padding-bottom: 55px;
+}
+
+#win-edge {
+    display: flex;
+    flex-direction: column;
+    transition: 50ms;
+}
+
+#win-edge>.tool {
+    display: flex;
+    padding: 6px 7px 2px 7px;
+}
+
+#win-edge>.tool>.a {
+    font-size: 18px;
+    border-radius: var(--radius-md);
+    width: 35px;
+    height: 30px;
+    text-align: center;
+    transition: 50ms;
+    margin: 0 1.5px;
+    --top:2px;
+}
+
+#win-edge>.tool>.a.disabled {
+    filter: opacity(0.5);
+    pointer-events: none;
+}
+
+#win-edge>.tool>.a>.bi::before {
+    position: relative;
+    top: var(--top);
+}
+
+#win-edge>.tool>.a:hover {
+    background-color: var(--hover-half);
+}
+
+#win-edge>.tool>input {
+    background-color: var(--hover-half);
+    border-radius: 50px;
+    border: 1.5px solid transparent;
+    padding: 3px 14px 4px 10px;
+    outline: medium;
+    color: var(--text);
+    transition: 100ms, border 0s;
+    height: 30px;
+    margin: 0 2px;
+}
+
+#win-edge>.tool>input.url {
+    flex-grow: 1;
+}
+
+#win-edge>.tool>input.rename:not(.show) {
+    width: 0;
+    padding: 0;
+    border: none;
+}
+
+#win-edge>.tool>input.rename.show {
+    width: 200px;
+}
+
+#win-edge>.tool>input:hover {
+    border-color: #7f7f7f7f;
+}
+
+#win-edge>.tool>input:focus {
+    border-color: var(--href);
+}
+
+#win-edge>iframe {
+    width: calc(100% - 4px);
+    flex-grow: 1;
+    margin: 2px;
+    border-radius: var(--radius-2xl);
+    --bg: var(--bg);
+    --text: var(--text);
+    display: none;
+}
+
+#win-edge>iframe.show {
+    display: block;
+}
+
+.reloading>svg {
+    width: 27px !important;
+}
+
+.reloading {
+    margin-right: -5px;
+    margin-bottom: -4px;
+    animation: reload 100ms;
+}
+
+@keyframes reload {
+    0% {
+        margin-right: -27px;
+    }
+
+    100% {
+        margin-right: -5px;
+    }
+}
+
+.reloading>svg>circle:first-child {
+    stroke: #7f7f7f50;
+    fill: none;
+    stroke-width: 2px;
+}
+
+.reloading>svg>circle:last-child {
+    stroke: var(--href);
+    stroke-width: 2px;
+}
+
+#voiceBall {
+    aspect-ratio: 1;
+    touch-action: none;
+}

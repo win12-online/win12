@@ -1,0 +1,42 @@
+#win-run {
+    display: flex !important;
+    padding: 12px;
+    
+}
+
+#win-run>.open {
+    display: flex !important;
+    width: 100%;
+    gap: 12px;
+    height: 100%;
+    align-items: center;
+}
+
+#win-run>.open>.icon {
+    min-width:48px;
+    min-height:48px ;
+    background-image: url('../../icon/run.svg');
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+#win-run>.open>input {
+    height: 100%;
+    flex:1;
+    background-color: transparent;
+    border: 0;
+    box-shadow: none;
+}
+
+#win-run>.open>input:focus {
+    background-color: transparent;
+    border: 0;
+    box-shadow: none;
+    background-image: none;
+}
+
+
+#win-run>.open>.button {
+    width: 64px;
+}

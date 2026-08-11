@@ -1,0 +1,3095 @@
+// 应用功能
+let apps = {
+    setting: {
+        init: () => {
+            if (window.innerWidth <= 600) {
+                // 竖屏打开默认停在顶层列表，不自动钻进主页子页
+                $('#win-setting').removeClass('drilled');
+            } else {
+                $('#win-setting>.menu>list>a.home')[0].click();
+            }
+            $('#win-setting>.page>.cnt.update>.setting-list>div:last-child>.alr>a.checkbox')[localStorage.getItem('autoUpdate') == 'true' ? 'addClass' : 'removeClass']('checked');
+            apps.setting.checkUpdate();
+            // 加载已保存的蓝屏颜色
+            var savedColor = getPanicColor();
+            $('div.dp.advanced>div>input.panic-inp').val(savedColor);
+            $('div.dp.advanced>div>.color.panic-color').css('background-color', savedColor);
+        },
+        page: (name) => {
+            $('#win-setting>.page>.cnt.' + name).scrollTop(0);
+            $('#win-setting>.page>.cnt.show').removeClass('show');
+            $('#win-setting>.page>.cnt.' + name).addClass('show');
+            $('#win-setting>.menu>list>a.check').removeClass('check');
+            $('#win-setting>.menu>list>a.' + name).addClass('check');
+            $('#win-setting').addClass('drilled');
+        },
+        back: () => {
+            $('#win-setting').removeClass('drilled');
+        },
+        theme_get: () => {
+            $('#set-theme').html(`<loading><svg width="30px" height="30px" viewBox="0 0 16 16">
+            <circle cx="8px" cy="8px" r="7px" style="stroke:#7f7f7f50;fill:none;stroke-width:3px;"></circle>
+            <circle cx="8px" cy="8px" r="7px" style="stroke:#2983cc;stroke-width:3px;"></circle></svg></loading>`);
+            // 实时获取主题
+            api('repos/tjy-gitnub/win12-theme/contents').then(res => {
+                res.json().then(cs => {
+                    console.log(cs);
+                    cs.forEach(c => {
+                        if (c.type == 'dir') {
+                            api(c.url, true).then(res => {
+                                res.json().then(cnt => {
+                                    $('#set-theme').html('');
+                                    cnt.forEach(cn => {
+                                        if (cn.name == 'theme.json') {
+                                            $.getJSON('https://tjy-gitnub.github.io/win12-theme/' + cn.path).then(inf => {
+                                                // let infjs = inf;
+                                                if ($('#set-theme>loading').length)
+                                                    $('#set-theme').html('');
+                                                $('#set-theme').append(`<a class="a act" onclick="apps.setting.theme_set('${c.name}')" style="background-image:url('https://tjy-gitnub.github.io/win12-theme/${c.name}/view.jpg')">${c.name}</a>`);
+                                            });
+                                        }
+                                    });
+                                })
+                            });
+                        }
+                    });
+                })
+            });
+        },
+        theme_set: (infp) => {
+            api('repos/tjy-gitnub/win12-theme/contents/' + infp).then(res => {
+                res.json().then(cnt => {
+                    // console.log('https://api.github.com/repos/tjy-gitnub/win12-theme/contents/' + infp);
+                    cnt.forEach(cn => {
+                        if (cn.name == 'theme.json') {
+                            $.getJSON('https://tjy-gitnub.github.io/win12-theme/' + cn.path).then(inf => {
+                                let infjs = inf;
+                                cnt.forEach(fbg => {
+                                    console.log(fbg, infjs);
+                                    if (fbg.name == infjs.bg) {
+                                        $(':root').css('--bgul', `url('https://tjy-gitnub.github.io/win12-theme/${fbg.path}')`);
+                                        $(':root').css('--theme-1', infjs.color1);
+                                        $(':root').css('--theme-2', infjs.color2);
+                                        $(':root').css('--href', infjs.href);
+                                        // $('#set-theme').append(`<a class="a act" onclick="apps.setting.theme_set(\`(${inf})\`)" style="background-image:url('https://tjy-gitnub.github.io/win12-theme/${fbg.path}')">${c.name}</a>`);
+                                    }
+                                });
+                            });
+                        }
+                    });
+                })
+            });
+        },
+        checkUpdate: async (manual = false) => {
+            const $update = $('#win-setting>.page>.cnt.update');
+            const $notice = $update.find('.update-main .notice');
+            const $detail = $update.find('.update-main .detail');
+            const $button = $update.find('.update-check');
+            const $release = $update.find('.update-release');
+
+            $release.addClass('disabled').removeAttr('onclick');
+
+            if (!(window.win12Native && window.win12Native.isTauri())) {
+                $notice.text('仅 Tauri App 可用');
+                $detail.text('Windows 更新需要桌面版调用 GitHub 发布接口。');
+                $button.addClass('disabled');
+                return;
+            }
+
+            $button.addClass('disabled').text('正在检查...');
+            $notice.text('正在检查更新...');
+            $detail.text('正在连接 GitHub');
+
+            try {
+                const result = await window.win12Native.checkAppUpdate();
+                const currentVersion = result.current_version || '未知版本';
+                const latestVersion = result.latest_version || '未知版本';
+                const publishedAt = result.published_at ? new Date(result.published_at).toLocaleString() : '';
+                const releaseText = result.latest_name || latestVersion;
+
+                if (result.update_available) {
+                    $notice.text('有可用更新');
+                    $detail.text(`当前版本 ${currentVersion}，最新版本 ${latestVersion}${publishedAt ? `，发布于 ${publishedAt}` : ''}`);
+                    $release.removeClass('disabled')
+                        .attr('onclick', `window.open(${JSON.stringify(result.release_url)}, '_blank')`)
+                        .find('div>p:first-child').text(`获取 ${releaseText}`);
+                    $release.find('div>p:last-child').text('打开 GitHub 最新发布页下载安装包');
+                }
+                else {
+                    $notice.text('你使用的是最新版本');
+                    $detail.text(`当前版本 ${currentVersion}，GitHub 最新版本 ${latestVersion}`);
+                    $release.find('div>p:first-child').text('下载完整内容');
+                    $release.find('div>p:last-child').text('当前没有比本机更新的版本');
+                }
+            }
+            catch (e) {
+                $notice.text('无法检查更新');
+                $detail.text(String(e));
+            }
+            finally {
+                $button.removeClass('disabled').text(manual ? '重新检查' : '检查更新');
+            }
+        },
+    },
+    msstore: {
+        STORE_KEY: 'msstore_installed',
+        CUSTOM_KEY: 'msstore_custom',
+        // 推荐网页应用目录
+        CATALOG: {
+            baidu:    { name: '百度',       url: 'https://www.baidu.com',      desc: '百度一下，你就知道',     cate: '工具', cat: 'app',  icon: 'icon/store/baidu.webp' },
+            bilibili: { name: '哔哩哔哩',   url: 'https://www.bilibili.com',   desc: '弹幕视频社区',           cate: '视频', cat: 'app',  icon: 'icon/store/bilibili.webp' },
+            youtube:  { name: 'YouTube',    url: 'https://www.youtube.com',    desc: '视频分享平台',           cate: '视频', cat: 'app',  icon: 'icon/store/youtube.webp' },
+            taobao:   { name: '淘宝',       url: 'https://www.taobao.com',     desc: '淘！我喜欢',             cate: '购物', cat: 'app',  icon: 'icon/store/taobao.webp' },
+            jd:       { name: '京东',       url: 'https://www.jd.com',         desc: '多快好省',               cate: '购物', cat: 'app',  icon: 'icon/store/jd.webp' },
+            weibo:    { name: '微博',       url: 'https://weibo.com',          desc: '随时随地发现新鲜事',     cate: '社交', cat: 'app',  icon: 'icon/store/weibo.webp' },
+            zhihu:    { name: '知乎',       url: 'https://www.zhihu.com',      desc: '有问题，上知乎',         cate: '社交', cat: 'app',  icon: 'icon/store/zhihu.webp' },
+            wangyiyun:{ name: '网易云音乐', url: 'https://music.163.com',      desc: '音乐社区',               cate: '音乐', cat: 'app',  icon: 'icon/store/wangyiyun.webp' },
+            g_genshin:{ name: '原神',       url: 'https://ys.mihoyo.com',      desc: '开放世界冒险',           cate: '游戏', cat: 'game', icon: 'icon/store/g_genshin.webp' },
+            g_minecraft:{ name: '我的世界', url: 'https://mcjs.cc',            desc: '沙盒建造游戏',           cate: '游戏', cat: 'game', icon: 'icon/store/g_minecraft.webp' },
+            g_start:  { name: 'Start 云游戏', url: 'https://start.qq.com',     desc: '云端畅玩大作',           cate: '游戏', cat: 'game', icon: 'icon/store/g_start.webp' },
+            macos_web:{ name: 'macOS 网页版', url: 'https://macos.goose.cc.cd', desc: '浏览器里的 macOS 体验',  cate: '系统', cat: 'app',  icon: 'icon/store/macos_web.webp' },
+            goosehost:{ name: 'GooseHost',    url: 'https://host.goose.gs.cn',  desc: '静态网站托管服务',       cate: '开发', cat: 'app',  icon: 'icon/store/goosehost.webp' }
+        },
+        init: () => {
+            apps.msstore.page('home');
+            if (!apps.msstore.initialized) {
+                apps.msstore.initialized = true;
+                apps.msstore.renderLists();
+            }
+        },
+        page: (name) => {
+            $('#win-msstore>.page>.cnt.' + name).scrollTop(0);
+            $('#win-msstore>.page>.cnt.show').removeClass('show');
+            $('#win-msstore>.page>.cnt.' + name).addClass('show');
+            $('#win-msstore>.menu>list>a.check').removeClass('check');
+            $('#win-msstore>.menu>list>a.' + name).addClass('check');
+            const list = $('#win-msstore>.menu>list.focs')[0];
+            if (list) {
+                const ind = list.$$('span.focs')[0];
+                const act = list.$$('a.' + name)[0];
+                if (ind && act && !ind.dataset.type) {
+                    const last = list.$$('a');
+                    $(ind).addClass('cl');
+                    $(ind).css('top', act.offsetTop - last[last.length - 1].offsetTop + 'px');
+                    $(ind).css('left', act.offsetLeft - list.offsetLeft + 'px');
+                    setTimeout(() => { $(ind).removeClass('cl'); }, 500);
+                }
+            }
+            if (name === 'apps' || name === 'game') apps.msstore.renderLists();
+            if (name === 'down') apps.msstore.renderDown();
+            if (name === 'home') apps.msstore.renderHome();
+        },
+        getInstalled: () => {
+            try { return JSON.parse(localStorage.getItem(apps.msstore.STORE_KEY) || '[]'); }
+            catch (e) { return []; }
+        },
+        getCustom: () => {
+            try { return JSON.parse(localStorage.getItem(apps.msstore.CUSTOM_KEY) || '[]'); }
+            catch (e) { return []; }
+        },
+        // 目录应用用随包内置图标；自定义应用无随包图标，回落 cloudflare 图标中转 favicon.cyann.top 取站点图标
+        faviconOf: (url) => {
+            try { return 'https://favicon.cyann.top/' + new URL(url).hostname; }
+            catch (e) { return 'icon/edge.svg'; }
+        },
+        // 硬编码的软件图标直接塞文件夹里了，格式是 webp，对了我没搞明白你们那个放 app 的仓库怎么用，没适配哈
+        iconOf: (a) => {
+            if (!a) return 'icon/edge.svg';
+            return a.icon || apps.msstore.faviconOf(a.url);
+        },
+        isInstalled: (id) => apps.msstore.getInstalled().includes(id),
+        esc: (s) => String(s).replace(/[&<>'"]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[m])),
+        listHtml: (cat) => {
+            let html = '<div class="store-grid">';
+            for (const id in apps.msstore.CATALOG) {
+                const a = apps.msstore.CATALOG[id];
+                if (a.cat !== cat) continue;
+                html += apps.msstore.cardHtml(id, a, apps.msstore.isInstalled(id));
+            }
+            html += '</div>';
+            return html;
+        },
+        cardHtml: (id, a, installed) => {
+            const fav = apps.msstore.iconOf(a);
+            const act = installed
+                ? `<button class="open" onclick="apps.msstore.openApp('${id}')">打开</button><button class="get" onclick="apps.msstore.uninstall('${id}')">卸载</button>`
+                : `<button class="get" onclick="apps.msstore.install('${id}')">获取</button>`;
+            return `<div class="store-card" data-id="${id}">
+                <img class="store-card-icon" src="${fav}" onerror="this.src='icon/edge.svg'">
+                <div class="store-card-info">
+                    <div class="store-card-name">${apps.msstore.esc(a.name)}</div>
+                    <div class="store-card-desc">${apps.msstore.esc(a.desc)}</div>
+                    <div class="store-card-cate">${apps.msstore.esc(a.cate)}</div>
+                </div>
+                <div class="store-card-act">${act}</div>
+            </div>`;
+        },
+        renderLists: () => {
+            const appsList = $('#win-msstore>.page>.cnt.apps');
+            const gameList = $('#win-msstore>.page>.cnt.game');
+            if (appsList.length) appsList.html(apps.msstore.listHtml('app'));
+            if (gameList.length) gameList.html(apps.msstore.listHtml('game'));
+        },
+        renderHome: () => {
+            const box = $('#win-msstore>.page>.cnt.home>.container>.store-home-section>.store-featured');
+            if (!box.length) return;
+            let html = '';
+            let n = 0;
+            for (const id in apps.msstore.CATALOG) {
+                const a = apps.msstore.CATALOG[id];
+                if (a.cat !== 'app' && a.cat !== 'game') continue;
+                if (n >= 8) break;
+                html += apps.msstore.cardHtml(id, a, apps.msstore.isInstalled(id));
+                n++;
+            }
+            box.html(html);
+        },
+        install: (id, isCustom) => {
+            const a = isCustom ? apps.msstore.getCustom().find(x => x.id === id) : apps.msstore.CATALOG[id];
+            if (!a || apps.msstore.isInstalled(id)) return;
+            const card = $(`#win-msstore .store-card[data-id="${id}"]`);
+            if (card.length) card.find('.store-card-act').html('<span class="installing">安装中…</span>');
+            const fav = apps.msstore.iconOf(a);
+            let prog = 0;
+            const timer = setInterval(() => {
+                prog = Math.min(100, prog + 12);
+                if (card.length) card.find('.installing').text(`安装中… ${prog}%`);
+                if (prog >= 100) {
+                    clearInterval(timer);
+                    apps.msstore.mountApp(id, a.url, a.name, fav, isCustom);
+                    const installed = apps.msstore.getInstalled();
+                    installed.push(id);
+                    localStorage.setItem(apps.msstore.STORE_KEY, JSON.stringify(installed));
+                    if (isCustom) {
+                        const cs = apps.msstore.getCustom();
+                        const c = cs.find(x => x.id === id);
+                        if (c) c.installed = true;
+                        localStorage.setItem(apps.msstore.CUSTOM_KEY, JSON.stringify(cs));
+                    }
+                    apps.msstore.renderLists();
+                    apps.msstore.renderDown();
+                }
+            }, 120);
+        },
+        uninstall: (id) => {
+            apps.msstore.unmountApp(id);
+            let installed = apps.msstore.getInstalled();
+            installed = installed.filter(x => x !== id);
+            localStorage.setItem(apps.msstore.STORE_KEY, JSON.stringify(installed));
+            const cs = apps.msstore.getCustom();
+            const c = cs.find(x => x.id === id);
+            if (c) c.installed = false;
+            localStorage.setItem(apps.msstore.CUSTOM_KEY, JSON.stringify(cs));
+            apps.msstore.renderLists();
+            apps.msstore.renderDown();
+        },
+        openApp: (id) => { openapp(id); },
+        mountApp: (id, url, name, fav, isCustom) => {
+            const favicon = fav || apps.msstore.faviconOf(url);
+            // msstore 传入的 favicon 已带前缀，这里去掉，否则会拼成 icon/icon/... 的雷霆路径。
+            icon[id] = favicon.startsWith('icon/') ? favicon.slice(5) : favicon;
+            if ($('.window.' + id).length) return;
+            const winHtml = `<div class="window ${id} webapp">
+                <div class="resize-bar"></div>
+                <div class="titbar">
+                    <img src="${favicon}" class="icon" onerror="this.src='icon/edge.svg'">
+                    <p>${apps.msstore.esc(name)}</p>
+                    <div>
+                        <a class="a wbtg red" onclick="hidewin('${id}')"><i class="bi bi-x-lg"></i></a>
+                        <a class="a wbtg max" onclick="maxwin('${id}')"><i class="bi bi-app"></i></a>
+                        <a class="a wbtg" onclick="minwin('${id}')"><i class="bi bi-dash-lg"></i></a>
+                    </div>
+                </div>
+                <div class="loadback"><img src="${favicon}" class="icon" onerror="this.src='icon/edge.svg'"></div>
+                <div class="content" id="win-${id}"></div>
+            </div>`;
+            document.body.insertAdjacentHTML('beforeend', winHtml);
+            apps[id] = createWebapp(id, url);
+            apps.msstore.bindWindowChrome(id);
+            const entry = `<a class="a enable ${id}" id="startapp-${id}" data-cm-name="${apps.msstore.esc(name)}" oncontextmenu="return showcm(event,'smlapp',['${id}',this.dataset.cmName])" onclick="openapp('${id}');hide_startmenu();"><img src="${favicon}" onerror="this.src='icon/edge.svg'"><p>${apps.msstore.esc(name)}</p></a>`;
+            // 刷新恢复或重装时清理旧的开始菜单条目
+            $('#startapp-' + id).remove();
+            const anchor = $('#startmenu-l a[onclick*="openapp(\'vscode\')"]');
+            if (anchor.length) anchor.after(entry);
+            apps.msstore.mountDesktop(id, name, favicon);
+        },
+        mountDesktop: (id, name, favicon) => {
+            // 桌面图标：安装删除
+            if ($('#desktop>div[appname="' + id + '"]').length) return;
+            if (desktopItem.some(x => x.indexOf("appname='" + id + "'") > -1)) return;
+            const s = `<div class="b" ondblclick="openapp('${id}')" ontouchstart="openapp('${id}')" appname='${id}'><img src="${favicon}" onerror="this.src='icon/edge.svg'"><p>${apps.msstore.esc(name)}</p></div>`;
+            $('#desktop').append(s);
+            desktopItem[desktopItem.length] = s;
+            addMenu();
+            saveDesktop();
+        },
+        unmountDesktop: (id) => {
+            $('#desktop>div[appname="' + id + '"]').remove();
+            const i = desktopItem.findIndex(x => x.indexOf("appname='" + id + "'") > -1);
+            if (i > -1) { desktopItem.splice(i, 1); saveDesktop(); }
+        },
+        bindWindowChrome: (id) => {
+            // 运行时动态创建的窗口
+            const win = $('.window.' + id);
+            if (!win.length) return;
+            const titbar = win.children('.titbar');
+            const resizeBar = win.children('.resize-bar');
+            win.attr('onmousedown', `focwin('${id}')`);
+            win.attr('ontouchstart', `focwin('${id}')`);
+            titbar.attr('oncontextmenu', `return showcm(event,'titbar','${id}')`);
+            titbar.attr('ondblclick', `maxwin('${id}')`);
+            titbar.children('div').children('.wbtg').mousedown(stop);
+            titbar.children('.icon').mousedown(stop);
+            const winEl = win[0];
+            const tbEl = titbar[0];
+            tbEl.addEventListener('mousedown', (e) => {
+                if ($('.taskmgr>.titbar>div>input').is(':focus')) return;
+                let x = window.getComputedStyle(winEl, null).getPropertyValue('left').split('px')[0];
+                let y = window.getComputedStyle(winEl, null).getPropertyValue('top').split('px')[0];
+                if (y != 0) { bfLeft = x; bfTop = y; }
+                deltaLeft = e.clientX - x;
+                deltaTop = e.clientY - y;
+                page.onmousemove = win_move.bind(winEl);
+            });
+            tbEl.addEventListener('touchstart', (e) => {
+                if (e.target.closest('.wbtg, .icon, .tab, .tabs>.new')) return;
+                if (e.cancelable) e.preventDefault();
+                let x = window.getComputedStyle(winEl, null).getPropertyValue('left').split('px')[0];
+                let y = window.getComputedStyle(winEl, null).getPropertyValue('top').split('px')[0];
+                if (y != 0) { bfLeft = x; bfTop = y; }
+                deltaLeft = e.targetTouches[0].clientX - x;
+                deltaTop = e.targetTouches[0].clientY - y;
+                page.ontouchmove = win_move.bind(winEl);
+            });
+            if (resizeBar.length) {
+                for (const n of ['top', 'bottom', 'left', 'right', 'top-right', 'top-left', 'bottom-right', 'bottom-left']) {
+                    resizeBar[0].insertAdjacentHTML('afterbegin', `<div class="resize-knob ${n}" onmousedown="resizewin(this.parentElement.parentElement, '${n}', this)" ontouchstart="event.preventDefault(); resizewin(this.parentElement.parentElement, '${n}', this)"></div>`);
+                }
+            }
+        },
+        unmountApp: (id) => {
+            apps.msstore.unmountDesktop(id);
+            hidewin(id);
+            $('.window.' + id).remove();
+            delete apps[id];
+            if (icon[id]) delete icon[id];
+            $('#startapp-' + id).remove();
+        },
+        renderDown: () => {
+            const cont = $('#win-msstore>.page>.cnt.down .installed-list');
+            if (!cont.length) return;
+            const installed = apps.msstore.getInstalled();
+            let html = '';
+            installed.forEach(id => {
+                const a = apps.msstore.CATALOG[id] || apps.msstore.getCustom().find(x => x.id === id);
+                if (!a) return;
+                const fav = apps.msstore.iconOf(a);
+                html += `<div class="store-card" data-id="${id}">
+                    <img class="store-card-icon" src="${fav}" onerror="this.src='icon/edge.svg'">
+                    <div class="store-card-info">
+                        <div class="store-card-name">${apps.msstore.esc(a.name)}</div>
+                        <div class="store-card-desc">${apps.msstore.esc(a.desc)}</div>
+                    </div>
+                    <div class="store-card-act">
+                        <button class="open" onclick="apps.msstore.openApp('${id}')">打开</button>
+                        <button class="get" onclick="apps.msstore.uninstall('${id}')">卸载</button>
+                    </div>
+                </div>`;
+            });
+            cont.html(html || '<div class="store-empty">暂无已安装的应用</div>');
+        },
+        makeCustom: () => {
+            const name = $('#msstore-custom-name').val().trim();
+            const url = $('#msstore-custom-url').val().trim();
+            if (!name) { alert('请输入应用名称'); return; }
+            if (!/^https?:\/\//i.test(url)) { alert('请输入以 http:// 或 https:// 开头的网址'); return; }
+            const id = 'custom_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
+            const cs = apps.msstore.getCustom();
+            cs.push({ id: id, name: name, url: url, installed: false });
+            localStorage.setItem(apps.msstore.CUSTOM_KEY, JSON.stringify(cs));
+            $('#msstore-custom-name').val('');
+            $('#msstore-custom-url').val('');
+            apps.msstore.install(id, true);
+        },
+        toggleCustom: () => {
+            // 自定义表单默认收起，由标题栏入口呼出
+            apps.msstore.page('down');
+            const box = $('#win-msstore .custom-apps');
+            if (box.length) box.toggleClass('show');
+        },
+        restore: () => {
+            apps.msstore.getInstalled().forEach(id => {
+                const a = apps.msstore.CATALOG[id] || apps.msstore.getCustom().find(x => x.id === id);
+                if (!a) return;
+                apps.msstore.mountApp(id, a.url, a.name, apps.msstore.iconOf(a), !!apps.msstore.getCustom().find(x => x.id === id));
+            });
+        }
+    },
+    run: {
+        init: () => {
+            $('#win-run>.open>input').val(run_cmd);   //在 windows 中，运行输入的内容会被保留
+            window.setTimeout(() => {
+                $('#win-run>.open>input').focus();
+                $('#win-run>.open>input').select();
+            }, 300);
+        },
+        run: (cmd) => {
+            if (!runcmd(cmd)) {
+                if (cmd != '') {
+                    try {
+                        cmd = cmd.replace(/\/$/, '');
+                        var pathl = cmd.split('/');
+                        let tmp = apps.explorer.getPath();
+                        let valid = true;
+                        pathl.forEach(name => {
+                            if (Object.prototype.hasOwnProperty.call(tmp['folder'], name)) {
+                                tmp = tmp['folder'][name];
+                            }
+                            else {
+                                valid = false;
+                                return false;
+                            }
+                        });
+                        if (valid == true) {
+                            run_cmd = cmd;
+                            openapp('explorer');
+                            window.setTimeout(() => {
+                                apps.explorer.goto(cmd);
+                            }, 300);
+                        }
+                        else {
+                            nts['Can-not-open-file'] = {
+                                cnt: '<p class="tit">' + cmd + `</p>
+                                <p>Windows 找不到文件 '` + cmd + '\'。请确定文件名是否正确后，再试一次。</p> ',
+                                btn: [
+                                    { type: 'main', text: '确定', js: 'closenotice();showwin(\'run\');$(\'#win-run>.open>input\').select();' },
+                                    { type: 'cancel', text: '在 Micrsoft Edge 中搜索', js: 'closenotice();openapp(\'edge\');window.setTimeout(() => {apps.edge.newtab();apps.edge.goto(\'https://www.bing.com/search?q=' + encodeURIComponent(cmd) + '\');}, 300);' }
+                                ]
+                            };
+                            shownotice('Can-not-open-file');
+                        }
+                    }
+                    catch {
+                        nts['Can-not-open-file'] = {
+                            cnt: '<p class="tit">' + cmd + `</p>
+                            <p>Windows 找不到文件 '` + cmd + '\'。请确定文件名是否正确后，再试一次。</p> ',
+                            btn: [
+                                { type: 'main', text: '确定', js: 'closenotice();showwin(\'run\');$(\'#win-run>.open>input\').select();' },
+                                { type: 'cancel', text: '在 Micrsoft Edge 中搜索', js: 'closenotice();openapp(\'edge\');window.setTimeout(() => {apps.edge.newtab();apps.edge.goto(\'https://www.bing.com/search?q=' + encodeURIComponent(cmd) + '\');}, 300);' }
+                            ]
+                        };
+                        shownotice('Can-not-open-file');
+                    }
+                }
+            }
+        }
+    },
+    taskmgr: {
+        sortType: 'cpu',
+        sortOrder: 'up-down',
+        tasks: structuredClone(taskmgrTasks),
+        cpu: 0,
+        cpuChart: null,
+        cpuBg: null,
+        memory: 0,
+        memoryChart: null,
+        memoryBg: null,
+        memory2Elt: null,
+        cpuRunningTime: 0,
+        disk: 0,
+        diskChart: null,
+        diskBg: null,
+        disk2Chart: null,
+        disk2Bg: null,
+        diskSpeed: {
+            read: 0,
+            write: 0
+        },
+        wifi: {
+            receive: 0,
+            send: 0
+        },
+        wifiChart: null,
+        wifiBg: null,
+        ethernet: {
+            receive: 0,
+            send: 0
+        },
+        ethernetChart: null,
+        ethernetBg: null,
+        gpu: {
+            d3: 0,
+            copy: 0,
+            videod: 0,
+            videop: 0,
+            usage: 0
+        },
+        gpuChart: [null, null, null, null],
+        gpuBg: [null, null, null, null],
+        gpu2Chart: [null, null],
+        gpu2Bg: [null, null],
+        gpuMemory: {
+            private: 0,
+            public: 0
+        },
+        gpu3Chart: null,
+        processList: [],
+        handle: 0,
+        foldHide: false,
+        delay: 0,
+        paused: false,
+        pauseKeyBound: false,
+        remove: () => {
+            apps.taskmgr.paused = false;
+            apps.taskmgr.loaded = false;
+            window.clearInterval(apps.taskmgr.handle);
+            if (apps.taskmgr.preLoaded == true) {
+                apps.taskmgr.preLoaded = false;
+                apps.taskmgr.load(false);
+            }
+            else {
+                apps.taskmgr.preLoaded = false;
+            }
+        },
+        init: () => {
+            apps.taskmgr.bindPauseKey();
+            window.setTimeout(() => {
+                $('#win-taskmgr>.menu>list.focs>a')[0].click();
+            }, 200);
+        },
+        bindPauseKey: () => {
+            if (apps.taskmgr.pauseKeyBound) {
+                return;
+            }
+
+            apps.taskmgr._pauseKeyDownHandler = (event) => {
+                if (event.key == 'Control' && $('.window.taskmgr.foc')[0]) {
+                    apps.taskmgr.paused = true;
+                }
+            };
+            apps.taskmgr._pauseKeyUpHandler = (event) => {
+                if (event.key == 'Control') {
+                    apps.taskmgr.paused = false;
+                }
+            };
+            apps.taskmgr._pauseBlurHandler = () => {
+                apps.taskmgr.paused = false;
+            };
+
+            document.addEventListener('keydown', apps.taskmgr._pauseKeyDownHandler);
+            document.addEventListener('keyup', apps.taskmgr._pauseKeyUpHandler);
+            window.addEventListener('blur', apps.taskmgr._pauseBlurHandler);
+            apps.taskmgr.pauseKeyBound = true;
+        },
+        fold: () => {
+            if (!apps.taskmgr.foldHide) {
+                window.setTimeout(() => {
+                    $('#win-taskmgr>.menu>.focs>a>p').hide();
+                }, 50);
+                $('#win-taskmgr')[0].style.gridTemplateColumns = '78px auto';
+            }
+            else {
+                window.setTimeout(() => {
+                    $('#win-taskmgr>.menu>.focs>a>p').show();
+                }, 100);
+                $('#win-taskmgr')[0].style.gridTemplateColumns = '320px auto';
+            }
+            apps.taskmgr.foldHide = !apps.taskmgr.foldHide;
+        },
+        load: (init_all = true) => {
+            if (init_all == true) {
+                const performance = $('#win-taskmgr>.main>.cnt.performance>.content>.performance-graph')[0];
+                performance.$$('.graph-cpu>.information>.left>div:nth-child(3)>.value')[0].innerText = apps.taskmgr.tasks.length;
+
+                apps.taskmgr.cpuChart = performance.$$('.graph-cpu>.graph>.chart')[0];
+                apps.taskmgr.cpuBg = performance.$$('.graph-cpu>.graph>.bg')[0];
+                apps.taskmgr.cpuBg.innerHTML = '<g class="col"></g><g class="row"></g>';
+                apps.taskmgr.cpuChart.innerHTML = '<path d="M 6000 1000" stroke="#2983cc" stroke-width="3px" fill="#2983cc22" />';
+
+                apps.taskmgr.memoryChart = performance.$$('.graph-memory>.graph>.chart')[0];
+                apps.taskmgr.memoryBg = performance.$$('.graph-memory>.graph>.bg')[0];
+                apps.taskmgr.memoryBg.innerHTML = '<g class="col"></g><g class="row"></g>';
+                apps.taskmgr.memoryChart.innerHTML = '<path d="M 6000 1000" stroke="#660099" stroke-width="3px" fill="#66009922" />';
+
+                apps.taskmgr.memory2Elt = performance.$$('.graph-memory>.graph2>.chart')[0];
+
+                apps.taskmgr.diskChart = performance.$$('.graph-disk>.graph>.chart')[0];
+                apps.taskmgr.diskBg = performance.$$('.graph-disk>.graph>.bg')[0];
+                apps.taskmgr.diskBg.innerHTML = '<g class="col"></g><g class="row"></g>';
+                apps.taskmgr.diskChart.innerHTML = '<path d="M 6000 1000" stroke="#008000" stroke-width="3px" fill="#00800022" />';
+
+                apps.taskmgr.disk2Chart = performance.$$('.graph-disk>.graph2>.chart')[0];
+                apps.taskmgr.disk2Bg = performance.$$('.graph-disk>.graph2>.bg')[0];
+                apps.taskmgr.disk2Bg.innerHTML = '<g class="col"></g><g class="row"></g>';
+                apps.taskmgr.disk2Chart.innerHTML = '<path d="M 6000 1000" stroke="#008000" stroke-width="3px" fill="#00800022" /><path d="M 6000 1000" stroke="#008000" stroke-width="3px" fill="none" stroke-dasharray="15, 15" />';
+
+                apps.taskmgr.wifiChart = performance.$$('.graph-wifi>.graph>.chart')[0];
+                apps.taskmgr.wifiBg = performance.$$('.graph-wifi>.graph>.bg')[0];
+                apps.taskmgr.wifiChart.innerHTML = '<path d="M 6000 1000" stroke="#8e5829" stroke-width="3px" fill="#8e582922" /><path d="M 6000 1000" stroke="#8e5829" stroke-width="3px" fill="none" stroke-dasharray="10, 10" />';
+                apps.taskmgr.wifiBg.innerHTML = '<g class="col"></g><g class="row"></g>';
+
+                apps.taskmgr.ethernetChart = performance.$$('.graph-ethernet>.graph>.chart')[0];
+                apps.taskmgr.ethernetBg = performance.$$('.graph-ethernet>.graph>.bg')[0];
+                apps.taskmgr.ethernetChart.innerHTML = '<path d="M 6000 1000" stroke="#d35e3b" stroke-width="3px" fill="#d35e3b22" /><path d="M 6000 1000" stroke="#d35e3b" stroke-width="3px" fill="none" stroke-dasharray="10, 10" />';
+                apps.taskmgr.ethernetBg.innerHTML = '<g class="col"></g><g class="row"></g>';
+
+                apps.taskmgr.gpu3Chart = performance.$$('.graph-gpu>.graphs>svg')[0];
+                apps.taskmgr.gpu3Chart.innerHTML = '<path d="M 6000 1000" stroke="#2983cc" stroke-width="3px" fill="#2983cc22" />';
+
+                for (var i = 1; i <= 4; i++) {
+                    apps.taskmgr.gpuChart[i - 1] = performance.$$('.graph-gpu>.graphs>.graph' + i + '>.chart>.chart')[0];
+                    apps.taskmgr.gpuChart[i - 1].innerHTML = '<path d="M 6000 1000" stroke-width="3px" stroke="#2983cc" fill="#2983cc22" />';
+                    apps.taskmgr.gpuBg[i - 1] = performance.$$('.graph-gpu>.graphs>.graph' + i + '>.chart>.bg')[0];
+                    apps.taskmgr.gpuBg[i - 1].innerHTML = '<g class="col"></g><g class="row"></g>';
+                }
+                for (var i = 1; i <= 2; i++) {
+                    apps.taskmgr.gpu2Chart[i - 1] = performance.$$('.graph-gpu>.gpu2-' + i + '>.chart')[0];
+                    apps.taskmgr.gpu2Bg[i - 1] = performance.$$('.graph-gpu>.gpu2-' + i + '>.bg')[0];
+                    apps.taskmgr.gpu2Bg[i - 1].innerHTML = '<g class="col"></g><g class="row"></g>';
+                    apps.taskmgr.gpu2Chart[i - 1].innerHTML = '<path d="M 6000 1000" stroke-width="3px" stroke="#2983cc" fill="#2983cc22" />';
+                }
+            }
+
+            if (apps.taskmgr.preLoaded != true && apps.taskmgr.loaded != true) {
+                apps.taskmgr.gpuMemory.private = Number((Math.random() * 4).toFixed(2));
+                apps.taskmgr.gpuMemory.public = Number((Math.random() * 4).toFixed(2));
+                apps.taskmgr.generateProcesses();
+                apps.taskmgr.sort();
+                apps.taskmgr.loadProcesses();
+                apps.taskmgr.performanceLoad();
+            }
+
+            if (init_all == true) {
+                apps.taskmgr.gpuMemory.private = Number((Math.random() * 4).toFixed(2));
+                apps.taskmgr.gpuMemory.public = Number((Math.random() * 4).toFixed(2));
+                apps.taskmgr.loadProcesses();
+                apps.taskmgr.generateProcesses();
+                apps.taskmgr.sort();
+                apps.taskmgr.performanceLoad();
+                apps.taskmgr.drawGrids();
+                apps.taskmgr.handle = window.setInterval(() => {
+                    if (apps.taskmgr.paused) {
+                        return;
+                    }
+                    apps.taskmgr.loadProcesses();
+                    apps.taskmgr.generateProcesses();
+                    apps.taskmgr.sort();
+                    apps.taskmgr.performanceLoad();
+                    apps.taskmgr.loadGraph();
+                    apps.taskmgr.gridLine();
+                    apps.taskmgr.memory2Elt.style.width = apps.taskmgr.memory + '%';
+                }, 1000);
+            }
+            else if (apps.taskmgr.loaded != true && apps.taskmgr.preLoaded != true) {
+                apps.taskmgr.handle = window.setInterval(() => {
+                    if (apps.taskmgr.paused) {
+                        return;
+                    }
+                    apps.taskmgr.loadProcesses();
+                    apps.taskmgr.generateProcesses();
+                    apps.taskmgr.sort();
+                    apps.taskmgr.performanceLoad();
+                }, 1000);
+            }
+        },
+        page: (name) => {
+            $('#win-taskmgr>.main>.cnt.' + name).scrollTop(0);
+            $('#win-taskmgr>.main>.cnt.show').removeClass('show');
+            $('#win-taskmgr>.main>.cnt.' + name).addClass('show');
+            $('#win-taskmgr>.menu>list.focs>a.check').removeClass('check');
+            $('#win-taskmgr>.menu>list.focs>a.' + name).addClass('check');
+            if (!(name == 'processes' || name == '404')) {
+                document.getElementById('tsk-search').style.display = 'none';
+            } else {
+                document.getElementById('tsk-search').style.display = '';
+            }
+        },
+        graph: (name) => {
+            $('#win-setting>.page>.cnt.' + name).scrollTop(0);
+            $('#win-taskmgr>.main>.cnt.performance>.content>.performance-graph>.show').removeClass('show');
+            $('#win-taskmgr>.main>.cnt.performance>.content>.performance-graph>.' + name).addClass('show');
+            $('#win-taskmgr>.main>.cnt.performance>.content>.select-menu>.check').removeClass('check');
+            $('#win-taskmgr>.main>.cnt.performance>.content>.select-menu>.' + name).addClass('check');
+        },
+        generateProcesses: () => {
+            let processList = [];
+            let max = 100 / apps.taskmgr.tasks.length;
+            let cpusum = 0, memorysum = 0, disksum = 0, diskUsing = Number(Math.random()) > 0.7/*, color = window.getComputedStyle(page, null).getPropertyValue('--href')*/;
+            var search_len = 0;
+            for (const elt of apps.taskmgr.tasks) {
+                let cpu = Number((Math.random() * max).toFixed(1)),
+                    memory = apps.taskmgr.memory != 0 ? apps.taskmgr.memory / apps.taskmgr.tasks.length + Number(((Math.random() - 0.5) / 5).toFixed(1)) : Number((Math.random() * max).toFixed(1)),
+                    disk = Number((Math.random() * max).toFixed(1)) > (max / 1.2) && diskUsing ? max * Number(Math.random().toFixed(1)) : 0;
+                cpusum = Number((cpusum + cpu).toFixed(1));
+                memorysum = Number((memorysum + memory).toFixed(1));
+                disksum = Number((disksum + disk).toFixed(1));
+                if (document.getElementById('tsk-search').value != '' && document.getElementById('tsk-search').style.display == '' && (!elt.name.toLowerCase().includes(document.getElementById('tsk-search').value.toLowerCase()))) {
+                    continue;
+                }
+                processList.splice(processList.length, 0, {
+                    name: elt.name,
+                    icon: elt.icon || '',
+                    system: elt.system,
+                    cpu: cpu,
+                    memory: memory,
+                    disk: disk
+                });
+                search_len++;
+            }
+            if (search_len == 0) {
+                apps.taskmgr.page('404');
+            }
+            else {
+                if ($('#tsk-search').val() != '' && $('#tsk-search')[0].style.display == '') {
+                    apps.taskmgr.page('processes');
+                }
+            }
+            apps.taskmgr.cpu = cpusum;
+            apps.taskmgr.memory = memorysum;
+            apps.taskmgr.disk = disksum;
+            apps.taskmgr.processList = processList;
+
+        },
+        loadProcesses: (processList = apps.taskmgr.processList) => {
+            const processContainer = $('#win-taskmgr>.main>.cnt.processes tbody.view')[0];
+            const values = $('#win-taskmgr>.main>.cnt.processes thead>tr>th>.value');
+            const cpu = values[0], memory = values[1], disk = values[2];
+            let selected;
+            if ($('#win-taskmgr>.main>.cnt.processes tbody.view>tr.select>td:first-child>.text')[0]) {
+                selected = $('#win-taskmgr>.main>.cnt.processes tbody.view>tr.select>td:first-child>.text')[0].innerText;
+            }
+            let max = 100 / apps.taskmgr.tasks.length;
+            processContainer.innerHTML = '';
+            for (const elt of processList) {
+                const newElt = document.createElement('tr');
+                newElt.classList.add('notrans');
+                newElt.innerHTML = `<td><div class="text"><div class="icon" style="background-image: url('${elt.icon ? elt.icon : ''}');"></div>${elt.name}</div></td><td style="text-align: right;background-color: color-mix(in srgb, var(--theme-2) ${elt.cpu >= (max / 1.3) ? '75%' : '50%'}, transparent);">${elt.cpu.toFixed(1)}%</td><td style="text-align: right;background-color: color-mix(in srgb, var(--theme-2) ${elt.memory >= (max / 1) ? '75%' : '50%'}, transparent);">${elt.memory.toFixed(1)}%</td><td style="text-align: right;background-color: color-mix(in srgb, var(--theme-2) ${elt.disk >= (max / 1.3) ? '75%' : '50%'}, transparent);">${elt.disk.toFixed(1)}%</td><td>${['非常低', '非常低', '非常低', '低', '中'][Math.floor(Math.random() * 5)]}</td>`;
+                if (elt.name == selected) {
+                    newElt.classList.add('select');
+                }
+                processContainer.appendChild(newElt);
+                newElt.onclick = function () {
+                    apps.taskmgr.selectProcess(this);
+                };
+                newElt.oncontextmenu = function (e) {
+                    return showcm(e, 'taskmgr.processes', elt.name);
+                };
+                window.setTimeout(() => {
+                    newElt.classList.remove('notrans');
+                }, 100);
+            }
+            cpu.innerText = apps.taskmgr.cpu.toFixed(1) + '%';
+            memory.innerText = apps.taskmgr.memory.toFixed(1) + '%';
+            disk.innerText = apps.taskmgr.disk.toFixed(1) + '%';
+        },
+        sort: (processList = apps.taskmgr.processList, type = apps.taskmgr.sortType, order = apps.taskmgr.sortOrder) => {
+            processList.sort((a, b) => {
+                if (a[type] > b[type]) {
+                    return order == 'up-down' ? -1 : 1;
+                }
+                else if (a[type] <= b[type]) {
+                    return order == 'up-down' ? 1 : -1;
+                }
+            });
+            apps.taskmgr.processList = processList;
+        },
+        performanceLoad: () => {
+            $('#win-taskmgr>.main>.cnt.performance>.content>.performance-graph>.graph-cpu>.information>.left>div:nth-child(1)>.value')[0].innerText = `${apps.taskmgr.cpu.toFixed(1)}%`;
+            $('#win-taskmgr>.main>.cnt.performance>.content>.performance-graph>.graph-cpu>.information>.left>div:nth-child(2)>.value')[0].innerText = `${(3200 / 100 * apps.taskmgr.cpu).toFixed(1)} GHz`;
+            $('#win-taskmgr>.main>.cnt.performance>.content>.performance-graph>.graph-cpu>.information>.left>div:nth-child(4)>.value')[0].innerText = `${apps.taskmgr.tasks.length * (5 + Math.floor(Math.random() * 5))}`;
+            $('#win-taskmgr>.main>.cnt.performance>.content>.performance-graph>.graph-cpu>.information>.left>div:nth-child(5)>.value')[0].innerText = `${apps.taskmgr.tasks.length * (10 + Math.floor(Math.random() * 20))}`;
+            let sec = apps.taskmgr.cpuRunningTime;
+            let min = Math.floor(sec / 60);
+            sec %= 60;
+            let hour = Math.floor(min / 60);
+            min %= 60;
+            let day = Math.floor(hour / 24);
+            hour %= 24;
+            $('#win-taskmgr>.main>.cnt.performance>.content>.performance-graph>.graph-cpu>.information>.left>div:nth-child(6)>.value')[0].innerText = `${day}:${String(hour).length < 2 ? '0' : ''}${hour}:${String(min).length < 2 ? '0' : ''}${min}:${String(sec).length < 2 ? '0' : ''}${sec}`;
+            $('#win-taskmgr>.main>.cnt.performance>.content>.select-menu>.graph-cpu>.right>.data>.value1')[0].innerText = `${apps.taskmgr.cpu.toFixed(1)}%`;
+            $('#win-taskmgr>.main>.cnt.performance>.content>.select-menu>.graph-cpu>.right>.data>.value2')[0].innerText = `${(3200 / 100 * apps.taskmgr.cpu).toFixed(1)}GHz`;
+
+            $('#win-taskmgr>.main>.cnt.performance>.content>.performance-graph>.graph-memory>.information>.left>div:nth-child(1)>.value')[0].innerText = `${apps.taskmgr.memory.toFixed(1)} GB (0 MB)`;
+            $('#win-taskmgr>.main>.cnt.performance>.content>.performance-graph>.graph-memory>.information>.left>div:nth-child(2)>.value')[0].innerText = `${(100 - apps.taskmgr.memory).toFixed(1)} GB`;
+            $('#win-taskmgr>.main>.cnt.performance>.content>.performance-graph>.graph-memory>.information>.left>div:nth-child(3)>.value')[0].innerText = `${(apps.taskmgr.memory - 2).toFixed(1)} / 100 GB`;
+            $('#win-taskmgr>.main>.cnt.performance>.content>.performance-graph>.graph-memory>.information>.left>div:nth-child(4)>.value')[0].innerText = `${(apps.taskmgr.memory / 2).toFixed(2)} GB`;
+            $('#win-taskmgr>.main>.cnt.performance>.content>.select-menu>.graph-memory>.right>.data>.value1')[0].innerText = `${apps.taskmgr.memory.toFixed(1)} / 100 GB`;
+            $('#win-taskmgr>.main>.cnt.performance>.content>.select-menu>.graph-memory>.right>.data>.value2')[0].innerText = `${apps.taskmgr.memory.toFixed(1)}%`;
+
+            apps.taskmgr.diskSpeed.read = apps.taskmgr.disk != 0 ? (Math.random() * 100).toFixed(2) : 0;
+            apps.taskmgr.diskSpeed.write = apps.taskmgr.disk != 0 ? (Math.random() * 100).toFixed(2) : 0;
+            $('#win-taskmgr>.main>.cnt.performance>.content>.performance-graph>.graph-disk>.information>.left>div:nth-child(1)>.value')[0].innerText = `${apps.taskmgr.disk}%`;
+            $('#win-taskmgr>.main>.cnt.performance>.content>.performance-graph>.graph-disk>.information>.left>div:nth-child(2)>.value')[0].innerText = `${apps.taskmgr.disk != 0 ? Math.random().toFixed(2) : 0} 毫秒`;
+            $('#win-taskmgr>.main>.cnt.performance>.content>.performance-graph>.graph-disk>.information>.left>div:nth-child(3)>.value')[0].innerText = `${apps.taskmgr.diskSpeed.read} ${apps.taskmgr.disk != 0 ? 'MB/秒' : 'KB/秒'}`;
+            $('#win-taskmgr>.main>.cnt.performance>.content>.performance-graph>.graph-disk>.information>.left>div:nth-child(4)>.value')[0].innerText = `${apps.taskmgr.diskSpeed.write} ${apps.taskmgr.disk != 0 ? 'MB/秒' : 'KB/秒'}`;
+            $('#win-taskmgr>.main>.cnt.performance>.content>.select-menu>.graph-disk>.right>.data>.value2')[0].innerText = `${apps.taskmgr.disk}%`;
+
+            $('#win-taskmgr>.main>.cnt.performance>.content>.select-menu>.graph-gpu>.right>.data>.value2')[0].innerText = `${apps.taskmgr.gpu.usage.toFixed(1)}%`;
+
+            apps.taskmgr.gpu.d3 = Number((Math.random() * 15).toFixed(2));
+            apps.taskmgr.gpu.copy = Number((Math.random() * 15).toFixed(2));
+            apps.taskmgr.gpu.videop = Number((Math.random() * 15).toFixed(2));
+            apps.taskmgr.gpu.videod = Number((Math.random() * 15).toFixed(2));
+            apps.taskmgr.gpu.usage = Number(((apps.taskmgr.gpu.d3 + apps.taskmgr.gpu.copy + apps.taskmgr.gpu.videop + apps.taskmgr.gpu.videod) / 4).toFixed(1));
+
+            apps.taskmgr.wifi.receive = Number((Math.random() * 100).toFixed(2));
+            apps.taskmgr.wifi.send = Number((Math.random() * 100).toFixed(2));
+            $('#win-taskmgr>.main>.cnt.performance>.content>.performance-graph>.graph-wifi>.information>.left>div:nth-child(1)>.value')[0].innerText = `${apps.taskmgr.wifi.send.toFixed(2)} Mbps`;
+            $('#win-taskmgr>.main>.cnt.performance>.content>.performance-graph>.graph-wifi>.information>.left>div:nth-child(2)>.value')[0].innerText = `${apps.taskmgr.wifi.receive.toFixed(2)} Mbps`;
+            $('#win-taskmgr>.main>.cnt.performance>.content>.select-menu>.graph-wifi>.right>.data>.value2')[0].innerText = `发送： ${apps.taskmgr.wifi.send} 接收： ${apps.taskmgr.wifi.receive} Mbps`;
+
+            apps.taskmgr.ethernet.receive = Number((Math.random() * 100).toFixed(2));
+            apps.taskmgr.ethernet.send = Number((Math.random() * 100).toFixed(2));
+            $('#win-taskmgr>.main>.cnt.performance>.content>.performance-graph>.graph-ethernet>.information>.left>div:nth-child(1)>.value')[0].innerText = `${apps.taskmgr.ethernet.send.toFixed(1)} Kbps`;
+            $('#win-taskmgr>.main>.cnt.performance>.content>.performance-graph>.graph-ethernet>.information>.left>div:nth-child(2)>.value')[0].innerText = `${apps.taskmgr.ethernet.receive.toFixed(1)} Kbps`;
+        },
+        drawGraph: (chart, data, nth = 0) => {
+            var path = $(chart.querySelectorAll('path')[nth]).attr('d');
+            path = path.replace(/ L 6000 1000$/, '');
+            var pathl = path.split(' ');
+            var newPath = '';
+            var sum = 0, head = 0;
+            for (var i = 0; i < pathl.length; i += 3) {
+                const arg = pathl[i];
+                if (arg == 'M' && Number(pathl[i + 1]) > 0) {
+                    pathl[i + 1] = Number(pathl[i + 1]) - 100;
+                    pathl[i + 2] = pathl[i + 2];
+                }
+                else if (arg == 'M' && Number(pathl[i + 1]) <= 0) {
+                    pathl[i + 1] = 0;
+                    pathl[i + 2] = 1000;
+                }
+                else if (arg == 'L') {
+                    if (sum == 0) {
+                        head = i;
+                    }
+                    else if (sum >= 60) {
+                        pathl.splice(head, 3);
+                        sum--;
+                        i -= 3;
+                    }
+                    pathl[i + 1] = Number(pathl[i + 1]) - 100;
+                    sum++;
+                }
+            }
+            pathl.push('L', '6000', 1000 - data, 'L', '6000', '1000');
+            window.setTimeout(() => {
+                $(chart.querySelectorAll('path')[nth]).attr('d', '');
+                for (const arg of pathl) {
+                    if (!(arg === '')) {
+                        newPath += arg + ' ';
+                    }
+                }
+                newPath = newPath.substring(0, newPath.length - 1);
+                $(chart.querySelectorAll('path')[nth]).attr('d', newPath);
+            }, apps.taskmgr.delay);
+        },
+        loadGraph: () => {
+            apps.taskmgr.drawGraph(apps.taskmgr.cpuChart, apps.taskmgr.cpu * 10);
+            apps.taskmgr.drawGraph(apps.taskmgr.memoryChart, apps.taskmgr.memory * 10);
+            apps.taskmgr.drawGraph(apps.taskmgr.diskChart, apps.taskmgr.disk * 10);
+            apps.taskmgr.drawGraph(apps.taskmgr.disk2Chart, apps.taskmgr.diskSpeed.read * 10, 0);
+            apps.taskmgr.drawGraph(apps.taskmgr.disk2Chart, apps.taskmgr.diskSpeed.write * 10, 1);
+            apps.taskmgr.drawGraph(apps.taskmgr.wifiChart, apps.taskmgr.wifi.receive * 10, 0);
+            apps.taskmgr.drawGraph(apps.taskmgr.wifiChart, apps.taskmgr.wifi.send * 10, 1);
+            apps.taskmgr.drawGraph(apps.taskmgr.ethernetChart, apps.taskmgr.ethernet.receive * 10, 0);
+            apps.taskmgr.drawGraph(apps.taskmgr.ethernetChart, apps.taskmgr.ethernet.send * 10, 1);
+            for (var i = 0; i < 4; i++) {
+                apps.taskmgr.drawGraph(apps.taskmgr.gpuChart[i], apps.taskmgr.gpu[['d3', 'copy', 'videop', 'videod'][i]] * 10);
+            }
+            for (var i = 0; i < 2; i++) {
+                apps.taskmgr.drawGraph(apps.taskmgr.gpu2Chart[i], apps.taskmgr.gpuMemory[['private', 'public'][i]] * (i == 1 ? (1000 / 32) : (1000 / 16)));
+            }
+            apps.taskmgr.drawGraph(apps.taskmgr.gpu3Chart, apps.taskmgr.gpu.usage * 10);
+            const menu = $('#win-taskmgr>.main>.cnt.performance>.content>.select-menu')[0];
+            menu.$$('.graph-cpu svg')[0].innerHTML = apps.taskmgr.cpuChart.innerHTML;
+            menu.$$('.graph-memory svg')[0].innerHTML = apps.taskmgr.memoryChart.innerHTML;
+            menu.$$('.graph-disk svg')[0].innerHTML = apps.taskmgr.diskChart.innerHTML;
+            menu.$$('.graph-wifi svg')[0].innerHTML = apps.taskmgr.wifiChart.innerHTML;
+            menu.$$('.graph-ethernet svg')[0].innerHTML = apps.taskmgr.ethernetChart.innerHTML;
+            menu.$$('.graph-gpu svg')[0].innerHTML = apps.taskmgr.gpu3Chart.innerHTML;
+        },
+        changeSort: (elt, type) => {
+            for (const _elt of $('#win-taskmgr>.main>.cnt.processes thead>tr>th>i')) {
+                _elt.className = 'bi';
+            }
+            if (apps.taskmgr.sortOrder == 'up-down' && apps.taskmgr.sortType == type) {
+                elt.className = 'bi bi-chevron-up';
+                apps.taskmgr.sortOrder = 'down-up';
+                apps.taskmgr.sort(apps.taskmgr.processList, type, 'down-up');
+            }
+            else {
+                elt.className = 'bi bi-chevron-down';
+                apps.taskmgr.sortOrder = 'up-down';
+                apps.taskmgr.sortType = type;
+                apps.taskmgr.sort(apps.taskmgr.processList, type, 'up-down');
+            }
+        },
+        gridLine: () => {
+            apps.taskmgr.changeGrids(apps.taskmgr.memoryBg);
+            apps.taskmgr.changeGrids(apps.taskmgr.cpuBg);
+            apps.taskmgr.changeGrids(apps.taskmgr.diskBg);
+            apps.taskmgr.changeGrids(apps.taskmgr.disk2Bg);
+            apps.taskmgr.changeGrids(apps.taskmgr.wifiBg);
+            apps.taskmgr.changeGrids(apps.taskmgr.ethernetBg);
+            apps.taskmgr.gpuBg.forEach(function (chart) {
+                apps.taskmgr.changeGrids(chart);
+            });
+            apps.taskmgr.gpu2Bg.forEach(function (chart) {
+                apps.taskmgr.changeGrids(chart);
+            });
+        },
+        selectProcess: (elt) => {
+            $('#win-taskmgr>.main>.cnt.processes tbody.view>.select').removeClass('select');
+            $(elt).addClass('select');
+        },
+        taskkill: (name) => {
+            if (name == 'System') {
+                window.location = 'bluescreen.html';
+            }else if(name == 'Windows Logon Process'){
+               window.location.reload();
+            }else {
+                apps.taskmgr.tasks.splice(apps.taskmgr.tasks.findIndex(elt => elt.name == name), 1);
+                if (taskmgrTasks.find(elt => elt.name == name).link != null) {
+                    hidewin(taskmgrTasks.find(elt => elt.name == name).link);
+                }
+            }
+        },
+        initgrids: (chart) => {
+            const column = chart.querySelector('g.col'), row = chart.querySelector('g.row');
+            for (var i = 0; i <= 20; i++) {
+                column.innerHTML += `<path d="M ${i * 300} 0 L ${i * 300} 1000 Z" stroke="#aeaeae" fill="none" />`;
+            }
+            for (var i = 0; i <= 10; i++) {
+                row.innerHTML += `<path d="M 0 ${i * 100} L 6000 ${i * 100} Z" stroke="#aeaeae" fill="none" />`;
+            }
+        },
+        drawGrids: () => {
+            apps.taskmgr.initgrids(apps.taskmgr.cpuBg);
+            apps.taskmgr.initgrids(apps.taskmgr.diskBg);
+            apps.taskmgr.initgrids(apps.taskmgr.memoryBg);
+            apps.taskmgr.initgrids(apps.taskmgr.disk2Bg);
+            apps.taskmgr.initgrids(apps.taskmgr.wifiBg);
+            apps.taskmgr.initgrids(apps.taskmgr.ethernetBg);
+            for (var i = 0; i < 4; i++) {
+                apps.taskmgr.initgrids(apps.taskmgr.gpuBg[i]);
+            }
+            for (var i = 0; i < 2; i++) {
+                apps.taskmgr.initgrids(apps.taskmgr.gpu2Bg[i]);
+            }
+        },
+        changeGrids: (chart) => {
+            const grid = chart.querySelectorAll('g.col>path');
+            for (const elt of grid) {
+                let path = $(elt).attr('d').split(' ');
+                for (var i = 0; i < path.length; i++) {
+                    if (path[i] == 'M' || path[i] == 'L') {
+                        var cur = Number(path[i + 1]);
+                        cur -= 100;
+                        if (cur < 0) {
+                            cur = (300 - (-cur)) + 6000;
+                        }
+                        path[i + 1] = String(cur);
+                    }
+                }
+                $(elt).attr('d', '');
+                let tmp = '';
+                for (const comp of path) {
+                    tmp += comp + ' ';
+                }
+                $(elt).attr('d', tmp);
+                console.log($(elt).attr('d'));
+            }
+        }
+    },
+    whiteboard: {
+        canvas: null,
+        ctx: null,
+        windowResizeObserver: null,
+        color: 'red',
+        init: () => {
+            apps.whiteboard.ctx.lineJoin = 'round';
+            apps.whiteboard.ctx.lineCap = 'round';
+            apps.whiteboard.changeColor(apps.whiteboard.color);
+            if ($(':root').hasClass('dark')) {
+                $('.window.whiteboard>.titbar>p').text('Blackboard');
+            } else {
+                $('.window.whiteboard>.titbar>p').text('Whiteboard');
+            }
+        },
+        changeColor: (color) => {
+            apps.whiteboard.color = color;
+            if (color == 'eraser') {
+                apps.whiteboard.ctx.strokeStyle = 'black';
+                apps.whiteboard.ctx.lineWidth = 35;
+                apps.whiteboard.ctx.globalCompositeOperation = 'destination-out';
+            }
+            else {
+                apps.whiteboard.ctx.strokeStyle = color;
+                apps.whiteboard.ctx.globalCompositeOperation = 'source-over';
+                apps.whiteboard.ctx.lineWidth = 8;
+            }
+        },
+        changePen: function () {
+            const pens = $('#win-whiteboard>.toolbar>.tools>*');
+            for (const elt of pens) {
+                elt.classList.remove('active');
+            }
+            this.classList.add('active');
+            apps.whiteboard.changeColor(this.dataset.color);
+        },
+        load: () => {
+            apps.whiteboard.canvas = $('#win-whiteboard>canvas')[0];
+            apps.whiteboard.ctx = apps.whiteboard.canvas.getContext('2d');
+            apps.whiteboard.windowResizeObserver = new ResizeObserver(apps.whiteboard.resize);
+            apps.whiteboard.windowResizeObserver.observe($('.window.whiteboard')[0], { box: 'border-box' });
+        },
+        resize: () => {
+            try {
+                const imgData = apps.whiteboard.ctx.getImageData(0, 0, apps.whiteboard.canvas.width, apps.whiteboard.canvas.height);
+                apps.whiteboard.canvas.width = $('#win-whiteboard')[0].clientWidth;
+                apps.whiteboard.canvas.height = $('#win-whiteboard')[0].clientHeight;
+                apps.whiteboard.ctx.putImageData(imgData, 0, 0);
+            }
+            catch {
+                apps.whiteboard.canvas.width = $('#win-whiteboard')[0].clientWidth;
+                apps.whiteboard.canvas.height = $('#win-whiteboard')[0].clientHeight;
+            }
+            apps.whiteboard.init();
+        },
+        draw: (e) => {
+            let offsetX, offsetY, left = $('#win-whiteboard')[0].getBoundingClientRect().left, top = $('#win-whiteboard')[0].getBoundingClientRect().top;
+            if (e.type.match('mouse')) {
+                offsetX = e.clientX - left, offsetY = e.clientY - top;
+            }
+            else if (e.type.match('touch')) {
+                offsetX = e.touches[0].clientX - left, offsetY = e.touches[0].clientY - top;
+            }
+            apps.whiteboard.ctx.beginPath();
+            apps.whiteboard.ctx.moveTo(offsetX, offsetY);
+            page.onmousemove = apps.whiteboard.drawing;
+            page.ontouchmove = apps.whiteboard.drawing;
+            page.onmouseup = apps.whiteboard.up;
+            page.ontouchend = apps.whiteboard.up;
+            page.ontouchcancel = apps.whiteboard.up;
+        },
+        drawing: (e) => {
+            let offsetX, offsetY, left = $('#win-whiteboard')[0].getBoundingClientRect().left, top = $('#win-whiteboard')[0].getBoundingClientRect().top;
+            if (e.type.match('mouse')) {
+                offsetX = e.clientX - left, offsetY = e.clientY - top;
+            }
+            else if (e.type.match('touch')) {
+                offsetX = e.touches[0].clientX - left, offsetY = e.touches[0].clientY - top;
+            }
+            apps.whiteboard.ctx.lineTo(offsetX, offsetY);
+            apps.whiteboard.ctx.stroke();
+        },
+        up: () => {
+            apps.whiteboard.ctx.stroke();
+            page.onmousemove = null;
+            page.ontouchmove = null;
+            page.onmouseup = null;
+            page.ontouchend = null;
+            page.ontouchcancel = null;
+        },
+        download: () => {
+            const url = apps.whiteboard.canvas.toDataURL();
+            $('#win-whiteboard>a.download')[0].href = url;
+            $('#win-whiteboard>a.download')[0].click();
+        },
+        saveAs: () => {
+            // Show filename input dialog using notice system
+            shownotice('whiteboard-saveas');
+        },
+        doSaveAs: () => {
+            // Execute the actual save with the filename from the notice input
+            const fileName = document.getElementById('whiteboard-filename').value.trim() ||
+                `Whiteboard_${new Date().toISOString().slice(0, 10)}`;
+
+            const url = apps.whiteboard.canvas.toDataURL();
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = fileName.endsWith('.png') ? fileName : fileName + '.png';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            closenotice();
+        },
+        delete: () => {
+            apps.whiteboard.ctx.clearRect(0, 0, apps.whiteboard.canvas.width, apps.whiteboard.canvas.height);
+        }
+    },
+    // webapp 即将网页嵌套作为应用内容，格式参考 desktop.html 中 vscode, bilibili
+    webapps: {
+        apps: ['vscode', 'bilibili', 'copilot', 'minesweeper'],
+        init: () => {
+            for (const app of apps.webapps.apps) {
+                if (!apps[app].loaded) apps[app].load();
+                // These apps are preloaded during desktop startup.  Mark the
+                // wrapper as loaded so openapp() does not append a second
+                // iframe the first time the user opens it.
+                apps[app].loaded = true;
+            }
+        }
+    },
+    vscode: createWebapp('vscode', 'https://github1s.com/'),
+    bilibili: createWebapp('bilibili', 'https://bilibili.com/'),
+    'copilot': createWebapp('copilot', '/chatgh/copilot.html'),
+    'minesweeper': createWebapp('minesweeper', 'https://win12-online.github.io/win12/games/minesweeper.html'),
+    defender: {
+        init: () => {
+            return null;
+        },
+        load: () => {
+            var chart = $('#chart')[0].getContext('2d'),
+                gradient = chart.createLinearGradient(0, 0, 0, 450);
+            gradient.addColorStop(0, 'rgba(0, 199, 214, 0.32)');
+            gradient.addColorStop(0.3, 'rgba(0, 199, 214, 0.1)');
+            gradient.addColorStop(1, 'rgba(0, 199, 214, 0)');
+            var data = {
+                labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+                datasets: [{
+                    label: '病毒攻击次数',
+                    backgroundColor: gradient,
+                    pointBackgroundColor: '#00c7d6',
+                    borderWidth: 1,
+                    borderColor: '#0e1a2f',
+                    data: [60, 45, 80, 30, 35, 55, 25, 80, 40, 50, 80, 50]
+                }]
+            };
+            var options = {
+                responsive: true,
+                maintainAspectRatio: true,
+                animation: {
+                    easing: 'easeInOutQuad',
+                    duration: 520
+                },
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            fontColor: '#5e6a81'
+                        },
+                        gridLines: {
+                            color: 'rgba(200, 200, 200, 0.08)',
+                            lineWidth: 1
+                        }
+                    }],
+                    xAxes: [{
+                        ticks: {
+                            fontColor: '#5e6a81'
+                        }
+                    }]
+                },
+                elements: {
+                    line: {
+                        tension: 0.4
+                    }
+                },
+                legend: {
+                    display: false
+                },
+                point: {
+                    backgroundColor: '#00c7d6'
+                },
+                tooltips: {
+                    titleFontFamily: 'Poppins',
+                    backgroundColor: 'rgba(0,0,0,0.4)',
+                    titleFontColor: 'white',
+                    caretSize: 5,
+                    cornerRadius: 2,
+                    xPadding: 10,
+                    yPadding: 10
+                }
+            };
+            var chartInstance = new Chart(chart, {
+                type: 'line',
+                data: data,
+                options: options
+            });
+        }
+    },
+    camera: {
+        requestGeneration: 0,
+        init: () => {
+            if (!localStorage.getItem('camera')) {
+                showwin('camera-notice');
+                return null;
+            }
+            if (localStorage.getItem('camera')) {
+                const requestGeneration = ++apps.camera.requestGeneration;
+                apps.camera.streaming = false;
+                apps.camera.video = $('#win-camera video')[0];
+                const video = apps.camera.video;
+                apps.camera.canvas = $('#win-camera canvas')[0];
+                apps.camera.context = apps.camera.canvas.getContext('2d');
+                apps.camera.context.fillStyle = '#aaa';
+                apps.camera.downloadLink = $('#win-camera a')[0];
+                // apps.camera.control = document.querySelector('#win-camera>.control')
+                navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+                    .then(stream => {
+                        if (requestGeneration !== apps.camera.requestGeneration) {
+                            stream.getTracks().forEach(track => track.stop());
+                            return;
+                        }
+                        video.srcObject = stream;
+                        const playing = video.play();
+                        if (playing && typeof playing.catch == 'function') playing.catch(() => {});
+                    })
+                    .catch(() => {
+                        if (requestGeneration === apps.camera.requestGeneration) {
+                            hidewin('camera');
+                        }
+                    });
+                apps.camera.video.addEventListener('canplay', () => {
+                    if (!apps.camera.streaming) {
+                        apps.camera.aspectRatio = apps.camera.video.videoWidth / apps.camera.video.videoHeight;
+                        apps.camera.canvas.width = apps.camera.video.videoWidth;
+                        apps.camera.canvas.height = apps.camera.video.videoHeight;
+                        apps.camera.windowResizeObserver = new ResizeObserver(apps.camera.resize);
+                        apps.camera.windowResizeObserver.observe($('.window.camera')[0], { box: 'border-box' });
+                        apps.camera.streaming = true;
+                    }
+                });
+            }
+            else {
+                hidewin('camera');
+            }
+        },
+        clearCanvas: () => {
+            apps.camera.context.fillRect(0, 0, canvas.width, canvas.height);
+        },
+        takePhoto: () => {
+            apps.camera.context.drawImage(apps.camera.video, 0, 0, apps.camera.canvas.width, apps.camera.canvas.height);
+            apps.camera.downloadLink.href = apps.camera.canvas.toDataURL('image/png');
+            apps.camera.downloadLink.download = 'photo.png';
+            apps.camera.downloadLink.click();
+        },
+        notice: () => {
+            if (!localStorage.getItem('camera')) {
+                showwin('camera-notice');
+            }
+            else {
+                openapp('camera');
+            }
+        },
+        resize: () => {
+            let w = $('#win-camera')[0].offsetWidth,
+                h = $('#win-camera')[0].offsetHeight;
+            if (w / apps.camera.aspectRatio <= h) {
+                if (!$('#win-camera').hasClass('v')) {
+                    $('#win-camera').removeClass('h');
+                    $('#win-camera').addClass('v');
+                }
+            }
+            else if (w / apps.camera.aspectRatio >= h) {
+                if (!$('#win-camera').hasClass('h')) {
+                    $('#win-camera').removeClass('v');
+                    $('#win-camera').addClass('h');
+                }
+            }
+        },
+        remove: () => {
+            apps.camera.requestGeneration += 1;
+            const video = apps.camera.video;
+            const stream = video && video.srcObject;
+            if (stream) {
+                stream.getTracks().forEach((track) => track.stop());
+            }
+            if (video) video.srcObject = null;
+            if (apps.camera.windowResizeObserver) {
+                apps.camera.windowResizeObserver.disconnect();
+                apps.camera.windowResizeObserver = null;
+            }
+        }
+    },
+    explorer: {
+        mounts: {},
+        nextDriveLetter: 'E',
+        fsApiSupported: ('showDirectoryPicker' in window),
+        deleteKeyBound: false,
+        pendingCreateNames: new Map(),
+        init: () => {
+            apps.explorer.tabs = [];
+            apps.explorer.len = 0;
+            apps.explorer.newtab();
+            // apps.explorer.reset();
+            apps.explorer.Process_Of_Select = '';
+            apps.explorer.is_use = 0;//千万不要删除它，它依托 bug 运行
+            apps.explorer.is_use2 = 0;//千万不要删除它，它依托 bug 运行
+            apps.explorer.old_name = '';
+            apps.explorer.clipboard = null;
+            if (!apps.explorer.fsApiSupported) $('#explorer-mount-btn').hide();
+            if (!apps.explorer.deleteKeyBound) {
+                document.addEventListener('keydown', function (event) {
+                    const focusedWindow = $('.window.foc.show')[0];
+                    const target = event.target;
+                    const isEditing = target && (
+                        target.isContentEditable
+                        || ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName)
+                    );
+                    if (event.key === 'Delete'
+                        && !event.defaultPrevented
+                        && !event.isComposing
+                        && !isEditing
+                        && focusedWindow
+                        && focusedWindow.classList.contains('explorer')
+                        && apps.explorer.Process_Of_Select) {
+                        event.preventDefault();
+                        apps.explorer.del(apps.explorer.Process_Of_Select);
+                    }
+                });
+                apps.explorer.deleteKeyBound = true;
+            }
+        },
+        mountDrive: async () => {
+            if (!apps.explorer.fsApiSupported) { shownotice('fs-api-unsupported'); return; }
+            try {
+                const dirHandle = await window.showDirectoryPicker({ mode: 'readwrite' });
+                document.body.style.cursor = 'wait';
+                const letter = apps.explorer.nextDriveLetter + ':';
+                apps.explorer.nextDriveLetter = String.fromCharCode(
+                    apps.explorer.nextDriveLetter.charCodeAt(0) + 1);
+                apps.explorer.mounts[letter] = dirHandle;
+                apps.explorer.path.folder[letter] = { folder: {}, file: [], _mounted: true, _handle: dirHandle };
+                if (!apps.explorer.tabs[apps.explorer.now][2].length) apps.explorer.reset();
+                document.body.style.cursor = '';
+            } catch (e) {
+                document.body.style.cursor = '';
+                if (e.name !== 'AbortError') shownotice('fs-mount-error');
+            }
+        },
+        openMountedFile: async (path) => {
+            var pathl = path.split('/');
+            var fileName = pathl[pathl.length - 1];
+            var ext = fileName.split('.').pop().toLowerCase();
+            let tmp = apps.explorer.path;
+            for (let i = 0; i < pathl.length - 1; i++) {
+                tmp = tmp['folder'][pathl[i]];
+            }
+            var fileObj = tmp['file'].find(f => f.name === fileName);
+            if (!fileObj || !fileObj._mounted || !fileObj._handle) return;
+            try {
+                const file = await fileObj._handle.getFile();
+                const codeExts = ['js', 'ts', 'jsx', 'tsx', 'css', 'scss', 'less', 'html', 'htm', 'xml',
+                    'json', 'yaml', 'yml', 'py', 'java', 'c', 'cpp', 'h', 'cs', 'go',
+                    'rs', 'rb', 'php', 'sh', 'bat', 'ps1', 'sql', 'svg'];
+                const notepadExts = ['txt', 'log', 'md', 'csv', 'ini', 'cfg'];
+                if (codeExts.includes(ext)) {
+                    const text = await file.text();
+                    apps.codeEditor.open(text, fileName, fileObj._handle);
+                } else if (notepadExts.includes(ext)) {
+                    const text = await file.text();
+                    apps.notepad._mountedFileHandle = fileObj._handle;
+                    apps.notepad._dirty = false;
+                    apps.notepad._loading = true;
+                    if ($('#taskbar>.notepad').length != 0) {
+                        $('#win-notepad>.text-box')[0].innerText = text;
+                        if ($('.window.notepad').hasClass('min')) minwin('notepad');
+                        focwin('notepad');
+                        requestAnimationFrame(() => { apps.notepad._loading = false; });
+                    } else {
+                        apps.notepad._pendingContent = text;
+                        openapp('notepad');
+                    }
+                    $('.window.notepad>.titbar>p').text(fileName);
+                    apps.notepad.setMdMode(ext === 'md');
+                } else if (['png', 'jpg', 'jpeg', 'bmp', 'gif', 'webp', 'ico'].includes(ext)) {
+                    const url = URL.createObjectURL(file);
+                    apps.imgviewer.open(url, fileName);
+                } else if (['mp4', 'webm', 'mov', 'avi', 'mkv', 'flv', 'wmv'].includes(ext)) {
+                    const url = URL.createObjectURL(file);
+                    apps.mediaplayer.open(url, fileName, 'video');
+                } else if (['mp3', 'wav', 'flac', 'ogg', 'aac', 'wma', 'm4a'].includes(ext)) {
+                    const url = URL.createObjectURL(file);
+                    apps.mediaplayer.open(url, fileName, 'audio');
+                } else if (ext === 'pdf') {
+                    const url = URL.createObjectURL(file);
+                    apps.pdfviewer.open(url, fileName);
+                } else {
+                    shownotice('unsupported-file-type');
+                }
+            } catch (e) {
+                shownotice('file-read-error');
+            }
+        },
+        unmountDrive: (letter) => {
+            delete apps.explorer.mounts[letter];
+            delete apps.explorer.path.folder[letter];
+            if (!apps.explorer.tabs[apps.explorer.now][2].length) apps.explorer.reset();
+            else if (apps.explorer.tabs[apps.explorer.now][2].startsWith(letter)) apps.explorer.reset();
+        },
+        populateFromHandle: async (dirHandle, targetObj) => {
+            targetObj.folder = {};
+            targetObj.file = [];
+            for await (const entry of dirHandle.values()) {
+                if (entry.kind === 'directory') {
+                    targetObj.folder[entry.name] = { folder: {}, file: [], _mounted: true, _handle: entry };
+                } else {
+                    const ext = entry.name.split('.').pop().toLowerCase();
+                    let ico = 'icon/files/none.png';
+                    if (['txt', 'log', 'md', 'csv', 'ini', 'cfg'].includes(ext)) ico = 'icon/files/txt.png';
+                    else if (['js', 'ts', 'jsx', 'tsx', 'css', 'scss', 'less', 'html', 'htm', 'xml',
+                              'json', 'yaml', 'yml', 'py', 'java', 'c', 'cpp', 'h', 'cs', 'go',
+                              'rs', 'rb', 'php', 'sh', 'bat', 'ps1', 'sql'].includes(ext)) ico = 'icon/files/txt.png';
+                    else if (['png', 'jpg', 'bmp', 'jpeg', 'gif', 'webp', 'svg', 'ico', 'tiff'].includes(ext)) ico = 'icon/files/picture.png';
+                    else if (['doc', 'docx', 'rtf', 'odt'].includes(ext)) ico = 'icon/files/word.png';
+                    else if (['xls', 'xlsx', 'ods'].includes(ext)) ico = 'icon/files/excel.png';
+                    else if (['ppt', 'pptx', 'odp'].includes(ext)) ico = 'icon/files/ppt.png';
+                    else if (['mp3', 'wav', 'flac', 'ogg', 'aac', 'wma', 'm4a'].includes(ext)) ico = 'icon/files/music.png';
+                    else if (['mp4', 'avi', 'mkv', 'mov', 'wmv', 'webm', 'flv'].includes(ext)) ico = 'icon/files/vidio.png';
+                    else if (['exe', 'msi'].includes(ext)) ico = 'icon/files/exefile.png';
+                    else if (['zip', 'rar', '7z', 'tar', 'gz'].includes(ext)) ico = 'icon/files/none.png';
+                    else if ('pdf' === ext) ico = 'icon/files/pdf.svg';
+                    targetObj.file.push({ name: entry.name, ico: ico, command: '', _handle: entry, _mounted: true });
+                }
+            }
+        },
+        tabs: [],
+        now: null,
+        len: 0,
+        newtab: (path = '') => {
+            m_tab.newtab('explorer', '');
+            apps.explorer.tabs[apps.explorer.tabs.length - 1][2] = path;
+            apps.explorer.initHistory(apps.explorer.tabs[apps.explorer.tabs.length - 1][0]);
+            apps.explorer.checkHistory(apps.explorer.tabs[apps.explorer.tabs.length - 1][0]);
+            m_tab.tab('explorer', apps.explorer.tabs.length - 1);
+            // }
+        },
+        settab: (t, i) => {
+            return `
+                <div class="tab ${t[0]}" onclick="m_tab.tab('explorer',${i})"
+                oncontextmenu="showcm(event,'explorer.tab',${i});stop(event);return false"
+                onmousedown="
+                    if(event.button==1){m_tab.close('explorer',${i});stop(event);}
+                    else{m_tab.moving('explorer',this,event,${i});stop(event);disableIframes();}"
+                ontouchstart="m_tab.moving('explorer',this,event,${i});stop(event);disableIframes();">
+                    <p>${t[1]}</p>
+                    <span class="clbtn bi bi-x" onclick="m_tab.close('explorer',${i});stop(event);"></span>
+                </div>`;
+        },
+        tab: (c, load = true) => {
+            if (load) {
+                console.log(c);
+                if (!apps.explorer.tabs[c][2].length) apps.explorer.reset();
+                else apps.explorer.goto(apps.explorer.tabs[c][2]);
+            }
+            apps.explorer.checkHistory(apps.explorer.tabs[c][0]);
+        },
+        reset: (clear = true) => {
+            let resetHtml = `<style>#win-explorer>.page>.main>.content>.view>.class{margin: 5px 0 0 10px;display: flex;}
+            #win-explorer>.page>.main>.content>.view>.class>img{width: 20px;height: 20px;margin-top: 3px;margin-right: 5px;filter:brightness(0.9);}
+            #win-explorer>.page>.main>.content>.view>.group{display: flex;flex-wrap: wrap;padding: 10px 20px;}
+            #win-explorer>.page>.main>.content>.view>.group>.item{width: 280px;margin: 5px;height:80px;
+    box-shadow: 0 1px 2px var(--s3d);
+                background: radial-gradient(circle, var(--card),var(--card));border-radius: 10px;display: flex;}
+            #win-explorer>.page>.main>.content>.view>.group>.item:hover{background-color: var(--hover);}
+
+            #win-explorer>.page>.main>.content>.view>.group>.item>img{width: 55px;height: 55px;margin-top: 18px;margin-left: 10px;}
+            #win-explorer>.page>.main>.content>.view>.group>.item>div{flex-grow: 1;padding: 5px 5px 0 0;}
+            #win-explorer>.page>.main>.content>.view>.group>.item>div>.bar{width: calc(100% - 10px);height: 8px;border-radius: 10px;
+                background-color: var(--hover-b);margin: 5px 5px;}
+            #win-explorer>.page>.main>.content>.view>.group>.item>div>.bar>.content{height: 100%;background-image: linear-gradient(90deg, var(--theme-1), var(--theme-2));
+                border-radius: 10px;}
+            #win-explorer>.page>.main>.content>.view>.group>.item>div>.info{color: #959595;font-size: 14px;}</style>
+            <p class="class"><img src="apps/icons/explorer/disk.svg"> 设备和驱动器</p><div class="group">
+            <a class="a item act" ondblclick="apps.explorer.goto('C:')" ontouchend="apps.explorer.goto('C:')" oncontextmenu="showcm(event,'explorer.folder','C:');return stop(event);">
+            <img src="apps/icons/explorer/diskwin.svg"><div><p class="name">本地磁盘 (C:)</p>
+            <div class="bar"><div class="content" style="width: 88%;"></div>
+            </div><p class="info">32.6 GB 可用，共 143 GB</p></div></a><a class="a item act" ondblclick="apps.explorer.goto('D:')" ontouchend="apps.explorer.goto('D:')"
+            oncontextmenu="showcm(event,'explorer.folder','D:');return stop(event);">
+            <img src="apps/icons/explorer/disk.svg"><div><p class="name">本地磁盘 (D:)</p><div class="bar"><div class="content" style="width: 15%;"></div>
+            </div><p class="info">185.3 GB 可用，共 216 GB</p></div></a>`;
+            for (let letter in apps.explorer.mounts) {
+                const handle = apps.explorer.mounts[letter];
+                resetHtml += `<a class="a item act" ondblclick="apps.explorer.goto('${letter}')" ontouchend="apps.explorer.goto('${letter}')" oncontextmenu="showcm(event,'explorer.mounted','${letter}');return stop(event);">
+                <img src="apps/icons/explorer/disk.svg"><div><p class="name">${handle.name} (${letter})</p>
+                <div class="bar"><div class="content" style="width: 0%;"></div>
+                </div><p class="info">本地文件夹</p></div></a>`;
+            }
+            resetHtml += `</div>`;
+            $('#win-explorer>.page>.main>.content>.view')[0].innerHTML = resetHtml;
+            $('#win-explorer>.path>.tit')[0].innerHTML = '<div class="icon" style="background-image: url(\'./apps/icons/explorer/thispc.svg\')"></div><div class="path"><div class="text" onclick="apps.explorer.reset()">此电脑</div><div class="arrow">&gt;</div></div>';
+            // if(rename){
+            m_tab.rename('explorer', '<img src="./apps/icons/explorer/thispc.svg"> 此电脑');
+            apps.explorer.tabs[apps.explorer.now][2] = '';
+            if (clear) {
+                apps.explorer.delHistory(apps.explorer.tabs[apps.explorer.now][0]);
+                apps.explorer.pushHistory(apps.explorer.tabs[apps.explorer.now][0], '此电脑');
+            }
+            // }
+        },
+        select: (path, id) => {
+            var elements = document.querySelectorAll('#win-explorer > .main > .content > .view > .select');
+            for (var i = 0; i < elements.length; i++) {
+                elements[i].classList.remove('select');
+            }
+            apps.explorer.Process_Of_Select = path;
+            var element = document.getElementById(id);
+            element.classList.add('select');
+            apps.explorer.is_use += 1;
+        },
+        copy_or_cut: (path, operate) => { //operate 只能为 copy 或 cut
+            var pathl = path.split('/');
+            var name = pathl[pathl.length - 1];
+            pathl.pop();
+            let files = apps.explorer.getPath();
+            let tmp = null;
+            pathl.forEach(name => {
+                if (tmp !== null) {
+                    tmp = tmp['folder'][name];
+                } else {
+                    tmp = files['folder'][name];
+                }
+            });
+
+            if (Object.keys(tmp['folder']).includes(name)) {
+                apps.explorer.clipboard = ['folder', [name], tmp['folder'][name]];
+                if (operate == 'cut') {
+                    delete tmp['folder'][name];
+                }
+            }
+            else {
+                for (var i = 0; i < tmp['file'].length; i++) {
+                    if (tmp['file'][i]['name'] == name) {
+                        apps.explorer.clipboard = ['file', tmp['file'][i]];
+                        if (operate == 'cut') {
+                            tmp['file'].splice(i, 1); // Use splice instead of delete
+                        }
+                        break;
+                    }
+                }
+            }
+            apps.explorer.pushLocalStoragePath(files, true)
+        },
+        paste: (path) => {
+            if (!apps.explorer.clipboard) {
+                return;
+            }
+            var pathl = path.split('/');
+            let files = apps.explorer.getPath();
+            let tmp = null;
+            pathl.forEach(name => {
+                if (tmp !== null) {
+                    tmp = tmp['folder'][name];
+                } else {
+                    tmp = files['folder'][name];
+                }
+            });
+
+            var clipboard = apps.explorer.clipboard;
+            if (clipboard[0] == 'file') {
+                // Check for duplicate file name
+                if (tmp['file'] != null && tmp['folder'] != null) {
+                    if (tmp['file'].some(file => file.name === clipboard[1].name) && (tmp['folder'][clipboard[1][0]])) {
+                        shownotice('duplication file name');
+                        return;
+                    }
+                } else if (tmp['file'] == null && tmp['folder'] != null) {
+                    if (tmp['folder'][clipboard[1][0]]) {
+                        shownotice('duplication file name');
+                        return;
+                    } else {
+                        tmp['file'] = []
+                    }
+                } else if (tmp['file'] != null && tmp['folder'] == null) {
+                    if (tmp['file'].some(file => file.name === clipboard[1].name)) {
+                        shownotice('duplication file name');
+                        return;
+                    };
+                };
+                tmp['file'].push({ ...clipboard[1] }); // Create a copy of the file object
+            } else {
+                // Check for duplicate folder name
+                if (tmp['folder'][clipboard[1][0]]) {
+                    shownotice('duplication file name');
+                    return;
+                }
+                tmp['folder'][clipboard[1][0]] = JSON.parse(JSON.stringify(clipboard[2])); // Deep copy the folder
+            }
+            apps.explorer.goto(path);
+            apps.explorer.pushLocalStoragePath(files, true)
+        },
+        del_select: () => {
+            if (apps.explorer.is_use >= 1 && apps.explorer.is_use2 != apps.explorer.is_use) {
+                apps.explorer.is_use2 = apps.explorer.is_use;
+                return;
+            }
+            var elements = document.querySelectorAll('#win-explorer>.page>.main>.content>.view>.change');
+            console.log(elements);
+            for (var i = 0; i < elements.length; i++) {
+                var name_1, icon_;
+                elements[i].classList.remove('change');
+                let aTag = elements[i];
+                var on = apps.explorer.old_name;
+                let inputTag = aTag.querySelector('#new_name');
+                var pathl = $('#win-explorer>.path>.tit')[0].dataset.path.split('/');
+                var isMountedRename = !!apps.explorer.mounts[pathl[0]];
+                let files = isMountedRename ? apps.explorer.path : apps.explorer.getPath();
+                let tmp = files;
+                pathl.forEach(name => {
+                    if (tmp !== null) {
+                        tmp = tmp['folder'][name];
+                    } else {
+                        tmp = files['folder'][name];
+                    }
+                });
+                if (inputTag.value == '' || apps.explorer.traverseDirectory(tmp, inputTag.value) || on == inputTag.value) {
+                    if (apps.explorer.traverseDirectory(tmp, inputTag.value) && on != inputTag.value) {
+                        shownotice('duplication file name');
+                    }
+                    var element = document.getElementById('new_name');
+                    element.parentNode.removeChild(element);
+                    aTag.innerHTML += on;
+                    continue;
+                }
+                name_1 = inputTag.value.split('.');
+                if (name_1[0].indexOf('/') > -1) alert('恭喜你发现了这个 bug,但是太懒了不想修 qwq');
+                console.log(name_1);
+                if (name_1[1] == 'txt') {
+                    icon_ = 'icon/files/txt.png';
+                }
+                else if (name_1[1] == 'png' || name_1[1] == 'jpg' || name_1[1] == 'bmp') {
+                    icon_ = 'icon/files/picture.png';
+                }
+                else {
+                    icon_ = 'icon/files/none.png';
+                }
+                //这边可以适配更多的文件类型
+
+                aTag.innerHTML += inputTag.value;
+                for (var j = 0; j < tmp['file'].length; j++) {
+                    if (tmp['file'][j]['name'] == on) {
+                        const fileEntry = tmp['file'][j];
+                        fileEntry['name'] = inputTag.value;
+                        fileEntry['ico'] = icon_;
+                        if (isMountedRename && tmp._handle) {
+                            (async () => {
+                                try {
+                                    const oldHandle = await tmp._handle.getFileHandle(on);
+                                    const file = await oldHandle.getFile();
+                                    const newHandle = await tmp._handle.getFileHandle(inputTag.value, { create: true });
+                                    const writable = await newHandle.createWritable();
+                                    await writable.write(await file.arrayBuffer());
+                                    await writable.close();
+                                    await tmp._handle.removeEntry(on);
+                                    fileEntry._handle = newHandle;
+                                } catch (e) {
+                                    console.warn('Rename on mounted FS failed:', e);
+                                }
+                            })();
+                        }
+                    }
+                }
+                const keys = Object.keys(tmp['folder']);
+                for (var i = 0; i < keys.length; i++) {
+                    if (keys[i] == on) {
+                        keys[i] = inputTag.value;
+                        tmp['folder'][inputTag.value] = tmp['folder'][on];
+                        delete tmp['folder'][on];
+                    }
+                }
+                element = document.getElementById('new_name');
+                element.parentNode.removeChild(element);
+                if (isMountedRename) {
+                    apps.explorer._gotoSync(pathl.join('/'), false);
+                } else {
+                    apps.explorer.pushLocalStoragePath(files, true);
+                }
+            }
+            apps.explorer.is_use2 = apps.explorer.is_use;
+            elements = document.querySelectorAll('#win-explorer>.page>.main>.content>.view>.select');
+            for (var i = 0; i < elements.length; i++) {
+                elements[i].classList.remove('select');
+            }
+            apps.explorer.Process_Of_Select = '';
+        },
+        goto: (path, clear = true) => {
+            if (path == '此电脑') { apps.explorer.reset(clear); return null; }
+            var pathl = path.split('/');
+            if (apps.explorer.mounts[pathl[0]]) {
+                return apps.explorer._gotoAsync(path, clear, !clear);
+            }
+            return apps.explorer._gotoSync(path, clear);
+        },
+        _gotoAsync: async (path, clear, forceRefresh = false) => {
+            $('#win-explorer>.page>.main>.content>.view')[0].innerHTML = '<p class="info" style="opacity:0.6;">加载中...</p>';
+            var pathl = path.split('/');
+            let tmp = apps.explorer.path;
+            try {
+                for (let i = 0; i < pathl.length; i++) {
+                    tmp = tmp['folder'][pathl[i]];
+                    const needLoad = Object.keys(tmp.folder).length === 0 && tmp.file.length === 0;
+                    if (tmp._mounted && tmp._handle && (needLoad || (forceRefresh && i === pathl.length - 1))) {
+                        await apps.explorer.populateFromHandle(tmp._handle, tmp);
+                    }
+                }
+                apps.explorer._gotoSync(path, clear);
+            } catch (e) {
+                $('#win-explorer>.page>.main>.content>.view')[0].innerHTML = '<p class="info">无法读取此文件夹。</p>';
+            }
+        },
+        _gotoSync: (path, clear = true) => {
+            apps.explorer.Process_Of_Select = '';
+            $('#win-explorer>.page>.main>.content>.view')[0].innerHTML = '';
+            var pathl = path.split('/');
+            var pathqwq = '';
+            var index_ = 0;
+            let tmp = apps.explorer.mounts[pathl[0]]
+                ? apps.explorer.path
+                : apps.explorer.getPath();
+            if (path == '此电脑') {
+                apps.explorer.reset(clear);
+                return null;
+            }
+            $('#win-explorer>.path>.tit')[0].dataset.path = path;
+            $('#win-explorer>.path>.tit>.path')[0].innerHTML = '<div class="text" onclick="apps.explorer.reset()">此电脑</div><div class="arrow">&gt;</div>';
+            $('#win-explorer>.path>.tit>.icon')[0].style.marginTop = '0px';
+            if (pathl[pathl.length - 1] == 'C:') {
+                $('#win-explorer>.path>.tit>.icon')[0].style.backgroundImage = 'url("apps/icons/explorer/diskwin.svg")';
+                $('#win-explorer>.path>.tit>.icon')[0].style.marginTop = '2.5px';
+                m_tab.rename('explorer', '<img src="./apps/icons/explorer/diskwin.svg" style="margin-top:2.5px">' + pathl[pathl.length - 1]);
+            }
+            else if (pathl[pathl.length - 1] == 'D:') {
+                $('#win-explorer>.path>.tit>.icon')[0].style.backgroundImage = 'url("apps/icons/explorer/disk.svg")';
+                m_tab.rename('explorer', '<img src="./apps/icons/explorer/disk.svg">' + pathl[pathl.length - 1]);
+            }
+            else if (apps.explorer.mounts[pathl[pathl.length - 1]]) {
+                $('#win-explorer>.path>.tit>.icon')[0].style.backgroundImage = 'url("apps/icons/explorer/disk.svg")';
+                m_tab.rename('explorer', '<img src="./apps/icons/explorer/disk.svg">' + pathl[pathl.length - 1]);
+            }
+            else {
+                $('#win-explorer>.path>.tit>.icon')[0].style.backgroundImage = 'url("apps/icons/explorer/folder.svg")';
+                m_tab.rename('explorer', '<img src="./apps/icons/explorer/folder.svg">' + pathl[pathl.length - 1]);
+            }
+            // if(rename){
+            apps.explorer.tabs[apps.explorer.now][2] = path;
+            // }
+            pathl.forEach(name => {
+                pathqwq += name;
+                $('#win-explorer>.path>.tit>.path')[0].innerHTML += `<div class="text" onclick="apps.explorer.goto('${pathqwq}')">${name}</div><div class="arrow">&gt;</div>`;
+                tmp = tmp['folder'][name];
+                pathqwq += '/';
+            });
+            var path_ = path;
+            if (Object.keys(tmp['folder']) == 0 && tmp['file'].length == 0) {
+                $('#win-explorer>.page>.main>.content>.view')[0].innerHTML = '<p class="info">此文件夹为空。</p>';
+            }
+            else {
+                let ht = '';
+                for (let folder in tmp['folder']) {
+                    ht += `<a class="a item files" id="file${index_}" onclick="apps.explorer.select('${path}/${folder}','file${index_}');" ondblclick="apps.explorer.goto('${path}/${folder}')" ontouchend="apps.explorer.goto('${path}/${folder}')" oncontextmenu="showcm(event,'explorer.folder','${path}/${folder}');return stop(event);">
+                        <img src="apps/icons/explorer/folder.svg">${folder}</a>`;
+                    index_ += 1;
+                }
+                if (tmp['file']) {
+                    tmp['file'].forEach(file => {
+                        let cmd = file['command'];
+                        if (file._mounted && file._handle) {
+                            cmd = `apps.explorer.openMountedFile('${path_}/${file['name']}')`;
+                        }
+                        ht += `<a class="a item file" id="file${index_}" onclick="apps.explorer.select('${path_}/${file['name']}','file${index_}');" ondblclick="${cmd}" ontouchend="${cmd}" oncontextmenu="showcm(event,'explorer.file','${path_}/${file['name']}');return stop(event);">
+                            <img src="${file['ico']}">${file['name']}</a>`;
+                        index_ += 1;
+                    });
+                }
+                $('#win-explorer>.page>.main>.content>.view')[0].innerHTML = ht;
+            }
+            if (pathl.length == 1) {
+                $('#win-explorer>.path>.goback').attr('onclick', 'apps.explorer.reset()');
+            } else {
+                $('#win-explorer>.path>.goback').attr('onclick', `apps.explorer.goto('${path.substring(0, path.length - pathl[pathl.length - 1].length - 1)}')`);
+            }
+
+            if (clear) {
+                apps.explorer.delHistory(apps.explorer.tabs[apps.explorer.now][0]);
+                apps.explorer.pushHistory(apps.explorer.tabs[apps.explorer.now][0], $('#win-explorer>.path>.tit')[0].dataset.path);
+            }
+            apps.explorer.checkHistory(apps.explorer.tabs[apps.explorer.now][0]);
+        },
+        add: async (path, name_, type = 'file', command = '', icon = '') => { //type 为文件类型，只有文件夹 files 和文件 file
+            const pathl = path.split('/').filter(Boolean);
+            const isMounted = !!apps.explorer.mounts[pathl[0]];
+            const files = isMounted ? apps.explorer.path : apps.explorer.getPath();
+            let tmp = files;
+
+            for (const name of pathl) {
+                if (!tmp || !tmp.folder
+                    || !Object.prototype.hasOwnProperty.call(tmp.folder, name)) {
+                    shownotice('file-write-error');
+                    return false;
+                }
+                tmp = tmp.folder[name];
+            }
+
+            tmp.folder ??= {};
+            tmp.file ??= [];
+
+            let finalName = name_;
+            let counter = 1;
+            let baseName = name_;
+            let extension = '';
+            if (type === 'file' && name_.includes('.')) {
+                const lastDotIndex = name_.lastIndexOf('.');
+                baseName = name_.substring(0, lastDotIndex);
+                extension = name_.substring(lastDotIndex);
+            }
+            let reservedNames = apps.explorer.pendingCreateNames.get(path);
+            if (!reservedNames) {
+                reservedNames = new Set();
+                apps.explorer.pendingCreateNames.set(path, reservedNames);
+            }
+            while (apps.explorer.traverseDirectory(tmp, finalName) || reservedNames.has(finalName)) {
+                finalName = `${baseName} (${counter})${extension}`;
+                counter += 1;
+            }
+            reservedNames.add(finalName);
+
+            try {
+                if (type === 'files') {
+                    const folderEntry = { folder: {}, file: [] };
+                    if (isMounted) {
+                        if (!tmp._handle) throw new Error('Mounted directory handle is missing');
+                        folderEntry._handle = await tmp._handle.getDirectoryHandle(finalName, { create: true });
+                        folderEntry._mounted = true;
+                    }
+                    tmp.folder[finalName] = folderEntry;
+                } else {
+                    const extensionName = finalName.includes('.')
+                        ? finalName.split('.').pop().toLowerCase()
+                        : '';
+                    let icon_ = 'icon/files/none.png';
+                    if (extensionName === 'txt') {
+                        icon_ = 'icon/files/txt.png';
+                        if (command === '') command = 'openapp(\'notepad\')';
+                    } else if (['png', 'jpg', 'bmp'].includes(extensionName)) {
+                        icon_ = 'icon/files/picture.png';
+                    }
+                    if (icon !== '') icon_ = icon;
+
+                    const fileEntry = { name: finalName, ico: icon_, command: command };
+                    if (isMounted) {
+                        if (!tmp._handle) throw new Error('Mounted directory handle is missing');
+                        fileEntry._handle = await tmp._handle.getFileHandle(finalName, { create: true });
+                        fileEntry._mounted = true;
+                        fileEntry.command = '';
+                    }
+                    tmp.file.push(fileEntry);
+                }
+            } catch (error) {
+                reservedNames.delete(finalName);
+                if (reservedNames.size === 0) apps.explorer.pendingCreateNames.delete(path);
+                console.warn('Create file or folder failed:', error);
+                shownotice('file-write-error');
+                return false;
+            }
+            reservedNames.delete(finalName);
+            if (reservedNames.size === 0) apps.explorer.pendingCreateNames.delete(path);
+
+            if (!isMounted) apps.explorer.pushLocalStoragePath(files, false);
+            await apps.explorer.goto(path);
+            apps.explorer.rename(path + '/' + finalName);
+            return true;
+        },
+        rename: (path) => {
+            var pathl = path.split('/');
+            var name = pathl[pathl.length - 1];
+            const isMounted = !!apps.explorer.mounts[pathl[0]];
+            apps.explorer.old_name = name;
+            pathl.pop();
+            let files = isMounted ? apps.explorer.path : apps.explorer.getPath();
+            let tmp = files;
+            pathl.forEach(name => {
+                if (tmp !== null) {
+                    tmp = tmp['folder'][name];
+                } else {
+                    tmp = files['folder'][name];
+                }
+            });
+            let element = document.querySelector('#' + apps.explorer.get_file_id(name));
+            if (!element) return false;
+            let img = element.querySelector('img').outerHTML;
+            element.innerHTML = img;
+            let input = document.createElement('input');
+            // input.style.cssText = '';
+            input.id = 'new_name';
+            input.className = 'input';
+            input.value = apps.explorer.old_name;
+            element.appendChild(input);
+            setTimeout(() => { $('#new_name').focus(); $('#new_name').select(); }, 200);
+
+            element.classList.add('change');
+            var input_ = document.getElementById('new_name');
+            input_.addEventListener('keyup', function (event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    apps.explorer.del_select();
+                }
+            });
+            if (!isMounted) apps.explorer.pushLocalStoragePath(files, false);
+            return true;
+        },
+        get_file_id: (name) => {  //只能找到已经打开了的文件夹的元素 id
+            var elements = document.getElementsByClassName('item');
+            for (var i = 0; i < elements.length; i++) {
+                var element = elements[i];
+                if (element.innerText == name) {
+                    return element.id;
+                }
+            }
+        },
+        del: (path) => {
+            if (!path) return false;
+            var pathl = path.split('/');
+            var name = pathl[pathl.length - 1];
+            var isMounted = !!apps.explorer.mounts[pathl[0]];
+            pathl.pop();
+            let files = isMounted ? apps.explorer.path : apps.explorer.getPath();
+            let tmp = files;
+            for (const parentName of pathl) {
+                if (!tmp || !tmp.folder || !tmp.folder[parentName]) return false;
+                tmp = tmp.folder[parentName];
+            }
+            if (!tmp || !tmp.file || !tmp.folder) return false;
+            let tmp_file = tmp['file'];
+            console.log(tmp_file)
+            console.log(tmp)
+            for (var i = 0; i < tmp_file.length; i++) {
+                if (tmp_file[i]['name'] == name) {
+                    tmp_file.splice(i, 1);
+                }
+            }
+            let tmp_files = tmp['folder'];
+            delete tmp_files[name];
+            if (isMounted && tmp._handle) {
+                tmp._handle.removeEntry(name, { recursive: true }).catch(() => shownotice('file-write-error'));
+            }
+            apps.explorer.history.forEach(item => {
+                while (item.includes(path)) {
+                    item.splice(item.findIndex(elt => { return elt == path; }), 1);
+                }
+            });
+            if (!isMounted) apps.explorer.pushLocalStoragePath(files, false);
+            apps.explorer.goto(pathl.join('/'));
+            return true;
+        },
+        pushLocalStoragePath: (path, isRefresh = false) => {
+            const pathStr = JSON.stringify(path);
+            localStorage.setItem("files_path", pathStr);
+            if ((isRefresh ?? false) == true) {
+                apps.explorer.goto($('#win-explorer>.path>.tit')[0].dataset.path, false);
+            }
+        },
+        normalizePathTree: (node, seen = new Set()) => {
+            if (!node || typeof node !== 'object' || Array.isArray(node) || seen.has(node)) {
+                return false;
+            }
+            seen.add(node);
+            if (node.folder === undefined) node.folder = {};
+            if (node.file === undefined) node.file = [];
+            if (!node.folder || typeof node.folder !== 'object' || Array.isArray(node.folder)
+                || !Array.isArray(node.file)) {
+                return false;
+            }
+            for (const file of node.file) {
+                if (!file || typeof file !== 'object' || Array.isArray(file)
+                    || typeof file.name !== 'string') {
+                    return false;
+                }
+            }
+            for (const child of Object.values(node.folder)) {
+                if (!apps.explorer.normalizePathTree(child, seen)) return false;
+            }
+            return true;
+        },
+        getPath: () => {
+            const filesPath = localStorage.getItem("files_path");
+            if (filesPath !== null) {
+                try {
+                    const parsed = JSON.parse(filesPath);
+                    if (apps.explorer.normalizePathTree(parsed)) return parsed;
+                } catch (error) {
+                    console.warn('Invalid explorer state; resetting it:', error);
+                }
+                localStorage.removeItem('files_path');
+            }
+            apps.explorer.normalizePathTree(apps.explorer.path);
+            apps.explorer.pushLocalStoragePath(apps.explorer.path);
+            return apps.explorer.path;
+        },
+        traverseDirectory(dir, name) {
+            if (dir['file'] == null || dir['folder'] == null)
+                return false;
+            console.log(name)
+            for (var i = 0; i < dir['file'].length; i++) {
+                if (dir['file'][i]['name'] == name) {
+                    return true;
+                }
+            }
+            const keys = Object.keys(dir['folder']);
+            for (var i = 0; i < keys.length; i++) {
+                if (keys[i] == name) {
+                    return true;
+                }
+            }
+            return false;
+        },
+        // 禁止奇奇怪怪的缩进！尽量压行，不要毫无意义地全部格式化和展开！ 
+        // 给我看蒙了这东西，写的是啥
+        path: { folder: { 'C:': { folder: { 'Program Files': { folder: { 'WindowsApps': { folder: {}, file: [] }, 'Microsoft': { folder: {}, file: [] } }, file: [{ name: 'about.exe', ico: 'icon/about.svg', command: 'openapp(\'about\')' }, { name: 'setting.exe', ico: 'icon/setting.svg', command: 'openapp(\'setting\')' },] }, 'Program Files (x86)': { folder: { 'Microsoft': { folder: { 'Edge': { folder: { 'Application': { folder: { 'SetupMetrics': { folder: {}, file: [] } }, file: [{ name: 'msedge.exe', ico: 'icon/edge.svg', command: 'openapp(\'edge\')' }] } } } } } } }, 'Windows': { folder: { 'Boot': { folder: {}, file: [] }, 'System': { folder: {}, file: [] }, 'SysWOW64': { folder: {}, file: [] }, 'System32': { folder: {}, file: [{ name: 'calc.exe', ico: 'icon/calc.svg', command: 'openapp(\'calc\')' }, { name: 'cmd.exe', ico: 'icon/terminal.svg', command: 'openapp(\'terminal\')' }, { name: 'notepad.exe', ico: 'icon/notepad.svg', command: 'openapp(\'notepad\')' }, { name: 'taskmgr.exe', ico: 'icon/taskmgr.png', command: 'openapp(\'taskmgr\')' }, { name: 'winver.exe', ico: 'icon/about.svg', command: 'openapp(\'winver\')' },] } }, file: [{ name: 'explorer.exe', ico: 'icon/explorer.svg', command: 'apps.explorer.newtab()' }, { name: 'notepad.exe', ico: 'icon/notepad.svg', command: 'openapp(\'notepad\')' }, { name: 'py.exe', ico: 'icon/python.svg', command: 'openapp(\'python\')' },] }, '用户': { folder: { 'Administrator': { folder: { '推荐的项目': { folder: {}, file: [{ name: '瓶盖介绍.doc', ico: 'icon/files/word.png', command: 'openapp(\'word\');apps.word.edit()' }, { name: '瓶盖质量统计分析.xlsx', ico: 'icon/files/excel.png', command: '' },] }, '文档': { folder: { 'IISExpress': { folder: {}, file: [] }, 'PowerToys': { folder: {}, file: [] } }, file: [{ name: '瓶盖介绍.doc', ico: 'icon/files/word.png', command: '' }, { name: '瓶盖质量统计分析.xlsx', ico: 'icon/files/excel.png', command: '' },] }, '图片': { folder: { '本机照片': { folder: {}, file: [] }, '屏幕截图': { folder: {}, file: [] } }, file: [{ name: '瓶盖构造图.png', ico: 'icon/files/img.png', command: '' }, { name: '可口可乐瓶盖.jpg', ico: 'icon/files/img.png', command: '' },] }, 'AppData': { folder: { 'Local': { folder: { 'Microsoft': { folder: { 'Windows': { folder: { 'Fonts': {}, 'TaskManager': {}, 'Themes': {}, 'Shell': {}, '应用程序快捷方式': {}, } }, } }, 'Programs': { folder: { 'Python': { folder: { 'Python311': { folder: { 'DLLs': {}, 'Doc': {}, 'include': {}, 'Lib': { folder: { 'site-packages': {}, 'tkinter': {}, } }, 'libs': {}, 'Script': {}, 'share': {}, 'tcl': {}, 'Tools': {} }, file: [{ name: 'python.exe', ico: 'icon/python.png', command: 'openapp(\'python\')' }] } }, } } }, 'Temp': { folder: {} }, } }, 'LocalLow': { folder: { 'Microsoft': { folder: { 'Windows': {}, } }, } }, 'Roaming': { folder: { 'Microsoft': { folder: { 'Windows': { folder: { '「开始」菜单': { folder: { '程序': { folder: {} }, } }, } }, } }, } }, }, file: [] }, '音乐': { folder: { '录音机': { folder: {}, file: [] } } } } }, '公用': { folder: { '公用文档': { folder: { 'IISExpress': { folder: {}, file: [] }, 'PowerToys': { folder: {}, file: [] } }, file: [] }, '公用图片': { folder: { '本机照片': { folder: {}, file: [] }, '屏幕截图': { folder: {}, file: [] } }, file: [] }, '公用音乐': { folder: { '录音机': { folder: {}, file: [] } } } } } } } }, file: [] }, 'D:': { folder: { 'Microsoft': { folder: {}, file: [] } }, file: [{ name: '瓶盖结构说明.docx', ico: 'icon/files/word.png', command: '' }, { name: '可口可乐瓶盖历史.pptx', ico: 'icon/files/ppt.png', command: '' },] } } },
+    },
+    calc: {
+        init: () => {
+            document.getElementById('calc-input').innerHTML = '0';
+        }
+    },
+    about: {
+        repo: () => {
+            return isTauriApp() ? 'win12-online/win12-desktop' : 'win12-online/win12';
+        },
+        contentSuffix: () => {
+            return isTauriApp() ? 'tauri' : 'web';
+        },
+        init: () => {
+            updateAboutAppEntrypoints();
+            apps.about.page('about');
+            if (!$(apps.about.contributorsSelector() + '>.a').length) apps.about.get();
+            if (!($(apps.about.starSelector()).html().includes('刷新'))) apps.about.get_star();
+            if (isTauriApp() && !$('#ReleaseShowDesktop>details').length) apps.about.get_releases();
+        },
+        page: (name) => {
+            const suffix = apps.about.contentSuffix();
+            $('#win-about>.cnt').removeClass('show');
+            $(`#win-about>.${name}-${suffix}`).addClass('show');
+            $('.about-menu>a').removeClass('check');
+            $(`.about-menu>.${name}`).addClass('check');
+        },
+        contributorsSelector: () => {
+            return isTauriApp() ? '#contri-desktop' : '#contri';
+        },
+        starSelector: () => {
+            return isTauriApp() ? '#StarShowDesktop' : '#StarShow';
+        },
+        run_loading: (expr) => {
+            $(expr).html(`<loading><svg width="30px" height="30px" viewBox="0 0 16 16">
+            <circle cx="8px" cy="8px" r="7px" style="stroke:#7f7f7f50;fill:none;stroke-width:3px;"></circle>
+            <circle cx="8px" cy="8px" r="7px" style="stroke:#2983cc;stroke-width:3px;"></circle></svg></loading>`);
+        },
+        escape_html: (text) => {
+            return String(text || '').replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+        },
+        render_release_body: (body) => {
+            const text = body || '此发行版没有填写发行日志。';
+            if (typeof marked !== 'undefined' && typeof DOMPurify !== 'undefined') {
+                const html = marked.parse(text);
+                return DOMPurify.sanitize(html);
+            }
+            return apps.about.escape_html(text).replace(/\n/g, '<br>');
+        },
+        get_releases: () => {
+            apps.about.run_loading('#ReleaseShowDesktop');
+            fetch('https://api.github.com/repos/win12-online/win12-desktop/releases')
+                .then(response => response.json())
+                .then(releases => {
+                    setTimeout(() => {
+                        $('#ReleaseShowDesktop').html('');
+                        if (!Array.isArray(releases) || releases.length == 0) {
+                            $('#ReleaseShowDesktop').html('<p>&emsp;&emsp;暂无发行版发行日志。</p><a class="button" onclick="apps.about.get_releases()"><i class="bi bi-arrow-clockwise"></i> 刷新</a>');
+                            return;
+                        }
+                        releases.forEach((release, index) => {
+                            const title = apps.about.escape_html(release.name || release.tag_name || '未命名发行版');
+                            const tag = release.tag_name ? `<span>${apps.about.escape_html(release.tag_name)}</span> ` : '';
+                            const date = release.published_at ? ` ${apps.about.escape_html(new Date(release.published_at).toLocaleDateString())}` : '';
+                            const body = apps.about.render_release_body(release.body);
+                            $('#ReleaseShowDesktop').append(`<details ${index == 0 ? 'open' : ''}><summary>${tag}${title}${date}</summary><div class="release-body">${body}</div></details>`);
+                        });
+                        $('#ReleaseShowDesktop').append('<a onclick="window.open(\'https://github.com/win12-online/win12-desktop/releases\',\'_blank\');" win12_title="https://github.com/win12-online/win12-desktop/releases" class="a jump" style="text-align: center;">更多</a>');
+                    }, 200);
+                })
+                .catch(error => {
+                    console.error('获取发行版发行日志时出错：', error);
+                    $('#ReleaseShowDesktop').html('<div style="display: flex;"><p>&emsp;&emsp;哎呀！出错了！</p>&emsp;<a class="button" onclick="apps.about.get_releases()"><i class="bi bi-arrow-clockwise"></i> 重试</a></div>');
+                });
+        },
+        get: () => {
+            const selector = apps.about.contributorsSelector();
+            apps.about.run_loading(selector);
+            // 实时获取项目贡献者
+            $.get(`https://api.github.com/repos/${apps.about.repo()}/contributors`).then(cs => {
+                setTimeout(() => {
+                    $(selector).html('');
+                    cs.forEach(c => {
+                        $(selector).append(`<a class="a" title="${c['login']}" onclick="window.open('${c['html_url']}','_blank');"><img class="avatar" src="${c['avatar_url']}" alt="${c['login']}"><span class="info"><p class="name">${c['login']}</p><p class="cbs">贡献 <span class="num">${c['contributions']}</span></p></span></a>`);
+                    });
+                    $(selector).append('<a class="button" onclick="apps.about.get()"><i class="bi bi-arrow-clockwise"></i> 刷新</a>');
+                }, 200);
+            });
+        },
+        get_star: () => {
+            const selector = apps.about.starSelector();
+            apps.about.run_loading(selector);
+            fetch(`https://api.github.com/repos/${apps.about.repo()}`)
+                .then(response => response.json())
+                .then(data => {
+                    setTimeout(() => {
+                        const starCount = data.stargazers_count;
+                        $(selector).html('<div style="display: flex;"><p>&emsp;&emsp;Star 数量：' + starCount + ' (实时数据)</p>&emsp;<a class="button" onclick="apps.about.get_star()"><i class="bi bi-arrow-clockwise"></i> 刷新</a></div>');
+                    }, 200);
+                })
+                .catch(error => {
+                    console.error('获取 star 数量时出错：', error);
+                    $(selector).html('<div style="display: flex;"><p>&emsp;&emsp;哎呀！出错了！</p>&emsp;<a class="button" onclick="apps.about.get_star()"><i class="bi bi-arrow-clockwise"></i> 重试</a></div>');
+                });
+        }
+    },
+    notepad: {
+        _pendingContent: null,
+        _mountedFileHandle: null,
+        _keyBound: false,
+        _isMd: false,
+        _previewing: false,
+        _dirty: false,
+        _loading: false,
+        _markDirty: () => {
+            if (!apps.notepad._dirty && apps.notepad._mountedFileHandle && !apps.notepad._loading) {
+                apps.notepad._dirty = true;
+                var p = $('.window.notepad>.titbar>p');
+                if (!p.text().startsWith('* ')) p.text('* ' + p.text());
+            }
+        },
+        init: () => {
+            apps.notepad._resetPreview();
+            apps.notepad._dirty = false;
+            apps.notepad._loading = true;
+            $('#win-notepad>.text-box').addClass('down');
+            setTimeout(() => {
+                if (apps.notepad._pendingContent !== null) {
+                    $('#win-notepad>.text-box')[0].innerText = apps.notepad._pendingContent;
+                    apps.notepad._pendingContent = null;
+                } else {
+                    $('#win-notepad>.text-box')[0].innerText = '';
+                    apps.notepad._mountedFileHandle = null;
+                }
+                $('#win-notepad>.text-box').removeClass('down');
+                requestAnimationFrame(() => { apps.notepad._loading = false; });
+            }, 200);
+            if (!apps.notepad._keyBound) {
+                apps.notepad._keyBound = true;
+                $('#win-notepad>.text-box').on('input', apps.notepad._markDirty);
+                document.addEventListener('keydown', function (e) {
+                    if (e.ctrlKey && e.key === 's' && $('.window.foc')[0]?.classList.contains('notepad')) {
+                        e.preventDefault();
+                        apps.notepad.saveMounted();
+                    }
+                });
+            }
+        },
+        _resetPreview: () => {
+            apps.notepad._isMd = false;
+            apps.notepad._previewing = false;
+            $('#notepad-md-toggle').hide().removeClass('active').html('<i class="bi bi-eye"></i> 预览');
+            $('#notepad-md-preview').hide();
+            $('#win-notepad>.text-box').show();
+        },
+        setMdMode: (enabled) => {
+            apps.notepad._resetPreview();
+            apps.notepad._isMd = enabled;
+            if (enabled) {
+                $('#notepad-md-toggle').show();
+            }
+        },
+        togglePreview: () => {
+            apps.notepad._previewing = !apps.notepad._previewing;
+            if (apps.notepad._previewing) {
+                var text = $('#win-notepad>.text-box')[0].innerText;
+                var html = marked.parse(text);
+                $('#notepad-md-preview').html(typeof DOMPurify !== 'undefined' ? DOMPurify.sanitize(html) : html).show();
+                $('#win-notepad>.text-box').hide();
+                $('#notepad-md-toggle').addClass('active').html('<i class="bi bi-pencil"></i> 编辑');
+            } else {
+                $('#notepad-md-preview').hide();
+                $('#win-notepad>.text-box').show();
+                $('#notepad-md-toggle').removeClass('active').html('<i class="bi bi-eye"></i> 预览');
+            }
+        },
+        saveMounted: async () => {
+            if (!apps.notepad._mountedFileHandle) return;
+            try {
+                const writable = await apps.notepad._mountedFileHandle.createWritable();
+                await writable.write($('#win-notepad>.text-box')[0].innerText);
+                await writable.close();
+                apps.notepad._dirty = false;
+                var p = $('.window.notepad>.titbar>p');
+                p.text(p.text().replace(/^\* /, ''));
+                p.css('opacity', '0.5');
+                setTimeout(() => p.css('opacity', ''), 300);
+            } catch (e) {
+                shownotice('file-write-error');
+            }
+        },
+        close: () => {
+            if (apps.notepad._dirty && apps.notepad._mountedFileHandle) {
+                shownotice('unsaved-notepad');
+                return;
+            }
+            apps.notepad._forceClose();
+        },
+        _forceClose: () => {
+            apps.notepad._dirty = false;
+            apps.notepad._mountedFileHandle = null;
+            hidewin('notepad');
+            hidewin('notepad-fonts', 'configs');
+        }
+    },
+    imgviewer: {
+        _blobUrl: null,
+        _scale: 1,
+        _rotate: 0,
+        init: () => {},
+        open: (url, name) => {
+            openapp('imgviewer');
+            apps.imgviewer._blobUrl = url;
+            apps.imgviewer._scale = 1;
+            apps.imgviewer._rotate = 0;
+            apps.imgviewer._applyTransform();
+            $('#win-imgviewer .preview-img').attr('src', url);
+            $('.window.imgviewer>.titbar>p').text(name || lang('图片查看器', 'imgviewer.name'));
+        },
+        close: () => {
+            if (apps.imgviewer._blobUrl) {
+                URL.revokeObjectURL(apps.imgviewer._blobUrl);
+                apps.imgviewer._blobUrl = null;
+            }
+            hidewin('imgviewer');
+        },
+        zoomIn: () => {
+            apps.imgviewer._scale = Math.min(apps.imgviewer._scale * 1.25, 10);
+            apps.imgviewer._applyTransform();
+        },
+        zoomOut: () => {
+            apps.imgviewer._scale = Math.max(apps.imgviewer._scale / 1.25, 0.1);
+            apps.imgviewer._applyTransform();
+        },
+        rotateRight: () => {
+            apps.imgviewer._rotate = (apps.imgviewer._rotate + 90) % 360;
+            apps.imgviewer._applyTransform();
+        },
+        resetView: () => {
+            apps.imgviewer._scale = 1;
+            apps.imgviewer._rotate = 0;
+            apps.imgviewer._applyTransform();
+        },
+        _applyTransform: () => {
+            $('#win-imgviewer .preview-img').css('transform',
+                `scale(${apps.imgviewer._scale}) rotate(${apps.imgviewer._rotate}deg)`);
+        }
+    },
+    mediaplayer: {
+        _blobUrl: null,
+        init: () => {},
+        open: (url, name, type) => {
+            openapp('mediaplayer');
+            apps.mediaplayer._blobUrl = url;
+            $('.window.mediaplayer>.titbar>p').text(name || lang('媒体播放器', 'mediaplayer.name'));
+            if (type === 'video') {
+                $('#mediaplayer-video').attr('src', url).show()[0].load();
+                $('#mediaplayer-audio').hide()[0].pause();
+                $('.window.mediaplayer>.titbar>img').attr('src', 'icon/files/vidio.png');
+            } else {
+                $('#mediaplayer-audio').attr('src', url).show()[0].load();
+                $('#mediaplayer-video').hide()[0].pause();
+                $('.window.mediaplayer>.titbar>img').attr('src', 'icon/files/music.png');
+            }
+        },
+        close: () => {
+            $('#mediaplayer-video')[0].pause();
+            $('#mediaplayer-audio')[0].pause();
+            if (apps.mediaplayer._blobUrl) {
+                URL.revokeObjectURL(apps.mediaplayer._blobUrl);
+                apps.mediaplayer._blobUrl = null;
+            }
+            hidewin('mediaplayer');
+        }
+    },
+    pdfviewer: {
+        _blobUrl: null,
+        init: () => {},
+        open: (url, name) => {
+            openapp('pdfviewer');
+            apps.pdfviewer._blobUrl = url;
+            $('#pdfviewer-frame').attr('src', url);
+            $('.window.pdfviewer>.titbar>p').text(name || lang('PDF 查看器', 'pdfviewer.name'));
+        },
+        close: () => {
+            $('#pdfviewer-frame').attr('src', '');
+            if (apps.pdfviewer._blobUrl) {
+                URL.revokeObjectURL(apps.pdfviewer._blobUrl);
+                apps.pdfviewer._blobUrl = null;
+            }
+            hidewin('pdfviewer');
+        }
+    },
+    codeEditor: {
+        editor: null,
+        _fileHandle: null,
+        _dirty: false,
+        _loading: false,
+        _wrap: false,
+        _fontSize: 15,
+        _modeMap: {
+            js: 'javascript', jsx: 'jsx', ts: 'typescript', tsx: 'tsx',
+            css: 'css', scss: 'scss', less: 'less',
+            html: 'html', htm: 'html', xml: 'xml', svg: 'svg',
+            json: 'json', yaml: 'yaml', yml: 'yaml',
+            py: 'python', java: 'java', c: 'c_cpp', cpp: 'c_cpp', h: 'c_cpp',
+            cs: 'csharp', go: 'golang', rs: 'rust', rb: 'ruby',
+            php: 'php', sh: 'sh', bat: 'batchfile', ps1: 'powershell',
+            sql: 'sql', md: 'markdown', r: 'r', lua: 'lua', swift: 'swift',
+            kt: 'kotlin', dart: 'dart', toml: 'toml', ini: 'ini',
+            dockerfile: 'dockerfile', makefile: 'makefile'
+        },
+        _modeLabelMap: {
+            javascript: 'JavaScript', jsx: 'JSX', typescript: 'TypeScript', tsx: 'TSX',
+            css: 'CSS', scss: 'SCSS', less: 'Less',
+            html: 'HTML', xml: 'XML', svg: 'SVG',
+            json: 'JSON', yaml: 'YAML',
+            python: 'Python', java: 'Java', c_cpp: 'C/C++',
+            csharp: 'C#', golang: 'Go', rust: 'Rust', ruby: 'Ruby',
+            php: 'PHP', sh: 'Shell', batchfile: 'Batch', powershell: 'PowerShell',
+            sql: 'SQL', markdown: 'Markdown', r: 'R', lua: 'Lua', swift: 'Swift',
+            kotlin: 'Kotlin', dart: 'Dart', toml: 'TOML', ini: 'INI',
+            text: 'Text'
+        },
+        init: () => { return null; },
+        load: () => {
+            ace.require('ace/ext/language_tools');
+            var ed = ace.edit('code-ace-editor');
+            apps.codeEditor.editor = ed;
+            ed.setTheme('ace/theme/vibrant_ink');
+            ed.setOptions({
+                enableBasicAutocompletion: true,
+                enableSnippets: true,
+                showPrintMargin: false,
+                enableLiveAutocompletion: true,
+                fontSize: 15,
+                tabSize: 4,
+                useSoftTabs: true,
+                scrollPastEnd: 0.5
+            });
+            ed.commands.addCommand({
+                name: 'save', bindKey: { win: 'Ctrl-S', mac: 'Command-S' },
+                exec: () => apps.codeEditor.save()
+            });
+            ed.commands.addCommand({
+                name: 'gotoline', bindKey: { win: 'Ctrl-G', mac: 'Command-G' },
+                exec: () => {
+                    var line = prompt('跳转到行：');
+                    if (line) ed.gotoLine(parseInt(line), 0, true);
+                }
+            });
+            ed.on('change', () => {
+                if (!apps.codeEditor._dirty && apps.codeEditor._fileHandle && !apps.codeEditor._loading) {
+                    apps.codeEditor._dirty = true;
+                    var p = $('.window.code-editor>.titbar>p');
+                    if (!p.text().startsWith('* ')) p.text('* ' + p.text());
+                }
+            });
+            ed.selection.on('changeCursor', () => apps.codeEditor._updateStatus());
+            ed.on('changeSession', () => apps.codeEditor._updateStatus());
+        },
+        _updateStatus: () => {
+            var ed = apps.codeEditor.editor;
+            if (!ed) return;
+            var cursor = ed.getCursorPosition();
+            $('#code-status-cursor').text('行 ' + (cursor.row + 1) + ', 列 ' + (cursor.column + 1));
+            var sel = ed.getSelectedText();
+            if (sel.length > 0) {
+                $('#code-status-cursor').text(
+                    '行 ' + (cursor.row + 1) + ', 列 ' + (cursor.column + 1) +
+                    ' (已选 ' + sel.length + ' 字符)');
+            }
+            var modePath = ed.session.getMode().$id || '';
+            var modeName = modePath.split('/').pop();
+            $('#code-status-lang').text(apps.codeEditor._modeLabelMap[modeName] || modeName || 'Text');
+            var tab = ed.session.getUseSoftTabs() ? '空格' : 'Tab';
+            $('#code-status-tab').text(tab + ': ' + ed.session.getTabSize());
+        },
+        open: (text, fileName, fileHandle) => {
+            apps.codeEditor._fileHandle = fileHandle || null;
+            apps.codeEditor._dirty = false;
+            openapp('code-editor');
+            if (!apps.codeEditor.editor) {
+                shownotice('file-read-error');
+                return;
+            }
+            var ext = fileName.split('.').pop().toLowerCase();
+            var mode = apps.codeEditor._modeMap[ext] || 'text';
+            apps.codeEditor._loading = true;
+            apps.codeEditor.editor.session.setMode('ace/mode/' + mode);
+            apps.codeEditor.editor.setValue(text, -1);
+            apps.codeEditor._loading = false;
+            apps.codeEditor._dirty = false;
+            $('.window.code-editor>.titbar>p').text(fileName);
+            apps.codeEditor._updateStatus();
+        },
+        save: async () => {
+            if (!apps.codeEditor._fileHandle) return;
+            try {
+                const writable = await apps.codeEditor._fileHandle.createWritable();
+                await writable.write(apps.codeEditor.editor.getValue());
+                await writable.close();
+                apps.codeEditor._dirty = false;
+                var p = $('.window.code-editor>.titbar>p');
+                p.text(p.text().replace(/^\* /, ''));
+                p.css('opacity', '0.5');
+                setTimeout(() => p.css('opacity', ''), 300);
+            } catch (e) {
+                shownotice('file-write-error');
+            }
+        },
+        setTheme: (theme) => {
+            if (apps.codeEditor.editor) apps.codeEditor.editor.setTheme(theme);
+        },
+        toggleWrap: () => {
+            apps.codeEditor._wrap = !apps.codeEditor._wrap;
+            if (apps.codeEditor.editor)
+                apps.codeEditor.editor.session.setUseWrapMode(apps.codeEditor._wrap);
+            $('#code-wrap-btn').toggleClass('active', apps.codeEditor._wrap);
+        },
+        changeFontSize: (delta) => {
+            apps.codeEditor._fontSize = Math.max(10, Math.min(30, apps.codeEditor._fontSize + delta));
+            if (apps.codeEditor.editor)
+                apps.codeEditor.editor.setFontSize(apps.codeEditor._fontSize);
+        },
+        close: () => {
+            if (apps.codeEditor._dirty && apps.codeEditor._fileHandle) {
+                shownotice('unsaved-code-editor');
+                return;
+            }
+            apps.codeEditor._forceClose();
+        },
+        _forceClose: () => {
+            apps.codeEditor._dirty = false;
+            apps.codeEditor._fileHandle = null;
+            hidewin('code-editor');
+        }
+    },
+    pythonEditor: {
+        editor: null,
+        init: () => {
+            return null;
+        },
+        run: () => {
+            let result;
+            let output = document.getElementById('output');
+            try {
+                if (apps.python.pyodide) {
+                    let code = apps.pythonEditor.editor.getValue();
+                    apps.python.pyodide.runPython('sys.stdout = io.StringIO()');
+                    apps.python.pyodide.runPython(code);
+                    result = apps.python.pyodide.runPython('sys.stdout.getvalue()');
+                }
+            }
+            catch (e) {
+                result = e.message;
+            }
+            output.innerHTML = result;
+        },
+        load: () => {
+            if (!apps.python.loaded) {
+                apps.python.loaded = true;
+                apps.python.load();
+            }
+            ace.require('ace/ext/language_tools');
+            apps.pythonEditor.editor = ace.edit('win-python-ace-editor');
+            apps.pythonEditor.editor.session.setMode('ace/mode/python');
+            apps.pythonEditor.editor.setTheme('ace/theme/vibrant_ink');
+            apps.pythonEditor.editor.setOptions({
+                enableBasicAutocompletion: true,
+                enableSnippets: true,
+                showPrintMargin: false,
+                enableLiveAutocompletion: true
+            });
+        }
+    },
+    notepadFonts: {
+        sizes: {
+            '初号': '56',
+            '小初': '48',
+            '一号': '34.7',
+            '小一': '32',
+            '二号': '29.3',
+            '小二': '24',
+            '三号': '21.3',
+            '小三': '20',
+            '四号': '18.7',
+            '小四': '16',
+            '五号': '14',
+            '小五': '12'
+        },
+        styles: {
+            '正常': '',
+            '粗体': 'font-weight: bold;',
+            '斜体': 'font-style: italic;',
+            '粗偏斜体': 'font-weight: bold; font-style: italic;'
+        },
+        load: () => {
+            apps.notepadFonts.fontvalues = $('#win-notepad-font>.row>#win-notepad-font-type>.value-box>.option');
+            apps.notepadFonts.sizevalues = $('#win-notepad-font>.row>#win-notepad-font-size>.value-box>.option');
+            apps.notepadFonts.stylevalues = $('#win-notepad-font>.row>#win-notepad-font-style>.value-box>.option');
+            apps.notepadFonts.typeinput = $('#win-notepad-font>.row>#win-notepad-font-type>input[type=text]')[0];
+            apps.notepadFonts.sizeinput = $('#win-notepad-font>.row>#win-notepad-font-size>input[type=text]')[0];
+            apps.notepadFonts.styleinput = $('#win-notepad-font>.row>#win-notepad-font-style>input[type=text]')[0];
+            apps.notepadFonts.previewBox = $('#win-notepad-font>.preview>.preview-box');
+            apps.notepadFonts.textBox = $('.notepad>#win-notepad>.text-box');
+
+            for (const elt of apps.notepadFonts.fontvalues) {
+                elt.onclick = function () {
+                    apps.notepadFonts.typeinput.value = this.innerText;
+                    apps.notepadFonts.preview();
+                };
+                elt.setAttribute('style', `font-family: ${elt.innerText};`);
+            }
+
+            for (const elt of apps.notepadFonts.sizevalues) {
+                elt.onclick = function () {
+                    apps.notepadFonts.sizeinput.value = this.innerText;
+                    apps.notepadFonts.preview();
+                };
+            }
+
+            for (const elt of apps.notepadFonts.stylevalues) {
+                elt.onclick = function () {
+                    apps.notepadFonts.styleinput.value = this.innerText;
+                    apps.notepadFonts.preview();
+                };
+                elt.setAttribute('style', apps.notepadFonts.styles[elt.innerText]);
+            }
+
+            apps.notepadFonts.sizeinput.addEventListener('keyup', apps.notepadFonts.preview);
+            apps.notepadFonts.typeinput.addEventListener('keyup', apps.notepadFonts.preview);
+        },
+        preview: () => {
+            var fontsize = 0;
+            var fontstyle;
+            if (!apps.notepadFonts.sizeinput.value.match(/^[0-9]*$/)) {
+                if (apps.notepadFonts.sizes[apps.notepadFonts.sizeinput.value] != undefined) {
+                    fontsize = apps.notepadFonts.sizes[apps.notepadFonts.sizeinput.value];
+                }
+            }
+            else if (apps.notepadFonts.sizeinput.value.match(/^[0-9]*$/)) {
+                fontsize = apps.notepadFonts.sizeinput.value;
+            }
+            if (apps.notepadFonts.styles[apps.notepadFonts.styleinput.value] != undefined) {
+                fontstyle = apps.notepadFonts.styles[apps.notepadFonts.styleinput.value];
+            }
+            else if (apps.notepadFonts.styles[apps.notepadFonts.styleinput.value] == undefined) {
+                fontstyle = apps.notepadFonts.styles['正常'];
+            }
+            apps.notepadFonts.previewBox.attr('style', `font-family: ${apps.notepadFonts.typeinput.value} !important; font-size: ${fontsize}px !important;${fontstyle}`);
+        },
+        commitFont: () => {
+            const styles = window.getComputedStyle(apps.notepadFonts.previewBox[0], null);
+            apps.notepadFonts.textBox.attr('style', `font-family: ${styles.fontFamily} !important; font-size: ${styles.fontSize} !important; font-weight: ${styles.fontWeight} !important; font-style: ${styles.fontStyle} !important;`);
+            hidewin('notepad-fonts', 'configs');
+        },
+        reset: () => {
+            const styles = window.getComputedStyle(apps.notepadFonts.textBox[0], null);
+            apps.notepadFonts.typeinput.value = styles.fontFamily.split(', ')[0];
+            var fontsize = styles.fontSize.split('px')[0];
+            var fontweight = styles.fontWeight;
+            var fontstyle = styles.fontStyle;
+            if (fontweight == '700' && fontstyle == 'normal') {
+                apps.notepadFonts.styleinput.value = '粗体';
+            }
+            else if (fontweight == '400' && fontstyle == 'italic') {
+                apps.notepadFonts.styleinput = '斜体';
+            }
+            else if (fontweight == '700' && fontstyle == 'italic') {
+                apps.notepadFonts.styleinput.value = '粗偏斜体';
+            }
+            else if (fontweight == '400' && fontstyle == 'normal') {
+                apps.notepadFonts.styleinput.value = '正常';
+            }
+            for (const [key, value] of Object.entries(apps.notepadFonts.sizes)) {
+                if (value == fontsize) {
+                    fontsize = key;
+                    break;
+                }
+            }
+            apps.notepadFonts.sizeinput.value = fontsize;
+        },
+    },
+    python: {
+        codeCache: '',
+        prompt: '>>> ',
+        indent: false,
+        loadPromise: null,
+        loadError: '',
+        showLoadError: () => {
+            const output = $('#win-python>pre.text-cmd')[0];
+            if (!output || !apps.python.loadError
+                || output.querySelector('.python-load-error')) return;
+            const message = document.createElement('div');
+            message.className = 'python-load-error';
+            message.textContent = apps.python.loadError;
+            output.appendChild(message);
+        },
+        load: () => {
+            if (apps.python.loadPromise) return apps.python.loadPromise;
+            apps.python.loadError = '';
+            apps.python.loadPromise = (async function () {
+                try {
+                    // The shell now starts before optional CDN scripts finish.
+                    // Give the async Pyodide loader time to arrive when Python is
+                    // opened immediately, while still ending in a visible error
+                    // instead of an unhandled rejection when the CDN is offline.
+                    const deadline = Date.now() + 15000;
+                    while (typeof loadPyodide != 'function' && Date.now() < deadline) {
+                        await new Promise(resolve => setTimeout(resolve, 100));
+                    }
+                    if (typeof loadPyodide != 'function') {
+                        throw new Error('Pyodide loader is unavailable');
+                    }
+                    let runtimeTimeout;
+                    try {
+                        apps.python.pyodide = await Promise.race([
+                            loadPyodide(),
+                            new Promise((_, reject) => {
+                                runtimeTimeout = setTimeout(
+                                    () => reject(new Error('Pyodide runtime load timed out')),
+                                    30000
+                                );
+                            })
+                        ]);
+                    }
+                    finally {
+                        clearTimeout(runtimeTimeout);
+                    }
+                    apps.python.pyodide.runPython(`
+import sys
+import io
+`);
+                }
+                catch (error) {
+                    apps.python.loaded = false;
+                    apps.python.loadError = 'Python 运行环境加载失败 / Python runtime unavailable.';
+                    apps.python.showLoadError();
+                    console.warn('Unable to load Python runtime:', error);
+                }
+                finally {
+                    apps.python.loadPromise = null;
+                }
+            })();
+            return apps.python.loadPromise;
+        },
+        init: () => {
+            $('#win-python').html(`
+        <pre>
+Python 3.11.2  [MSC v.1912 64 bit (AMD64)] :: Anaconda, Inc. on win32
+Type "help", "copyright", "credits" or "license" for more information.
+        </pre>
+        <pre class="text-cmd"></pre>
+        <pre style="display: flex;"><span class='prompt'>>>> </span><input type="text" onkeyup="if (event.keyCode == 13) { apps.python.run(); }"></pre>`);
+            apps.python.showLoadError();
+        },
+        run: () => {
+            if (apps.python.pyodide) {
+                const input = $('#win-python>pre>input');
+                const _code = input.val();
+                if (_code == 'exit()') {
+                    hidewin('python');
+                    input.val('');
+                }
+                else {
+                    const elt = $('#win-python>pre.text-cmd')[0];
+                    const lastChar = _code[_code.length - 1];
+                    var newD = document.createElement('div');
+                    newD.innerText = `${apps.python.prompt}${_code}`;
+                    elt.appendChild(newD);
+                    if (lastChar != ':' && lastChar != '\\' && ((!apps.python.indent || _code == ''))) {
+                        apps.python.prompt = '>>> ';
+                        apps.python.codeCache += _code;
+                        apps.python.indent = false;
+                        const code = apps.python.codeCache;
+                        apps.python.codeCache = '';
+                        apps.python.pyodide.runPython('sys.stdout = io.StringIO()');
+                        try {
+                            const result = String(apps.python.pyodide.runPython(code));
+                            if (apps.python.pyodide.runPython('sys.stdout.getvalue()')) {
+                                var newD = document.createElement('div');
+                                newD.innerText = `${apps.python.pyodide.runPython('sys.stdout.getvalue()')}`;
+                                elt.appendChild(newD);
+                            }
+                            if (result && result != 'undefined') {
+                                var newD = document.createElement('div');
+                                if (result == 'false') {
+                                    newD.innerText = 'False';
+                                }
+                                else if (result == 'true') {
+                                    newD.innerText = 'True';
+                                }
+                                else {
+                                    newD.innerText = result;
+                                }
+                                elt.appendChild(newD);
+                            }
+                        }
+                        catch (err) {
+                            var newD = document.createElement('div');
+                            newD.innerText = `${err.message}`;
+                            elt.appendChild(newD);
+                        }
+                    }
+                    else {
+                        apps.python.prompt = '... ';
+                        if (lastChar == ':') {
+                            apps.python.indent = true;
+                        }
+                        apps.python.codeCache += _code + '\n';
+                    }
+                    input.val('');
+
+                    // 自动聚焦
+                    input.blur();
+                    input.focus();
+
+                    $('#win-python .prompt')[0].innerText = apps.python.prompt;
+                }
+            }
+        }
+    },
+    terminal: {
+        historyList: [],
+        historypt: 0,
+        historyTemp: '',
+        isViewingHistory: false,
+        init: () => {
+            $('#win-terminal').html(`<pre>
+Micrȯsoft Windows [版本 12.0.39035.7324]
+(c) Microṡoft Corporation。保留所有杈利。
+        </pre>
+        <pre class="text-cmd"></pre>
+        <pre style="display: flex"><span class="prompt">C:\\Windows\\System32> </span><input type="text" onkeyup="apps.terminal.handleKeyUp(event)"></pre>`);
+            $('#win-terminal>pre>input').focus();
+        },
+        handleKeyUp: (event) => {
+            const input = $('#win-terminal input');
+            if (event.keyCode === 13) { // Enter
+                apps.terminal.run();
+            } else if (event.keyCode === 38) { // Up arrow
+                apps.terminal.history('up');
+            } else if (event.keyCode === 40) { // Down arrow
+                apps.terminal.history('down');
+            }
+        },
+        run: () => {
+            const elt = $('#win-terminal>pre.text-cmd')[0];
+            const input = $('#win-terminal input');
+            const command = input.val().trim();
+
+            if (command !== '') {
+                // Add command to history
+                apps.terminal.historyList.push(command);
+                apps.terminal.historypt = apps.terminal.historyList.length;
+
+                var newD = document.createElement('div');
+                newD.innerText = `C:\\Windows\\System32> ${command}`;
+                elt.appendChild(newD);
+
+                if (command === 'exit') {
+                    hidewin('terminal');
+                } else if (!runcmd(command, true)) {
+                    var newD = document.createElement('div');
+                    newD.innerText = `"${command}" 不是内部或外部命令，也不是可运行程序或批处理文件`;
+                    elt.appendChild(newD);
+                }
+            }
+
+            input.val('');
+            input.blur();
+            input.focus();
+        },
+        history: (direction) => {
+            const input = $('#win-terminal input');
+
+            if (!apps.terminal.isViewingHistory) {
+                apps.terminal.isViewingHistory = true;
+                apps.terminal.historyTemp = input.val();
+            }
+
+            if (direction === 'up' && apps.terminal.historypt > 0) {
+                apps.terminal.historypt--;
+                input.val(apps.terminal.historyList[apps.terminal.historypt]);
+            } else if (direction === 'down') {
+                apps.terminal.historypt++;
+                if (apps.terminal.historypt >= apps.terminal.historyList.length) {
+                    apps.terminal.historypt = apps.terminal.historyList.length;
+                    apps.terminal.isViewingHistory = false;
+                    input.val(apps.terminal.historyTemp);
+                } else {
+                    input.val(apps.terminal.historyList[apps.terminal.historypt]);
+                }
+            }
+        }
+    },
+    search: {
+        rand: [{ name: '农夫山泉瓶盖简介.txt', bi: 'text', ty: '文本文档' },
+        { name: '瓶盖构造图.png', bi: 'image', ty: 'PNG 文件' },
+        { name: '瓶盖结构说明.docx', bi: 'richtext', ty: 'Microsoft Word 文档' },
+        { name: '可口可乐瓶盖.jpg', bi: 'image', ty: 'JPG 文件' },
+        { name: '可口可乐瓶盖历史.pptx', bi: 'slides', ty: 'Microsoft Powerpoint 演示文稿' },
+        { name: '瓶盖质量统计分析.xlsx', bi: 'ruled', ty: 'Microsoft Excel 工作表' },
+        { name: '农夫山泉瓶盖.svg', bi: 'image', ty: 'SVG 文件' },
+        { name: '瓶盖介绍.doc', bi: 'richtext', ty: 'Microsoft Word 文档' }],
+        search: le => {
+            if (le > 0) {
+                $('#search-win>.ans>.list>list').html(
+                    `<a class="a" onclick="apps.search.showdetail(${le % 8})"><i class="bi bi-file-earmark-${apps.search.rand[le % 8].bi}"></i> ${apps.search.rand[le % 8].name
+                    }</a><a class="a" onclick="apps.search.showdetail(${(le + 3) % 8})"><i class="bi bi-file-earmark-${apps.search.rand[(le + 3) % 8].bi}"></i> ${apps.search.rand[(le + 3) % 8].name}</a>`);
+                apps.search.showdetail(le % 8);
+            } else {
+                $('#search-win>.ans>.list>list').html(
+                    `<p class="text">推荐</p>
+					<a onclick="openapp('setting');$('#search-btn').removeClass('show');
+					$('#search-win').removeClass('show');
+					setTimeout(() => {
+						$('#search-win').removeClass('show-begin');
+					}, 200);">
+						<img src="icon/setting.svg"><p>设置</p></a>
+					<a onclick="openapp('about');$('#search-btn').removeClass('show');
+					$('#search-win').removeClass('show');
+					setTimeout(() => {
+						$('#search-win').removeClass('show-begin');
+					}, 200);">
+						<img src="icon/about.svg"><p>${getAboutAppTitle()}</p></a>`);
+                $('#search-win>.ans>.view').removeClass('show');
+            }
+        },
+        showdetail: i => {
+            $('#search-win>.ans>.view').addClass('show');
+            let inf = apps.search.rand[i];
+            $('#search-win>.ans>.view>.fname>.bi').attr('class', 'bi bi-file-earmark-' + inf.bi);
+            $('#search-win>.ans>.view>.fname>.name').text(inf.name);
+            $('#search-win>.ans>.view>.fname>.type').text(inf.ty);
+        }
+    },
+    edge: {
+        init: () => {
+            $('#win-edge>iframe').remove();
+            apps.edge.titleRequests.clear();
+            apps.edge.tabs = [];
+            apps.edge.len = 0;
+            apps.edge.newtab();
+        },
+        tabs: [],
+        now: null,
+        len: 0,
+        titleRequests: new Map(),
+        reloadElt: '<loading class="reloading"><svg viewBox="0 0 16 16"><circle cx="8px" cy="8px" r="5px"></circle><circle cx="8px" cy="8px" r="5px"></circle></svg></loading>',
+        max: false,
+        fuls: false,
+        b1: false, b2: false, b3: false,
+        newtab: () => {
+            m_tab.newtab('edge', '新建标签页');
+            apps.edge.initHistory(apps.edge.tabs[apps.edge.tabs.length - 1][0]);
+            apps.edge.pushHistory(apps.edge.tabs[apps.edge.tabs.length - 1][0], 'mainpage.html');
+            $('#win-edge').append(`<iframe src="mainpage.html" frameborder="0" class="${apps.edge.tabs[apps.edge.tabs.length - 1][0]}">`);
+            $('#win-edge>.tool>input.url').focus();
+            $('#win-edge>iframe')[apps.edge.tabs.length - 1].onload = function () {
+                this.contentDocument.querySelector('input').onkeyup = function (e) {
+                    if (e.keyCode == 13 && $(this).val() != '') {
+                        apps.edge.goto($(this).val());
+                    }
+                };
+                this.contentDocument.querySelector('svg').onclick = () => {
+                    if ($(this.contentDocument.querySelector('input')).val() != '') {
+                        apps.edge.goto($(this.contentDocument.querySelector('input')).val());
+                    }
+                };
+            };
+            m_tab.tab('edge', apps.edge.tabs.length - 1);
+            apps.edge.checkHistory(apps.edge.tabs[apps.edge.now][0]);
+        },
+        fullscreen: () => {
+            if (!apps.edge.max) {
+                maxwin('edge');
+                apps.edge.max = !apps.edge.max;
+            }
+            document.getElementById('fuls-edge').style.display = 'none';
+            document.getElementById('edge-max').style.display = 'none';
+            document.getElementById('fuls-edge-exit').style.display = '';
+            document.getElementById('over-bar').style.display = '';
+            $('.edge>.titbar').hide();
+            $('.edge>.content>.tool').hide();
+            apps.edge.fuls = !apps.edge.fuls;
+        },
+        exitfullscreen: () => {
+            if (apps.edge.max) {
+                maxwin('edge'); apps.edge.max = !apps.edge.max;
+            }
+            document.getElementById('fuls-edge').style.display = '';
+            document.getElementById('edge-max').style.display = '';
+            document.getElementById('fuls-edge-exit').style.display = 'none';
+            document.getElementById('over-bar').style.display = 'none';
+            $('.edge>.titbar').show();
+            $('.edge>.content>.tool').show();
+            apps.edge.fuls = !apps.edge.fuls;
+        },
+        in_div(id, event) {
+            var div = document.getElementById(id);
+            var x = event.clientX;
+            var y = event.clientY;
+            var divx1 = div.offsetLeft;
+            var divy1 = div.offsetTop;
+            var divx2 = div.offsetLeft + div.offsetWidth;
+            var divy2 = div.offsetTop + div.offsetHeight;
+            if (x < divx1 || x > divx2 || y < divy1 || y > divy2) {
+                //如果离开，则执行。。 
+                return false;
+            }
+            else {
+                //如检播到，则执行。。 
+                return true;
+            }
+        },
+        settab: (t, i) => {
+            if ($('.window.edge>.titbar>.tabs>.tab.' + t[0] + '>.reloading')[0]) {
+                return `<div class="tab ${t[0]}" onclick="m_tab.tab('edge',${i})" oncontextmenu="showcm(event,'edge.tab',${i});stop(event);return false" onmousedown="m_tab.moving('edge',this,event,${i});stop(event);disableIframes();" ontouchstart="m_tab.moving('edge',this,event,${i});stop(event);disableIframes();">${apps.edge.reloadElt}<p>${t[1]}</p><span class="clbtn bi bi-x" onclick="m_tab.close('edge',${i})"></span></div>`;
+            }
+            else {
+                return `<div class="tab ${t[0]}" onclick="m_tab.tab('edge',${i})" oncontextmenu="showcm(event,'edge.tab',${i});stop(event);return false" onmousedown="m_tab.moving('edge',this,event,${i});stop(event);disableIframes();" ontouchstart="m_tab.moving('edge',this,event,${i});stop(event);disableIframes();"><p>${t[1]}</p><span class="clbtn bi bi-x" onclick="m_tab.close('edge',${i})"></span></div>`;
+            }
+        },
+        tab: (c) => {
+            $('#win-edge>iframe.show').removeClass('show');
+            $('#win-edge>iframe.' + apps.edge.tabs[c][0]).addClass('show');
+            $('#win-edge>.tool>input.url').val($('#win-edge>iframe.' + apps.edge.tabs[c][0]).attr('src') == 'mainpage.html' ? '' : $('#win-edge>iframe.' + apps.edge.tabs[c][0]).attr('src'));
+            $('#win-edge>.tool>input.rename').removeClass('show');
+            apps.edge.checkHistory(apps.edge.tabs[apps.edge.now][0]);
+        },
+        c_rename: (c) => {
+            m_tab.tab('edge', c);
+            $('#win-edge>.tool>input.rename').val(apps.edge.tabs[apps.edge.now][1]);
+            $('#win-edge>.tool>input.rename').addClass('show');
+            setTimeout(() => {
+                $('#win-edge>.tool>input.rename').focus();
+            }, 300);
+        },
+        reload: () => {
+            if (wifiStatus == false) {
+                $('#win-edge>iframe.show').attr('src', 'data/disconnected' + (isDark ? '_dark' : '') + '.html');
+            }
+            else {
+                $('#win-edge>iframe.show').attr('src', $('#win-edge>iframe.show').attr('src'));
+                if (!$('.window.edge>.titbar>.tabs>.tab.' + apps.edge.tabs[apps.edge.now][0] + '>.reloading')[0]) {
+                    $('.window.edge>.titbar>.tabs>.tab.' + apps.edge.tabs[apps.edge.now][0])[0].insertAdjacentHTML('afterbegin', apps.edge.reloadElt);
+                    $('#win-edge>iframe.' + apps.edge.tabs[apps.edge.now][0])[0].onload = function () {
+                        $('.window.edge>.titbar>.tabs>.tab.' + this.classList[0])[0].removeChild($('.window.edge>.titbar>.tabs>.tab.' + this.classList[0] + '>.reloading')[0]);
+                    };
+                }
+            }
+        },
+        getTitle: async (url, tabId) => {
+            const requestToken = {};
+            apps.edge.titleRequests.set(tabId, requestToken);
+            try {
+                const response = await fetch(server + pages['get-title'] + `?url=${encodeURIComponent(url)}`);
+                if (!response.ok) return;
+                const text = await response.text();
+                if (apps.edge.titleRequests.get(tabId) !== requestToken) return;
+                const tabIndex = apps.edge.tabs.findIndex(tab => tab[0] === tabId);
+                if (tabIndex < 0) return;
+                apps.edge.tabs[tabIndex][1] = text;
+                m_tab.settabs('edge');
+                const currentTab = apps.edge.tabs[apps.edge.now];
+                if (currentTab) {
+                    $('.window.edge>.titbar>.tabs>.tab.' + currentTab[0]).addClass('show');
+                }
+            } catch (error) {
+                console.warn('Unable to load page title:', error);
+            }
+        },
+        goto: (u, clear = true) => {
+            const currentTab = apps.edge.tabs[apps.edge.now];
+            if (!currentTab) return;
+            const requestedValue = String(u == null ? '' : u).trim();
+            const resolvedInput = resolveEdgeAddressInput(requestedValue);
+            if (resolvedInput.type === 'empty') return;
+            const tabId = currentTab[0];
+            // Invalidate any slower title request from the previous navigation.
+            apps.edge.titleRequests.set(tabId, {});
+            if (wifiStatus == false) {
+                m_tab.rename('edge', requestedValue);
+                $('#win-edge>iframe.' + tabId).attr('src', 'data/disconnected' + (isDark ? '_dark' : '') + '.html');
+                $('#win-edge>.tool>input.url').val(requestedValue);
+            }
+            else {
+                $('#win-edge>iframe.show').attr('src', resolvedInput.url);
+                m_tab.rename('edge', resolvedInput.type === 'search'
+                    ? requestedValue
+                    : (resolvedInput.url === 'mainpage.html' ? '新建标签页' : resolvedInput.url));
+                if (!$('.window.edge>.titbar>.tabs>.tab.' + apps.edge.tabs[apps.edge.now][0] + '>.reloading')[0]) {
+                    $('.window.edge>.titbar>.tabs>.tab.' + apps.edge.tabs[apps.edge.now][0])[0].insertAdjacentHTML('afterbegin', apps.edge.reloadElt);
+                }
+                $('#win-edge>iframe.' + apps.edge.tabs[apps.edge.now][0])[0].onload = function () {
+                    $('.window.edge>.titbar>.tabs>.tab.' + this.classList[0])[0].removeChild($('.window.edge>.titbar>.tabs>.tab.' + this.classList[0] + '>.reloading')[0]);
+                };
+                apps.edge.getTitle($('#win-edge>iframe.' + tabId).attr('src'), tabId);
+                if (clear) {
+                    apps.edge.delHistory(tabId);
+                    apps.edge.pushHistory(tabId, $('#win-edge>iframe.' + tabId).attr('src'));
+                }
+                apps.edge.checkHistory(tabId);
+            }
+
+        },
+    },
+    winver: {
+        init: () => {
+            $('#win-winver>.mesg').show();
+        },
+    },
+    windows12: {
+        init: () => {
+            document.getElementById('win12-window').src = './boot.html';
+        }
+    },
+    wsa: {
+        init: () => {
+            null;
+        }
+    },
+    word: {
+        init: () => {
+            $('#win-word>.app-left>.focs>.home').css("display", "flex");
+            $('#win-word>.app-left>.focs>.back').css("display", "none");
+            $('.window.word>.pages>.edit').removeClass('show');
+            $('.window.word>.pages>.home').addClass('show');
+            $(`.window.word>.pages>.edit>.content`).empty();
+            $(`.window.word>.pages>.edit>.content`).append(`<div class="doc homepage" contenteditable></div>`);
+        },
+        edit: () => {
+            $('.window.word>.pages>.home').removeClass('show');
+            $('.window.word>.pages>.edit').addClass('show');
+        },
+        home: () => {
+            $('#win-word>.app-left>.focs>.home').css("display", "none");
+            $('#win-word>.app-left>.focs>.back').css("display", "flex");
+            $('.window.word>.pages>.edit').removeClass('show');
+            $('.window.word>.pages>.home').addClass('show');
+        },
+        new: () => {
+            $(`.window.word>.pages>.edit>.content`).empty();
+            $(`.window.word>.pages>.edit>.content`).append(`<div class="doc homepage" contenteditable></div>`);
+            $('.window.word>.pages>.home').removeClass('show');
+            $('.window.word>.pages>.edit').addClass('show');
+        },
+    }
+};
+
+// 标签页历史栈：explorer 与 edge 原本各抄了一份完全相同的实现
+// （归一化 apps.explorer↔apps.edge 后逐行 diff，51 行里只有 4 行不同，全是按钮选择器）。
+Object.assign(apps.explorer, createHistoryStack('explorer', '#win-explorer>.path>.back', '#win-explorer>.path>.front'));
+Object.assign(apps.edge, createHistoryStack('edge', '#win-edge>.tool>.back', '#win-edge>.tool>.front'));

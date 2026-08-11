@@ -1,0 +1,844 @@
+#win-defender icon {
+    font-family: SettingsIcons;
+    font-size: 20px;
+    margin: 0px 20px 0 5px;
+    background-image: linear-gradient(100deg, var(--theme-1), var(--theme-2));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: saturate(130%) brightness(1.1);
+}
+
+.window.defender {
+    --app-bg-dark: #01081f;
+    --app-bg-before: linear-gradient(180deg, rgba(1, 8, 31, 0) 0%, rgba(1, 8, 31, 1) 100%);
+    --app-bg-before-2: linear-gradient(0deg, rgba(1, 8, 31, 0) 0%, rgba(1, 8, 31, 1) 100%);
+    --app-bg-light: #151c32;
+    --app-logo: #3d7eff;
+    --nav-link: #5e6a81;
+    --nav-link-active: #fff;
+    --list-item-hover: #0c1635;
+    --main-color: #fff;
+    --secondary-color: #5e6a81;
+    --color-light: rgba(52, 129, 210, .2);
+    --warning-bg: #ffe5e5;
+    --warning-icon: #ff8181;
+    --applicant-bg: #e3fff1;
+    --applicant-icon: #61e1a1;
+    --close-bg: #fff8e5;
+    --close-icon: #fdbc64;
+    --draft-bg: #fed8b3;
+    --draft-icon: #e9780e;
+}
+
+#win-defender {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    position: relative;
+    max-width: 1680px;
+}
+
+#win-defender .app-left {
+    flex-basis: 240px;
+    background-color: var(--app-bg-dark);
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 24px 0;
+    transition: all 0.4s ease-in;
+}
+
+#win-defender .app-left.show {
+    right: 0;
+    opacity: 1;
+}
+
+#win-defender .app-main {
+    flex: 1;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background-color: var(--app-bg-light);
+    padding: 24px;
+    background: radial-gradient(circle, #051340 1%, #040f32 100%);
+}
+
+#win-defender .app-right {
+    flex-basis: 320px;
+    width: 320px;
+    background-color: var(--app-bg-dark);
+    height: 100%;
+    padding: 64px 0 0 0;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    transition: all 0.4s ease-in;
+}
+
+#win-defender .app-right:before {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    height: 48px;
+    width: 100%;
+    background-image: var(--app-bg-before);
+    z-index: 1;
+}
+
+#win-defender .app-right.show {
+    right: 0;
+    opacity: 1;
+}
+
+#win-defender .app-right .close-right {
+    display: none;
+}
+
+#win-defender .app-right-content {
+    flex: 1;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+#win-defender .app-logo {
+    display: flex;
+    align-items: center;
+    color: var(--app-logo);
+    margin-right: 16px;
+    padding: 0 24px;
+}
+
+#win-defender .app-logo span {
+    color: #fff;
+    display: inline-block;
+    line-height: 24px;
+    font-size: 16px;
+    margin-left: 16px;
+}
+
+#win-defender ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+#win-defender a {
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#win-defender button {
+    cursor: pointer;
+}
+
+#win-defender .nav-list {
+    margin-top: 40px;
+}
+
+#win-defender .nav-list-item {
+    margin-bottom: 12px;
+}
+
+#win-defender .nav-list-item:not(.active):hover {
+    background-color: var(--list-item-hover);
+}
+
+#win-defender .nav-list-item.active .nav-list-link {
+    color: var(--nav-link-active);
+}
+
+#win-defender .nav-list-item.active .nav-list-link:after {
+    height: 100%;
+    opacity: 1;
+}
+
+#win-defender .nav-list-item.active svg {
+    stroke: var(--app-logo);
+}
+
+#win-defender .nav-list-link {
+    font-weight: 300;
+    font-size: 14px;
+    line-height: 24px;
+    padding: 8px 24px;
+    color: var(--nav-link);
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+#win-defender .nav-list-link svg {
+    margin-right: 12px;
+}
+
+#win-defender .nav-list-link:after {
+    content: "";
+    height: 100%;
+    width: 2px;
+    background-color: var(--app-logo);
+    right: 0;
+    top: 0;
+    position: absolute;
+    border-radius: 2px;
+    opacity: 0;
+    height: 0;
+}
+
+#win-defender .open-right-area {
+    display: none;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    background-color: var(--app-bg-dark);
+    border-radius: var(--radius-xs);
+    height: 40px;
+    width: 40px;
+    padding: 0;
+}
+
+#win-defender .main-header-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+#win-defender .main-header-line h1 {
+    color: var(--main-color);
+    margin: 0;
+    font-size: 24px;
+    line-height: 32px;
+}
+
+#win-defender .main-header-line input {
+    border-radius: var(--radius-xs);
+    background-color: var(--color-light);
+    border: none;
+    border: 1px solid var(--color-light);
+    color: var(--main-color);
+    height: 32px;
+    padding: 0 8px 0 32px;
+    font-size: 14px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%233481d2' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='feather feather-search'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E");
+    background-position: center left 10px;
+    background-repeat: no-repeat;
+    background-size: 16px;
+    outline: none;
+    transition: 0.2s;
+    width: 100%;
+    max-width: 400px;
+    margin-left: 16px;
+}
+
+#win-defender .main-header-line input:placeholder {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+#win-defender .main-header-line input:hover,
+#win-defender .main-header-line input:focus {
+    border: 1px solid #3481d2;
+    box-shadow: 0 0 0 3px var(--color-light);
+}
+
+#win-defender .chart-row {
+    display: flex;
+    justify-content: space-between;
+    margin: 0 -8px;
+}
+
+#win-defender .chart-row.three .chart-container-wrapper {
+    width: 33.3%;
+}
+
+#win-defender .chart-row.three .chart-container-wrapper .chart-container {
+    justify-content: space-between;
+}
+
+#win-defender .chart-row.two .big {
+    flex: 1;
+    max-width: 77.7%;
+}
+
+#win-defender .chart-row.two .big .chart-container {
+    flex-direction: column;
+}
+
+#win-defender .chart-row.two .small {
+    width: 33.3%;
+}
+
+#win-defender .chart-row.two .small .chart-container {
+    flex-direction: column;
+}
+
+#win-defender .chart-row.two .small .chart-container+.chart-container {
+    margin-top: 16px;
+}
+
+#win-defender .line-chart {
+    width: 100%;
+    margin-top: 24px;
+}
+
+#win-defender .chart-container {
+    width: 100%;
+    border-radius: var(--radius-2xl);
+    background-color: var(--app-bg-dark);
+    padding: 16px;
+    display: flex;
+    align-items: center;
+}
+
+#win-defender .chart-container.applicants {
+    max-height: 336px;
+    overflow-y: auto;
+}
+
+#win-defender .chart-container-wrapper {
+    padding: 21px;
+}
+
+#win-defender .chart-info-wrapper {
+    flex-shrink: 0;
+    flex-basis: 120px;
+}
+
+#win-defender .chart-info-wrapper h2 {
+    color: var(--secondary-color);
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin: 0 0 8px 0;
+}
+
+#win-defender .chart-info-wrapper span {
+    color: var(--main-color);
+    font-size: 24px;
+    line-height: 32px;
+    font-weight: 500;
+}
+
+#win-defender .chart-svg {
+    position: relative;
+    max-width: 90px;
+    min-width: 40px;
+    flex: 1;
+}
+
+#win-defender .circle-bg {
+    fill: none;
+    stroke: #eee;
+    stroke-width: 1.2;
+}
+
+#win-defender .circle {
+    fill: none;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    -webkit-animation: progress 1s ease-out forwards;
+    animation: progress 1s ease-out forwards;
+}
+
+#win-defender .circular-chart.orange .circle {
+    stroke: #ff9f00;
+}
+
+#win-defender .circular-chart.orange .circle-bg {
+    stroke: #776547;
+}
+
+#win-defender .circular-chart.blue .circle {
+    stroke: #00cfde;
+}
+
+#win-defender .circular-chart.blue .circle-bg {
+    stroke: #557b88;
+}
+
+#win-defender .circular-chart.pink .circle {
+    stroke: #ff7dcb;
+}
+
+#win-defender .circular-chart.pink .circle-bg {
+    stroke: #6f5684;
+}
+
+#win-defender .percentage {
+    fill: #fff;
+    font-size: 0.5em;
+    text-anchor: middle;
+    font-weight: 400;
+}
+
+@-webkit-keyframes progress {
+    0% {
+        stroke-dasharray: 0 100;
+    }
+}
+
+@keyframes progress {
+    0% {
+        stroke-dasharray: 0 100;
+    }
+}
+
+#win-defender .chart-container-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 12px;
+}
+
+#win-defender .chart-container-header h2 {
+    margin: 0;
+    color: var(--main-color);
+    font-size: 12px;
+    line-height: 16px;
+    opacity: 0.8;
+}
+
+#win-defender .chart-container-header span {
+    color: var(--app-logo);
+    font-size: 12px;
+    line-height: 16px;
+}
+
+#win-defender .acquisitions-bar {
+    width: 100%;
+    height: 4px;
+    border-radius: var(--radius-xs);
+    margin-top: 16px;
+    margin-bottom: 8px;
+    display: flex;
+}
+
+#win-defender .bar-progress {
+    height: 4px;
+    display: inline-block;
+}
+
+#win-defender .bar-progress.applications {
+    background-color: #ff7dcb;
+}
+
+#win-defender .bar-progress.shortlisted {
+    background-color: #00cfde;
+}
+
+#win-defender .bar-progress.on-hold {
+    background-color: #fdac42;
+}
+
+#win-defender .bar-progress.rejected {
+    background-color: #ff5c5c;
+}
+
+#win-defender .progress-bar-info {
+    display: flex;
+    align-items: center;
+    margin-top: 8px;
+    width: 100%;
+}
+
+#win-defender .progress-color {
+    width: 10px;
+    height: 10px;
+    border-radius: var(--radius-circle);
+    margin-right: 8px;
+}
+
+#win-defender .progress-color.applications {
+    background-color: #ff7dcb;
+}
+
+#win-defender .progress-color.shortlisted {
+    background-color: #00cfde;
+}
+
+#win-defender .progress-color.on-hold {
+    background-color: #fdac42;
+}
+
+#win-defender .progress-color.rejected {
+    background-color: #ff5c5c;
+}
+
+#win-defender .progress-type {
+    color: var(--secondary-color);
+    font-size: 12px;
+    line-height: 16px;
+}
+
+#win-defender .progress-amount {
+    color: var(--secondary-color);
+    font-size: 12px;
+    line-height: 16px;
+    margin-left: auto;
+}
+
+#win-defender .applicant-line {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    margin-top: 12px;
+}
+
+#win-defender .applicant-line img {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-circle);
+    -o-object-fit: cover;
+    object-fit: cover;
+    margin-right: 10px;
+    flex-shrink: 0;
+}
+
+#win-defender .applicant-info span {
+    color: var(--main-color);
+    font-size: 14px;
+    line-height: 16px;
+}
+
+#win-defender .applicant-info p {
+    margin: 4px 0;
+    font-size: 12px;
+    line-height: 16px;
+    color: var(--secondary-color);
+}
+
+#win-defender .profile-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+
+#win-defender .profile-box:before {
+    content: "";
+    position: absolute;
+    top: 100%;
+    height: 48px;
+    width: 100%;
+    background-image: var(--app-bg-before-2);
+    z-index: 1;
+}
+
+#win-defender .profile-photo-wrapper {
+    width: 80px;
+    height: 80px;
+    overflow: hidden;
+    border-radius: var(--radius-circle);
+    margin-bottom: 16px;
+}
+
+#win-defender .profile-photo-wrapper img {
+    width: 100%;
+    height: 100%;
+    -o-object-fit: cover;
+    object-fit: cover;
+}
+
+#win-defender .profile-text,
+#win-defender .profile-subtext {
+    font-size: 12px;
+    line-height: 16px;
+    color: var(--secondary-color);
+    margin: 0 0 8px 0;
+}
+
+#win-defender .profile-text {
+    font-weight: 600;
+}
+
+#win-defender .app-right-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 16px;
+    margin-top: 16px;
+}
+
+#win-defender .app-right-section-header h2 {
+    font-size: 14px;
+    line-height: 24px;
+    color: var(--secondary-color);
+}
+
+#win-defender .app-right-section-header span {
+    display: inline-block;
+    color: var(--secondary-color);
+    position: relative;
+}
+
+#win-defender .app-right-section-header span.notification-active:before {
+    content: "";
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    border-radius: var(--radius-circle);
+    background-color: var(--app-logo);
+    top: -1px;
+    right: -1px;
+    box-shadow: 0 0 0 2px var(--app-bg-dark);
+}
+
+#win-defender .message-line {
+    display: flex;
+    align-items: center;
+    padding: 8px 16px;
+    margin-bottom: 8px;
+}
+
+#win-defender .message-line:hover {
+    background-color: var(--list-item-hover);
+}
+
+#win-defender .message-line img {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-circle);
+    -o-object-fit: cover;
+    object-fit: cover;
+    margin-right: 8px;
+}
+
+#win-defender .message-text-wrapper {
+    max-width: calc(100% - 48px);
+}
+
+#win-defender .message-text {
+    font-size: 14px;
+    line-height: 16px;
+    color: var(--main-color);
+    margin: 0;
+    opacity: 0.8;
+    width: 100%;
+}
+
+#win-defender .message-subtext {
+    font-size: 12px;
+    line-height: 16px;
+    color: var(--secondary-color);
+    margin: 4px 0 0 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+}
+
+#win-defender .activity-line {
+    padding: 8px 16px;
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 8px;
+}
+
+#win-defender .activity-link {
+    font-size: 12px;
+    line-height: 16px;
+    color: var(--app-logo);
+    text-decoration: underline;
+}
+
+#win-defender .activity-text {
+    font-size: 12px;
+    line-height: 16px;
+    color: var(--secondary-color);
+    width: 100%;
+    margin: 0;
+}
+
+#win-defender .activity-text strong {
+    color: #fff;
+    opacity: 0.4;
+    font-weight: 500;
+}
+
+#win-defender .activity-icon {
+    border-radius: var(--radius-xl);
+    width: 32px;
+    height: 32px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    margin-right: 8px;
+}
+
+#win-defender .activity-icon.warning {
+    background-color: var(--warning-bg);
+    color: var(--warning-icon);
+}
+
+#win-defender .activity-icon.applicant {
+    background-color: var(--applicant-bg);
+    color: var(--applicant-icon);
+}
+
+#win-defender .activity-icon.close {
+    background-color: var(--close-bg);
+    color: var(--close-icon);
+}
+
+#win-defender .activity-icon.draft {
+    background-color: var(--draft-bg);
+    color: var(--draft-icon);
+}
+
+#win-defender .action-buttons {
+    display: flex;
+    align-items: center;
+}
+
+#win-defender .menu-button {
+    width: 40px;
+    height: 40px;
+    margin-left: 8px;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    background-color: var(--app-bg-dark);
+    border: none;
+    color: var(--main-color);
+    border-radius: var(--radius-xs);
+}
+
+#win-defender .close-menu {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background-color: transparent;
+    padding: 0;
+    color: var(--main-color);
+    cursor: pointer;
+}
+
+@media screen and (max-width: 1350px) {
+    #win-defender .app-right {
+        flex-basis: 240px;
+        width: 240px;
+    }
+
+    #win-defender .app-left {
+        flex-basis: 200px;
+    }
+}
+
+@media screen and (max-width: 1200px) {
+    #win-defender .app-right {
+        position: absolute;
+        opacity: 0;
+        top: 0;
+        z-index: 2;
+        height: 100%;
+        width: 320px;
+        right: -100%;
+        box-shadow: 0 0 10px 5px rgba(1, 8, 31, 0.4);
+    }
+
+    #win-defender .app-right .close-right {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        background-color: transparent;
+        padding: 0;
+        color: var(--main-color);
+        cursor: pointer;
+    }
+
+    #win-defender .app-main .open-right-area {
+        display: flex;
+        color: var(--main-color);
+    }
+}
+
+@media screen and (max-width: 1180px) {
+    #win-defender .chart-row.two {
+        flex-direction: column;
+    }
+
+    #win-defender .chart-row.two .big {
+        max-width: 100%;
+    }
+
+    #win-defender .chart-row.two .small {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+    }
+
+    #win-defender .chart-row.two .small .chart-container {
+        width: calc(50% - 8px);
+    }
+
+    #win-defender .chart-row.two .small .chart-container.applicants {
+        margin-top: 0;
+    }
+}
+
+@media screen and (max-width: 920px) {
+    #win-defender .menu-button {
+        display: flex;
+    }
+
+    #win-defender .app-left {
+        position: absolute;
+        opacity: 0;
+        top: 0;
+        z-index: 2;
+        height: 100%;
+        width: 320px;
+        right: -100%;
+        box-shadow: 0 0 10px 5px rgba(1, 8, 31, 0.4);
+    }
+
+    #win-defender .close-menu {
+        display: flex;
+    }
+}
+
+@media screen and (max-width: 650px) {
+    #win-defender .chart-row.three {
+        flex-direction: column;
+    }
+
+    #win-defender .chart-row.three .chart-container-wrapper {
+        width: 100%;
+    }
+
+    #win-defender .chart-svg {
+        min-height: 60px;
+        min-width: 40px;
+    }
+}
+
+@media screen and (max-width: 520px) {
+    #win-defender .chart-row.two .small {
+        flex-direction: column;
+    }
+
+    #win-defender .chart-row.two .small .chart-container {
+        width: 100%;
+    }
+
+    #win-defender .chart-row.two .small .chart-container.applicants {
+        margin-top: 16px;
+    }
+
+    #win-defender .main-header-line h1 {
+        font-size: 14px;
+    }
+}

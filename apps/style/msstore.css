@@ -1,0 +1,391 @@
+@font-face {
+    font-family: StoreIcons;
+    src: url("../icons/msstore/icons.ttf");
+}
+/* I love CSS! */
+#win-msstore {
+    display: grid;
+    grid-template-columns: 80px auto;
+    grid-template-rows: 1fr;
+
+    & icon {
+        font-family: StoreIcons;
+    }
+
+    &>.menu {
+        & .m-icon {
+            color: transparent;
+            -webkit-text-stroke: 2px #000;
+        }
+
+        &>list {
+            margin-left: 5px;
+            overflow-y: auto;
+            padding-right: 10px;
+            border-radius: var(--radius-md);
+            height: 100%;
+
+            & icon {
+                font-size: 1.8em;
+                margin-bottom: 0px;
+                line-height: 1.1;
+                transition: all 500ms;
+            }
+
+            & .t2 {
+                font-size: 0.7em !important;
+                color: var(--text2);
+                transition: all 500ms;
+                overflow: hidden;
+                opacity: 1.0;
+            }
+
+            &>a {
+                padding: 5px 10px;
+                height: 59px !important;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                margin-bottom: 4px;
+                border-radius: var(--radius-md);
+                transition: all 500ms;
+                overflow: hidden;
+                position: relative;
+
+                &.check {
+                    background-color: var(--hover) !important;
+
+                    & icon {
+                        font-size: 2.3em;
+                        background-image: linear-gradient(to right bottom, var(--theme-1), var(--theme-2));
+                        -webkit-background-clip: text;
+                        background-clip: text;
+                        color: #00000022;
+                    }
+
+                    & .t2 {
+                        opacity: 0.0;
+                        margin-bottom: -20px;
+                    }
+                }
+            }
+
+            &>span.focs {
+                height: 26px;
+                margin-top: -47px;
+            }
+        }
+    }
+
+    &>.page {
+        background-color: var(--bg50);
+        border-radius: 10px 0px 0px 0px;
+        overflow: hidden;
+        min-height: 0;
+
+        &>.cnt {
+            transition: transform 400ms cubic-bezier(0.05, 0.96, 0.11, 1), opacity 300ms, height 0ms;
+            transform: translate(0, 50%);
+            opacity: 0;
+            height: 0px;
+            padding: 0px;
+            overflow: hidden;
+
+            &.show {
+                height: 100%;
+                transform: none !important;
+                opacity: 1;
+                overflow-y: auto;
+                min-height: 0px;
+            }
+
+            &.home {
+                &>.container {
+                    height: 100%;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 18px;
+                    padding: 16px 18px 30px 18px;
+
+                    &>.store-hero {
+                        position: relative;
+                        flex: 0 0 auto;
+                        border-radius: var(--radius-2xl);
+                        padding: 26px 28px;
+                        color: #fff;
+                        overflow: hidden;
+                        background-image: linear-gradient(120deg, var(--theme-1), var(--theme-2));
+                        box-shadow: 0 8px 24px var(--s3d);
+
+                        &::after {
+                            content: "";
+                            position: absolute;
+                            right: -50px;
+                            top: -50px;
+                            width: 200px;
+                            height: 200px;
+                            border-radius: 50%;
+                            background: rgba(255, 255, 255, 0.18);
+                            filter: blur(6px);
+                        }
+
+                        &>.store-hero-kicker {
+                            font-size: 0.78em;
+                            letter-spacing: 0.08em;
+                            text-transform: uppercase;
+                            opacity: 0.85;
+                        }
+
+                        &>.store-hero-title {
+                            margin: 6px 0 4px;
+                            font-size: 1.7em;
+                            font-weight: 700;
+                            line-height: 1.2;
+                        }
+
+                        &>.store-hero-sub {
+                            margin: 0;
+                            font-size: 0.92em;
+                            opacity: 0.9;
+                        }
+                    }
+
+                    &>.store-home-section {
+                        flex: 1 1 auto;
+                        min-height: 0;
+                        display: flex;
+                        flex-direction: column;
+
+                        &>.store-home-section-tit {
+                            display: flex;
+                            align-items: baseline;
+                            justify-content: space-between;
+                            margin: 4px 6px 12px;
+                            font-size: 1.25em;
+                            font-weight: 600;
+
+                            &>.store-home-more {
+                                font-size: 0.58em;
+                                font-weight: 400;
+                                color: var(--text2);
+                                cursor: pointer;
+
+                                &:hover {
+                                    color: var(--theme-1);
+                                }
+                            }
+                        }
+
+                        &>.store-featured {
+                            display: grid;
+                            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+                            gap: 14px;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+.m-icon {
+    font-family: StoreIcons;
+}
+
+/* 应用 / 游戏 / 下载 三页内容内边距 */
+#win-msstore>.page>.cnt.apps,
+#win-msstore>.page>.cnt.game,
+#win-msstore>.page>.cnt.down {
+    padding: 16px 18px 30px 18px;
+}
+
+/* 应用网格 */
+#win-msstore .store-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 14px;
+}
+
+/* 应用卡片 */
+#win-msstore .store-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background-color: var(--hover);
+    border-radius: var(--radius-2xl);
+    padding: 14px;
+    transition: background-color 300ms;
+}
+#win-msstore .store-card-icon {
+    width: 48px;
+    height: 48px;
+    flex: 0 0 48px;
+    border-radius: 10px;
+    object-fit: contain;
+    background-color: var(--fill);
+    box-shadow: 0 2px 8px var(--s3d);
+}
+#win-msstore .store-card-info {
+    flex: 1;
+    min-width: 0;
+}
+#win-msstore .store-card-name {
+    font-size: 1.05em;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+#win-msstore .store-card-desc {
+    font-size: 0.82em;
+    color: var(--text2);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+#win-msstore .store-card-cate {
+    display: inline-block;
+    margin-top: 4px;
+    font-size: 0.72em;
+    padding: 2px 8px;
+    border-radius: var(--radius-sm);
+    background-color: var(--fill);
+    color: var(--text2);
+}
+#win-msstore .store-card-act {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 0 0 auto;
+}
+#win-msstore .store-card-act .get,
+#win-msstore .store-card-act .open {
+    border: none;
+    padding: 6px 16px;
+    border-radius: 999px;
+    cursor: pointer;
+    font-size: 0.85em;
+    white-space: nowrap;
+}
+#win-msstore .store-card-act .get {
+    background-image: linear-gradient(to right bottom, var(--theme-1), var(--theme-2));
+    color: #fff;
+}
+#win-msstore .store-card-act .open {
+    background-color: var(--fill);
+    color: var(--text);
+}
+#win-msstore .installing {
+    font-size: 0.82em;
+    color: var(--text2);
+    white-space: nowrap;
+}
+
+/* 自定义应用表单：默认收起，由标题栏入口呼出 */
+#win-msstore .custom-apps {
+    display: none;
+    margin-bottom: 22px;
+}
+#win-msstore .custom-apps.show {
+    display: block;
+}
+
+/* 商店标题栏自定义入口：低调放置于最小化按钮左侧 */
+.window.msstore .titbar .custom-entry {
+    opacity: 0.4;
+    width: 30px;
+    font-size: 12px;
+    transition: opacity 200ms;
+}
+.window.msstore .titbar .custom-entry:hover {
+    opacity: 1;
+}
+#win-msstore .custom-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+}
+#win-msstore .custom-form input {
+    flex: 1 1 200px;
+    min-width: 0;
+    padding: 9px 12px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--fill);
+    background-color: var(--bg50);
+    color: var(--text);
+    font-size: 0.9em;
+}
+#win-msstore .custom-form button {
+    padding: 9px 18px;
+    border: none;
+    border-radius: 999px;
+    cursor: pointer;
+    font-size: 0.9em;
+    color: #fff;
+    background-image: linear-gradient(to right bottom, var(--theme-1), var(--theme-2));
+}
+
+/* 已安装列表为空 */
+#win-msstore .store-empty {
+    color: var(--text2);
+    font-size: 0.9em;
+    padding: 10px 0;
+}
+
+@media (max-width: 768px) {
+    #win-msstore {
+        grid-template-columns: 60px 1fr;
+    }
+    #win-msstore>.menu>list {
+        margin-left: 2px;
+        padding-right: 4px;
+    }
+    #win-msstore>.menu>list>a {
+        padding: 5px 4px;
+        height: 50px !important;
+    }
+    #win-msstore>.menu>list>icon {
+        font-size: 1.4em;
+    }
+    #win-msstore>.page {
+        border-radius: 6px 0 0 0;
+    }
+    #win-msstore>.page>.cnt.home>.container {
+        padding: 10px 10px 22px 10px;
+        gap: 12px;
+    }
+    #win-msstore>.page>.cnt.home>.container>.store-hero {
+        padding: 18px 18px;
+    }
+    #win-msstore>.page>.cnt.home>.container>.store-hero>.store-hero-title {
+        font-size: 1.3em;
+    }
+    #win-msstore>.page>.cnt.home>.container>.store-hero>.store-hero-sub {
+        font-size: 0.82em;
+    }
+    #win-msstore>.page>.cnt.home>.container>.store-home-section>.store-home-section-tit {
+        margin: 2px 4px 8px;
+        font-size: 1.05em;
+    }
+    #win-msstore>.page>.cnt.home>.container>.store-home-section>.store-featured {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+    #win-msstore .store-grid {
+        grid-template-columns: 1fr;
+    }
+    #win-msstore .store-card {
+        padding: 10px;
+        gap: 10px;
+    }
+    #win-msstore .store-card-icon {
+        width: 40px;
+        height: 40px;
+        flex: 0 0 40px;
+    }
+    #win-msstore .store-card-act {
+        flex-direction: row;
+    }
+}

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 更改页面标题以提高搜索引擎可搜索性 -->
+    <title>Win12 BIOS Setup</title>
+    <!-- 使用相对路径引用外部 CSS 文件 -->
+    <link rel="stylesheet" href="./apps/style/bios.css">
+    <link rel="shortcut icon" href="./pwa/logo.png" type="image/x-icon">
+</head>
+
+<body id="body" ontouchstart="return;">
+    <div id="confirmContainer">
+        <div id="exit_confirm">
+            <div id="confirm" data-show="false">
+                <p id="confirm-tit"> Save configuration changes and exit now? </p>
+                <div class="btns" style="display: flex;justify-content: space-around;">
+                    <a class="confirm-button" id="ok-btn" style="background-color: #000;color: #fff;" onclick="" ontouchstart="">[OK]</a>
+                    <a class="confirm-button" style="color: #000;background-color: #fff;" ontouchstart="event.preventDefault();$('#confirmContainer').css('display', 'none');$('#confirm').attr('data-show', 'false');" onclick="$('#confirmContainer').css('display', 'none');$('#confirm').attr('data-show', 'false');" id="cancel-btn">[Cancel]</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="background"></div>
+
+    <head>
+        <nav>
+            <p class="tit">BIOS Setup Utility</p>
+        </nav>
+        <nav class="pages" style="padding-left: 15px;">
+            <a class="tab tab0" id="main" onclick="tab = 0; changePage(0)" ontouchstart="event.preventDefault();changePage(0)">Main</a>
+            <a class="tab tab1" id="advanced" onclick="tab = 1; changePage(1)" ontouchstart="event.preventDefault();changePage(1)">Advanced</a>
+            <a class="tab tab2" id="boot" onclick="tab = 2; changePage(2)" ontouchstart="event.preventDefault();changePage(2)">Boot</a>
+            <a class="tab tab3" id="security" onclick="tab = 3; changePage(3)" ontouchstart="event.preventDefault();changePage(3)">Security</a>
+            <a class="tab tab4" id="exit" onclick="tab = 4; changePage(4)" ontouchstart="event.preventDefault();changePage(4)">Exit</a>
+        </nav>
+    </head>
+    <div id="mainPage" class="page page0">
+        <div class="table">
+            <div>System Time: </div>
+            <div id="time">[11:45:14]</div>
+            <div>System Date: </div>
+            <div id="date">[11/4/5141]</div>
+            <div>BIOS Version: </div>
+            <div>Win12 BIOS v1.0.0</div>
+            <div>Processor: </div>
+            <div>The Wandering Earth (R) NB (R) Quantum Chip 550W @ 8192</div>
+            <div>Memory Size: </div>
+            <div>100 GB</div>
+        </div>
+    </div>
+    <div id="advancedPage" class="page page1">
+        <div class="table">
+            <div>CPU Configuration</div>
+            <div class="submenu">
+                <div>Intel Hyper-Threading: </div>
+                <div class="option">[Enabled]</div>
+                <div>Intel Turbo Boost: </div>
+                <div class="option">[Enabled]</div>
+                <div>CPU Core Ratio: </div>
+                <div class="option">[Auto]</div>
+            </div>
+            <div>Memory Configuration</div>
+            <div class="submenu">
+                <div>Memory Frequency: </div>
+                <div class="option">[Auto]</div>
+                <div>Memory Timing Mode: </div>
+                <div class="option">[Auto]</div>
+                <div>XMP Profile: </div>
+                <div class="option">[Disabled]</div>
+            </div>
+        </div>
+    </div>
+    <div id="bootPage" class="page page2">
+        <div class="table">
+            <div>Boot Configuration</div>
+            <div class="submenu">
+                <div>Fast Boot: </div>
+                <div class="option">[Enabled]</div>
+                <div>Boot Mode: </div>
+                <div class="option">[UEFI]</div>
+                <div>Boot Priority Order:</div>
+                <div class="submenu">
+                    <div>1. Windows Boot Manager</div>
+                    <div>2. SATA HDD</div>
+                    <div>3. USB Device</div>
+                    <div>4. Network Boot</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="securityPage" class="page page3">
+        <div class="table">
+            <div>Security Configuration</div>
+            <div class="submenu">
+                <div>Administrator Password: </div>
+                <div class="option">[Not Set]</div>
+                <div>User Password: </div>
+                <div class="option">[Not Set]</div>
+                <div>Secure Boot: </div>
+                <div class="option">[Enabled]</div>
+                <div>TPM State: </div>
+                <div class="option">[Enabled]</div>
+            </div>
+        </div>
+    </div>
+    <div id="exitPage" class="page page4">
+        <div class="container">
+            <div onclick="BIOS_confirm(' Save configuration changes and exit now? ','toBoot()')" ontouchstart="event.preventDefault();BIOS_confirm(' Save configuration changes and exit now? ','toBoot()')" class="exit" id="e1">Exit Saving Changes</div>
+            <div onclick="BIOS_confirm(' Discard changes and exit setup? ','toBoot()');" ontouchstart="event.preventDefault();BIOS_confirm(' Discard changes and exit setup? ','toBoot()');" class="exit" id="e2">Exit Discarding Changes</div>
+            <div onclick="BIOS_confirm('  Restore default setup?  ','$(`#confirmContainer`).css(`display`, `none`);$(`#confirm`).attr(`data-show`, `false`);');" ontouchstart="event.preventDefault();BIOS_confirm('  Restore default setup?  ','$(`#confirmContainer`).css(`display`, `none`); $(`#confirm`).attr(`data-show`, `false`);');" class="exit" id="e3">Restore Defaults</div>
+        </div>
+    </div>
+    <script src="./scripts/jq.min.js"></script>
+    <script src="scripts/bios_kernel.js"></script>
+</body>
+
+</html>

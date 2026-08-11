@@ -1,0 +1,134 @@
+.window.tabs>.titbar>.tabs {
+    display: flex;
+    flex-grow: 1 !important;
+    height: calc(100% - 2px);
+    padding: 2px 1px;
+    /* overflow-x:auto; */
+    overflow: hidden;
+    align-items: center;
+    margin-top: 2px;
+}
+
+.window.tabs>.titbar>.tabs>.tab {
+    display: flex;
+    border-radius: var(--radius-lg);
+    max-width: 200px;
+    display: flex;
+    justify-content: space-between;
+    /* padding: 4px 0; */
+    align-items: center;
+    width: 0;
+    flex-grow: 1;
+    max-width: 200px;
+    min-width: none;
+    overflow: hidden;
+    transition: 50ms;
+    height: 100%;
+    white-space: nowrap;
+}
+
+:root.corner_squ .window.tabs>.titbar>.tabs>.tab {
+    corner-shape: squircle;
+    border-radius: var(--radius-3xl);
+}
+
+.window.tabs>.titbar>.tabs>.tab::before {
+    content: '';
+    position: relative;
+    width: 1.5px;
+    height: 19px;
+    background: var(--hr);
+    /* opacity: 0.3; */
+    transition: 50ms;
+}
+
+.window.tabs>.titbar>.tabs>.tab p {
+    overflow: hidden;
+    display: -webkit-box;
+    box-orient: vertical;
+    -webkit-box-orient: vertical;
+    line-clamp: 1;
+    -webkit-line-clamp: 1;
+}
+
+.window.tabs>.titbar>.tabs>.tab.show {
+    background: var(--hover) !important;
+    box-shadow: 0 1px 2px var(--shadow);
+}
+
+.window.tabs>.titbar>.tabs>.tab.close {
+    transform: translateY(calc(100% + 5px)) !important;
+    opacity: 0.6;
+    transition: 150ms;
+}
+
+.window.tabs>.titbar>.tabs>.tab.left {
+    transform: translateX(-100%) !important;
+    transition: 150ms;
+}
+
+.window.tabs>.titbar>.tabs>.tab.right {
+    transform: translateX(100%) !important;
+    transition: 150ms;
+}
+
+.window.tabs>.titbar>.tabs>.tab.moving {
+    /* background: var(--unfoc) !important; */
+    background: var(--bg) !important;
+    z-index: 1;
+}
+
+.window.tabs>.titbar>.tabs>.tab:hover {
+    background: var(--hover-b);
+}
+
+.window.tabs>.titbar>.tabs>.tab:hover::before,
+.window.tabs>.titbar>.tabs>.tab:hover+.tab::before,
+.window.tabs>.titbar>.tabs>.tab.show::before,
+.window.tabs>.titbar>.tabs>.tab.show+.tab::before {
+    opacity: 0;
+}
+
+.window.tabs>.titbar>.tabs>.tab>p {
+    font-size: 15px;
+    margin-left: 7px;
+    margin-top: 1px;
+    flex-grow: 1;
+}
+
+.window.tabs>.titbar>.tabs>.tab>.clbtn {
+    border-radius: var(--radius-xs);
+    display: block;
+    margin: 0 5px 0 0;
+    width: 18px;
+    height: 18px;
+}
+
+.window.tabs>.titbar>.tabs>.tab>.clbtn::before {
+    position: relative;
+    top: -3px;
+    left: 1px;
+}
+
+.window.tabs>.titbar>.tabs>.tab>.clbtn:hover {
+    background: var(--hover);
+}
+
+.window.tabs>.titbar>.tabs>.new {
+    border-radius: var(--radius-lg);
+    margin: 3px 2px;
+    height: 25px;
+    width: 25px;
+    font-size: 20px;
+    text-align: center;
+    transition: 50ms;
+}
+
+.window.tabs>.titbar>.tabs>.new::before {
+    position: relative;
+    top: -3px;
+}
+
+.window.tabs>.titbar>.tabs>.new:hover {
+    background-color: var(--hover-half);
+}

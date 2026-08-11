@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Windows 12 Web Version</title> <!-- 优化：更具描述性的页面标题 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 优化：添加 viewport meta 标签，确保在移动设备上的适配性 -->
+    <style>
+        @font-face {
+            font-family: 'dos';
+            src: url(./fonts/dos.ttf);
+        }
+
+        html {
+            background-color: #000000;
+        }
+
+        * {
+            font-family: 'dos';
+            margin: 0; /* 优化：合并重复的 CSS 属性 */
+            padding: 0;
+            border: 0;
+            user-select: none;
+            scrollbar-width: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -o-user-select: none;
+        }
+
+        ::-webkit-scrollbar {
+            display: none;
+        }
+
+        body {
+            background-color: black;
+            color: white;
+            cursor: none; /* 优化：使用 CSS 属性来隐藏鼠标指针 */
+        }
+
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #info {
+            position: absolute;
+            bottom: 10px;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body id="body" scroll="no">
+    <div id="info">
+        <div class="loading">
+            <p>Starting</p>
+            <div id="load" style="background-color: #acabac; width: 200px; height: 20px;"></div>
+            <div id="back" style="background-color: #565656; width: 200px; height: 20px;"></div>
+            <br>
+        </div>
+        <p style="text-align: center;">Press F2 or touch screen to enter SETUP</p>
+    </div>
+    <script src="./scripts/jq.min.js"></script>
+    <script src="./scripts/boot_kernel.js"></script>
+</body>
+</html>

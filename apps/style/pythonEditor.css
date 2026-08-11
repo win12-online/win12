@@ -1,0 +1,83 @@
+#win-pythonEditor *::-webkit-scrollbar {
+    background-color: #FFFFFF10;
+}
+
+::-webkit-scrollbar:hover {
+    background-color: #ffffff10;
+}
+
+#win-pythonEditor *{
+    scroll-behavior:initial !important;
+}
+
+#win-pythonEditor {
+    display: grid;
+    grid-template-rows: 60% 40%;
+    min-height: 0px;
+    user-select: all;
+}
+
+.window.pythonEditor .titbar .run {
+    font-size: 17px;
+    padding-top: 4px;
+}
+
+#win-python-ace-editor {
+    font-size: 16px;
+    line-height: 1.25;
+    height: 100% !important;
+    font-weight: 200;
+}
+
+#win-pythonEditor .output {
+    background-color: #0f0f0f;
+    color: #f8f8f2;
+    border: 25px solid #1a1a1a !important;
+    border: none;
+    /* border-radius: var(--radius-sm); */
+    padding: 10px;
+    width: 100%;
+    height: 100%;
+    font: 14px / normal 'Consolas', 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'Source Code Pro', 'source-code-pro', monospace;
+    overflow-y: scroll;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    user-select: auto;
+}
+
+#win-pythonEditor .output::selection {
+    background: #ddd;
+    background-clip: content-box;
+    color: #333;
+}
+/* 编辑器 */
+.ace_editor.ace_autocomplete.ace_dark.ace-vibrant-ink{
+    border-radius: var(--radius-xl);
+    box-shadow: 1px 1px 10px #000;
+}
+
+.ace_autocomplete .ace_layer.ace_marker-layer>.ace_active-line{
+    border-radius: var(--radius-sm);
+    background-color: #ffffff30 !important;
+}
+.ace_autocomplete .ace_layer.ace_marker-layer>.ace_line-hover{
+    border-radius: var(--radius-sm);
+    background: #ffffff20;
+    border-color: var(--href);
+    transition: 100ms;
+}
+.ace_autocomplete .ace_layer.ace_text-layer>.ace_line{
+    padding: 0px 6px;
+}
+
+.ace_autocomplete .ace_layer.ace_text-layer>.ace_line>.ace_completion-highlight{
+    color: var(--theme-1);
+}
+
+.ace_tooltip{
+    border-radius: var(--radius-xl);
+    box-shadow: 1px 1px 10px #000;
+    background-color: #26282c !important;
+    border: 1px #484747 solid;
+    padding: 5px 8px;
+}

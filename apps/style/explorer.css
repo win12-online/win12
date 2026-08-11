@@ -1,0 +1,335 @@
+.window.explorer>.titbar>.tabs>.tab>p>img {
+    width: 25px;
+    height: 25px;
+    margin-right: 5px;
+}
+
+.window.explorer>.titbar>.tabs>.tab>p {
+    display: flex !important;
+    align-items: center;
+}
+
+#win-explorer {
+    display: flex;
+    flex-direction: column;
+}
+
+#win-explorer>.page {
+    display: flex;
+    flex-grow: 1;
+    overflow: hidden;
+}
+
+#win-explorer>.page>.menu {
+    min-width: 250px;
+    height: 100%;
+    overflow-y: auto;
+    margin-right: 6px;
+    padding-right: 2px;
+}
+
+#win-explorer>.page>.menu>.card {
+    margin: 10px 0 10px 15px;
+    border-radius: var(--radius-xl);
+    background-color: var(--card);
+    padding: 4px;
+    box-shadow: 0 1px 2px 1px var(--s3d);
+}
+
+#win-explorer>.page>.menu>.card>.title {
+    padding: 6px 10px;
+    font-weight: 550;
+}
+
+#win-explorer>.page>.menu>.card>list>a {
+    padding: 4px 5px 4px 20px;
+    font-size: 15px;
+    border-radius: var(--radius-lg);
+    transition: 100ms;
+    display: flex;
+    height: 30px;
+    align-items: center;
+}
+
+#win-explorer>.page>.menu>.card>list>a.check {
+    background-color: var(--hover) !important;
+}
+
+#win-explorer>.page>.menu>.pinned>list>a>img {
+    width: 18px;
+    height: 18px;
+    /* margin-top: 2px; */
+    margin-right: 5px;
+}
+
+#win-explorer>.page>.menu>.tags>list>a>span:first-child {
+    width: 13px;
+    height: 13px;
+    margin-left: 4px;
+    /* margin-top: 4px; */
+    margin-right: 7px;
+    border-radius: var(--radius-circle);
+    box-shadow: 0 0 5px var(--shadow);
+}
+
+#win-explorer>.page>.main {
+    flex-grow: 1;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    padding-left: 2px;
+}
+
+#win-explorer>.page>.main>.tool {
+    width: 100%;
+    height: 42px;
+    display: flex;
+    padding: 0 10px 5px 10px;
+    margin-top: 3px;
+    align-items: center;
+}
+
+#win-explorer>.page>.main>.tool>.b {
+    height: 33px;
+    padding: 6px 8px;
+    border-radius: var(--radius-lg);
+    transition: 100ms;
+    margin: 0 1px;
+}
+
+#win-explorer>.page>.main>.tool>.b.t {
+    display: flex;
+    align-items: center;
+    font-size: 15px;
+}
+
+#win-explorer>.page>.main>.tool>.b.t>img {
+    display: flex;
+    margin-right: 5px;
+}
+
+#win-explorer>.page>.main>.tool>.b:hover {
+    background-color: var(--hover);
+}
+
+#win-explorer>.page>.main>.tool>.b>img {
+    width: 20px;
+    height: 20px;
+}
+
+#win-explorer>.page>.main>.tool>.hr {
+    width: 2px;
+    height: 25px;
+    background-color: #7f7f7f7f;
+    border-radius: var(--radius-2xl);
+    margin: 5px 3px;
+}
+
+#win-explorer>.page>.main>.content {
+    width: calc(100% - 15px);
+    flex-grow: 1;
+    background-color: var(--card);
+    border-radius: var(--radius-xl);
+    margin: 0 15px 10px 0;
+    padding: 13px 10px 40px 10px;
+    overflow-y: auto;
+    /* border: 1.5px solid #6f6f6f30; */
+    box-shadow: 0 1px 2px 1px var(--s3d);
+}
+
+#win-explorer>.path {
+    height: 35px;
+    width: 100%;
+    display: flex;
+    padding: 4px 10px 0 10px;
+    align-items: center;
+    /* margin-bottom: 10px; */
+}
+
+
+#win-explorer>.path>.front.disabled,
+#win-explorer>.path>.back.disabled {
+    filter: opacity(0.5);
+    pointer-events: none;
+}
+
+#win-explorer>.path>.btn {
+    transition: 100ms;
+    font-size: 17px;
+    text-align: center;
+    padding-top: 4px;
+    min-width: 33px;
+}
+
+#win-explorer>.path>.tit {
+    overflow: hidden;
+    display: flex;
+    /* background-color: var(--bg70); */
+    flex-grow: 1;
+    margin: 0px 10px 0px 5px;
+    border-radius: var(--radius-lg);
+    height: 32px;
+    /* align-items: center; */
+}
+
+#win-explorer>.path>.tit>img {
+    width: 22px;
+    height: 22px;
+    margin-top: 2px;
+}
+
+#win-explorer>.path>.tit>.path {
+    display: flex;
+    align-items: center;
+    overflow-y: hidden;
+    /* flex-grow: 1; */
+    width: calc(100% - 35px);
+}
+
+#win-explorer>.path>.tit>.path::-webkit-scrollbar {
+    height: 2px;
+}
+
+#win-explorer>.path>.tit>.path::-webkit-scrollbar-thumb {
+    background: #7f7f7f70;
+    background-clip: padding-box;
+    border: 0px solid transparent;
+    border-radius: var(--radius-2xl);
+}
+
+
+#win-explorer>.path>.tit>.path>* {
+    display: block;
+    height: 100%;
+    white-space: nowrap;
+}
+
+#win-explorer>.path>.tit>.path>.arrow {
+    opacity: 0.4;
+    font-size: 14px;
+    line-height: 1;
+    height: 14px;
+    margin: 0 4px;
+}
+
+#win-explorer>.path>.tit>.path>.text {
+    padding: 2px 5px;
+    height: min-content;
+    border-radius: var(--radius-sm);
+    font-size: 15px;
+    transition: 50ms;
+}
+
+#win-explorer>.path>.tit>.path>.text:hover {
+    background-color: var(--hover);
+}
+
+#win-explorer>.path>.tit>.path>.text:active {
+    opacity: 0.8;
+}
+
+#win-explorer>.path>.tit>.icon {
+    width: 25.6px;
+    margin-top: -1px;
+    margin-left: 3px;
+    margin-right: 5px;
+    background-size: contain;
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+}
+
+#win-explorer>.path>.search {
+    min-width: 170px;
+    width: 26%;
+    max-width: 400px;
+}
+
+#win-explorer>.path>.search>* {
+    float: right;
+}
+
+#win-explorer>.path>.search>.input {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+#win-explorer>.path>.search>input-before {
+    margin-top: 4px;
+    margin-right: -23px;
+}
+
+#win-explorer>.page>.main>.content>.view {
+    width: 100%;
+    height: max-content;
+    display: flex;
+    flex-direction: column;
+}
+
+#win-explorer>.page>.main>.content>.view>.info {
+    color: #888;
+    text-align: center;
+}
+
+#win-explorer>.page>.main>.content>.view>.item {
+    width: 100%;
+    padding: 2px 5px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    border: 1.5px solid transparent;
+    font-size: 14px;
+    align-items: center;
+    height: 30px;
+    transition: 50ms;
+}
+
+:root.corner_squ #win-explorer>.page>.main>.content>.view>.item {
+    corner-shape: squircle;
+    border-radius: 14px;
+}
+
+#win-explorer>.page>.main>.content>.view>.item:active {
+    /* transform: scale(0.99); */
+    /* transform-origin: bottom; */
+    opacity: 0.7;
+}
+
+#win-explorer>.page>.main>.content>.view>.item>img {
+    width: 25px;
+    height: 25px;
+    margin-right: 5px;
+}
+
+#win-explorer>.page>.main>.content>.view>.item.file>img {
+    width: 22px;
+    height: 22px;
+    margin-left: 2px;
+    margin-right: 7px;
+}
+
+#win-explorer>.page>.main>.content>.view>.item:hover {
+    background-color: var(--hover);
+    /* border: 1.5px solid #6f6f6f30; */
+    box-shadow: 0 1px 2px var(--s3d);
+}
+
+#win-explorer>.page>.main>.content>.view>.item>.input {
+    border-radius: var(--radius-sm);
+    /* background: none; */
+    font-size: 14px;
+    border-width: 2px;
+}
+
+
+:root.corner_squ {
+    #win-explorer>.page>.menu>.card,
+    #win-explorer>.page>.main>.content {
+        corner-shape: squircle;
+        border-radius: 18px;
+    }
+
+    #win-explorer>.page>.main>.content>.view>.group>.item{
+        corner-shape: squircle;
+        border-radius: var(--radius-pill);
+    }
+}

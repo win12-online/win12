@@ -1,0 +1,36 @@
+name: Update Lang Submodule
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: update-lang-submodule
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository with submodules
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Update lang submodule
+        run: |
+          git submodule update --remote lang
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add lang
+          git diff --cached --quiet && exit 0
+          git commit -m "chore: update lang submodule"
+          git pull --rebase origin main
+          git push
