@@ -114,6 +114,12 @@
             transform: translateY(-1px);
         }
 
+        .cell.selected {
+            outline: 3px solid var(--accent);
+            outline-offset: 1px;
+            z-index: 2;
+        }
+
         .cell.revealed {
             background: var(--cell-revealed);
             box-shadow: none;
@@ -189,7 +195,7 @@
             box-shadow: 0 20px 60px rgba(0,0,0,0.2); max-width: 300px;
         }
         .modal-content h2 { margin-top: 0; color: #111; }
-        .close { display: none; } /* 简化UI，不需要小叉叉 */
+        .close { display: none; } /* 简化 UI，不需要小叉叉*/
     </style>
 </head>
 <body>
@@ -244,6 +250,11 @@
     let timerInterval;
     let seconds = 0;
     let firstClick = true;
+    let selectedRow = 0;
+    let selectedCol = 0;
+    let gamepadLoopId = null;
+    let previousGamepadButtons = [];
+    let lastAxisMoveTime = 0;
 
     function createGrid() {
         grid = [];
@@ -297,6 +308,7 @@
                 gridElement.appendChild(cell);
             }
         }
+        setSelectedCell(Math.min(selectedRow, rows - 1), Math.min(selectedCol, cols - 1));
     }
 
     function handleCellClick(event) {
@@ -304,7 +316,11 @@
         const cell = event.currentTarget;
         const row = parseInt(cell.dataset.row);
         const col = parseInt(cell.dataset.col);
+        setSelectedCell(row, col);
+        revealCellAt(row, col);
+    }
 
+    function revealCellAt(row, col) {
         if(firstClick) {
             placeMines(row, col);
             calculateNumbers();
@@ -312,6 +328,7 @@
             startTimer();
         }
 
+        const cell = getCell(row, col);
         if (cell.classList.contains('flagged')) return;
         revealCell(row, col);
     }
@@ -322,6 +339,7 @@
         const cell = event.currentTarget;
         const row = parseInt(cell.dataset.row);
         const col = parseInt(cell.dataset.col);
+        setSelectedCell(row, col);
         toggleFlag(row, col, cell);
     }
 
@@ -401,6 +419,8 @@
         stopTimer();
         seconds = 0;
         firstClick = true;
+        selectedRow = 0;
+        selectedCol = 0;
         timerElement.textContent = '0';
         resetButton.textContent = '🙂';
         minesLeft = mines;
@@ -419,10 +439,113 @@
     }
 
     function stopTimer() {
-     // 写不到写啥，欢迎各位补充
+        clearInterval(timerInterval);
+        timerInterval = null;
+    }
+
+    function getCell(row, col) {
+        return document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
+    }
+
+    function setSelectedCell(row, col) {
+        selectedRow = Math.max(0, Math.min(rows - 1, row));
+        selectedCol = Math.max(0, Math.min(cols - 1, col));
+        document.querySelectorAll('.cell.selected').forEach(cell => cell.classList.remove('selected'));
+
+        const cell = getCell(selectedRow, selectedCol);
+        if (cell) {
+            cell.classList.add('selected');
+            cell.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+        }
+    }
+
+    function moveSelection(deltaRow, deltaCol) {
+        setSelectedCell(selectedRow + deltaRow, selectedCol + deltaCol);
+    }
+
+    function toggleSelectedFlag() {
+        if (isGameOver) return;
+        const cell = getCell(selectedRow, selectedCol);
+        if (cell) toggleFlag(selectedRow, selectedCol, cell);
+    }
+
+    function revealSelectedCell() {
+        if (isGameOver) {
+            resetGame();
+            return;
+        }
+        revealCellAt(selectedRow, selectedCol);
+    }
+
+    function handleKeyboard(event) {
+        if (event.target.matches('input, button')) return;
+
+        const actions = {
+            ArrowUp: () => moveSelection(-1, 0),
+            ArrowDown: () => moveSelection(1, 0),
+            ArrowLeft: () => moveSelection(0, -1),
+            ArrowRight: () => moveSelection(0, 1),
+            Enter: revealSelectedCell,
+            ' ': () => event.shiftKey ? toggleSelectedFlag() : revealSelectedCell(),
+            f: toggleSelectedFlag,
+            F: toggleSelectedFlag,
+            ContextMenu: toggleSelectedFlag,
+            r: resetGame,
+            R: resetGame
+        };
+
+        const action = actions[event.key];
+        if (!action) return;
+        event.preventDefault();
+        action();
+    }
+
+    function isGamepadButtonPressed(gamepad, index) {
+        return Boolean(gamepad.buttons[index] && gamepad.buttons[index].pressed);
+    }
+
+    function wasGamepadButtonPressed(gamepad, index) {
+        const pressed = isGamepadButtonPressed(gamepad, index);
+        const wasPressed = previousGamepadButtons[index];
+        previousGamepadButtons[index] = pressed;
+        return pressed && !wasPressed;
+    }
+
+    function pollGamepads() {
+        const gamepads = navigator.getGamepads ? navigator.getGamepads() : [];
+        const gamepad = Array.from(gamepads).find(Boolean);
+
+        if (gamepad) {
+            if (wasGamepadButtonPressed(gamepad, 0)) revealSelectedCell();
+            if (wasGamepadButtonPressed(gamepad, 1) || wasGamepadButtonPressed(gamepad, 2)) toggleSelectedFlag();
+            if (wasGamepadButtonPressed(gamepad, 9)) resetGame();
+
+            const now = Date.now();
+            const axisX = Math.abs(gamepad.axes[0]) > 0.55 ? Math.sign(gamepad.axes[0]) : 0;
+            const axisY = Math.abs(gamepad.axes[1]) > 0.55 ? Math.sign(gamepad.axes[1]) : 0;
+            const dpadX = (isGamepadButtonPressed(gamepad, 15) ? 1 : 0) - (isGamepadButtonPressed(gamepad, 14) ? 1 : 0);
+            const dpadY = (isGamepadButtonPressed(gamepad, 13) ? 1 : 0) - (isGamepadButtonPressed(gamepad, 12) ? 1 : 0);
+
+            if ((axisX || axisY || dpadX || dpadY) && now - lastAxisMoveTime > 150) {
+                moveSelection(dpadY || axisY, dpadX || axisX);
+                lastAxisMoveTime = now;
+            }
+        } else {
+            previousGamepadButtons = [];
+        }
+
+        gamepadLoopId = requestAnimationFrame(pollGamepads);
+    }
+
+    function startGamepadPolling() {
+        if (!gamepadLoopId && navigator.getGamepads) {
+            gamepadLoopId = requestAnimationFrame(pollGamepads);
+        }
     }
 
     // 事件绑定
+    document.addEventListener('keydown', handleKeyboard);
+    window.addEventListener('gamepadconnected', startGamepadPolling);
     resetButton.addEventListener('click', resetGame);
     restartButton.addEventListener('click', resetGame);
 
@@ -447,12 +570,17 @@
             mines = customMines;
             resetGame();
         } else {
-            shownotice("设置无效（行/列范围5-30）");
+            if (window.parent && typeof window.parent.shownotice === 'function') {
+                window.parent.shownotice("设置无效（行/列范围 5-30）");
+            } else {
+                alert("设置无效（行/列范围 5-30）");
+            }
         }
     });
 
     // 初始化
     resetGame();
+    startGamepadPolling();
 </script>
 
 </body>
