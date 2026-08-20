@@ -53,6 +53,8 @@
 
 - 在开发过程中请一并完善 i18n 的相关属性并将其添加到相关的 properties 文件中，对于如何设置属性和添加新的翻译词条等问题[在翻译贡献指南](https://github.com/win12-online/win12-locales/blob/main/lang/readme.md)中已有相关说明，请自行查阅。
 
+- 若贡献中包含 AI 生成内容，请务必遵循 [AI 辅助工具使用及披露约定](readme/legal/ai-tool-usage-and-disclosure-guidelines.md) 进行声明；原则上，未按要求披露的 PR 可能被拒绝或要求修改。
+
 - 在开发时，请参考 [中文文案排版指北](https://github.com/sparanoid/chinese-copywriting-guidelines) 中推荐的写作风格撰写文本。另外请注意，我们使用 [autocorrect](https://github.com/huacnlee/autocorrect) 进行自动检查。原则上，未通过检查的 PR 将不会被合并。
 
 - 您在贡献时需注意，若您将其他来源的文字内容引入本项目，或将这些文字内容经过改编、汇编后引入本项目。相关文字内容应采用与 CC BY-SA 4.0 单向或双向兼容的许可协议（例如：CC BY-SA 许可协议的 2.0 版本至 4.0 版本、CC BY 许可协议的所有版本、自由艺术许可证的 1.3 版本）进行许可；此外，您需要根据相应许可协议要求为相关文字内容的作者署名；不应将采用与 CC BY-SA 4.0 不兼容许可协议（例如：CC BY-SA 1.0，CC BY-NC-SA 许可协议的所有版本）的文字内容引入本项目。
