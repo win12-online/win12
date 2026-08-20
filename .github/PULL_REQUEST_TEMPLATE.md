@@ -24,7 +24,7 @@ If your PR is an implementation of an issue, please include the issue number (e.
 
 If your PR contains new translation entries, please go to [win12-locales](https://github.com/win12-online/win12-locales) to submit a Translation request Issue. A bot will automatically write your new translations into lang_zh_CN.properties.
 
-# 有关 AI辅助工具的使用 / Regarding the Use of AI Assistance Tools
+# 有关 AI 辅助工具的使用 / Regarding the Use of AI Assistance Tools
 
 若贡献中包含 AI 生成内容，请务必遵循 [AI 辅助工具使用及披露约定](readme/legal/ai-tool-usage-and-disclosure-guidelines.md) 进行声明；原则上，未按要求披露的 PR 可能被拒绝或要求修改。
 
