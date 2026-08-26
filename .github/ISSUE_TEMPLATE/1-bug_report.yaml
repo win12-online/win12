@@ -29,6 +29,14 @@ body:
             我已查看了常见问题解答(#735)
             I have reviewed the Frequently Asked Questions (#735)
           required: true
+        - label: |
+            我确认这不是安全漏洞，否则我将通过电子邮件或github私下报告模块报告
+            I've confirmed this isn't a security vulnerability; otherwise, I would have reported it privately via email or GitHub using the reporting module.
+          required: true
+        - label: |
+            我能确认这不是所设计的预期行为
+            I can confirm that this is not the intended behavior.
+          required: true
   - type: textarea
     id: what_happened
     attributes:
