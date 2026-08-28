@@ -824,7 +824,7 @@ let apps = {
     vscode: createWebapp('vscode', 'https://github1s.com/'),
     bilibili: createWebapp('bilibili', 'https://bilibili.com/'),
     'copilot': createWebapp('copilot', '/chatgh/copilot.html'),
-    'minesweeper': createWebapp('minesweeper', 'https://win12-online.github.io/win12/games/minesweeper.html'),
+    'minesweeper': createWebapp('minesweeper', 'games/minesweeper.html'),
     macos: createWebapp('macos', 'https://macos-web.app/'),
     defender: {
         init: () => {
