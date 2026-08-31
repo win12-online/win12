@@ -67,7 +67,9 @@ if (langcode == null || langcode == 'auto')
 document.documentElement.lang = langcode;
 
 
-if (document.querySelectorAll('#loginback>.langselect>.' + langcode).length != 0) {
+if (localStorage.getItem('lang') == 'auto' || localStorage.getItem('lang') == null) {
+    $('#loginback>.langselect>.def').addClass('selected')
+} else if (document.querySelectorAll('#loginback>.langselect>.' + langcode).length != 0) {
     $('#loginback>.langselect>.' + langcode).addClass('selected')
 } else {
     $('#loginback>.langselect>.en').addClass('selected')

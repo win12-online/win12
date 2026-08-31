@@ -235,11 +235,12 @@ toggletheme() 切换主题
 			margin-top: 5px;
             text-align: center;" data-i18n="welcome">欢迎</p>
 		</div>
-		<list class="langselect new">
-			<span class="text" style="font-size: 22px;"><i class="bi bi-globe2"></i></span>
-			<a class="a def" onclick="
-				localStorage.setItem('lang','auto');
-				window.location.href='';">Default language of the browser</a>
+		<button class="a language-dock" type="button" aria-label="Language" aria-controls="login-language-box" aria-expanded="false" onclick="toggleLoginLanguage();">
+			<i class="bi bi-globe2"></i>
+		</button>
+		<list id="login-language-box" class="langselect new" aria-label="Language selection">
+			<p class="language-box-title">Language</p>
+			<a class="a def" onclick="localStorage.setItem('lang','auto');window.location.href='';">Auto (device language)</a>
 			<a class="a zh-CN" onclick="localStorage.setItem('lang','zh-CN');window.location.href='';">简体中文</a>
 			<a class="a zh-TW" onclick="localStorage.setItem('lang','zh-TW');window.location.href='';">繁體中文</a>
 			<a class="a en" onclick="localStorage.setItem('lang','en');window.location.href='';">English</a>
