@@ -721,6 +721,7 @@ const windowMarkup = `	<div class="window defender" data-min-width="800" style="
 							<div><p data-i18n="setting.displayLanguage">Windows 显示语言</p><p data-i18n="setting.displayLanguageDesc">选择应用于 Windows 和应用程序的显示语言。</p></div>
 							<div class="languageSelectControl">
 								<select class="languageSelect" aria-label="Windows display language" onchange="apps.setting.changeLanguage(this.value)">
+									<option value="auto" data-i18n="setting.languageAuto">自动（根据设备语言）</option>
 									<option value="zh-CN">简体中文</option>
 									<option value="zh-TW">繁體中文</option>
 									<option value="en">English</option>

@@ -30,7 +30,9 @@ let apps = {
             window.location.reload();
         },
         syncLanguageSelect: () => {
-            $('#win-setting .languageSelect').val(localStorage.getItem('lang') || 'en');
+            const savedLanguage = localStorage.getItem('lang');
+            const language = savedLanguage === 'en-US' ? 'en' : (savedLanguage || 'auto');
+            $('#win-setting .languageSelect').val(language);
         },
         theme_get: () => {
             $('#set-theme').html(`<loading><svg width="30px" height="30px" viewBox="0 0 16 16">
