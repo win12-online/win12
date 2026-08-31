@@ -569,20 +569,59 @@ div.app-color input[type=color] {
     opacity: 0.6;
 }
 
-.languageSelect {
-    width: 150px;
-    height: 34px;
-    padding: 0 8px;
-    text-align: left;
-    border: 1px solid var(--s3d);
-    border-radius: 12px;
-    background: var(--card);
-    color: var(--text);
+.languageSelectControl {
+    position: relative;
+    flex: 0 0 150px;
 }
+
+.languageSelect {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 100%;
+    height: 34px;
+    padding: 3px 32px 3px 10px;
+    text-align: left;
+    border: 1px solid #7f7f7f7f;
+    border-radius: var(--radius-lg);
+    background-color: var(--bg50);
+    color: var(--text);
+    cursor: pointer;
+    outline: none;
+    box-shadow: 0 1px 2px var(--s3d);
+    transition: 100ms, border 0s;
+}
+
+:root.corner_squ .languageSelect {
+    corner-shape: squircle;
+    border-radius: var(--radius-3xl);
+}
+
+.languageSelect:hover {
+    background-color: var(--contextmeu);
+}
+
+.languageSelect:focus {
+    background-color: var(--bg);
+    background-clip: padding-box, border-box;
+    background-origin: padding-box, border-box;
+    background-image: linear-gradient(var(--bg), var(--bg)), linear-gradient(90deg, var(--theme-1), var(--theme-2));
+    border-color: transparent;
+    box-shadow: 0 1px 10px var(--s3d);
+}
+
+.languageSelectControl>.bi {
+    color: var(--text);
+    font-size: 12px;
+    pointer-events: none;
+    position: absolute;
+    right: 11px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
 .languageSelect option {
-    /* 添加样式，例如设置字体颜色和背景颜色 */
-	color: var(--text);
-    background-color: #fff;
+    color: var(--text);
+    background-color: var(--card);
     padding: 5px;
 }
 .settingTimeItem{

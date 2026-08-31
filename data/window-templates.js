@@ -719,11 +719,14 @@ const windowMarkup = `	<div class="window defender" data-min-width="800" style="
 						<p class="title" data-i18n="setting.languageRegion">语言和区域</p>
 						<div class="setting-card language-card">
 							<div><p data-i18n="setting.displayLanguage">Windows 显示语言</p><p data-i18n="setting.displayLanguageDesc">选择应用于 Windows 和应用程序的显示语言。</p></div>
-							<select class="languageSelect" aria-label="Windows display language" onchange="apps.setting.changeLanguage(this.value)">
-								<option value="zh-CN">简体中文</option>
-								<option value="zh-TW">繁體中文</option>
-								<option value="en">English</option>
-							</select>
+							<div class="languageSelectControl">
+								<select class="languageSelect" aria-label="Windows display language" onchange="apps.setting.changeLanguage(this.value)">
+									<option value="zh-CN">简体中文</option>
+									<option value="zh-TW">繁體中文</option>
+									<option value="en">English</option>
+								</select>
+								<i class="bi bi-chevron-down"></i>
+							</div>
 						</div>
 					</div>
 				</div>
