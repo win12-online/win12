@@ -528,16 +528,56 @@ div.app-color input[type=color] {
 	filter: opacity(1);
 }
 
+.time-panel {
+    display: none;
+}
+
+.time-panel.show {
+    display: block;
+}
+
+.time-option,
+.time-back {
+    cursor: pointer;
+}
+
+.time-back {
+    align-items: center;
+    color: var(--text);
+    display: inline-flex;
+    gap: 8px;
+    margin: 16px 0 2px 5px;
+    text-decoration: none;
+}
+
+.time-back:hover {
+    text-decoration: none;
+}
+
+.language-card {
+    align-items: center;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.language-card p {
+    margin: 0;
+}
+
+.language-card p:last-child {
+    font-size: 12px;
+    opacity: 0.6;
+}
+
 .languageSelect {
-    width: 130px;
-        height: 30px;
-        text-align: left;
-        border-radius: 12px;
-        background: var(--card);
-        color: var(--text);
-		position: absolute;
-		    right: 40px;
-			margin-right: -20px;
+    width: 150px;
+    height: 34px;
+    padding: 0 8px;
+    text-align: left;
+    border: 1px solid var(--s3d);
+    border-radius: 12px;
+    background: var(--card);
+    color: var(--text);
 }
 .languageSelect option {
     /* 添加样式，例如设置字体颜色和背景颜色 */
