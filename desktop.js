@@ -164,7 +164,7 @@ function win12FinishLogin() {
             showStartupNoticeOnce();
         }, 2000);
         if (use_music) {
-            document.querySelector('audio#startup-music').play();
+            window.dispatchEvent(new CustomEvent('play-startup'));
         }
     }, 2000);
 }
