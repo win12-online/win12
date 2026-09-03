@@ -101,6 +101,7 @@ body {
     height: 100%;
     font-size: 15.5px;
     color: var(--text);
+    -webkit-user-select: none;
     user-select: none;
 }
 
