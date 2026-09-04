@@ -21,7 +21,7 @@
             margin-left: 5px;
             overflow-y: auto;
             padding-right: 10px;
-            border-radius: 6px;
+            border-radius: var(--radius-md);
             height: 100%;
 
             & icon {
@@ -47,7 +47,7 @@
                 justify-content: center;
                 align-items: center;
                 margin-bottom: 4px;
-                border-radius: 6px;
+                border-radius: var(--radius-md);
                 transition: all 500ms;
                 overflow: hidden;
                 position: relative;
@@ -119,7 +119,7 @@
                             &>* {
                                 background-color: var(--hover);
                                 margin: 10px;
-                                border-radius: 10px;
+                                border-radius: var(--radius-2xl);
                                 padding: 14px;
                                 display: flex; 
 
@@ -191,7 +191,7 @@
                                             &>.type {
                                                 font-size: 0.85em;
                                                 padding: 4px 8px;
-                                                border-radius: 5px;
+                                                border-radius: var(--radius-sm);
                                                 background-color: var(--fill);
                                                 color: var(--text2);
                                                 flex-shrink: 0;

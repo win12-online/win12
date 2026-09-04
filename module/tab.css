@@ -11,7 +11,7 @@
 
 .window.tabs>.titbar>.tabs>.tab {
     display: flex;
-    border-radius: 7px;
+    border-radius: var(--radius-lg);
     max-width: 200px;
     display: flex;
     justify-content: space-between;
@@ -29,7 +29,7 @@
 
 :root.corner_squ .window.tabs>.titbar>.tabs>.tab {
     corner-shape: squircle;
-    border-radius: 15px;
+    border-radius: var(--radius-3xl);
 }
 
 .window.tabs>.titbar>.tabs>.tab::before {
@@ -97,7 +97,7 @@
 }
 
 .window.tabs>.titbar>.tabs>.tab>.clbtn {
-    border-radius: 4px;
+    border-radius: var(--radius-xs);
     display: block;
     margin: 0 5px 0 0;
     width: 18px;
@@ -115,7 +115,7 @@
 }
 
 .window.tabs>.titbar>.tabs>.new {
-    border-radius: 7px;
+    border-radius: var(--radius-lg);
     margin: 3px 2px;
     height: 25px;
     width: 25px;

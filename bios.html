@@ -17,8 +17,8 @@
             <div id="confirm" data-show="false">
                 <p id="confirm-tit"> Save configuration changes and exit now? </p>
                 <div class="btns" style="display: flex;justify-content: space-around;">
-                    <a class="confirm-button" id="ok-btn" style="background-color: #000;color: #fff;" click="" ontouchstart="">[OK]</a>
-                    <a class="confirm-button" style="color: #000;background-color: #fff;" ontouchstart="$('#confirmContainer').css('display', 'none');$('#confirm').attr('data-show', 'false');" click="$('#confirmContainer').css('display', 'none');$('#confirm').attr('data-show', 'false');" id="cancel-btn">[Cancel]</a>
+                    <a class="confirm-button" id="ok-btn" style="background-color: #000;color: #fff;" onclick="" ontouchstart="">[OK]</a>
+                    <a class="confirm-button" style="color: #000;background-color: #fff;" ontouchstart="event.preventDefault();$('#confirmContainer').css('display', 'none');$('#confirm').attr('data-show', 'false');" onclick="$('#confirmContainer').css('display', 'none');$('#confirm').attr('data-show', 'false');" id="cancel-btn">[Cancel]</a>
                 </div>
             </div>
         </div>
@@ -31,11 +31,11 @@
             <p class="tit">BIOS Setup Utility</p>
         </nav>
         <nav class="pages" style="padding-left: 15px;">
-            <a class="tab tab0" id="main" click="tab = 0; changePage(0)" ontouchstart="changePage(0)">Main</a>
-            <a class="tab tab1" id="advanced" click="tab = 1; changePage(1)" ontouchstart="changePage(1)">Advanced</a>
-            <a class="tab tab2" id="boot" click="tab = 2; changePage(2)" ontouchstart="changePage(2)">Boot</a>
-            <a class="tab tab3" id="security" click="tab = 3; changePage(3)" ontouchstart="changePage(3)">Security</a>
-            <a class="tab tab4" id="exit" click="tab = 4; changePage(4)" ontouchstart="changePage(4)">Exit</a>
+            <a class="tab tab0" id="main" onclick="tab = 0; changePage(0)" ontouchstart="event.preventDefault();changePage(0)">Main</a>
+            <a class="tab tab1" id="advanced" onclick="tab = 1; changePage(1)" ontouchstart="event.preventDefault();changePage(1)">Advanced</a>
+            <a class="tab tab2" id="boot" onclick="tab = 2; changePage(2)" ontouchstart="event.preventDefault();changePage(2)">Boot</a>
+            <a class="tab tab3" id="security" onclick="tab = 3; changePage(3)" ontouchstart="event.preventDefault();changePage(3)">Security</a>
+            <a class="tab tab4" id="exit" onclick="tab = 4; changePage(4)" ontouchstart="event.preventDefault();changePage(4)">Exit</a>
         </nav>
     </head>
     <div id="mainPage" class="page page0">
@@ -109,9 +109,9 @@
     </div>
     <div id="exitPage" class="page page4">
         <div class="container">
-            <div click="BIOS_confirm(' Save configuration changes and exit now? ','toBoot()')" ontouchstart="BIOS_confirm(' Save configuration changes and exit now? ','toBoot()')" class="exit" id="e1">Exit Saving Changes</div>
-            <div click="BIOS_confirm(' Discard changes and exit setup? ','toBoot()');" ontouchstart="BIOS_confirm(' Discard changes and exit setup? ','toBoot()');" class="exit" id="e2">Exit Discarding Changes</div>
-            <div click="BIOS_confirm('  Restore default setup?  ','$(`#confirmContainer`).css(`display`, `none`);$(`#confirm`).attr(`data-show`, `false`);');" ontouchstart="BIOS_confirm('  Restore default setup?  ','$(`#confirmContainer`).css(`display`, none); $(`#confirm`).attr(`data-show`, `false`);');" class="exit" id="e3">Restore Defaults</div>
+            <div onclick="BIOS_confirm(' Save configuration changes and exit now? ','toBoot()')" ontouchstart="event.preventDefault();BIOS_confirm(' Save configuration changes and exit now? ','toBoot()')" class="exit" id="e1">Exit Saving Changes</div>
+            <div onclick="BIOS_confirm(' Discard changes and exit setup? ','toBoot()');" ontouchstart="event.preventDefault();BIOS_confirm(' Discard changes and exit setup? ','toBoot()');" class="exit" id="e2">Exit Discarding Changes</div>
+            <div onclick="BIOS_confirm('  Restore default setup?  ','$(`#confirmContainer`).css(`display`, `none`);$(`#confirm`).attr(`data-show`, `false`);');" ontouchstart="event.preventDefault();BIOS_confirm('  Restore default setup?  ','$(`#confirmContainer`).css(`display`, `none`); $(`#confirm`).attr(`data-show`, `false`);');" class="exit" id="e3">Restore Defaults</div>
         </div>
     </div>
     <script src="./scripts/jq.min.js"></script>

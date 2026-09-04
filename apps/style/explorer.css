@@ -30,7 +30,7 @@
 
 #win-explorer>.page>.menu>.card {
     margin: 10px 0 10px 15px;
-    border-radius: 8px;
+    border-radius: var(--radius-xl);
     background-color: var(--card);
     padding: 4px;
     box-shadow: 0 1px 2px 1px var(--s3d);
@@ -44,7 +44,7 @@
 #win-explorer>.page>.menu>.card>list>a {
     padding: 4px 5px 4px 20px;
     font-size: 15px;
-    border-radius: 7px;
+    border-radius: var(--radius-lg);
     transition: 100ms;
     display: flex;
     height: 30px;
@@ -68,7 +68,7 @@
     margin-left: 4px;
     /* margin-top: 4px; */
     margin-right: 7px;
-    border-radius: 50%;
+    border-radius: var(--radius-circle);
     box-shadow: 0 0 5px var(--shadow);
 }
 
@@ -93,7 +93,7 @@
 #win-explorer>.page>.main>.tool>.b {
     height: 33px;
     padding: 6px 8px;
-    border-radius: 7px;
+    border-radius: var(--radius-lg);
     transition: 100ms;
     margin: 0 1px;
 }
@@ -122,7 +122,7 @@
     width: 2px;
     height: 25px;
     background-color: #7f7f7f7f;
-    border-radius: 10px;
+    border-radius: var(--radius-2xl);
     margin: 5px 3px;
 }
 
@@ -130,7 +130,7 @@
     width: calc(100% - 15px);
     flex-grow: 1;
     background-color: var(--card);
-    border-radius: 8px;
+    border-radius: var(--radius-xl);
     margin: 0 15px 10px 0;
     padding: 13px 10px 40px 10px;
     overflow-y: auto;
@@ -168,7 +168,7 @@
     /* background-color: var(--bg70); */
     flex-grow: 1;
     margin: 0px 10px 0px 5px;
-    border-radius: 7px;
+    border-radius: var(--radius-lg);
     height: 32px;
     /* align-items: center; */
 }
@@ -195,7 +195,7 @@
     background: #7f7f7f70;
     background-clip: padding-box;
     border: 0px solid transparent;
-    border-radius: 10px;
+    border-radius: var(--radius-2xl);
 }
 
 
@@ -216,7 +216,7 @@
 #win-explorer>.path>.tit>.path>.text {
     padding: 2px 5px;
     height: min-content;
-    border-radius: 5px;
+    border-radius: var(--radius-sm);
     font-size: 15px;
     transition: 50ms;
 }
@@ -274,7 +274,7 @@
 #win-explorer>.page>.main>.content>.view>.item {
     width: 100%;
     padding: 2px 5px;
-    border-radius: 5px;
+    border-radius: var(--radius-sm);
     display: flex;
     border: 1.5px solid transparent;
     font-size: 14px;
@@ -314,7 +314,7 @@
 }
 
 #win-explorer>.page>.main>.content>.view>.item>.input {
-    border-radius: 5px;
+    border-radius: var(--radius-sm);
     /* background: none; */
     font-size: 14px;
     border-width: 2px;
@@ -330,6 +330,6 @@
 
     #win-explorer>.page>.main>.content>.view>.group>.item{
         corner-shape: squircle;
-        border-radius: 25px;
+        border-radius: var(--radius-pill);
     }
 }

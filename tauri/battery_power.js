@@ -17,6 +17,7 @@ function setBatteryUnavailableUI() {
     const title = batteryLang("无法获取电量", "battery.unavailable");
     el.setAttribute("win12_title", title);
     el.setAttribute("title", title);
+    el.setAttribute("aria-label", title);
   }
 }
 
@@ -37,6 +38,7 @@ function updateBatteryUI(battery) {
 
   el.setAttribute("win12_title", title);
   el.setAttribute("title", title);
+  el.setAttribute("aria-label", title);
 
   if (pathElement) {
     pathElement.setAttribute(

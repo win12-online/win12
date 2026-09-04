@@ -2,7 +2,8 @@
   "name": "Windows 12",
   "short_name": "Windows 12",
   "display": "standalone",
-  "start_url": "/win12/boot.html",
+  "start_url": "../boot.html",
+  "scope": "../",
   "prefer_related_applications": true,
   "background_color": "#000",
   "icons": [

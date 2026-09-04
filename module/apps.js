@@ -813,43 +813,19 @@ let apps = {
         apps: ['vscode', 'bilibili', 'copilot', 'minesweeper'],
         init: () => {
             for (const app of apps.webapps.apps) {
-                apps[app].load();
+                if (!apps[app].loaded) apps[app].load();
+                // These apps are preloaded during desktop startup.  Mark the
+                // wrapper as loaded so openapp() does not append a second
+                // iframe the first time the user opens it.
+                apps[app].loaded = true;
             }
         }
     },
-    vscode: {
-        init: () => {
-            return null;
-        },
-        load: () => {
-            // 不能改成 vscode.dev, 别问，问就算用不了
-            $('#win-vscode')[0].insertAdjacentHTML('afterbegin', '<iframe src="https://github1s.com/" frameborder="0" style="width: 100%; height: 100%;" loading="lazy"></iframe>');
-        }
-    },
-    bilibili: {
-        init: () => {
-            return null;
-        },
-        load: () => {
-            $('#win-bilibili')[0].insertAdjacentHTML('afterbegin', '<iframe src="https://bilibili.com/" frameborder="0" style="width: 100%; height: 100%;" loading="lazy"></iframe>');
-        }
-    },
-    'copilot': {
-        init: () => {
-            return null;
-        },
-        load: () => {
-            $('#win-copilot')[0].insertAdjacentHTML('afterbegin', '<iframe src="/chatgh/copilot.html" frameborder="0" style="width: 100%; height: 100%;" loading="lazy"></iframe>');
-        }
-    },
-    'minesweeper': {
-        init: () => {
-            return null;
-        },
-        load: () => {
-            $('#win-minesweeper')[0].insertAdjacentHTML('afterbegin', '<iframe src="https://win12-online.github.io/win12/games/minesweeper.html" frameborder="0" style="width: 100%; height: 100%;" loading="lazy"></iframe>');
-        }
-    },
+    vscode: createWebapp('vscode', 'https://github1s.com/'),
+    bilibili: createWebapp('bilibili', 'https://bilibili.com/'),
+    'copilot': createWebapp('copilot', '/chatgh/copilot.html'),
+    'minesweeper': createWebapp('minesweeper', 'https://win12-online.github.io/win12/games/minesweeper.html'),
+    macos: createWebapp('macos', 'https://macos-web.app/'),
     defender: {
         init: () => {
             return null;
@@ -923,14 +899,17 @@ let apps = {
         }
     },
     camera: {
+        requestGeneration: 0,
         init: () => {
             if (!localStorage.getItem('camera')) {
                 showwin('camera-notice');
                 return null;
             }
             if (localStorage.getItem('camera')) {
+                const requestGeneration = ++apps.camera.requestGeneration;
                 apps.camera.streaming = false;
                 apps.camera.video = $('#win-camera video')[0];
+                const video = apps.camera.video;
                 apps.camera.canvas = $('#win-camera canvas')[0];
                 apps.camera.context = apps.camera.canvas.getContext('2d');
                 apps.camera.context.fillStyle = '#aaa';
@@ -938,11 +917,18 @@ let apps = {
                 // apps.camera.control = document.querySelector('#win-camera>.control')
                 navigator.mediaDevices.getUserMedia({ video: true, audio: false })
                     .then(stream => {
-                        apps.camera.video.srcObject = stream;
-                        apps.camera.video.play();
+                        if (requestGeneration !== apps.camera.requestGeneration) {
+                            stream.getTracks().forEach(track => track.stop());
+                            return;
+                        }
+                        video.srcObject = stream;
+                        const playing = video.play();
+                        if (playing && typeof playing.catch == 'function') playing.catch(() => {});
                     })
                     .catch(() => {
-                        hidewin('camera');
+                        if (requestGeneration === apps.camera.requestGeneration) {
+                            hidewin('camera');
+                        }
                     });
                 apps.camera.video.addEventListener('canplay', () => {
                     if (!apps.camera.streaming) {
@@ -993,16 +979,25 @@ let apps = {
             }
         },
         remove: () => {
-            apps.camera.video.srcObject.getTracks().forEach((t) => {
-                t.stop();
-            });
-            apps.camera.video.srcObject = null;
+            apps.camera.requestGeneration += 1;
+            const video = apps.camera.video;
+            const stream = video && video.srcObject;
+            if (stream) {
+                stream.getTracks().forEach((track) => track.stop());
+            }
+            if (video) video.srcObject = null;
+            if (apps.camera.windowResizeObserver) {
+                apps.camera.windowResizeObserver.disconnect();
+                apps.camera.windowResizeObserver = null;
+            }
         }
     },
     explorer: {
         mounts: {},
         nextDriveLetter: 'E',
         fsApiSupported: ('showDirectoryPicker' in window),
+        deleteKeyBound: false,
+        pendingCreateNames: new Map(),
         init: () => {
             apps.explorer.tabs = [];
             apps.explorer.len = 0;
@@ -1014,11 +1009,27 @@ let apps = {
             apps.explorer.old_name = '';
             apps.explorer.clipboard = null;
             if (!apps.explorer.fsApiSupported) $('#explorer-mount-btn').hide();
-            document.addEventListener('keydown', function (event) {
-                if (event.key === 'Delete' && $('.window.foc')[0].classList[1] == 'explorer') {
-                    apps.explorer.del(apps.explorer.Process_Of_Select);
-                }
-            });
+            if (!apps.explorer.deleteKeyBound) {
+                document.addEventListener('keydown', function (event) {
+                    const focusedWindow = $('.window.foc.show')[0];
+                    const target = event.target;
+                    const isEditing = target && (
+                        target.isContentEditable
+                        || ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName)
+                    );
+                    if (event.key === 'Delete'
+                        && !event.defaultPrevented
+                        && !event.isComposing
+                        && !isEditing
+                        && focusedWindow
+                        && focusedWindow.classList.contains('explorer')
+                        && apps.explorer.Process_Of_Select) {
+                        event.preventDefault();
+                        apps.explorer.del(apps.explorer.Process_Of_Select);
+                    }
+                });
+                apps.explorer.deleteKeyBound = true;
+            }
         },
         mountDrive: async () => {
             if (!apps.explorer.fsApiSupported) { shownotice('fs-api-unsupported'); return; }
@@ -1302,7 +1313,8 @@ let apps = {
                 var on = apps.explorer.old_name;
                 let inputTag = aTag.querySelector('#new_name');
                 var pathl = $('#win-explorer>.path>.tit')[0].dataset.path.split('/');
-                let files = apps.explorer.getPath();
+                var isMountedRename = !!apps.explorer.mounts[pathl[0]];
+                let files = isMountedRename ? apps.explorer.path : apps.explorer.getPath();
                 let tmp = files;
                 pathl.forEach(name => {
                     if (tmp !== null) {
@@ -1326,7 +1338,7 @@ let apps = {
                 if (name_1[1] == 'txt') {
                     icon_ = 'icon/files/txt.png';
                 }
-                else if (name_1[1] == 'png' || name_1[1] == 'jpg' | name_1[1] == 'bmp') {
+                else if (name_1[1] == 'png' || name_1[1] == 'jpg' || name_1[1] == 'bmp') {
                     icon_ = 'icon/files/picture.png';
                 }
                 else {
@@ -1335,11 +1347,11 @@ let apps = {
                 //这边可以适配更多的文件类型
 
                 aTag.innerHTML += inputTag.value;
-                var isMountedRename = !!apps.explorer.mounts[pathl[0]];
                 for (var j = 0; j < tmp['file'].length; j++) {
                     if (tmp['file'][j]['name'] == on) {
-                        tmp['file'][j]['name'] = inputTag.value;
-                        tmp['file'][j]['ico'] = icon_;
+                        const fileEntry = tmp['file'][j];
+                        fileEntry['name'] = inputTag.value;
+                        fileEntry['ico'] = icon_;
                         if (isMountedRename && tmp._handle) {
                             (async () => {
                                 try {
@@ -1350,7 +1362,7 @@ let apps = {
                                     await writable.write(await file.arrayBuffer());
                                     await writable.close();
                                     await tmp._handle.removeEntry(on);
-                                    tmp['file'][j]._handle = newHandle;
+                                    fileEntry._handle = newHandle;
                                 } catch (e) {
                                     console.warn('Rename on mounted FS failed:', e);
                                 }
@@ -1368,7 +1380,11 @@ let apps = {
                 }
                 element = document.getElementById('new_name');
                 element.parentNode.removeChild(element);
-                apps.explorer.pushLocalStoragePath(files, true)
+                if (isMountedRename) {
+                    apps.explorer._gotoSync(pathl.join('/'), false);
+                } else {
+                    apps.explorer.pushLocalStoragePath(files, true);
+                }
             }
             apps.explorer.is_use2 = apps.explorer.is_use;
             elements = document.querySelectorAll('#win-explorer>.page>.main>.content>.view>.select');
@@ -1381,10 +1397,9 @@ let apps = {
             if (path == '此电脑') { apps.explorer.reset(clear); return null; }
             var pathl = path.split('/');
             if (apps.explorer.mounts[pathl[0]]) {
-                apps.explorer._gotoAsync(path, clear, !clear);
-            } else {
-                apps.explorer._gotoSync(path, clear);
+                return apps.explorer._gotoAsync(path, clear, !clear);
             }
+            return apps.explorer._gotoSync(path, clear);
         },
         _gotoAsync: async (path, clear, forceRefresh = false) => {
             $('#win-explorer>.page>.main>.content>.view')[0].innerHTML = '<p class="info" style="opacity:0.6;">加载中...</p>';
@@ -1409,7 +1424,9 @@ let apps = {
             var pathl = path.split('/');
             var pathqwq = '';
             var index_ = 0;
-            let tmp = apps.explorer.getPath();
+            let tmp = apps.explorer.mounts[pathl[0]]
+                ? apps.explorer.path
+                : apps.explorer.getPath();
             if (path == '此电脑') {
                 apps.explorer.reset(clear);
                 return null;
@@ -1479,111 +1496,97 @@ let apps = {
             }
             apps.explorer.checkHistory(apps.explorer.tabs[apps.explorer.now][0]);
         },
-        add: (path, name_, type = 'file', command = '', icon = '') => { //type 为文件类型，只有文件夹 files 和文件 file
-            var pathl = path.split('/');
-            var icon_ = '';
-            let files = apps.explorer.getPath();
+        add: async (path, name_, type = 'file', command = '', icon = '') => { //type 为文件类型，只有文件夹 files 和文件 file
+            const pathl = path.split('/').filter(Boolean);
+            const isMounted = !!apps.explorer.mounts[pathl[0]];
+            const files = isMounted ? apps.explorer.path : apps.explorer.getPath();
             let tmp = files;
-            pathl.forEach(name => {
-                if (tmp !== null) {
-                    tmp = tmp['folder'][name];
-                } else {
-                    tmp = files['folder'][name];
-                }
-            });
-            if (tmp == null) {
-                tmp = { folder: {}, file: [] };
-            }
-			
-    		let finalName = name_;
-    		let counter = 1;
-    		let baseName = name_;
-    		let extension = "";
-    
-    		if (type === 'file' && name_.includes('.')) {
-        		const lastDotIndex = name_.lastIndexOf('.');
-        		baseName = name_.substring(0, lastDotIndex);
-        		extension = name_.substring(lastDotIndex); // e.g., ".txt"
-    		}
 
-            while (apps.explorer.traverseDirectory(tmp, finalName)) {
-              finalName = `${baseName} (${counter})${extension}`;
-              counter++; 
+            for (const name of pathl) {
+                if (!tmp || !tmp.folder
+                    || !Object.prototype.hasOwnProperty.call(tmp.folder, name)) {
+                    shownotice('file-write-error');
+                    return false;
+                }
+                tmp = tmp.folder[name];
             }
 
-            // 检查是否是文件夹
-            if (type === 'files') {
-                if (icon !== '') {
-                    icon_ = icon;
-                } else {
-                    icon_ = 'icon/folder.png';
-                }
-                try {
-                    if (isMounted && tmp._handle) {
-                        tmp.folder[name_] = { folder: {}, file: [], _mounted: true };
-                        tmp._handle.getDirectoryHandle(name_, { create: true }).then(h => {
-                            tmp.folder[name_]._handle = h;
-                        }).catch(() => shownotice('file-write-error'));
-                    } else {
-                        tmp.folder[name_] = { folder: {}, file: [] };
-                    }
-                } catch {
-                    tmp = { folder: {}, file: [] };
-                    tmp.folder[name_] = { folder: {}, file: [] };
-                }
-                apps.explorer.pushLocalStoragePath(files, true);
-                apps.explorer.goto(path);
-                apps.explorer.rename(path + '/' + name_);
-                return;
-            }
+            tmp.folder ??= {};
+            tmp.file ??= [];
 
-            // 处理文件
-            const name_1 = name_.split('.');
-            if (name_1.length < 2) {
-                icon_ = 'icon/files/none.png';
+            let finalName = name_;
+            let counter = 1;
+            let baseName = name_;
+            let extension = '';
+            if (type === 'file' && name_.includes('.')) {
+                const lastDotIndex = name_.lastIndexOf('.');
+                baseName = name_.substring(0, lastDotIndex);
+                extension = name_.substring(lastDotIndex);
             }
-            else if (name_1[1] === 'txt') {
-                icon_ = 'icon/files/txt.png';
-                if (command === '') {
-                    command = 'openapp(\'notepad\')';
-                }
+            let reservedNames = apps.explorer.pendingCreateNames.get(path);
+            if (!reservedNames) {
+                reservedNames = new Set();
+                apps.explorer.pendingCreateNames.set(path, reservedNames);
             }
-            else if (['png', 'jpg', 'bmp'].includes(name_1[1])) {
-                icon_ = 'icon/files/picture.png';
+            while (apps.explorer.traverseDirectory(tmp, finalName) || reservedNames.has(finalName)) {
+                finalName = `${baseName} (${counter})${extension}`;
+                counter += 1;
             }
-            else {
-                icon_ = 'icon/files/none.png';
-            }
-
-            if (icon !== '') {
-                icon_ = icon;
-            }
+            reservedNames.add(finalName);
 
             try {
-                if (isMounted && tmp._handle) {
-                    var fileEntry = { name: name_, ico: icon_, command: '', _mounted: true };
-                    tmp.file.push(fileEntry);
-                    tmp._handle.getFileHandle(name_, { create: true }).then(h => {
-                        fileEntry._handle = h;
-                    }).catch(() => shownotice('file-write-error'));
+                if (type === 'files') {
+                    const folderEntry = { folder: {}, file: [] };
+                    if (isMounted) {
+                        if (!tmp._handle) throw new Error('Mounted directory handle is missing');
+                        folderEntry._handle = await tmp._handle.getDirectoryHandle(finalName, { create: true });
+                        folderEntry._mounted = true;
+                    }
+                    tmp.folder[finalName] = folderEntry;
                 } else {
-                    tmp.file.push({ name: name_, ico: icon_, command: command });
+                    const extensionName = finalName.includes('.')
+                        ? finalName.split('.').pop().toLowerCase()
+                        : '';
+                    let icon_ = 'icon/files/none.png';
+                    if (extensionName === 'txt') {
+                        icon_ = 'icon/files/txt.png';
+                        if (command === '') command = 'openapp(\'notepad\')';
+                    } else if (['png', 'jpg', 'bmp'].includes(extensionName)) {
+                        icon_ = 'icon/files/picture.png';
+                    }
+                    if (icon !== '') icon_ = icon;
+
+                    const fileEntry = { name: finalName, ico: icon_, command: command };
+                    if (isMounted) {
+                        if (!tmp._handle) throw new Error('Mounted directory handle is missing');
+                        fileEntry._handle = await tmp._handle.getFileHandle(finalName, { create: true });
+                        fileEntry._mounted = true;
+                        fileEntry.command = '';
+                    }
+                    tmp.file.push(fileEntry);
                 }
+            } catch (error) {
+                reservedNames.delete(finalName);
+                if (reservedNames.size === 0) apps.explorer.pendingCreateNames.delete(path);
+                console.warn('Create file or folder failed:', error);
+                shownotice('file-write-error');
+                return false;
             }
-            catch {
-                tmp = { folder: {}, file: [] };
-                tmp.file = [{ name: name_, ico: icon_, command: command }];
-            }
-            apps.explorer.pushLocalStoragePath(files, true);
-            apps.explorer.goto(path);
-            apps.explorer.rename(path + '/' + name_);
+            reservedNames.delete(finalName);
+            if (reservedNames.size === 0) apps.explorer.pendingCreateNames.delete(path);
+
+            if (!isMounted) apps.explorer.pushLocalStoragePath(files, false);
+            await apps.explorer.goto(path);
+            apps.explorer.rename(path + '/' + finalName);
+            return true;
         },
         rename: (path) => {
             var pathl = path.split('/');
             var name = pathl[pathl.length - 1];
+            const isMounted = !!apps.explorer.mounts[pathl[0]];
             apps.explorer.old_name = name;
             pathl.pop();
-            let files = apps.explorer.getPath();
+            let files = isMounted ? apps.explorer.path : apps.explorer.getPath();
             let tmp = files;
             pathl.forEach(name => {
                 if (tmp !== null) {
@@ -1593,9 +1596,7 @@ let apps = {
                 }
             });
             let element = document.querySelector('#' + apps.explorer.get_file_id(name));
-            console.log(element)
-            console.log(apps.explorer.get_file_id(name))
-            console.log(name)
+            if (!element) return false;
             let img = element.querySelector('img').outerHTML;
             element.innerHTML = img;
             let input = document.createElement('input');
@@ -1614,7 +1615,8 @@ let apps = {
                     apps.explorer.del_select();
                 }
             });
-            apps.explorer.pushLocalStoragePath(files, false)
+            if (!isMounted) apps.explorer.pushLocalStoragePath(files, false);
+            return true;
         },
         get_file_id: (name) => {  //只能找到已经打开了的文件夹的元素 id
             var elements = document.getElementsByClassName('item');
@@ -1626,19 +1628,18 @@ let apps = {
             }
         },
         del: (path) => {
+            if (!path) return false;
             var pathl = path.split('/');
             var name = pathl[pathl.length - 1];
             var isMounted = !!apps.explorer.mounts[pathl[0]];
             pathl.pop();
-            let files = apps.explorer.getPath();
+            let files = isMounted ? apps.explorer.path : apps.explorer.getPath();
             let tmp = files;
-            pathl.forEach(name => {
-                if (tmp !== null) {
-                    tmp = tmp['folder'][name];
-                } else {
-                    tmp = files['folder'][name];
-                }
-            });
+            for (const parentName of pathl) {
+                if (!tmp || !tmp.folder || !tmp.folder[parentName]) return false;
+                tmp = tmp.folder[parentName];
+            }
+            if (!tmp || !tmp.file || !tmp.folder) return false;
             let tmp_file = tmp['file'];
             console.log(tmp_file)
             console.log(tmp)
@@ -1652,13 +1653,14 @@ let apps = {
             if (isMounted && tmp._handle) {
                 tmp._handle.removeEntry(name, { recursive: true }).catch(() => shownotice('file-write-error'));
             }
-            apps.explorer.goto(pathl.join('/'));
             apps.explorer.history.forEach(item => {
                 while (item.includes(path)) {
                     item.splice(item.findIndex(elt => { return elt == path; }), 1);
                 }
             });
-            apps.explorer.pushLocalStoragePath(files, true)
+            if (!isMounted) apps.explorer.pushLocalStoragePath(files, false);
+            apps.explorer.goto(pathl.join('/'));
+            return true;
         },
         pushLocalStoragePath: (path, isRefresh = false) => {
             const pathStr = JSON.stringify(path);
@@ -1667,14 +1669,42 @@ let apps = {
                 apps.explorer.goto($('#win-explorer>.path>.tit')[0].dataset.path, false);
             }
         },
+        normalizePathTree: (node, seen = new Set()) => {
+            if (!node || typeof node !== 'object' || Array.isArray(node) || seen.has(node)) {
+                return false;
+            }
+            seen.add(node);
+            if (node.folder === undefined) node.folder = {};
+            if (node.file === undefined) node.file = [];
+            if (!node.folder || typeof node.folder !== 'object' || Array.isArray(node.folder)
+                || !Array.isArray(node.file)) {
+                return false;
+            }
+            for (const file of node.file) {
+                if (!file || typeof file !== 'object' || Array.isArray(file)
+                    || typeof file.name !== 'string') {
+                    return false;
+                }
+            }
+            for (const child of Object.values(node.folder)) {
+                if (!apps.explorer.normalizePathTree(child, seen)) return false;
+            }
+            return true;
+        },
         getPath: () => {
             const filesPath = localStorage.getItem("files_path");
             if (filesPath !== null) {
-                return JSON.parse(filesPath);
-            } else {
-                apps.explorer.pushLocalStoragePath(apps.explorer.path);
-                return apps.explorer.path;
-            };
+                try {
+                    const parsed = JSON.parse(filesPath);
+                    if (apps.explorer.normalizePathTree(parsed)) return parsed;
+                } catch (error) {
+                    console.warn('Invalid explorer state; resetting it:', error);
+                }
+                localStorage.removeItem('files_path');
+            }
+            apps.explorer.normalizePathTree(apps.explorer.path);
+            apps.explorer.pushLocalStoragePath(apps.explorer.path);
+            return apps.explorer.path;
         },
         traverseDirectory(dir, name) {
             if (dir['file'] == null || dir['folder'] == null)
@@ -1696,58 +1726,6 @@ let apps = {
         // 禁止奇奇怪怪的缩进！尽量压行，不要毫无意义地全部格式化和展开！ 
         // 给我看蒙了这东西，写的是啥
         path: { folder: { 'C:': { folder: { 'Program Files': { folder: { 'WindowsApps': { folder: {}, file: [] }, 'Microsoft': { folder: {}, file: [] } }, file: [{ name: 'about.exe', ico: 'icon/about.svg', command: 'openapp(\'about\')' }, { name: 'setting.exe', ico: 'icon/setting.svg', command: 'openapp(\'setting\')' },] }, 'Program Files (x86)': { folder: { 'Microsoft': { folder: { 'Edge': { folder: { 'Application': { folder: { 'SetupMetrics': { folder: {}, file: [] } }, file: [{ name: 'msedge.exe', ico: 'icon/edge.svg', command: 'openapp(\'edge\')' }] } } } } } } }, 'Windows': { folder: { 'Boot': { folder: {}, file: [] }, 'System': { folder: {}, file: [] }, 'SysWOW64': { folder: {}, file: [] }, 'System32': { folder: {}, file: [{ name: 'calc.exe', ico: 'icon/calc.svg', command: 'openapp(\'calc\')' }, { name: 'cmd.exe', ico: 'icon/terminal.svg', command: 'openapp(\'terminal\')' }, { name: 'notepad.exe', ico: 'icon/notepad.svg', command: 'openapp(\'notepad\')' }, { name: 'taskmgr.exe', ico: 'icon/taskmgr.png', command: 'openapp(\'taskmgr\')' }, { name: 'winver.exe', ico: 'icon/about.svg', command: 'openapp(\'winver\')' },] } }, file: [{ name: 'explorer.exe', ico: 'icon/explorer.svg', command: 'apps.explorer.newtab()' }, { name: 'notepad.exe', ico: 'icon/notepad.svg', command: 'openapp(\'notepad\')' }, { name: 'py.exe', ico: 'icon/python.svg', command: 'openapp(\'python\')' },] }, '用户': { folder: { 'Administrator': { folder: { '推荐的项目': { folder: {}, file: [{ name: '瓶盖介绍.doc', ico: 'icon/files/word.png', command: 'openapp(\'word\');apps.word.edit()' }, { name: '瓶盖质量统计分析.xlsx', ico: 'icon/files/excel.png', command: '' },] }, '文档': { folder: { 'IISExpress': { folder: {}, file: [] }, 'PowerToys': { folder: {}, file: [] } }, file: [{ name: '瓶盖介绍.doc', ico: 'icon/files/word.png', command: '' }, { name: '瓶盖质量统计分析.xlsx', ico: 'icon/files/excel.png', command: '' },] }, '图片': { folder: { '本机照片': { folder: {}, file: [] }, '屏幕截图': { folder: {}, file: [] } }, file: [{ name: '瓶盖构造图.png', ico: 'icon/files/img.png', command: '' }, { name: '可口可乐瓶盖.jpg', ico: 'icon/files/img.png', command: '' },] }, 'AppData': { folder: { 'Local': { folder: { 'Microsoft': { folder: { 'Windows': { folder: { 'Fonts': {}, 'TaskManager': {}, 'Themes': {}, 'Shell': {}, '应用程序快捷方式': {}, } }, } }, 'Programs': { folder: { 'Python': { folder: { 'Python311': { folder: { 'DLLs': {}, 'Doc': {}, 'include': {}, 'Lib': { folder: { 'site-packages': {}, 'tkinter': {}, } }, 'libs': {}, 'Script': {}, 'share': {}, 'tcl': {}, 'Tools': {} }, file: [{ name: 'python.exe', ico: 'icon/python.png', command: 'openapp(\'python\')' }] } }, } } }, 'Temp': { folder: {} }, } }, 'LocalLow': { folder: { 'Microsoft': { folder: { 'Windows': {}, } }, } }, 'Roaming': { folder: { 'Microsoft': { folder: { 'Windows': { folder: { '「开始」菜单': { folder: { '程序': { folder: {} }, } }, } }, } }, } }, }, file: [] }, '音乐': { folder: { '录音机': { folder: {}, file: [] } } } } }, '公用': { folder: { '公用文档': { folder: { 'IISExpress': { folder: {}, file: [] }, 'PowerToys': { folder: {}, file: [] } }, file: [] }, '公用图片': { folder: { '本机照片': { folder: {}, file: [] }, '屏幕截图': { folder: {}, file: [] } }, file: [] }, '公用音乐': { folder: { '录音机': { folder: {}, file: [] } } } } } } } }, file: [] }, 'D:': { folder: { 'Microsoft': { folder: {}, file: [] } }, file: [{ name: '瓶盖结构说明.docx', ico: 'icon/files/word.png', command: '' }, { name: '可口可乐瓶盖历史.pptx', ico: 'icon/files/ppt.png', command: '' },] } } },
-        history: [],
-        historypt: [],
-        initHistory: (tab) => {
-            apps.explorer.history[tab] = [];
-            apps.explorer.historypt[tab] = -1;
-        },
-        pushHistory: (tab, u) => {
-            apps.explorer.history[tab].push(u);
-            apps.explorer.historypt[tab]++;
-        },
-        topHistory: (tab) => {
-            return apps.explorer.history[tab][apps.explorer.historypt[tab]];
-        },
-        popHistory: (tab) => {
-            apps.explorer.historypt[tab]--;
-            return apps.explorer.history[tab][apps.explorer.historypt[tab]];
-        },
-        incHistory: (tab) => {
-            apps.explorer.historypt[tab]++;
-            return apps.explorer.history[tab][apps.explorer.historypt[tab]];
-        },
-        delHistory: (tab) => {
-            apps.explorer.history[tab].splice(apps.explorer.historypt[tab] + 1, apps.explorer.history[tab].length - 1 - apps.explorer.historypt[tab]);
-        },
-        historyIsEmpty: (tab) => {
-            return apps.explorer.historypt[tab] <= 0;
-        },
-        historyIsFull: (tab) => {
-            return apps.explorer.historypt[tab] >= apps.explorer.history[tab].length - 1;
-        },
-        checkHistory: (tab) => {
-            if (apps.explorer.historyIsEmpty(tab)) {
-                $('#win-explorer>.path>.back').addClass('disabled');
-            }
-            else if (!apps.explorer.historyIsEmpty(tab)) {
-                $('#win-explorer>.path>.back').removeClass('disabled');
-            }
-            if (apps.explorer.historyIsFull(tab)) {
-                $('#win-explorer>.path>.front').addClass('disabled');
-            }
-            else if (!apps.explorer.historyIsFull(tab)) {
-                $('#win-explorer>.path>.front').removeClass('disabled');
-            }
-        },
-        back: (tab) => {
-            apps.explorer.goto(apps.explorer.popHistory(tab), false);
-            apps.explorer.checkHistory(tab);
-        },
-        front: (tab) => {
-            apps.explorer.goto(apps.explorer.incHistory(tab), false);
-            apps.explorer.checkHistory(tab);
-        }
     },
     calc: {
         init: () => {
@@ -1879,7 +1857,7 @@ let apps = {
                     $('#win-notepad>.text-box')[0].innerText = apps.notepad._pendingContent;
                     apps.notepad._pendingContent = null;
                 } else {
-                    $('#win-notepad>.text-box').val('');
+                    $('#win-notepad>.text-box')[0].innerText = '';
                     apps.notepad._mountedFileHandle = null;
                 }
                 $('#win-notepad>.text-box').removeClass('down');
@@ -2336,14 +2314,64 @@ let apps = {
         codeCache: '',
         prompt: '>>> ',
         indent: false,
+        loadPromise: null,
+        loadError: '',
+        showLoadError: () => {
+            const output = $('#win-python>pre.text-cmd')[0];
+            if (!output || !apps.python.loadError
+                || output.querySelector('.python-load-error')) return;
+            const message = document.createElement('div');
+            message.className = 'python-load-error';
+            message.textContent = apps.python.loadError;
+            output.appendChild(message);
+        },
         load: () => {
-            (async function () {
-                apps.python.pyodide = await loadPyodide();
-                apps.python.pyodide.runPython(`
+            if (apps.python.loadPromise) return apps.python.loadPromise;
+            apps.python.loadError = '';
+            apps.python.loadPromise = (async function () {
+                try {
+                    // The shell now starts before optional CDN scripts finish.
+                    // Give the async Pyodide loader time to arrive when Python is
+                    // opened immediately, while still ending in a visible error
+                    // instead of an unhandled rejection when the CDN is offline.
+                    const deadline = Date.now() + 15000;
+                    while (typeof loadPyodide != 'function' && Date.now() < deadline) {
+                        await new Promise(resolve => setTimeout(resolve, 100));
+                    }
+                    if (typeof loadPyodide != 'function') {
+                        throw new Error('Pyodide loader is unavailable');
+                    }
+                    let runtimeTimeout;
+                    try {
+                        apps.python.pyodide = await Promise.race([
+                            loadPyodide(),
+                            new Promise((_, reject) => {
+                                runtimeTimeout = setTimeout(
+                                    () => reject(new Error('Pyodide runtime load timed out')),
+                                    30000
+                                );
+                            })
+                        ]);
+                    }
+                    finally {
+                        clearTimeout(runtimeTimeout);
+                    }
+                    apps.python.pyodide.runPython(`
 import sys
 import io
 `);
+                }
+                catch (error) {
+                    apps.python.loaded = false;
+                    apps.python.loadError = 'Python 运行环境加载失败 / Python runtime unavailable.';
+                    apps.python.showLoadError();
+                    console.warn('Unable to load Python runtime:', error);
+                }
+                finally {
+                    apps.python.loadPromise = null;
+                }
             })();
+            return apps.python.loadPromise;
         },
         init: () => {
             $('#win-python').html(`
@@ -2353,6 +2381,7 @@ Type "help", "copyright", "credits" or "license" for more information.
         </pre>
         <pre class="text-cmd"></pre>
         <pre style="display: flex;"><span class='prompt'>>>> </span><input type="text" onkeyup="if (event.keyCode == 13) { apps.python.run(); }"></pre>`);
+            apps.python.showLoadError();
         },
         run: () => {
             if (apps.python.pyodide) {
@@ -2538,6 +2567,7 @@ Micrȯsoft Windows [版本 12.0.39035.7324]
     edge: {
         init: () => {
             $('#win-edge>iframe').remove();
+            apps.edge.titleRequests.clear();
             apps.edge.tabs = [];
             apps.edge.len = 0;
             apps.edge.newtab();
@@ -2545,8 +2575,7 @@ Micrȯsoft Windows [版本 12.0.39035.7324]
         tabs: [],
         now: null,
         len: 0,
-        history: [],
-        historypt: [],
+        titleRequests: new Map(),
         reloadElt: '<loading class="reloading"><svg viewBox="0 0 16 16"><circle cx="8px" cy="8px" r="5px"></circle><circle cx="8px" cy="8px" r="5px"></circle></svg></loading>',
         max: false,
         fuls: false,
@@ -2651,102 +2680,60 @@ Micrȯsoft Windows [版本 12.0.39035.7324]
                 }
             }
         },
-        getTitle: async (url, np) => {
-            const response = await fetch(server + pages['get-title'] + `?url=${url}`);
-            if (response.ok == true) {
+        getTitle: async (url, tabId) => {
+            const requestToken = {};
+            apps.edge.titleRequests.set(tabId, requestToken);
+            try {
+                const response = await fetch(server + pages['get-title'] + `?url=${encodeURIComponent(url)}`);
+                if (!response.ok) return;
                 const text = await response.text();
-                apps.edge.tabs[np][1] = text;
+                if (apps.edge.titleRequests.get(tabId) !== requestToken) return;
+                const tabIndex = apps.edge.tabs.findIndex(tab => tab[0] === tabId);
+                if (tabIndex < 0) return;
+                apps.edge.tabs[tabIndex][1] = text;
                 m_tab.settabs('edge');
-                m_tab.tab('edge', np);
+                const currentTab = apps.edge.tabs[apps.edge.now];
+                if (currentTab) {
+                    $('.window.edge>.titbar>.tabs>.tab.' + currentTab[0]).addClass('show');
+                }
+            } catch (error) {
+                console.warn('Unable to load page title:', error);
             }
         },
         goto: (u, clear = true) => {
+            const currentTab = apps.edge.tabs[apps.edge.now];
+            if (!currentTab) return;
+            const requestedValue = String(u == null ? '' : u).trim();
+            const resolvedInput = resolveEdgeAddressInput(requestedValue);
+            if (resolvedInput.type === 'empty') return;
+            const tabId = currentTab[0];
+            // Invalidate any slower title request from the previous navigation.
+            apps.edge.titleRequests.set(tabId, {});
             if (wifiStatus == false) {
-                m_tab.rename('edge', u);
-                $('#win-edge>iframe.show').attr('src', '.data/disconnected' + (isDark ? '_dark' : '') + '.html');
-                $('#win-edge>.tool>input.url').val(u);
+                m_tab.rename('edge', requestedValue);
+                $('#win-edge>iframe.' + tabId).attr('src', 'data/disconnected' + (isDark ? '_dark' : '') + '.html');
+                $('#win-edge>.tool>input.url').val(requestedValue);
             }
             else {
-                // 6
-                if (!/^(((ht|f)tps?):\/\/)?([^!@#$%^&*?.\s-]([^!@#$%^&*?.\s]{0,63}[^!@#$%^&*?.\s])?\.)+[a-z]{2,6}\/?/.test(u) && !u.match(/^mainpage.html$/)) {
-                    // 启用必应搜索
-                    $('#win-edge>iframe.show').attr('src', 'https://bing.com/search?q=' + encodeURIComponent(u));
-                    m_tab.rename('edge', u);
-                }
-                // 检测网址是否带有 http 头
-                else if (!/^https?:\/\//.test(u) && !u.match(/^mainpage.html$/)) {
-                    $('#win-edge>iframe.show').attr('src', 'http://' + u);
-                    m_tab.rename('edge', 'http://' + u);
-                }
-                else {
-                    $('#win-edge>iframe.show').attr('src', u);
-                    m_tab.rename('edge', u.match(/^mainpage.html$/) ? '新建标签页' : u);
-                }
+                $('#win-edge>iframe.show').attr('src', resolvedInput.url);
+                m_tab.rename('edge', resolvedInput.type === 'search'
+                    ? requestedValue
+                    : (resolvedInput.url === 'mainpage.html' ? '新建标签页' : resolvedInput.url));
                 if (!$('.window.edge>.titbar>.tabs>.tab.' + apps.edge.tabs[apps.edge.now][0] + '>.reloading')[0]) {
                     $('.window.edge>.titbar>.tabs>.tab.' + apps.edge.tabs[apps.edge.now][0])[0].insertAdjacentHTML('afterbegin', apps.edge.reloadElt);
                 }
                 $('#win-edge>iframe.' + apps.edge.tabs[apps.edge.now][0])[0].onload = function () {
                     $('.window.edge>.titbar>.tabs>.tab.' + this.classList[0])[0].removeChild($('.window.edge>.titbar>.tabs>.tab.' + this.classList[0] + '>.reloading')[0]);
                 };
-                apps.edge.getTitle($('#win-edge>iframe.show').attr('src'), apps.edge.now);
+                apps.edge.getTitle($('#win-edge>iframe.' + tabId).attr('src'), tabId);
                 if (clear) {
-                    apps.edge.delHistory(apps.edge.tabs[apps.edge.now][0]);
-                    apps.edge.pushHistory(apps.edge.tabs[apps.edge.now][0], $('#win-edge>iframe.show').attr('src'));
+                    apps.edge.delHistory(tabId);
+                    apps.edge.pushHistory(tabId, $('#win-edge>iframe.' + tabId).attr('src'));
                 }
-                apps.edge.checkHistory(apps.edge.tabs[apps.edge.now][0]);
+                apps.edge.checkHistory(tabId);
             }
 
         },
-        initHistory: (tab) => {
-            apps.edge.history[tab] = [];
-            apps.edge.historypt[tab] = -1;
-        },
-        pushHistory: (tab, u) => {
-            apps.edge.history[tab].push(u);
-            apps.edge.historypt[tab]++;
-        },
-        topHistory: (tab) => {
-            return apps.edge.history[tab][apps.edge.historypt[tab]];
-        },
-        popHistory: (tab) => {
-            apps.edge.historypt[tab]--;
-            return apps.edge.history[tab][apps.edge.historypt[tab]];
-        },
-        incHistory: (tab) => {
-            apps.edge.historypt[tab]++;
-            return apps.edge.history[tab][apps.edge.historypt[tab]];
-        },
-        delHistory: (tab) => {
-            apps.edge.history[tab].splice(apps.edge.historypt[tab] + 1, apps.edge.history[tab].length - 1 - apps.edge.historypt[tab]);
-        },
-        historyIsEmpty: (tab) => {
-            return apps.edge.historypt[tab] <= 0;
-        },
-        historyIsFull: (tab) => {
-            return apps.edge.historypt[tab] >= apps.edge.history[tab].length - 1;
-        },
-        checkHistory: (tab) => {
-            if (apps.edge.historyIsEmpty(tab)) {
-                $('#win-edge>.tool>.back').addClass('disabled');
-            }
-            else if (!apps.edge.historyIsEmpty(tab)) {
-                $('#win-edge>.tool>.back').removeClass('disabled');
-            }
-            if (apps.edge.historyIsFull(tab)) {
-                $('#win-edge>.tool>.front').addClass('disabled');
-            }
-            else if (!apps.edge.historyIsFull(tab)) {
-                $('#win-edge>.tool>.front').removeClass('disabled');
-            }
-        },
-        back: (tab) => {
-            apps.edge.goto(apps.edge.popHistory(tab), false);
-            apps.edge.checkHistory(tab);
-        },
-        front: (tab) => {
-            apps.edge.goto(apps.edge.incHistory(tab), false);
-            apps.edge.checkHistory(tab);
-        }
     },
     winver: {
         init: () => {
@@ -2790,3 +2777,8 @@ Micrȯsoft Windows [版本 12.0.39035.7324]
         },
     }
 };
+
+// 标签页历史栈：explorer 与 edge 原本各抄了一份完全相同的实现
+// （归一化 apps.explorer↔apps.edge 后逐行 diff，51 行里只有 4 行不同，全是按钮选择器）。
+Object.assign(apps.explorer, createHistoryStack('explorer', '#win-explorer>.path>.back', '#win-explorer>.path>.front'));
+Object.assign(apps.edge, createHistoryStack('edge', '#win-edge>.tool>.back', '#win-edge>.tool>.front'));

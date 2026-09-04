@@ -29,8 +29,8 @@
 </p>
 <details align="center">
   <summary>星史</summary>
-  <a href="https://star-history.com/#win12-online/win12&Date" style="text-decoration:none">
-<img src="https://api.star-history.com/svg?repos=win12-online/win12&type=Date" alt="Star History Chart">
+  <a href="https://star-history.dera.page/#win12-online/win12&Date" style="text-decoration:none">
+<img src="https://star-history.dera.page/svg?repos=win12-online/win12&type=Date" alt="Star History Chart">
   </a>
 </details>
 

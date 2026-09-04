@@ -38,7 +38,7 @@
 #win-setting>.menu>.user {
     display: flex;
     padding: 10px 10px;
-    border-radius: 10px;
+    border-radius: var(--radius-2xl);
     margin-bottom: 10px;
     /* transition: 200ms; */
     align-items: center;
@@ -46,7 +46,7 @@
 
 :root.corner_squ #win-setting>.menu>.user {
     corner-shape: squircle;
-    border-radius: 25px;
+    border-radius: var(--radius-pill);
 }
 
 #win-setting>.menu>.user:hover {
@@ -78,7 +78,7 @@
     width: 60px;
     min-width: 60px;
     height: 60px;
-    border-radius: 50%;
+    border-radius: var(--radius-circle);
     padding: 11px;
 }
 
@@ -89,7 +89,7 @@
     height: calc(100% - 138px);
     overflow-y: auto;
     padding-right: 10px;
-    border-radius: 6px;
+    border-radius: var(--radius-md);
 }
 
 #win-setting>.menu>list>a {
@@ -97,7 +97,7 @@
     font-size: 15px;
     display: flex;
     margin-bottom: 4px;
-    border-radius: 6px;
+    border-radius: var(--radius-md);
 }
 
 #win-setting>.menu>list>a:not(.enable) {
@@ -164,7 +164,7 @@
 
 .setting-card {
     background: var(--card);
-    border-radius: 10px;
+    border-radius: var(--radius-2xl);
 
     margin-bottom: 10px;
     display: flex;
@@ -183,7 +183,7 @@
     flex-direction: column;
     padding: 0 5px 60px 5px;
     margin-bottom: 0;
-    border-radius: 10px;
+    border-radius: var(--radius-2xl);
     width: 100%;
 }
 
@@ -192,7 +192,7 @@
     color: var(--text);
     background: var(--card);
     margin-bottom: 7px;
-    border-radius: 8px;
+    border-radius: var(--radius-xl);
     box-shadow: 0 1px 2px 0px var(--s3d);
     text-decoration: none;
     display: flex;
@@ -309,7 +309,7 @@
 .checkbox {
     width: 40px;
     height: 20px;
-    border-radius: 10px;
+    border-radius: var(--radius-2xl);
     background: linear-gradient(90deg, var(--hover-b), var(--hover-b));
     transition: 200ms all;
 }
@@ -319,7 +319,7 @@
     display: block;
     height: 16px;
     width: 16px;
-    border-radius: 8px;
+    border-radius: var(--radius-xl);
     background: #fff;
     position: relative;
     top: 2px;
@@ -363,7 +363,7 @@
 div.app-color .color {
     width: 30px;
     height: 30px;
-    border-radius: 8px;
+    border-radius: var(--radius-xl);
     margin: 3px 0 0 5px;
     outline: none;
     border: none;
@@ -438,7 +438,7 @@ div.app-color input[type=color] {
 #set-theme>.a {
     width: 100px;
     height: 100px;
-    border-radius: 10px;
+    border-radius: var(--radius-2xl);
 }
 
 #set-theme>.a {
@@ -514,7 +514,7 @@ div.app-color input[type=color] {
 	    width: 60px;
 	    min-width: 60px;
 	    height: 60px;
-	    border-radius: 50%;
+	    border-radius: var(--radius-circle);
 	    padding: 11px;
 	    margin-right: 15px;
 	    margin-bottom: 15px;

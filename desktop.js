@@ -14,113 +14,6 @@ console.log('%cWindows 12 网页版 (GitHub: win12-online/win12)', 'background-i
 
 
 
-function loadlang(code) {
-    $.i18n.properties({
-        name: 'lang',
-        path: 'lang/lang/', // 目录
-        language: code,
-        mode: 'map',
-        callback: function () {
-            $('[data-i18n]').each(function () {
-                // 标签的内容
-                // console.log($(this).data("i18n"));
-                // console.log($.i18n.prop($(this).data("i18n")));
-                // if($.i18n.prop($(this).data("i18n"))!=$(this).html())console.log($(this).data("i18n"),$(this).html());
-                $(this).html($.i18n.prop($(this).data("i18n")));
-            });
-            $('[data-i18n-attr]').each(function () {
-                // 标签的属性
-
-                // if($.i18n.prop($(this).data("i18n-key"))!=$(this).attr($(this).data("i18n-attr")))console.log($(this).data("i18n-key"),$(this).attr($(this).data("i18n-attr")));
-                $(this).attr($(this).data("i18n-attr"), $.i18n.prop($(this).data("i18n-key")));
-            });
-            updateAboutAppEntrypoints();
-        }
-    });
-}
-
-let nl = 'zh-TW';
-let langc = {
-    'zh-CN': 'zh-CN',
-    'zh-cn': 'zh-CN',
-    'zh-hans': 'zh-CN',
-    'zh-Hans': 'zh-CN',
-    'zh-TW': 'zh-TW',
-    'zh-tw': 'zh-TW',
-    'zh-hant': 'zh-TW',
-    'zh-Hant': 'zh-TW',
-    'zh-HK': 'zh-TW',
-    'zh-hk': 'zh-TW',
-    'zh': 'zh-CN',
-
-    'en': 'en',
-    'en-US': 'en',
-    'en-us': 'en',
-    'en-GB': 'en',
-    'en-gb': 'en'
-}
-
-let langcode, lang = (txt, id) => {
-    return $.i18n.prop(id);
-};
-
-if (localStorage.getItem('lang') != null) {
-    if (localStorage.getItem('lang') == 'hans' || localStorage.getItem('lang') == 'zh_cn' || localStorage.getItem('lang') == 'zh-cn') {
-        localStorage.setItem('lang', 'zh-CN');
-    }
-} else {
-    if (navigator.language in langc)
-        localStorage.setItem('lang', langc[navigator.language]);
-    else
-        localStorage.setItem('lang', 'en');
-}
-langcode = localStorage.getItem('lang');
-
-
-if (document.querySelectorAll('#loginback>.langselect>.' + langcode).length != 0) {
-    $('#loginback>.langselect>.' + langcode).addClass('selected')
-} else {
-    $('#loginback>.langselect>.en').addClass('selected')
-}
-
-
-if (langcode != 'zh-CN')
-    loadlang(langcode);
-
-if (langcode == 'zh-CN') {
-    lang = (txt, id) => {
-        // if(txt!=$.i18n.prop(id))console.log(id,txt);
-        return txt;
-    };
-}
-console.log('?')
-
-
-// 函数 lang(txt,id)
-/// langcode==zh_cn 下返回 txt,
-/// 否则返回语言 properties 文件中键 id 对应的值。
-/// 用例：lang('设置','setting.name')
-// 
-// 为开发方便，故不将简体中文纳入语言考虑
-
-function isTauriApp() {
-    return !!((window.win12Native && window.win12Native.isTauri && window.win12Native.isTauri()) || (window.__TAURI__ && window.__TAURI__.core));
-}
-
-function getAboutAppTitle() {
-    if (!isTauriApp()) return lang('关于 Win12 网页版', 'about.name');
-    if (langcode == 'en') return 'About Win12-desktop';
-    if (langcode == 'zh-TW') return '關於 Win12-desktop';
-    return '关于 Win12-desktop';
-}
-
-function updateAboutAppEntrypoints() {
-    $('.about-app-title').text(getAboutAppTitle());
-}
-
-updateAboutAppEntrypoints();
-
-
 // 后端服务器
 const server = 'http://win12server.freehk.svipss.top/';
 const pages = {
@@ -209,8 +102,54 @@ function stop(e) {
 }
 
 let loginPasswordHasPassword = false;
+let loginPasswordStatus = 'pending';
+let loginFinishing = false;
+let startupNoticeShown = false;
+const LOGIN_BRIDGE_TIMEOUT_MS = 8000;
+
+function showStartupNoticeOnce() {
+    if (startupNoticeShown) return;
+    startupNoticeShown = true;
+    shownotice('about');
+}
+
+async function withLoginBridgeTimeout(promise, message) {
+    let timeoutId;
+    try {
+        return await Promise.race([
+            Promise.resolve(promise),
+            new Promise((resolve, reject) => {
+                timeoutId = setTimeout(() => reject(new Error(message)), LOGIN_BRIDGE_TIMEOUT_MS);
+            })
+        ]);
+    }
+    finally {
+        clearTimeout(timeoutId);
+    }
+}
+
+function isNativeLoginEnvironment() {
+    try {
+        if (window.win12Native && typeof window.win12Native.isTauri == 'function'
+            && window.win12Native.isTauri()) return true;
+    }
+    catch (e) { }
+    return !!(window.__TAURI__ && window.__TAURI__.core);
+}
+
+function requireLoginBridge(method) {
+    if (!window.win12Native || typeof window.win12Native[method] != 'function') {
+        throw new Error('本地密码服务尚未就绪');
+    }
+    return window.win12Native;
+}
 
 function win12FinishLogin() {
+    if (loginFinishing) return;
+    loginFinishing = true;
+    setLoginError('');
+    $('#login').prop('disabled', true);
+    $('#login-password').prop('disabled', true);
     $('#login').css('opacity', '0');
     $('#login-password').css('opacity', '0');
     $('#login-error').css('opacity', '0');
@@ -222,6 +161,7 @@ function win12FinishLogin() {
         }, 500);
         setTimeout(() => {
             $('#loginback').css('display', 'none');
+            showStartupNoticeOnce();
         }, 2000);
         if (use_music) {
             document.querySelector('audio#startup-music').play();
@@ -234,13 +174,26 @@ function setLoginError(text) {
 }
 
 async function initLoginPassword() {
-    if (window.win12Native && window.win12Native.isTauri() && (new URL(location.href)).searchParams.get('skip_login') !== '1') {
+    const isNative = isNativeLoginEnvironment();
+    if (isNative && (new URL(location.href)).searchParams.get('skip_login') !== '1') {
+        loginPasswordStatus = 'pending';
+        $('#loginback').addClass('tauri-password');
+        $('#login-password').prop('disabled', true);
+        setLoginError('正在读取本地密码状态');
         try {
-            const status = await window.win12Native.getLoginPasswordStatus();
-            loginPasswordHasPassword = !!(status && status.has_password);
+            const status = await withLoginBridgeTimeout(
+                requireLoginBridge('getLoginPasswordStatus').getLoginPasswordStatus(),
+                '读取本地密码状态超时'
+            );
+            if (!status || typeof status.has_password != 'boolean') {
+                throw new Error('本地密码状态响应无效');
+            }
+            loginPasswordHasPassword = status.has_password;
+            loginPasswordStatus = loginPasswordHasPassword ? 'has-password' : 'no-password';
             if (loginPasswordHasPassword) {
                 $('#loginback').addClass('tauri-password');
-                $('#login-password').attr('placeholder', '密码');
+                $('#login-password').prop('disabled', false).attr('placeholder', '密码');
+                setLoginError('');
                 $('#login-password').focus();
             }
             else {
@@ -248,21 +201,37 @@ async function initLoginPassword() {
             }
         }
         catch (e) {
+            loginPasswordStatus = 'error';
             setLoginError('无法读取本地密码状态');
         }
+        finally {
+            $('#login').css('pointer-events', 'auto');
+        }
+    }
+    else {
+        loginPasswordStatus = 'not-required';
     }
 }
 
 async function win12LoginSubmit() {
-    if (!(window.win12Native && window.win12Native.isTauri())) {
+    if (!isNativeLoginEnvironment()) {
         win12FinishLogin();
         return;
     }
 
-    if (!loginPasswordHasPassword) {
+    if (loginPasswordStatus == 'pending') {
+        setLoginError('正在读取本地密码状态');
+        return;
+    }
+    if (loginPasswordStatus == 'error') {
+        await initLoginPassword();
+        if (loginPasswordStatus == 'error' || loginPasswordStatus == 'pending') return;
+    }
+    if (loginPasswordStatus == 'no-password' || loginPasswordStatus == 'not-required') {
         win12FinishLogin();
         return;
     }
+    if (loginPasswordStatus != 'has-password') return;
 
     const password = $('#login-password').val();
     if (!password) {
@@ -275,8 +244,11 @@ async function win12LoginSubmit() {
     setLoginError('正在验证');
 
     try {
-        const result = await window.win12Native.verifyLoginPassword(password);
-        if (result && result.ok) {
+        const result = await withLoginBridgeTimeout(
+            requireLoginBridge('verifyLoginPassword').verifyLoginPassword(password),
+            '验证密码超时'
+        );
+        if (result && !Array.isArray(result) && typeof result == 'object' && result.ok === true) {
             $('#login-password').val('');
             win12FinishLogin();
             return;
@@ -293,7 +265,7 @@ async function win12LoginSubmit() {
 }
 
 async function win12RefreshPasswordSettingStatus() {
-    if (!(window.win12Native && window.win12Native.isTauri())) {
+    if (!isNativeLoginEnvironment()) {
         $('#setting-password-status').text('仅 Tauri App 可用');
         $('#setting-password-current').hide();
         $('#setting-password-new').prop('disabled', true);
@@ -302,8 +274,15 @@ async function win12RefreshPasswordSettingStatus() {
     }
 
     try {
-        const status = await window.win12Native.getLoginPasswordStatus();
-        loginPasswordHasPassword = !!(status && status.has_password);
+        const status = await withLoginBridgeTimeout(
+            requireLoginBridge('getLoginPasswordStatus').getLoginPasswordStatus(),
+            '读取本地密码状态超时'
+        );
+        if (!status || typeof status.has_password != 'boolean') {
+            throw new Error('本地密码状态响应无效');
+        }
+        loginPasswordHasPassword = status.has_password;
+        loginPasswordStatus = loginPasswordHasPassword ? 'has-password' : 'no-password';
         $('#setting-password-status').text(loginPasswordHasPassword ? '已设置密码' : '未设置密码');
         $('#setting-password-current')[loginPasswordHasPassword ? 'show' : 'hide']();
         $('#setting-password-current').val('');
@@ -312,13 +291,21 @@ async function win12RefreshPasswordSettingStatus() {
         $('#setting-password-submit').removeClass('disabled');
     }
     catch (e) {
+        loginPasswordStatus = 'error';
         $('#setting-password-status').text(String(e));
+        $('#setting-password-new').prop('disabled', true);
+        $('#setting-password-submit').addClass('disabled');
     }
 }
 
 async function win12SetLoginPassword() {
-    if (!(window.win12Native && window.win12Native.isTauri())) {
+    if (!isNativeLoginEnvironment()) {
         $('#setting-password-status').text('仅 Tauri App 可用');
+        return;
+    }
+    if (loginPasswordStatus != 'has-password' && loginPasswordStatus != 'no-password') {
+        $('#setting-password-status').text('请先重新读取密码状态');
+        await win12RefreshPasswordSettingStatus();
         return;
     }
 
@@ -340,7 +327,13 @@ async function win12SetLoginPassword() {
     $('#setting-password-status').text(clearingPassword ? '正在清除' : '正在保存');
 
     try {
-        await window.win12Native.setLoginPassword(loginPasswordHasPassword ? currentPassword : null, newPassword);
+        await withLoginBridgeTimeout(
+            requireLoginBridge('setLoginPassword').setLoginPassword(
+                loginPasswordHasPassword ? currentPassword : null,
+                newPassword
+            ),
+            '保存本地密码超时'
+        );
         await win12RefreshPasswordSettingStatus();
         $('#setting-password-status').text(clearingPassword ? '密码已清空' : '密码已保存');
     }
@@ -359,7 +352,9 @@ $('input,textarea,*[contenteditable=true]').on('contextmenu', (e) => {
 // 给桌面上的图标加右键菜单
 function addMenu() {
     var parentDiv = $('#desktop')[0];
-    var childDivs = parentDiv.$$('#div');
+    // 必须是直接子 div：与 CSS 的 #desktop>div 一致，且用户自建项本身就是顶层 <div class="b">。
+    // 原写法是 '#div'（id 选择器），永远匹配 0 个元素，整个循环从不执行。
+    var childDivs = parentDiv.$$(':scope>div');
 
     for (var i = 0; i < childDivs.length; i++) {
         if (i <= 4) {//win12内置的5个图标不添加
@@ -372,12 +367,9 @@ function addMenu() {
                 return showcm(event, 'desktop.icon', [div.getAttribute('appname'), div.getAttribute('iconIndex')]);
             }
             return false;
-        }, useCapture = true);
+        }, true);
     }
 }
-var run_cmd = '';
-const nomax = { 'calc': 0, 'notepad-fonts': 0, 'camera-notice': 0, 'winver': 0, 'run': 0, 'wsa': 0 };
-const nomin = { 'notepad-fonts': 0, 'camera-notice': 0, 'run': 0 };
 var topmost = [];
 var sys_setting = [1, 1, 1, 0, 1, 1, 1];
 var use_music = true;
@@ -395,280 +387,14 @@ var use_mic_voice = true;
     形参 arg 为 showcm() 方法第三个位置的用以传参的参数内容，
     返回内容或为 'null' 表示跳过此项，或参考条目 2 的格式
 */
-const cms = {
-    'save-bar': [
-        arg => {
-            return ['<i class="bi bi-window-x"></i> 移除', `removeEdgeSaveUrl('${arg}')`];
-        }
-    ],
-    'titbar': [
-        arg => {
-            if (arg in nomax) {
-                return 'null';
-            }
-            if ($('.window.' + arg).hasClass('max')) {
-                return ['<i class="bi bi-window-stack"></i> ' + lang('还原', 'window.restore'), `maxwin('${arg}')`];
-            }
-            else {
-                return ['<i class="bi bi-window-fullscreen"></i> ' + lang('最大化', 'window.max'), `maxwin('${arg}')`];
-            }
-        },
-        arg => {
-            if (arg in nomin) {
-                return 'null';
-            }
-            else {
-                return ['<i class="bi bi-window-dash"></i> ' + lang('最小化', 'window.min'), `minwin('${arg}')`];
-            }
-        },
-        arg => {
-            if (arg in nomin) {
-                return ['<i class="bi bi-window-x"></i> ' + lang('关闭', 'close'), `hidewin('${arg}', 'configs')`];
-            }
-            else {
-                return ['<i class="bi bi-window-x"></i> ' + lang('关闭', 'close'), `hidewin('${arg}')`];
-            }
-        },
-    ],
-    'taskbar': [
-        arg => {
-            return ['<i class="bi bi-window-x"></i> ' + lang('关闭', 'close'), `hidewin('${arg}')`];
-        }
-    ],
-    'desktop': [
-        [`<i class="bi bi-arrow-clockwise"></i> ${lang('刷新', 'refresh')} <info>F5</info>`, '$(\'#desktop\').css(\'opacity\',\'0\');setTimeout(()=>{$(\'#desktop\').css(\'opacity\',\'1\');},100);setIcon();'],
-        ['<i class="bi bi-circle-square"></i> ' + lang('切换主题', 'desktop.tgltheme'), 'toggletheme()'],
-        `<a onmousedown="window.open(\'https://github.com/win12-online/win12\',\'_blank\');" win12_title="https://github.com/win12-online/win12" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)"><i class="bi bi-github"></i> ${lang('在 Github 中查看此项目', 'desktop.vogithub')}</a>`,
-        arg => {
-            if (edit_mode) {
-                return ['<i class="bi bi-pencil"></i> ' + lang('退出编辑模式', 'desktop.exitedit'), 'editMode();'];
-            }
-            else if (!edit_mode) {
-                return ['<i class="bi bi-pencil"></i> ' + lang('进入编辑模式', 'desktop.enteredit'), 'editMode();'];
-            }
-        },
-        ['<i class="bi bi-info-circle"></i> ' + getAboutAppTitle(), 'openapp(\'about\');'],
-        ['<i class="bi bi-brush"></i> ' + lang('个性化', 'psnl'), 'openapp(\'setting\');$(\'#win-setting > div.menu > list > a.enable.appearance\')[0].click()']
-    ],
-    'desktop.icon': [
-        arg => {
-            return ['<i class="bi bi-folder2-open"></i> ' + lang('打开', 'open'), 'openapp(`' + arg[0] + '`)'];
-        },
-        arg => {
-            if (arg[1] >= 0) {
-                return ['<i class="bi bi-trash3"></i> ' + lang('删除', 'del'), 'desktopItem.splice(' + (arg[1]) + ', 1);saveDesktop();setIcon();addMenu();'];
-            } else {
-                return 'null';
-            }
-        }
-    ],
-    'winx': [
-        arg => {
-            if ($('#start-menu').hasClass('show')) {
-                return ['<i class="bi bi-box-arrow-in-down"></i> 关闭开始菜单', 'hide_startmenu()'];
-            }
-            else {
-                return ['<i class="bi bi-box-arrow-in-up"></i> 打开开始菜单', `$('#start-btn').addClass('show');
-                if($('#search-win').hasClass('show')){$('#search-btn').removeClass('show');
-                $('#search-win').removeClass('show');setTimeout(() => {$('#search-win').removeClass('show-begin');
-                }, 200);}$('#start-menu').addClass('show-begin');setTimeout(() => {$('#start-menu').addClass('show');
-                }, 0);`];
-            }
-        },
-        '<hr>',
-        ['<i class="bi bi-gear"></i> ' + lang('设置', 'setting.name'), 'openapp(\'setting\')'],
-        ['<i class="bi bi-terminal"></i> ' + lang('运行', 'run.name'), 'openapp(\'run\')'],
-        ['<i class="bi bi-folder2-open"></i> ' + lang('文件资源管理器', 'explorer.name'), 'openapp(\'explorer\')'],
-        ['<i class="bi bi-search"></i> 搜索', `$('#search-btn').addClass('show');hide_startmenu();
-        $('#search-win').addClass('show-begin');setTimeout(() => {$('#search-win').addClass('show');
-        $('#search-input').focus();},200);`],
-        '<hr>',
-        ['<i class="bi bi-power"></i> 关机', 'window.location=\'shutdown.html\''],
-        ['<i class="bi bi-arrow-counterclockwise"></i> 重启', 'window.location=\'reload.html\''],
-    ],
-    'smapp': [
-        arg => {
-            return ['<i class="bi bi-window"></i> ' + lang('打开', 'open'), `openapp('${arg[0]}');hide_startmenu();`];
-        },
-        arg => {
-            return ['<i class="bi bi-link-45deg"></i> 在桌面创建链接', 'var s=`<div class=\'b\' ondblclick=openapp(\'' + arg[0] + '\')  ontouchstart=openapp(\'' + arg[0] + '\') appname=\'' + arg[0] + '\'><img src=\'icon/' + geticon(arg[0]) + '\'><p>' + arg[1] + '</p></div>`;$(\'#desktop\').append(s);desktopItem[desktopItem.length]=s;addMenu();saveDesktop();'];
-        },
-        arg => {
-            return ['<i class="bi bi-x"></i> 取消固定', `$('#startmenu-r>.pinned>.apps>.sm-app.${arg[0]}').remove()`];
-        }
-    ],
-    'smlapp': [
-        arg => {
-            return ['<i class="bi bi-window"></i> ' + lang('打开', 'open'), `openapp('${arg[0]}');hide_startmenu();`];
-        },
-        arg => {
-            return ['<i class="bi bi-link-45deg"></i> 在桌面创建链接', 'var s=`<div class=\'b\' ondblclick=openapp(\'' + arg[0] + '\')  ontouchstart=openapp(\'' + arg[0] + '\') appname=\'' + arg[0] + '\'><img src=\'icon/' + geticon(arg[0]) + '\'><p>' + arg[1] + '</p></div>`;$(\'#desktop\').append(s);desktopItem[desktopItem.length]=s;addMenu();saveDesktop();'];
-        },
-        arg => {
-            return ['<i class="bi bi-pin-angle"></i> 固定到开始菜单', 'pinapp(\'' + arg[0] + '\', \'' + arg[1] + '\', \'openapp(&quot;' + arg[0] + '&quot;);hide_startmenu();\')'];
-        }
-    ],
-    'msgupdate': [
-        ['<i class="bi bi-layout-text-window-reverse"></i> 查看详细', `openapp('about');if($('.window.about').hasClass('min'))
-        minwin('about');apps.about.page('update');
-        $('#win-about>.update.show>div>details:first-child').attr('open','open')`],
-        ['<i class="bi bi-box-arrow-right"></i> 关闭', '$(\'.msg.update\').removeClass(\'show\')']
-    ],
-    'explorer.folder': [
-        arg => {
-            return ['<i class="bi bi-folder2-open"></i> ' + lang('打开', 'open'), `apps.explorer.goto('${arg}')`];
-        },
-        arg => {
-            return ['<i class="bi bi-arrow-up-right-square"></i> 在新标签页中打开', `apps.explorer.newtab('${arg}');`];
-        },
-        arg => {
-            if ($('#win-explorer>.path>.tit>.path>div.text').length > 1)
-                return ['<i class="bi bi-trash3"></i> ' + lang('删除', 'del'), `apps.explorer.del('${arg}')`];
-            return 'null';
-        },
-        arg => {
-            if ($('#win-explorer>.path>.tit>.path>div.text').length > 1)
-                return ['<i class="bi bi-files"></i> 复制', `apps.explorer.copy_or_cut('${arg}','copy')`];
-            return 'null';
-        },
-        arg => {
-            if ($('#win-explorer>.path>.tit>.path>div.text').length > 1)
-                return ['<i class="bi bi-scissors"></i> 剪切', `apps.explorer.copy_or_cut('${arg}','cut')`];
-            return 'null';
-        },
-        arg => {
-            if ($('#win-explorer>.path>.tit>.path>div.text').length > 1)
-                return ['<i class="bi bi-input-cursor-text"></i> 重命名', `apps.explorer.rename('${arg}')`];
-            return 'null';
-        }
-    ],
-    'explorer.file': [
-        arg => {
-            const drive = arg.split('/')[0];
-            if (apps.explorer.mounts[drive])
-                return ['<i class="bi bi-folder2-open"></i> ' + lang('打开','open'), `apps.explorer.openMountedFile('${arg}')`];
-            // Find the file's command from virtual FS
-            var pathl = arg.split('/'), fileName = pathl.pop();
-            var tmp = apps.explorer.path;
-            pathl.forEach(n => { if (tmp && tmp.folder) tmp = tmp.folder[n]; });
-            var fileCmd = '';
-            if (tmp && tmp.file) {
-                var f = tmp.file.find(f => f.name === fileName);
-                if (f && f.command) fileCmd = f.command;
-            }
-            if (fileCmd)
-                return ['<i class="bi bi-folder2-open"></i> ' + lang('打开','open'), fileCmd];
-            return 'null';
-        },
-        arg => {
-            if ($('#win-explorer>.path>.tit>.path>div.text').length > 1)
-                return ['<i class="bi bi-trash3"></i> ' + lang('删除', 'del'), `apps.explorer.del('${arg}')`];
-            return 'null';
-        },
-        arg => {
-            if ($('#win-explorer>.path>.tit>.path>div.text')[0].innerHTML != '此电脑')
-                return ['<i class="bi bi-files"></i> 复制', `apps.explorer.copy_or_cut('${arg}','copy')`];
-            return 'null';
-        },
-        arg => {
-            if ($('#win-explorer>.path>.tit>.path>div.text').length > 1)
-                return ['<i class="bi bi-scissors"></i> 剪切', `apps.explorer.copy_or_cut('${arg}','cut')`];
-        },
-        arg => {
-            if ($('#win-explorer>.path>.tit>.path>div.text').length > 1)
-                return ['<i class="bi bi-input-cursor-text"></i> 重命名', `apps.explorer.rename('${arg}')`];
-            return 'null';
-        }
-    ],
-    'explorer.content': [
-        arg => {
-            if ($('#win-explorer>.path>.tit>.path>div.text').length > 1)
-                return ['<i class="bi bi-file-earmark-plus"></i> 新建文件', 'apps.explorer.add($(\'#win-explorer>.path>.tit\')[0].dataset.path,\'新建文本文档.txt\')'];
-            return 'null';
-        },
-        arg => {
-            if ($('#win-explorer>.path>.tit>.path>div.text').length > 1)
-                return ['<i class="bi bi-folder-plus"></i> 新建文件夹', 'apps.explorer.add($(\'#win-explorer>.path>.tit\')[0].dataset.path,\'新建文件夹\',type=\'files\')'];
-            return 'null';
-        },
-        arg => {
-            if ($('#win-explorer>.path>.tit>.path>div.text').length > 1)
-                return ['<i class="bi bi-file-earmark-arrow-down"></i> 粘贴', 'apps.explorer.paste($(\'#win-explorer>.path>.tit\')[0].dataset.path,\'新建文件夹\',type=\'files\')'];
-            return 'null';
-        },
-        arg => {
-            if ($('#win-explorer>.path>.tit>.path>div.text').length > 1)
-                return ['<i class="bi bi-arrow-clockwise"></i> 刷新', 'apps.explorer.goto($(\'#win-explorer>.path>.tit\')[0].dataset.path, false)'];
-            return ['<i class="bi bi-arrow-clockwise"></i> 刷新', 'apps.explorer.reset()'];
-        },
-        arg => {
-            if ($('#win-explorer>.path>.tit>.path>div.text').length <= 1 && apps.explorer.fsApiSupported)
-                return ['<i class="bi bi-usb-drive"></i> 挂载本地文件夹', 'apps.explorer.mountDrive()'];
-            return 'null';
-        }
-    ],
-    'explorer.mounted': [
-        arg => ['<i class="bi bi-folder2-open"></i> 打开', `apps.explorer.goto('${arg}')`],
-        arg => ['<i class="bi bi-eject"></i> 卸载', `apps.explorer.unmountDrive('${arg}')`]
-    ],
-    'explorer.tab': [
-        arg => {
-            return ['<i class="bi bi-x"></i> 关闭标签页', `m_tab.close('explorer',${arg})`];
-        }
-    ],
-    'edge.tab': [
-        arg => {
-            return ['<i class="bi bi-pencil-square"></i> 命名标签页', `apps.edge.c_rename(${arg})`];
-        },
-        arg => {
-            return ['<i class="bi bi-x"></i> 关闭标签页', `m_tab.close('edge',${arg})`];
-        }
-    ],
-    'taskmgr.processes': [
-        arg => {
-            return ['<i class="bi bi-x"></i> 结束任务', `apps.taskmgr.taskkill('${arg}')`];
-        }
-    ]
-};
 
-function showcm(e, cl, arg) {
-    if ($('#cm').hasClass('show-begin')) {
-        setTimeout(() => {
-            $('#cm').css('left', e.clientX);
-            $('#cm').css('top', e.clientY);
-            let h = '';
-            cms[cl].forEach(item => {
-                if (typeof (item) == 'function') {
-                    arg.event = e;
-                    ret = item(arg);
-                    if (ret == 'null') return true;
-                    h += `<a class="a" onmousedown="${ret[1]}">${ret[0]}</a>\n`;
-                }
-                else if (typeof (item) == 'string') {
-                    h += item + '\n';
-                }
-                else {
-                    h += `<a class="a" onmousedown="${item[1]}">${item[0]}</a>\n`;
-                }
-            });
-            $('#cm>list')[0].innerHTML = h;
-            $('#cm').addClass('show-begin');
-            $('#cm>.foc').focus();
-            // .foc 是用来模拟焦点的，将焦点放在右键菜单上
-            setTimeout(() => {
-                $('#cm').addClass('show');
-            }, 0);
-            setTimeout(() => {
-                if (e.clientY + $('#cm')[0].offsetHeight > $('html')[0].offsetHeight) {
-                    $('#cm').css('top', e.clientY - $('#cm')[0].offsetHeight);
-                }
-                if (e.clientX + $('#cm')[0].offsetWidth > $('html')[0].offsetWidth) {
-                    $('#cm').css('left', $('html')[0].offsetWidth - $('#cm')[0].offsetWidth - 5);
-                }
-            }, 200);
-        }, 200);
-        return;
-    }
+// 渲染右键菜单。原先这段逻辑在 showcm 里被完整复制了两遍（「已有菜单打开」与
+// 「直接打开」两条路径），除缩进外只有一处差别，而那处差别是个 bug：
+// 已打开路径写的是 `ret = item(arg)`（未声明），desktop.js 是 'use strict'，
+// 于是「在已有菜单打开时再右键一个函数型菜单项」必抛 ReferenceError。
+// 受影响的是 cms 里四个函数型条目：desktop.icon / smapp / smlapp / explorer.file。
+// 同路径还有一句 `arg.event = e`，全仓库无人读取，且 arg 可能为 null，一并移除。
+function renderContextMenu(e, cl, arg) {
     $('#cm').css('left', e.clientX);
     $('#cm').css('top', e.clientY);
     let h = '';
@@ -688,6 +414,7 @@ function showcm(e, cl, arg) {
     $('#cm>list')[0].innerHTML = h;
     $('#cm').addClass('show-begin');
     $('#cm>.foc').focus();
+    // .foc 是用来模拟焦点的，将焦点放在右键菜单上
     setTimeout(() => {
         $('#cm').addClass('show');
     }, 0);
@@ -700,8 +427,19 @@ function showcm(e, cl, arg) {
         }
     }, 200);
 }
-$('#cm>.foc').blur(() => {
-    let x = event.target.parentNode;
+
+function showcm(e, cl, arg) {
+    // 已有菜单打开时，等它收起再重绘（原逻辑的 200ms 延时保持不变）
+    if ($('#cm').hasClass('show-begin')) {
+        setTimeout(() => {
+            renderContextMenu(e, cl, arg);
+        }, 200);
+        return;
+    }
+    renderContextMenu(e, cl, arg);
+}
+$('#cm>.foc').blur((event) => {
+    let x = event.currentTarget.parentNode;
     $(x).removeClass('show');
     setTimeout(() => {
         $(x).removeClass('show-begin');
@@ -710,37 +448,6 @@ $('#cm>.foc').blur(() => {
 let font_window = false;
 
 // 下拉菜单
-const dps = {
-    'notepad.file': [
-        ['<i class="bi bi-file-earmark-plus"></i> 新建', `hidedp(true);apps.notepad._mountedFileHandle=null;$('#win-notepad>.text-box').addClass('down');
-        setTimeout(()=>{$('#win-notepad>.text-box').val('');$('#win-notepad>.text-box').removeClass('down')},200);`],
-        ['<i class="bi bi-floppy"></i> 保存 <info>Ctrl+S</info>', `hidedp(true);apps.notepad.saveMounted();`],
-        ['<i class="bi bi-box-arrow-right"></i> 另存为', `hidedp(true);$('#win-notepad>.save').attr('href', window.URL.createObjectURL(new Blob([$('#win-notepad>.text-box').html()])));
-        $('#win-notepad>.save')[0].click();`],
-        '<hr>',
-        ['<i class="bi bi-x"></i> 退出', 'isOnDp=false;hidedp(true);hidewin(\'notepad\')'],
-    ],
-    'notepad.edit': [
-        ['<i class="bi bi-files"></i> 复制 <info>Ctrl+C</info>', 'document.execCommand(\'copy\')'],
-        ['<i class="bi bi-clipboard"></i> 粘贴 <info>Ctrl+V</info>', 'document.execCommand(\'paste\')'],
-        ['<i class="bi bi-scissors"></i> 剪切 <info>Ctrl+X</info>', 'document.execCommand(\'cut\')'],
-        '<hr>',
-        ['<i class="bi bi-arrow-return-left"></i> 撤销 <info>Ctrl+Z</info>', 'document.execCommand(\'undo\')'],
-        ['<i class="bi bi-arrow-clockwise"></i> 重做 <info>Ctrl+Y</info>', 'document.execCommand(\'redo\')'],
-    ],
-    'notepad.view': [
-        ['<i class="bi bi-type"></i> 插入正常字块', 'hidedp(true);$(\'#win-notepad>.text-box\')[0].innerHTML+=\'<p>T</p>\''],
-        ['<i class="bi bi-type-h1"></i> 插入主标题', 'hidedp(true);$(\'#win-notepad>.text-box\')[0].innerHTML+=\'<h1>H1</h1>\''],
-        ['<i class="bi bi-type-h2"></i> 插入次标题', 'hidedp(true);$(\'#win-notepad>.text-box\')[0].innerHTML+=\'<h2>H2</h2>\''],
-        ['<i class="bi bi-type-h3"></i> 插入副标题', 'hidedp(true);$(\'#win-notepad>.text-box\')[0].innerHTML+=\'<h3>H3</h3>\''],
-        ['<i class="bi bi-type-underline"></i> 插入下划线', 'hidedp(true);$(\'#win-notepad>.text-box\')[0].innerHTML+=\'<u>U</u>\''],
-        ['<i class="bi bi-type-strikethrough"></i> 插入删除线', 'hidedp(true);$(\'#win-notepad>.text-box\')[0].innerHTML+=\'<s>S</s>\''],
-        ['<i class="bi bi-type-italic"></i> 插入斜体字', 'hidedp(true);$(\'#win-notepad>.text-box\')[0].innerHTML+=\'<i>I</i>\''],
-        ['<i class="bi bi-type-bold"></i> 插入加粗字', 'hidedp(true);$(\'#win-notepad>.text-box\')[0].innerHTML+=\'<b>B</b>\''],
-        '<hr>',
-        ['<i class="bi bi-fonts"></i> 字体', 'font_window=true;hidedp(true);showwin(\'notepad-fonts\');apps.notepadFonts.reset();'],
-    ]
-};
 
 function playWindowsBackground() {
     var audio = new Audio('./media/Windows Background.wav');
@@ -812,9 +519,10 @@ document.querySelectorAll('*[win12_title]:not(.notip)').forEach(a => {
     a.addEventListener('mouseleave', hidedescp);
 });
 function showdescp(e) {
+    if ($('#notice-back').hasClass('show')) return;
     $(e.target).attr('data-descp', 'waiting');
     setTimeout(() => {
-        if ($(e.target).attr('data-descp') == 'hide') {
+        if ($('#notice-back').hasClass('show') || $(e.target).attr('data-descp') == 'hide') {
             return;
         }
         $(e.target).attr('data-descp', 'show');
@@ -845,314 +553,117 @@ function hidedescp(e) {
 /* 参考 desktop.html 开头信息，
 格式、功能较简单，自行研究，不作赘述*/
 
-const nts = {
-    'about': {
-        cnt: lang(`<p class="tit">${isTauriApp() ? '关于 Win12-desktop' : 'Win12 网页版'}</p>
-            <p>${isTauriApp() ? 'Win12-desktop 是 Win12 网页版的桌面应用版本，' : 'Win12 网页版是一个开放源项目，'}<br />
-            希望让用户在网络上预先体验 Windows 12,<br />
-            内容可能与 Windows 12 正式版本不一致。<br />
-            使用标准网络技术,例如 HTML, CSS 和 JS<br />
-            此项目绝不附属于微软,且不应与微软操作系统或产品混淆,<br />
-            这也不是 Windows365 cloud PC<br />
-            本项目中微软、Windows和其他示范产品是微软公司的商标<br />
-            本项目中 Android 是谷歌公司的商标。</p>`, 'nts.about'),
-        btn: [
-            { type: 'main', text: lang(lang('关闭', 'close'), 'close'), js: 'closenotice();' },
-            { type: 'detail', text: lang('更多', 'more'), js: 'closenotice();openapp(\'about\');if($(\'.window.about\').hasClass(\'min\'))minwin(\'about\');$(\'.dock.about\').removeClass(\'show\')' },
-        ]
-    },
-    'feedback': {
-        cnt: `<p class="tit">${lang('反馈', 'nts.feedback.name')}</p>
-            <p>${lang('我们非常注重用户的体验与反馈', 'nts.feedback.txt')}</p>
-            <p><a class="a" onclick="window.open('https://nerimity.com/i/w2lvf','_blank');" win12_title="在浏览器新窗口打开链接" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)">${lang('欢迎通过 Nerimity 向我们寻求帮助或提交反馈', 'nts.feedback.txt1')}</a></p>
-            <list class="new">
-                <a class="a" onclick="window.open('https://github.com/win12-online/win12/issues','_blank');" win12_title="在浏览器新窗口打开链接" onmouseenter="showdescp(event)" onmouseleave="hidedescp(event)">${lang('在 github 上提交 issue (需要 github 账户)', 'nts.feedback.github')}</a>
-            </list>`,
-        btn: [
-            { type: 'main', text: lang(lang('关闭', 'close'), 'close'), js: 'closenotice();' },
-        ]
-    },
-    'widgets': {
-        cnt: `
-            <p class="tit">${lang('添加小组件', 'nts.addwg')}</p>
-            <list class="new">
-                <a class="a" onclick="closenotice(); widgets.widgets.add('calc');">${lang('计算器', 'calc.name')}</a>
-                <a class="a" onclick="closenotice(); widgets.widgets.add('nowplaying');">${lang('正在播放', 'nts.addwg.nowplaying')}</a>
-                <a class="a" onclick="closenotice(); widgets.widgets.add('weather');">${lang('天气', 'nts.addwg.weather')}</a>
-                <a class="a" onclick="closenotice(); widgets.widgets.add('monitor');">${lang('系统性能监视器', 'nts.addwg.monitor')}</a>
-            </list>`,
-        btn: [
-            { type: 'cancel', text: lang('取消', 'cancel'), js: 'closenotice();' }
-        ]
-    },
-    'ZeroDivision': {//计算器报错窗口
-        // 甚至还报错我真的哭死，直接输入框显示 error 啥的不就完了。。
-        cnt: lang(`<p class="tit">错误</p>
-            <p>除数不得等于 0</p>`, 'calc.error.zero'),
-        btn: [
-            { type: 'main', text: lang('确定', 'ok'), js: 'closenotice();' },
-        ]
-    },
-    'Can-not-open-file': {
-        cnt: '<p class="tit">' + run_cmd + `</p>
-        <p>Windows 找不到文件 '` + run_cmd + '\'。请确定文件名是否正确后，再试一次。</p> ',
-        btn: [
-            { type: 'main', text: lang('确定', 'ok'), js: 'closenotice();' },
-            { type: 'detail', text: '在 Micrsoft Edge 中搜索', js: 'closenotice();openapp(\'edge\');window.setTimeout(() => {apps.edge.newtab();apps.edge.goto(' + run_cmd + ');}, 300);' }
-        ]
-    },
-    'widgets.monitor': {
-        cnt: `
-        <p class="tit">切换监视器类型</p>
-        <list class="new">
-            <a class="a" onclick="closenotice(); widgets.monitor.type = 'cpu';">CPU 利用率</a>
-            <a class="a" onclick="closenotice(); widgets.monitor.type = 'memory';">内存使用率</a>
-            <a class="a" onclick="closenotice(); widgets.monitor.type = 'disk';">磁盘活动时间</a>
-            <a class="a" onclick="closenotice(); widgets.monitor.type = 'wifi-receive';">网络吞吐量 - 接收</a>
-            <a class="a" onclick="closenotice(); widgets.monitor.type = 'wifi-send';">网络吞吐量 - 发送</a>
-            <a class="a" onclick="closenotice(); widgets.monitor.type = 'gpu';">GPU 利用率</a>
-        </list>`,
-        btn: [
-            { type: 'cancel', text: lang('取消', 'cancel'), js: 'closenotice();' }
-        ]
-    },
-    'widgets.desktop': {
-        cnt: `
-            <p class="tit">添加桌面小组件</p>
-            <list class="new">
-                <a class="a" onclick="closenotice(); widgets.widgets.addToDesktop('calc');">计算器</a>
-                <a class="a" onclick="closenotice(); widgets.widgets.addToDesktop('nowplaying');">${lang('正在播放', 'nts.addwg.nowplaying')}</a>
-                <a class="a" onclick="closenotice(); widgets.widgets.addToDesktop('weather');">天气</a>
-                <a class="a" onclick="closenotice(); widgets.widgets.addToDesktop('monitor');">系统性能监视器</a>
-            </list>`,
-        btn: [
-            { type: 'cancel', text: lang('取消', 'cancel'), js: 'closenotice();' }
-        ]
-    },
-    'widgets.news.source': {
-        cnt: `
-            <p class="tit">切换新闻源</p>
-            <list class="new">
-                新闻源未加载，请检查网络连接
-            </list>`,
-        btn: [{ type: 'cancel', text: lang('取消', 'cancel'), js: 'closenotice();' }],
-    },
-    'duplication file name': {
-        cnt: `
-            <p class="tit">错误</p>
-            <p>文件名重复</p>`,
-        btn: [
-            { type: 'cancel', text: lang('取消', 'cancel'), js: 'closenotice();' }
-        ]
-    },
-    'about-copilot': {
-        cnt: `
-            <p class="tit">关于 Windows 12 Copilot</p>
-             <p>你可以使用此 AI 助手帮助你更快地完成工作，此 AI 助手基于 Deepseek v4 pro 模型 (有人用 Win12 工作？)<br>
-            也请适当使用，不要谈论敏感、违规话题，<br>请有身为一个人类最基本的道德底线。<br>根据相关法律法规，我们不向欧盟用户提供服务。<br>
-            在此特别感谢云智 API(yunzhiapi.cn) 为本项目提供赞助！</p>
-            <a class="a" onclick="window.open('https://win12-online.github.io/win12/readme/legal/privacy-policy-copliot','_blank');" win12_title="在浏览器新窗口打开链接">《隐私政策》</a><br>
-            <a class="a" onclick="window.open('https://win12-online.github.io/win12/readme/legal/user-agreement-copliot','_blank');" win12_title="在浏览器新窗口打开链接">《用户协议》</a><br>
-            <a class="a" onclick="window.open('https://status.win12.tech/status/win12/','_blank');" win12_title="在浏览器新窗口打开链接">状态监测</a><br>
-            <a class="a" onclick="window.open('https://www.yunzhiapi.cn/','_blank');" win12_title="在浏览器新窗口打开链接">云智 API 官网</a>
-        `,
-        btn: [
-            { type: 'main', text: lang('确定', 'ok'), js: 'closenotice();' },
-        ]
-    },
-    'shutdown': {
-        cnt: `
-        <p class="tit">即将注销你的登录</p>
-        <p>Windows 将在 114514 分钟后关闭。</p>`,
-        btn: [
-            { type: 'main', text: lang('关闭', 'close'), js: 'closenotice();' }
-        ]
-    },
-    'setting.update': {
-        cnt: `
-            <p class="tit">更新已就绪</p>
-            <p>请重启电脑以应用更新</p>
-        `,
-        btn: [
-            { type: 'main', text: '立即重启', js: 'location.href = `./reload.html`;' },
-            { type: 'detail', text: '稍后重启', js: 'closenotice();' }
-        ]
-    },
-    'recognition': {
-        cnt: `
-        <p class="tit">语音输入法使用须知</p>
-        <p>本语音输入法由@nb-group开发<br>
-        使用的语音识别api 仅可在使用 Chromium 内核的浏览器上使用，<br>
-        包括Microsoft Edge，Google Chrome等，<br>
-        api（理论上）完全离线.<br>
-        我们绝不会窃取您的输入信息，请放心使用。<br><br>
-        每次语音识别都会重新申请一下麦克风，这是浏览器的问题，<br>
-        可以在浏览器设置里选择始终允许。<br><br>
-        哦对了，关掉提示窗口之后再点一次语音球才能开始识别。
-        </p>
-         `,
-        btn: [
-            { type: 'main', text: lang('确定', 'ok'), js: 'closenotice();' },
-        ]
-    },
-    'setting.down': {
-        cnt: `
-        <p class="tit">下载完毕</p>
-        <p>请立即重新启动以应用更改</p>
-        `,
-        btn: [
-            { type: 'main', text: '重新启动', js: 'closenotice(); setTimeout(() => {window.location=`reload.html`;},200);' }
-        ]
-    },
-    'whiteboard-saveas': {
-        cnt: `
-        <p class="tit">${lang('另存为', 'whiteboard.saveas.title')}</p>
-        <p>${lang('请输入文件名:', 'whiteboard.saveas.prompt')}</p>
-        <input type="text" id="whiteboard-filename" placeholder="Whiteboard_${new Date().toISOString().slice(0, 10)}" style="width: 100%; padding: 8px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px;">
-        `,
-        btn: [
-            { type: 'main', text: lang('保存', 'whiteboard.saveas.save'), js: 'apps.whiteboard.doSaveAs();' },
-            { type: 'detail', text: lang('取消', 'whiteboard.saveas.cancel'), js: 'closenotice();' }
-        ]
-    },
-    'no-files-permission': {
-        cnt: lang(`<p class="tit">文件资源管理器</p>
-            <p>你没有权限打开该文件，请向文件的所有者或管理员申请权限<br /></p>`),
-        btn: [
-            { type: 'main', text: lang(lang('关闭', 'close'), 'close'), js: 'closenotice();' }
-        ]
-    },
-    'rename-pc': {
-        cnt: `
-        <p class="tit">重命名你的电脑</p>
-        <p>你可以使用字母、连字符和数字的组合</p>
-        <input type="text" id="rename-name" placeholder="Desktop-${Math.floor(Math.random() * 1000000)}">
-        `,
-        btn: [
-            { type: 'main', text: lang('保存', 'pc.saveas.save'), js: '' },
-            { type: 'detail', text: lang('取消', 'pc.saveas.cancel'), js: 'closenotice();' }
-        ]
-    },
-    'no-files-permission': {
-        cnt: lang(`<p class="tit">文件资源管理器</p>
-            <p>你没有权限打开该文件，请向文件的所有者或管理员申请权限<br /></p>`),
-        btn: [
-            { type: 'main', text: lang(lang('关闭', 'close'), 'close'), js: 'closenotice();' }
-        ]
-    },
-    'rename-pc': {
-        cnt: `
-        <p class="tit">重命名你的电脑</p>
-        <p>你可以使用字母、连字符和数字的组合</p>
-        <input type="text" id="rename-name" placeholder="Desktop-${Math.floor(Math.random() * 1000000)}" style="width: 100%; padding: 8px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px;">
-        `,
-        btn: [
-            { type: 'main', text: lang('保存', 'pc.saveas.save'), js: 'closenotice();' },
-            { type: 'detail', text: lang('取消', 'pc.saveas.cancel'), js: 'closenotice();' }
-        ]
-    },
-    'word-open-files-fail': {
-        cnt: lang(`<p class="tit">打开失败</p>
-            <p>Word在试图打开文件时遇到错误<br /></p>`),
-        btn: [
-            { type: 'main', text: lang(lang('关闭', 'close'), 'close'), js: 'closenotice();' }
-        ]
-    },
-    'fs-api-unsupported': {
-        cnt: lang(`<p class="tit">不支持的功能</p>
-            <p>您的浏览器不支持文件系统访问 API。请使用 Chrome 或 Edge 浏览器。</p>`, 'nts.fs-api-unsupported'),
-        btn: [
-            { type: 'main', text: lang('确定', 'ok'), js: 'closenotice();' }
-        ]
-    },
-    'fs-mount-error': {
-        cnt: lang(`<p class="tit">挂载失败</p>
-            <p>无法挂载本地文件夹，权限可能被拒绝。</p>`, 'nts.fs-mount-error'),
-        btn: [
-            { type: 'main', text: lang('确定', 'ok'), js: 'closenotice();' }
-        ]
-    },
-    'unsupported-file-type': {
-        cnt: lang(`<p class="tit">无法打开文件</p>
-            <p>没有找到可以打开此类型文件的应用程序。</p>`, 'nts.unsupported-file-type'),
-        btn: [
-            { type: 'main', text: lang('确定', 'ok'), js: 'closenotice();' }
-        ]
-    },
-    'file-read-error': {
-        cnt: lang(`<p class="tit">读取失败</p>
-            <p>无法读取文件内容，权限可能已过期。</p>`, 'nts.file-read-error'),
-        btn: [
-            { type: 'main', text: lang('确定', 'ok'), js: 'closenotice();' }
-        ]
-    },
-    'file-write-error': {
-        cnt: lang(`<p class="tit">保存失败</p>
-            <p>无法写入文件，权限可能已过期。</p>`, 'nts.file-write-error'),
-        btn: [
-            { type: 'main', text: lang('确定', 'ok'), js: 'closenotice();' }
-        ]
-    },
-    'unsaved-notepad': {
-        cnt: lang(`<p class="tit">是否保存更改？</p>
-            <p>文件有未保存的修改，关闭前是否保存？</p>`, 'nts.unsaved-changes'),
-        btn: [
-            { type: 'main', text: lang('保存','save'), js: 'closenotice();apps.notepad.saveMounted().then(()=>{apps.notepad._forceClose();})' },
-            { type: '', text: lang('不保存','discard'), js: 'closenotice();apps.notepad._forceClose();' },
-            { type: '', text: lang('取消','cancel'), js: 'closenotice();' }
-        ]
-    },
-    'unsaved-code-editor': {
-        cnt: lang(`<p class="tit">是否保存更改？</p>
-            <p>文件有未保存的修改，关闭前是否保存？</p>`, 'nts.unsaved-changes'),
-        btn: [
-            { type: 'main', text: lang('保存','save'), js: 'closenotice();apps.codeEditor.save().then(()=>{apps.codeEditor._forceClose();})' },
-            { type: '', text: lang('不保存','discard'), js: 'closenotice();apps.codeEditor._forceClose();' },
-            { type: '', text: lang('取消','cancel'), js: 'closenotice();' }
-        ]
-    },
-    'unsaved-notepad': {
-        cnt: lang(`<p class="tit">是否保存更改？</p>
-            <p>文件有未保存的修改，关闭前是否保存？</p>`, 'nts.unsaved-changes'),
-        btn: [
-            { type: 'main', text: lang('保存','save'), js: 'closenotice();apps.notepad.saveMounted().then(()=>{apps.notepad._forceClose();})' },
-            { type: '', text: lang('不保存','discard'), js: 'closenotice();apps.notepad._forceClose();' },
-            { type: '', text: lang('取消','cancel'), js: 'closenotice();' }
-        ]
-    },
-    'unsaved-code-editor': {
-        cnt: lang(`<p class="tit">是否保存更改？</p>
-            <p>文件有未保存的修改，关闭前是否保存？</p>`, 'nts.unsaved-changes'),
-        btn: [
-            { type: 'main', text: lang('保存','save'), js: 'closenotice();apps.codeEditor.save().then(()=>{apps.codeEditor._forceClose();})' },
-            { type: '', text: lang('不保存','discard'), js: 'closenotice();apps.codeEditor._forceClose();' },
-            { type: '', text: lang('取消','cancel'), js: 'closenotice();' }
-        ]
-    },
-    'error_aichat': {
-        cnt: lang(`<p class="tit">AI Chat 无法使用</p>
-            <p>暂时无法使用此功能，请转用语音输入球</p>`),
-        btn: [
-            { type: 'main', text: lang('确定', 'ok'), js: 'closenotice();' }
-        ]
-    },
-};
+let noticePreviousFocus = null;
+let noticeOpenTimer = null;
+let noticeCloseTimer = null;
+let noticeInertElements = [];
+
+function dismissTransientOverlaysForModal() {
+    // These layers normally close via blur/mouseleave, but making their parent
+    // inert can suppress that event.  Leaving a higher-z-index inert overlay
+    // visible would recreate a "visible but unclickable" surface above modal.
+    $('#cm, #dp, #descp').removeClass('show show-begin');
+    $('#taskbar-preview').removeClass('show');
+    $('[data-descp]').attr('data-descp', 'hide');
+}
+
+function getNoticeFocusable() {
+    return [...document.querySelectorAll(
+        '#notice button:not([disabled]), #notice a[href], #notice input:not([disabled]), ' +
+        '#notice textarea:not([disabled]), #notice select:not([disabled]), #notice [tabindex]:not([tabindex="-1"])'
+    )].filter(element => getComputedStyle(element).display !== 'none');
+}
+
+function handleNoticeKeydown(event) {
+    if (!$('#notice-back').hasClass('show')) return;
+    if ((event.key === 'Enter' || event.key === ' ')
+        && event.target.matches('#notice a[role="button"]')) {
+        event.preventDefault();
+        event.target.click();
+        return;
+    }
+    if (event.key !== 'Tab') return;
+    const focusable = getNoticeFocusable();
+    if (!focusable.length) {
+        event.preventDefault();
+        document.getElementById('notice').focus();
+        return;
+    }
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (!document.getElementById('notice').contains(document.activeElement)) {
+        event.preventDefault();
+        (event.shiftKey ? last : first).focus();
+    }
+    else if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+    }
+    else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+    }
+}
+document.addEventListener('keydown', handleNoticeKeydown);
+
 function shownotice(name) {
+    clearTimeout(noticeOpenTimer);
+    clearTimeout(noticeCloseTimer);
+    dismissTransientOverlaysForModal();
+    const noticeBack = document.getElementById('notice-back');
+    noticeBack.inert = false;
+    const wasOpen = $('#notice-back').hasClass('show');
+    if (!wasOpen) {
+        noticePreviousFocus = document.activeElement;
+        noticeInertElements = [...document.body.children]
+            .filter(element => element !== noticeBack && !element.inert);
+        noticeInertElements.forEach(element => { element.inert = true; });
+    }
     $('#notice>.cnt').html(nts[name].cnt);
     let tmp = '';
     nts[name].btn.forEach(btn => {
-        tmp += `<a class="a btn ${btn.type}" onclick="${btn.js}">${btn.text}</a>`;
+        tmp += `<button type="button" class="a btn ${btn.type}" onclick="${btn.js}">${btn.text}</button>`;
     });
     $('#notice>.btns').html(tmp);
-    $('#notice-back').addClass('show');
-    setTimeout(() => {
+    const notice = document.getElementById('notice');
+    const title = notice.querySelector('.cnt>.tit');
+    notice.setAttribute('role', 'dialog');
+    notice.setAttribute('aria-modal', 'true');
+    notice.setAttribute('tabindex', '-1');
+    if (title) {
+        title.id = 'notice-title';
+        notice.setAttribute('aria-labelledby', title.id);
+    }
+    else {
+        notice.removeAttribute('aria-labelledby');
+    }
+    $('#notice a:not([href])').attr({ role: 'button', tabindex: '0' });
+    $('#notice-back').attr('aria-hidden', 'false').addClass('show');
+    noticeOpenTimer = setTimeout(() => {
+        noticeOpenTimer = null;
         $('#notice').addClass('show');
+        const focusable = getNoticeFocusable();
+        (focusable[0] || notice).focus();
     }, 200);
 }
 function closenotice() {
+    clearTimeout(noticeOpenTimer);
+    noticeOpenTimer = null;
     $('#notice').removeClass('show');
-    setTimeout(() => {
+    clearTimeout(noticeCloseTimer);
+    noticeCloseTimer = setTimeout(() => {
+        noticeCloseTimer = null;
         $('#notice-back').removeClass('show');
+        const noticeBack = document.getElementById('notice-back');
+        const notice = document.getElementById('notice');
+        if (notice.contains(document.activeElement)) document.activeElement.blur();
+        noticeBack.inert = true;
+        noticeInertElements.forEach(element => { element.inert = false; });
+        noticeInertElements = [];
+        if (noticePreviousFocus && noticePreviousFocus.isConnected) noticePreviousFocus.focus();
+        noticePreviousFocus = null;
+        $('#notice-back').attr('aria-hidden', 'true');
+        focusHighestBlockingLayer();
     }, 200);
 }
 
@@ -1173,606 +684,6 @@ function closeVideo() {
 var shutdown_task = []; //关机任务，储存在这个数组里
 // 为什么要数组？
 
-// 运行的指令
-function runcmd(cmd, inTerminal = false) {
-    var cmds = cmd.split(' ');
-    var commandName = cmds[0].toLowerCase();
-
-    if (cmd.slice(0, 3) == 'cmd') {
-        run_cmd = cmd;
-        if (!inTerminal) {
-            openapp('terminal');
-        }
-        return true;
-    }
-    else if (cmd === 'cls') {
-        if (inTerminal) {
-            $('#win-terminal>.text-cmd').html('');
-        }
-        return true;
-    }
-    else if (cmd === 'help') {
-        if (inTerminal) {
-            $('#win-terminal>.text-cmd').append(`
-${lang('有关某个命令的详细信息，请键入 HELP 命令名', 'terminal.help.title')}
-DIR             ${lang('显示目录中的文件和子目录列表', 'terminal.help.dir')}
-LS              ${lang('显示目录中的文件和子目录列表 (DIR 的别名)', 'terminal.help.ls')}
-DEL             ${lang('删除一个或多个文件', 'terminal.help.del')}
-CD              ${lang('显示当前目录的名称或将其更改', 'terminal.help.cd')}
-CLS             ${lang('清除屏幕', 'terminal.help.cls')}
-HELP            ${lang('提供 Windows 命令的帮助信息', 'terminal.help.help')}
-SYSTEMINFO      ${lang('显示系统信息', 'terminal.help.systeminfo')}
-SHUTDOWN        ${lang('关闭计算机', 'terminal.help.shutdown')}
-CMD             ${lang('打开新的命令提示符窗口', 'terminal.help.cmd')}
-EXIT            ${lang('退出命令提示符程序', 'terminal.help.exit')}
-
-${lang('彩蛋命令：', 'terminal.help.easter')}
-HELLO           ${lang('打个招呼', 'terminal.help.hello')}
-MATRIX          ${lang('黑客帝国特效', 'terminal.help.matrix')}
-SNOW            ${lang('下雪特效', 'terminal.help.snow')}
-DANCE           ${lang('让窗口跳舞', 'terminal.help.dance')}
-STARWARS        ${lang('原力觉醒', 'terminal.help.starwars')}
-`);
-        }
-        return true;
-    }
-    else if (commandName === 'ping' || commandName === 'ping6') {
-        if (!inTerminal) {
-            openapp('terminal');
-        }
-
-        const host = cmds.slice(1).join(' ').trim();
-        const ipv6 = commandName === 'ping6';
-        const terminalOutput = $('#win-terminal>.text-cmd');
-        const terminalInput = $('#win-terminal input');
-
-        if (!window.win12Native || !window.win12Native.isTauri()) {
-            terminalOutput.append(`${commandName} 仅在 桌面版 中支持使用\n`);
-            return true;
-        }
-
-        if (!host) {
-            terminalOutput.append(`用法: ${commandName} <host>\n`);
-            return true;
-        }
-
-        terminalInput.prop('disabled', true);
-        window.win12Native.pingHost(host, ipv6, (output) => {
-            terminalOutput[0].appendChild(document.createTextNode(output));
-        }).catch((error) => {
-            terminalOutput.append((error && error.message ? error.message : String(error)) + '\n');
-        }).finally(() => {
-            terminalInput.prop('disabled', false);
-            terminalInput.focus();
-        });
-        return true;
-    }
-    else if (cmd === 'dir' || cmd === 'ls') {
-        if (inTerminal) {
-            $('#win-terminal>.text-cmd').append(`
- 驱动器 C 中的卷没有标签。
- 卷的序列号是 3E47-2B9A
-
- C:\\Windows\\System32 的目录
-
-${new Date().toLocaleDateString()}  ${new Date().toLocaleTimeString()}    <DIR>          .
-${new Date().toLocaleDateString()}  ${new Date().toLocaleTimeString()}    <DIR>          ..
-2023/10/01  10:30:00             1,024 calc.exe
-2023/10/01  10:30:00               512 cmd.exe
-2023/10/01  10:30:00             2,048 notepad.exe
-2023/10/01  10:30:00             4,096 taskmgr.exe
-2023/10/01  10:30:00               256 winver.exe
-               5 个文件          7,936 字节
-               2 个目录  21,474,836,480 可用字节
-`);
-        }
-        return true;
-    }
-    else if (cmd.startsWith('del ')) {
-        if (inTerminal) {
-            const fileName = cmd.substring(4).trim();
-            if (fileName.toLowerCase().includes('system32') || fileName.toLowerCase().includes('windows') || fileName.toLowerCase().includes('program files')) {
-                $('#win-terminal>.text-cmd').append(`错误: 拒绝访问。无法删除系统关键文件或目录。\n`);
-            } else {
-                $('#win-terminal>.text-cmd').append(`找不到文件 "${fileName}"。\n`);
-            }
-        }
-        return true;
-    }
-    else if (cmd.startsWith('cd ')) {
-        if (inTerminal) {
-            const path = cmd.substring(3).trim();
-            if (path === '..') {
-                $('#win-terminal>.text-cmd').append(`C:\\Windows\n`);
-            } else if (path === '\\' || path === '/') {
-                $('#win-terminal>.text-cmd').append(`C:\\\n`);
-            } else {
-                $('#win-terminal>.text-cmd').append(`C:\\Windows\\System32\\${path}\n`);
-            }
-        }
-        return true;
-    }
-    else if (cmd.toLowerCase() === 'hello') {
-        if (inTerminal) {
-            const greetings = [
-                '你好呀！今天也是元气满满的一天呢！(◍•ᴗ•◍)',
-                'Hello! 欢迎来到 Windows 12! ╰(*°▽°*)╯',
-                '嗨！很高兴见到你！(｡♥‿♥｡)',
-                '你好！我是 Windows 12 终端，有什么可以帮你的吗？(❁´◡`❁)'
-            ];
-            $('#win-terminal>.text-cmd').append(greetings[Math.floor(Math.random() * greetings.length)] + '\n');
-        }
-        return true;
-    }
-    else if (cmd.toLowerCase() === 'matrix') {
-        if (inTerminal) {
-            const chars = 'ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝ1234567890'; // 哈？(from stsc)
-            let matrix = '';
-
-            // 创建一个专门的容器来放置 matrix 效果
-            const matrixContainer = $('<div class="matrix-container" style="font-family: monospace; line-height: 1.2;"></div>');
-            $('#win-terminal>.text-cmd').append(matrixContainer);
-
-            for (let i = 0; i < 15; i++) {
-                let line = '';
-                for (let j = 0; j < 50; j++) {
-                    const rand = Math.random();
-                    if (rand < 0.3) {
-                        line += `<span style="color: #0f0; text-shadow: 0 0 8px #0f0;">${chars[Math.floor(Math.random() * chars.length)]}</span>`;
-                    } else if (rand < 0.4) {
-                        line += `<span style="color: #fff; text-shadow: 0 0 8px #fff;">${chars[Math.floor(Math.random() * chars.length)]}</span>`;
-                    } else {
-                        line += `<span style="color: #050;">${chars[Math.floor(Math.random() * chars.length)]}</span>`;
-                    }
-                }
-                matrix += line + '\n';
-            }
-            matrixContainer.html(matrix);
-
-            // 添加动画效果
-            const interval = setInterval(() => {
-                const newLine = Array.from({ length: 50 }, () => {
-                    const rand = Math.random();
-                    if (rand < 0.3) {
-                        return `<span style="color: #0f0; text-shadow: 0 0 8px #0f0;">${chars[Math.floor(Math.random() * chars.length)]}</span>`;
-                    } else if (rand < 0.4) {
-                        return `<span style="color: #fff; text-shadow: 0 0 8px #fff;">${chars[Math.floor(Math.random() * chars.length)]}</span>`;
-                    } else {
-                        return `<span style="color: #050;">${chars[Math.floor(Math.random() * chars.length)]}</span>`;
-                    }
-                }).join('');
-
-                const matrixContent = matrixContainer.html().split('\n');
-                matrixContent.shift();
-                matrixContent.push(newLine);
-                matrixContainer.html(matrixContent.join('\n'));
-            }, 100);
-
-            // 10 秒后停止动画并移除容器
-            setTimeout(() => {
-                clearInterval(interval);
-                setTimeout(() => {
-                    matrixContainer.fadeOut(500, function () {
-                        $(this).remove();
-                    });
-                }, 500);
-            }, 10000);
-        }
-        return true;
-    }
-    else if (cmd.toLowerCase() === 'snow') {
-        if (inTerminal) {
-            $('#win-terminal>.text-cmd').append('让整个屏幕下雪吧! ❄️\n');
-            if (!$('#snow-container').length) {
-                $('body').append(`
-                    <div id="snow-container" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 9999;">
-                        <div id="snow-pile" style="position: absolute; bottom: 0; left: 0; width: 100%; display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: center; perspective: 1000px; transform-style: preserve-3d;"></div>
-                    </div>
-                `);
-            }
-
-            const snowflakes = ['❄', '❅', '❆', '✻', '✼', '❉'];
-            const pileFlakes = ['❄', '❅', '❆'];
-            const colors = ['#fff', '#eef', '#ddf'];
-            let pileCount = 0;
-            let lastPilePosition = 50; // 用于记录上一个堆积位置
-
-            function createSnowflake() {
-                const flake = snowflakes[Math.floor(Math.random() * snowflakes.length)];
-                const color = colors[Math.floor(Math.random() * colors.length)];
-                const size = Math.random() * 1.2 + 0.6;
-                const left = Math.random() * 100;
-                const fallDuration = 3 + Math.random() * 2;
-                const $snowflake = $(`<span class="snowflake" style="position: absolute; left: ${left}%; top: -10%; font-size: ${size}em; color: ${color}; text-shadow: 0 0 5px ${color}; transition: all ${fallDuration}s linear; opacity: 0.8; transform: rotate(0deg) translateZ(0);">${flake}</span>`);
-
-                $('#snow-container').append($snowflake);
-
-                setTimeout(() => {
-                    const rotation = Math.random() * 360;
-                    const finalLeft = left + (Math.random() - 0.5) * 20;
-                    $snowflake.css({
-                        transform: `rotate(${rotation}deg) translateZ(0)`,
-                        top: '90%',
-                        left: `${finalLeft}%`
-                    });
-                }, 50);
-
-                setTimeout(() => {
-                    $snowflake.css({
-                        transition: 'all 0.5s ease-out',
-                        opacity: 0
-                    });
-
-                    if (pileCount < 200) {
-                        const pileFlake = pileFlakes[Math.floor(Math.random() * pileFlakes.length)];
-                        const pileSize = Math.random() * 0.4 + 0.3; // 减小堆积雪花的大小
-
-                        // 计算新的堆积位置，使其更自然
-                        const deviation = (Math.random() - 0.5) * 30;
-                        lastPilePosition = Math.max(10, Math.min(90, lastPilePosition + deviation));
-                        const pileLeft = lastPilePosition;
-
-                        // 计算堆积高度，使其形成自然的山形
-                        const baseHeight = Math.sin((pileLeft - 50) * Math.PI / 180) * 20;
-                        const pileHeight = Math.max(0, 20 - Math.abs(pileLeft - 50) / 2.5 + baseHeight);
-
-                        const $pile = $(`<span style="position: absolute; left: ${pileLeft}%; bottom: ${pileHeight}px; font-size: ${pileSize}em; opacity: 0; transform: scale(0) translateZ(${Math.random() * 50}px); transition: all 0.3s ease-out;">${pileFlake}</span>`);
-                        $('#snow-pile').append($pile);
-
-                        setTimeout(() => {
-                            $pile.css({
-                                transform: `scale(1) translateZ(${Math.random() * 50}px) rotate(${Math.random() * 30 - 15}deg)`,
-                                opacity: 0.85
-                            });
-                        }, 50);
-
-                        pileCount++;
-                    }
-
-                    setTimeout(() => $snowflake.remove(), 500);
-                }, fallDuration * 1000);
-            }
-
-            // 持续创建新雪花
-            const snowInterval = setInterval(() => {
-                if ($('#snow-container .snowflake').length < 100) {
-                    createSnowflake();
-                }
-            }, 200);
-
-            // 30 秒后停止动画并缓慢消失
-            setTimeout(() => {
-                clearInterval(snowInterval);
-                // 让所有堆积的雪花缓慢消失
-                $('#snow-pile span').each(function (i) {
-                    const $pile = $(this);
-                    setTimeout(() => {
-                        $pile.css({
-                            transition: 'all 0.5s ease-in',
-                            opacity: 0,
-                            transform: 'scale(0) translateY(10px)'
-                        });
-                    }, Math.random() * 2000);
-                });
-                // 让飘落的雪花消失
-                $('#snow-container .snowflake').each(function (i) {
-                    const $flake = $(this);
-                    setTimeout(() => {
-                        $flake.css({
-                            transition: 'all 1s ease-in',
-                            opacity: 0
-                        });
-                    }, Math.random() * 2000);
-                });
-                setTimeout(() => {
-                    $('#snow-container').fadeOut(1000, function () {
-                        $(this).remove();
-                    });
-                }, 2500);
-            }, 30000);
-        }
-        return true;
-    }
-    else if (cmd.toLowerCase() === 'dance') {
-        if (inTerminal) {
-            $('#win-terminal>.text-cmd').append('窗口开始跳舞啦! ♪(^∇^*)\n');
-            const windows = $('.window:not(.min)');
-            const danceSteps = [
-                { transform: 'rotate(5deg) translateY(-10px)' },
-                { transform: 'rotate(-5deg) translateY(0px)' },
-                { transform: 'rotate(5deg) translateX(10px)' },
-                { transform: 'rotate(-5deg) translateX(-10px)' },
-                { transform: 'rotate(0deg) translate(0, 0)' }
-            ];
-
-            windows.each(function () {
-                const win = $(this);
-                let danceCount = 0;
-                const danceInterval = setInterval(() => {
-                    danceCount++;
-                    win.css({
-                        transition: 'transform 0.3s ease-in-out',
-                        transform: danceSteps[danceCount % danceSteps.length].transform
-                    });
-
-                    // 跳舞 15 次后停止
-                    if (danceCount >= 15) {
-                        clearInterval(danceInterval);
-                        win.css({
-                            transition: 'transform 0.5s ease-out',
-                            transform: 'none'
-                        });
-                    }
-                }, 300);
-            });
-        }
-        return true;
-    }
-    else if (cmd === 'systeminfo') {
-        if (inTerminal) {
-            const d = new Date();
-            $('#win-terminal>.text-cmd').append(`
-主机名：WIN12-WEB
-OS 名称：Microsoft Windows 12 网页版
-OS 版本：12.0.39035.7324
-OS 制造商：Microsoft Corporation
-OS 配置：主要工作站
-OS 构建类型：Multiprocessor Free
-注册的所有人：Web User
-注册的组织：Web Organization
-产品 ID:               12345-67890-09876-54321
-初始安装日期：         ${d.toLocaleDateString()}
-系统启动时间：         ${d.toLocaleString()}
-系统制造商：Web Browser
-系统型号：Virtual Machine
-系统类型：x64-based PC
-处理器：AMD64 Family Web Browser
-BIOS 版本：Web Browser Virtual BIOS
-Windows 目录：C:\\Windows
-系统目录：C:\\Windows\\System32
-启动设备：             \\Device\\HarddiskVolume1
-系统区域设置：zh-cn;中文 (中国)
-输入法区域设置：zh-cn;中文 (中国)
-时区：                 (UTC+08:00) 北京，重庆，香港特别行政区，乌鲁木齐
-物理内存总量：8,192 MB
-可用的物理内存：4,096 MB
-虚拟内存：最大值：16,384 MB
-虚拟内存：可用：12,288 MB
-虚拟内存：使用中：4,096 MB
-页面文件位置：C:\\pagefile.sys
-域：WORKGROUP
-登录服务器：           \\\\WIN12-WEB
-修补程序：0 个修补程序已安装
-网卡：1 个 NIC 已安装
-                      [01]: Ethernet Browser Adapter
-`);
-        }
-        return true;
-    }
-    else if (cmd in apps) {
-        openapp(cmd);
-        return true;
-    }
-    else if (cmd.replace('.exe', '') in apps) {
-        openapp(cmd.replace('.exe', ''));
-        return true;
-    }
-    else if (cmd.includes('shutdown')) {//关机指令 by fzlzjerry
-        // 保存当前命令以供后续使用
-        run_cmd = cmd;
-        // 将命令按空格分割成数组以便解析参数
-        var cmds = cmd.split(' ');
-        // 检查命令是否为 shutdown 或 shutdown.exe
-        if ((cmds[0] == 'shutdown') || (cmds[0] == 'shutdown.exe')) {
-            // 如果没有参数，显示帮助信息
-            if (cmds.length == 1) {
-                // 如果不是在终端中执行，则打开终端
-                if (!inTerminal) {
-                    openapp('terminal');
-                    $('#win-terminal').html('<pre class="text-cmd"></pre>');
-                }
-                // 显示帮助信息
-                $('#win-terminal>.text-cmd').append(`
-shutdown [-s] [-r] [-f] [-a] [-t time]
--s:关机
--r:重启
--f:注销
--a:取消之前的操作
--t time:指定在 time 秒 后操作
-
-其余不多做介绍了` + (inTerminal ? '' : `
-请按任意键继续.&nbsp;.&nbsp;.<input type="text" onkeydown="hidewin('terminal')"></input>`));
-                if (!inTerminal) {
-                    $('#win-terminal>pre>input').focus();
-                }
-                return true;
-            }
-
-            // 初始化参数变量
-            let hasTime = false;      // 是否指定了时间
-            let timeValue = 0;        // 延迟时间值（秒）
-            let operation = '';       // 操作类型（关机/重启/注销）
-            let forceMode = false;    // 是否为强制模式（不显示通知）
-
-            // 检查并解析时间参数 (-t 或 /t)
-            if (cmds.includes('-t') || cmds.includes('/t')) {
-                const timeFlag = cmds.includes('-t') ? '-t' : '/t';
-                const timeIndex = cmds.indexOf(timeFlag);
-                // 检查时间参数是否有效
-                if (timeIndex < cmds.length - 1 && !isNaN(cmds[timeIndex + 1])) {
-                    hasTime = true;
-                    timeValue = parseInt(cmds[timeIndex + 1]);
-                } else {
-                    // 时间参数无效时显示错误信息
-                    $('#win-terminal>.text-cmd').append(`错误：无效的时间参数\n`);
-                    return true;
-                }
-            }
-
-            // 检查是否为强制模式 (-f 或 /f)
-            if (cmds.includes('-f') || cmds.includes('/f')) {
-                forceMode = true;
-            }
-
-            // 检查是否为取消操作 (-a 或 /a)
-            if (cmds.includes('-a') || cmds.includes('/a')) {
-                // 如果有正在进行的关机任务
-                if (shutdown_task.length > 0) {
-                    // 清除所有关机任务
-                    for (let task of shutdown_task) {
-                        if (task != null) {
-                            try {
-                                clearTimeout(task);
-                            } catch (err) { console.log(err); }
-                        }
-                    }
-                    shutdown_task = [];
-                    // 显示取消通知
-                    nts['shutdown'] = {
-                        cnt: `
-                        <p class="tit">注销已取消</p>
-                        <p>计划的关闭已取消。</p>`,
-                        btn: [
-                            { type: 'main', text: lang('关闭', 'close'), js: 'closenotice();' },
-                        ]
-                    };
-                    shownotice('shutdown');
-                } else {
-                    // 如果没有正在进行的关机任务，显示错误信息
-                    $('#win-terminal>.text-cmd').append(`错误：没有正在进行的关机操作\n`);
-                }
-                return true;
-            }
-
-            // 确定操作类型
-            if (cmds.includes('-s') || cmds.includes('/s')) {
-                operation = 'shutdown';    // 关机
-            }
-            else if (cmds.includes('-r') || cmds.includes('/r')) {
-                operation = 'restart';     // 重启
-            }
-            else if (cmds.includes('-f') || cmds.includes('/f')) {
-                operation = 'logoff';      // 注销
-            }
-            else {
-                // 如果没有指定有效的操作类型，显示错误信息
-                $('#win-terminal>.text-cmd').append(`错误：无效的操作参数\n`);
-                return true;
-            }
-
-            // 计算延迟时间和显示文本
-            const delay = hasTime ? timeValue * 1000 : 0;  // 将秒转换为毫秒
-            const timeString = hasTime ? calcTimeString(timeValue) : '立即';
-
-            // 准备通知内容
-            nts['shutdown'] = {
-                cnt: `
-                <p class="tit">即将${operation === 'restart' ? '重启' : operation === 'logoff' ? '注销' : '关机'}</p>
-                <p>Windows 将在 ${timeString} 后${operation === 'restart' ? '重启' : operation === 'logoff' ? '注销' : '关机'}。</p>`,
-                btn: [
-                    { type: 'main', text: lang('关闭', 'close'), js: 'closenotice();' },
-                ]
-            };
-
-            // 创建定时任务
-            const task = setTimeout(() => {
-                // 根据操作类型跳转到相应页面
-                if (operation === 'restart') {
-                    window.location.href = './reload.html';
-                } else if (operation === 'logoff') {
-                    window.location.href = './login.html';
-                } else {
-                    window.location.href = './shutdown.html';
-                }
-            }, delay);
-
-            // 将任务添加到任务列表
-            shutdown_task.push(task);
-
-            // 如果不是强制模式，显示通知
-            if (!forceMode) {
-                shownotice('shutdown');
-            }
-            return true;
-        }
-    }
-    else if (cmd.toLowerCase() === 'starwars') {
-        if (inTerminal) {
-            $('#win-terminal>.text-cmd').append('原力与你同在... ⚔️\n');
-
-            // 创建星球大战容器
-            const starWarsContainer = $('<div class="starwars-container" style="font-family: monospace; perspective: 400px; color: #ffd700; position: relative; height: 400px; overflow: hidden; background: #000;"></div>');
-            $('#win-terminal>.text-cmd').append(starWarsContainer);
-
-            // 添加星球大战文本
-            const text = `
-            Episode XII
-            WIN12 STRIKES BACK
-
-            在遥远的未来，一个充满
-            科技的银河系中...
-
-            Windows 操作系统已经
-            进化到了第 12 代。
-
-            然而，这个系统不仅仅
-            是一个操作系统，它是
-            一个充满原力的存在。
-
-            此刻，一股神秘的力量
-            正在你的电脑中觉醒...
-
-            你，就是那个被选中的人，
-            将带领这个系统走向新的
-            纪元...
-
-            愿原力与你同在！
-            `;
-
-            const crawl = $(`<div class="crawl" style="position: relative; top: 400px; transform-origin: 50% 100%; transform: rotateX(60deg); text-align: center; font-size: 24px; line-height: 1.5; white-space: pre-line; text-shadow: 0 0 10px #ffd700;"></div>`);
-            crawl.html(text);
-            starWarsContainer.append(crawl);
-
-            // 添加动态背景星星
-            for (let i = 0; i < 200; i++) {
-                const size = Math.random() * 2 + 1;
-                const speed = Math.random() * 3 + 1;
-                const star = $(`<div class="star" style="position: absolute; width: ${size}px; height: ${size}px; background: #fff; left: ${Math.random() * 100}%; top: ${Math.random() * 100}%; animation: twinkle ${speed}s infinite alternate;"></div>`);
-                starWarsContainer.append(star);
-            }
-
-            // 添加 CSS 动画
-            const style = $(`<style>
-                @keyframes twinkle {
-                    0% { opacity: 0.2; }
-                    100% { opacity: 1; }
-                }
-                .star {
-                    border-radius: 50%;
-                    box-shadow: 0 0 3px #fff;
-                }
-                .crawl {
-                    animation: crawl 30s linear;
-                }
-                @keyframes crawl {
-                    0% { top: 400px; opacity: 1; }
-                    90% { opacity: 1; }
-                    100% { top: -1000px; opacity: 0; }
-                }
-            </style>`);
-            starWarsContainer.append(style);
-
-            // 30 秒后清理
-            setTimeout(() => {
-                starWarsContainer.fadeOut(2000, function () {
-                    $(this).remove();
-                });
-            }, 30000);
-        }
-        return true;
-    }
-    return false;
-}
 
 
 // 语音球
@@ -1912,7 +823,7 @@ let copilot = {
         content: '很好。现在开始与用户对话。'
     }, {
         role: 'assistant',
-        content: '欢迎使用 Windows 12 Copilot AI助手，有什么可以帮您？'
+        content: '欢迎使用 Windows 12 Copilot AI 助手，有什么可以帮您？'
     }],
     init: () => {
         $('#copilot>.chat').html('');
@@ -2117,25 +1028,14 @@ for (let i = 1; i <= daysum; i++) {
 }
 function pinapp(id, name, command) {
     if ($('#startmenu-r>.pinned>.apps>.a.sm-app.' + id).length) return;
-    $('#startmenu-r>.pinned>.apps').append(`<a class='a sm-app enable ${id}' onclick='${command}';hide_startmenu();' oncontextmenu='return showcm(event,\"smapp\",[\"${id}\",\"${name}\"])'><img src='icon/${geticon(id)}'><p>${name}</p></a>`);
+    // 注意：command 本身已经带了 hide_startmenu()（见 cms 的 smapp 项），
+    // 原写法在属性外多写了一段 ;hide_startmenu();' —— 是无效的多余标记，渲染结果不变。
+    $('#startmenu-r>.pinned>.apps').append(`<a class='a sm-app enable ${id}' onclick='${command}' oncontextmenu='return showcm(event,\"smapp\",[\"${id}\",\"${name}\"])'><img src='icon/${geticon(id)}'><p>${name}</p></a>`);
 }
 
 // 应用方法
 
 // png 格式的图标在此备注，否则以 标识+.svg 的名称自动检索
-const icon = {
-    bilibili: 'bilibili.png',
-    vscode: 'vscode.png',
-    // python: 'python.png',
-    winver: 'about.svg',
-    // run: 'run.png',
-    // whiteboard: 'whiteboard.png',
-    taskmgr: 'taskmgr.png',
-    imgviewer: 'files/picture.png',
-    'code-editor': 'vscode.png',
-    mediaplayer: 'files/vidio.png',
-    pdfviewer: 'files/pdf.svg'
-};
 function geticon(name) {
     if (icon[name]) return icon[name];
     else return name + '.svg';
@@ -2148,7 +1048,11 @@ function syncTaskbarLayout() {
     $('#taskbar').css('width', 4 + count * (34 + 4));
 }
 
-function openapp(name) {
+function openapp(name, bypassPreOpenNotice = false) {
+    if (name == 'macos' && !bypassPreOpenNotice) {
+        shownotice('macos-web');
+        return;
+    }
     if (taskmgrTasks.findIndex(elt => elt.link == name) > -1 && apps.taskmgr.tasks.findIndex(elt => elt.link == name) == -1) {
         apps.taskmgr.tasks.splice(apps.taskmgr.tasks.length, 0, taskmgrTasks.find(elt => elt.link == name));
     }
@@ -2293,7 +1197,7 @@ function openDockWidget(name) {
             }, 0);
         }
     } else {
-        console.err("openDockWidget() 传递的 name 不正确！");
+        console.error("openDockWidget() 传递的 name 不正确！");
     }
 }
 
@@ -2426,6 +1330,7 @@ function setBatteryTooltip(title) {
     if (el) {
         el.setAttribute('win12_title', title);
         el.setAttribute('title', title);
+        el.setAttribute('aria-label', title);
     }
 }
 
@@ -2439,7 +1344,7 @@ function setBatteryUnavailableTooltip() {
     setBatteryTooltip(lang('无法获取电量', 'battery.unavailable'));
 }
 
-if (navigator.getBattery) {
+if (!isTauriApp() && navigator.getBattery) {
     navigator.getBattery().then((battery) => {
         // 检查 battery 对象和 level 属性是否存在且有效
         if (battery && typeof battery.level === 'number' && !isNaN(battery.level)) {
@@ -2483,7 +1388,7 @@ if (navigator.getBattery) {
         console.log('电池 API 不可用：', error);
         setBatteryUnavailableTooltip();
     });
-} else {
+} else if (!isTauriApp()) {
     setBatteryUnavailableTooltip();
 }
 
@@ -2573,15 +1478,22 @@ function saveDesktop() {
 }
 //global
 const parentEl = $('#desktop')[0];
-let parentRect = parentEl.getBoundingClientRect();
 const cell = 83; // 单位尺寸
 const gap = 10; // 单位间隔
 const padding = 20; // 偏移
-const cols = Math.max(1, Math.floor((parentRect.width - padding * 2 + gap) / (cell + gap)));
-const rows = Math.max(1, Math.floor((parentRect.height - padding * 2 + gap) / (cell + gap)));
+// 原本这三个是 const，只在脚本执行期算一次，窗口 resize 后吸附网格就失效了。
+// 改成每次拖拽开始时重算（不放在 mousemove 里，避免逐帧触发 layout）。
+let parentRect, cols, rows;
+function refreshDesktopGrid() {
+    parentRect = parentEl.getBoundingClientRect();
+    cols = Math.max(1, Math.floor((parentRect.width - padding * 2 + gap) / (cell + gap)));
+    rows = Math.max(1, Math.floor((parentRect.height - padding * 2 + gap) / (cell + gap)));
+}
+refreshDesktopGrid();
 
 function desktopMove(elt, e) {
     if (!edit_mode) return;// 编辑模式有效
+    refreshDesktopGrid();// 桌面尺寸可能已变，重算吸附网格
     e = e || window.event;
     // 阻止桌面响应
     try { e.stopPropagation(); } catch (err) { }
@@ -2658,26 +1570,60 @@ function attachDesktopDrag() {
     if (!parent) return;
     const children = Array.from(parent.children).filter(n => n.tagName.toLowerCase() === 'div' || n.tagName.toLowerCase() === 'a');
     children.forEach(ch => {
+        if (ch.dataset.desktopDragBound === 'true') return;
+        ch.dataset.desktopDragBound = 'true';
         ch.ondragstart = () => false;
+        const originalMouseDown = ch.onmousedown;
+        const originalTouchStart = ch.ontouchstart;
+        const touchFallback = ch.onclick || ch.ondblclick;
         ch.onmousedown = (e) => {
+            if (!edit_mode) {
+                return originalMouseDown ? originalMouseDown.call(ch, e) : undefined;
+            }
             //防止桌面响应
             try { e.stopPropagation(); } catch (err) { }
             try { e.preventDefault(); } catch (err) { }
             desktopMove(ch, e);
+            return false;
         };
         ch.ontouchstart = (e) => {
+            if (!edit_mode) {
+                if (originalTouchStart) return originalTouchStart.call(ch, e);
+                // Some desktop Chromium builds do not expose ontouchstart as a
+                // compiled DOM property even when the inline attribute exists.
+                // Reuse the icon's normal click/double-click action in that case.
+                if (touchFallback) {
+                    try { e.preventDefault(); } catch (err) { }
+                    return touchFallback.call(ch, e);
+                }
+                return undefined;
+            }
             try { e.stopPropagation(); } catch (err) { }
             try { e.preventDefault(); } catch (err) { }
             desktopMove(ch, e);
+            return false;
         };
     });
 }
+function readStoredArray(key) {
+    const value = localStorage.getItem(key);
+    if (value === null) return null;
+    try {
+        const parsed = JSON.parse(value);
+        if (Array.isArray(parsed)) return parsed;
+    }
+    catch (e) { }
+    localStorage.removeItem(key);
+    return null;
+}
 function setIcon() {
     // return;
-    if (!Array.isArray(JSON.parse(localStorage.getItem('desktop')))) {
-        setData('desktop', '[]')
+    let storedDesktop = readStoredArray('desktop');
+    if (storedDesktop === null) {
+        storedDesktop = [];
+        setData('desktop', '[]');
     }
-    if (Array.isArray(JSON.parse(localStorage.getItem('desktop')))) {
+    if (storedDesktop !== null) {
         $('#desktop')[0].innerHTML = `<div ondblclick="openapp('explorer');" ontouchstart="openapp('explorer');" oncontextmenu="return showcm(event,'desktop.icon',['explorer',-1]);" appname="explorer">
         <img src="apps/icons/explorer/thispc.svg">
         <p>${lang('此电脑', 'explorer.thispc')}</p>
@@ -2701,20 +1647,22 @@ function setIcon() {
     <span class="selection">
     </span>
     <p style="background-color: rgba(11,45,14,0);z-index:1;position: absolute;top:0px;left:0px;height:100%;width:100%" oncontextmenu="return showcm(event,'desktop');"></p>`;
-        desktopItem = JSON.parse(localStorage.getItem('desktop'));
+        desktopItem = storedDesktop;
         desktopItem.forEach((item) => {
             $('#desktop')[0].innerHTML += item;
         });
         addMenu();
     }
-    if (Array.isArray(JSON.parse(localStorage.getItem('topmost')))) {
-        topmost = JSON.parse(localStorage.getItem('topmost'));
+    const storedTopmost = readStoredArray('topmost');
+    if (storedTopmost !== null) {
+        topmost = storedTopmost;
         if (topmost.includes('taskmgr')) {
             $('#tsk-setting-topmost')[0].checked = true;
         }
     }
-    if (Array.isArray(JSON.parse(localStorage.getItem('sys_setting')))) {
-        var sys_setting_back = JSON.parse(localStorage.getItem('sys_setting'));
+    const storedSystemSettings = readStoredArray('sys_setting');
+    if (storedSystemSettings !== null) {
+        var sys_setting_back = storedSystemSettings;
         if (/^(1|0)+$/.test(sys_setting_back.join(''))/* 只含有 0 和 1 */) {
             sys_setting = sys_setting_back;
             for (var i = 0; i < sys_setting.length; i++) {
@@ -2759,16 +1707,28 @@ function setIcon() {
             root.removeClass('corner_squ');
         }
     }
+    attachDesktopDrag();
 }
 
-// 原神，启动！
-document.getElementsByTagName('body')[0].onload = () => {
+// Core shell startup must not wait for optional CDN scripts.  desktop.html
+// calls this after the local deferred modules have executed; load remains a
+// fallback for older/custom entry pages.
+let win12Started = false;
+function win12Start() {
+    if (win12Started) return;
+    win12Started = true;
     setTimeout(() => {
         $('#loadback').addClass('hide');
     }, 500);
     setTimeout(() => {
         $('#loadback').css('display', 'none');
-    }, 1000);
+        if ((new URL(location.href)).searchParams.get('skip_login') === '1') {
+            showStartupNoticeOnce();
+        }
+        else {
+            focusHighestBlockingLayer();
+        }
+    }, 750);
     apps.webapps.init();
     initLoginPassword();
     //getdata
@@ -2804,7 +1764,6 @@ document.getElementsByTagName('body')[0].onload = () => {
         $(':root').css('--theme-2', localStorage.getItem('color2'));
     }
     setIcon();//加载桌面图标
-	attachDesktopDrag();
     // 所以这个东西为啥要在开机的时候加载？
     // 不应该在 python.init 里面吗？
     //     (async function () {
@@ -2855,7 +1814,8 @@ document.getElementsByTagName('body')[0].onload = () => {
     updateVoiceBallStatus();
     // loadlang();
     checkOrientation();
-};
+}
+window.addEventListener('load', win12Start, { once: true });
 
 let autoUpdate = true;
 function checkUpdate() {
@@ -2877,7 +1837,9 @@ if (localStorage.getItem('autoUpdate') == undefined) {
     localStorage.setItem('autoUpdate', true);
 }
 else {
-    autoUpdate = (autoUpdate == 'true');
+    // 原写法是 autoUpdate == 'true'，拿布尔变量去比字符串，恒为 false。
+    // 后果：desktop.html 的「自动更新」开关基于错误的初值取反，第一次点击取消勾选无效。
+    autoUpdate = (localStorage.getItem('autoUpdate') == 'true');
 }
 
 const urlParams = new URL(location.href).searchParams;
@@ -2886,8 +1848,8 @@ if (urlParams.get('skip_login') !== '1') {
     $('#loginback').css('display', 'flex');
 }
 
-// 共用同一个开机提示；根据运行环境在 nts.about 中选择对应名称。
-shownotice('about');
+// About 是模态框，会把背景设为 inert。正常路径在 win12FinishLogin() 隐藏
+// 登录层后打开；skip_login 路径由 win12Start() 在启动遮罩隐藏后打开。
 // PWA 应用
 if (!location.href.match(/((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])(?::(?:[0-9]|[1-9][0-9]{1,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5]))/) && !location.href.match('localhost') && !urlParams.get('develop')) {
     navigator.serviceWorker.register('sw.js', { updateViaCache: 'none', scope: './' }).then(reg => {
@@ -2924,6 +1886,8 @@ if (!location.href.match(/((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d|[1-9]\d|
     }
 }
 function sendToSw(msg) {
+    // 首次加载时 controller 可能尚未就绪（checkUpdate 会在注册完成前调用本函数）
+    if (!navigator.serviceWorker || !navigator.serviceWorker.controller) return;
     navigator.serviceWorker.controller.postMessage(msg);
 }
 
@@ -2991,8 +1955,83 @@ function calcTimeString(second) {
 }
 
 //监听全局按键
+function isVisibleBlockingLayer(element) {
+    if (!element) return false;
+    const style = getComputedStyle(element);
+    return style.display !== 'none' && style.visibility !== 'hidden'
+        && element.getClientRects().length > 0;
+}
+
+function getHighestBlockingLayer() {
+    const noticeBack = document.getElementById('notice-back');
+    if (noticeBack && noticeBack.classList.contains('show')) return noticeBack;
+    for (const id of ['loadback', 'orientation-warning', 'loginback']) {
+        const element = document.getElementById(id);
+        if (isVisibleBlockingLayer(element)) return element;
+    }
+    return null;
+}
+
+function getBlockingLayerFocusable(layer) {
+    if (!layer) return [];
+    return [...layer.querySelectorAll(
+        'button:not([disabled]), input:not([disabled]), a[href], select:not([disabled]), ' +
+        'textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    )].filter(element => isVisibleBlockingLayer(element));
+}
+
+function focusHighestBlockingLayer() {
+    const layer = getHighestBlockingLayer();
+    if (!layer || layer.id === 'notice-back' || layer.id === 'loadback') return;
+    const focusable = getBlockingLayerFocusable(layer);
+    (focusable[0] || layer).focus({ preventScroll: true });
+}
+
+function handleBlockingLayerKeydown(event) {
+    if (event.key !== 'Tab') return;
+    const layer = getHighestBlockingLayer();
+    if (!layer || layer.id === 'notice-back') return;
+    if (layer.id === 'loadback') {
+        event.preventDefault();
+        return;
+    }
+    const focusable = getBlockingLayerFocusable(layer);
+    if (!focusable.length) {
+        event.preventDefault();
+        layer.focus({ preventScroll: true });
+        return;
+    }
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (!layer.contains(document.activeElement)) {
+        event.preventDefault();
+        (event.shiftKey ? last : first).focus({ preventScroll: true });
+    }
+    else if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus({ preventScroll: true });
+    }
+    else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus({ preventScroll: true });
+    }
+}
+
+function handleBlockingLayerFocus(event) {
+    const layer = getHighestBlockingLayer();
+    if (!layer || layer.id === 'notice-back' || layer.id === 'loadback') return;
+    if (!layer.contains(event.target)) focusHighestBlockingLayer();
+}
+
+document.addEventListener('keydown', handleBlockingLayerKeydown, true);
+document.addEventListener('focusin', handleBlockingLayerFocus, true);
+
 function setupGlobalKey() {
     $(document).keydown(function (event) {
+        if (getHighestBlockingLayer()) {
+            if (event.keyCode == 116) event.preventDefault();
+            return;
+        }
         if (event.keyCode == 116/*F5 被按下 (刷新)*/) {
             event.preventDefault();/*取消默认刷新行为*/
             $('#desktop').css('opacity', '0'); setTimeout(() => { $('#desktop').css('opacity', '1'); }, 100); setIcon();
@@ -3036,13 +2075,21 @@ function isMobileDevice() {
 }
 
 let orientationDismissed = false;
+let orientationPreviousFocus = null;
 
 function checkOrientation() {
     if (orientationDismissed) return;
     const container = document.getElementById('orientation-warning');
     const isPortrait = window.matchMedia("(orientation: portrait)").matches;
     if (isMobileDevice() && isPortrait) {
+        const wasVisible = isVisibleBlockingLayer(container);
+        if (!wasVisible && document.activeElement && document.activeElement !== document.body) {
+            orientationPreviousFocus = document.activeElement;
+        }
         container.style.display = "flex";
+        if (!wasVisible && getHighestBlockingLayer() === container) {
+            focusHighestBlockingLayer();
+        }
     } else {
         container.style.display = "none";
     }
@@ -3051,6 +2098,13 @@ function checkOrientation() {
 function dismissOrientation() {
     orientationDismissed = true;
     document.getElementById('orientation-warning').style.display = 'none';
+    if (orientationPreviousFocus && orientationPreviousFocus.isConnected
+        && isVisibleBlockingLayer(orientationPreviousFocus)
+        && !orientationPreviousFocus.closest('#notice-back[inert]')) {
+        orientationPreviousFocus.focus({ preventScroll: true });
+    }
+    orientationPreviousFocus = null;
+    focusHighestBlockingLayer();
 }
 
 // 监听屏幕方向变化
@@ -3082,8 +2136,16 @@ function showTaskbarPreview(name, event) {
     }
 
     const win = $(`.window.${name}`);
-    if (win.length && !win.hasClass('min')) {
-        const preview = $('#taskbar-preview');
+    const previewBox = $('#taskbar-preview');
+    if (!win.length || win.hasClass('min')) {
+        previewBox.removeClass('show');
+        previewBox.find('.preview-title img').attr('src', '');
+        previewBox.find('.preview-title span').text('');
+        previewBox.find('.preview-content .preview-window').empty();
+        return;
+    }
+    if (win.length) {
+        const preview = previewBox;
         const taskbarItem = $(event.currentTarget);
         const itemRect = taskbarItem[0].getBoundingClientRect();
 

@@ -1,9 +1,9 @@
 ﻿@keyframes shine {
     0% {
-        border-color: #111;
+        border-color: var(--caret);
     }
     49% {
-        border-color: #111;
+        border-color: var(--caret);
     }
     51% {
         border-color: transparent;
@@ -12,12 +12,12 @@
         border-color: transparent;
     }
     100% {
-        border-color: #111;
+        border-color: var(--caret);
     }
 }
 
 .wg {
-    border-radius: 10px;
+    border-radius: var(--radius-2xl);
     box-shadow: 1px 2px 5px var(--shadow);
     overflow: hidden;
     transition: 200ms;
@@ -25,7 +25,7 @@
 
 :root.corner_squ .wg {
     corner-shape: squircle;
-    border-radius: 25px;
+    border-radius: var(--radius-pill);
 }
 
 .wg>.titbar {
@@ -34,7 +34,7 @@
 }
 
 .wg>.titbar>.more {
-    border-radius: 50%;
+    border-radius: var(--radius-circle);
     width: 25px;
     height: 25px;
     /* background-color: var(--bggrey); */
@@ -108,7 +108,7 @@
 }
 
 .wg.toolbar {
-    border-radius: 8px;
+    border-radius: var(--radius-xl);
     height: 100%;
     background-color: var(--contextmeu);
     backdrop-filter: blur(20px) saturate(1.5);
@@ -180,7 +180,7 @@
 .wg.calc>.content>.container>input:focus {
     animation-name: shine;
     animation-duration: 1s;
-    border-color: #111;
+    border-color: var(--caret);
     animation-iteration-count: infinite;
 }
 

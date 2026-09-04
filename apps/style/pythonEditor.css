@@ -34,7 +34,7 @@
     color: #f8f8f2;
     border: 25px solid #1a1a1a !important;
     border: none;
-    /* border-radius: 5px; */
+    /* border-radius: var(--radius-sm); */
     padding: 10px;
     width: 100%;
     height: 100%;
@@ -52,16 +52,16 @@
 }
 /* 编辑器 */
 .ace_editor.ace_autocomplete.ace_dark.ace-vibrant-ink{
-    border-radius: 8px;
+    border-radius: var(--radius-xl);
     box-shadow: 1px 1px 10px #000;
 }
 
 .ace_autocomplete .ace_layer.ace_marker-layer>.ace_active-line{
-    border-radius: 5px;
+    border-radius: var(--radius-sm);
     background-color: #ffffff30 !important;
 }
 .ace_autocomplete .ace_layer.ace_marker-layer>.ace_line-hover{
-    border-radius: 5px;
+    border-radius: var(--radius-sm);
     background: #ffffff20;
     border-color: var(--href);
     transition: 100ms;
@@ -75,7 +75,7 @@
 }
 
 .ace_tooltip{
-    border-radius: 8px;
+    border-radius: var(--radius-xl);
     box-shadow: 1px 1px 10px #000;
     background-color: #26282c !important;
     border: 1px #484747 solid;

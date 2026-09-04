@@ -191,7 +191,7 @@
     align-items: center;
     border: none;
     background-color: var(--app-bg-dark);
-    border-radius: 4px;
+    border-radius: var(--radius-xs);
     height: 40px;
     width: 40px;
     padding: 0;
@@ -212,7 +212,7 @@
 }
 
 #win-defender .main-header-line input {
-    border-radius: 4px;
+    border-radius: var(--radius-xs);
     background-color: var(--color-light);
     border: none;
     border: 1px solid var(--color-light);
@@ -284,7 +284,7 @@
 
 #win-defender .chart-container {
     width: 100%;
-    border-radius: 10px;
+    border-radius: var(--radius-2xl);
     background-color: var(--app-bg-dark);
     padding: 16px;
     display: flex;
@@ -410,7 +410,7 @@
 #win-defender .acquisitions-bar {
     width: 100%;
     height: 4px;
-    border-radius: 4px;
+    border-radius: var(--radius-xs);
     margin-top: 16px;
     margin-bottom: 8px;
     display: flex;
@@ -447,7 +447,7 @@
 #win-defender .progress-color {
     width: 10px;
     height: 10px;
-    border-radius: 50%;
+    border-radius: var(--radius-circle);
     margin-right: 8px;
 }
 
@@ -490,7 +490,7 @@
 #win-defender .applicant-line img {
     width: 32px;
     height: 32px;
-    border-radius: 50%;
+    border-radius: var(--radius-circle);
     -o-object-fit: cover;
     object-fit: cover;
     margin-right: 10px;
@@ -531,7 +531,7 @@
     width: 80px;
     height: 80px;
     overflow: hidden;
-    border-radius: 50%;
+    border-radius: var(--radius-circle);
     margin-bottom: 16px;
 }
 
@@ -579,7 +579,7 @@
     position: absolute;
     width: 6px;
     height: 6px;
-    border-radius: 50%;
+    border-radius: var(--radius-circle);
     background-color: var(--app-logo);
     top: -1px;
     right: -1px;
@@ -600,7 +600,7 @@
 #win-defender .message-line img {
     width: 32px;
     height: 32px;
-    border-radius: 50%;
+    border-radius: var(--radius-circle);
     -o-object-fit: cover;
     object-fit: cover;
     margin-right: 8px;
@@ -659,7 +659,7 @@
 }
 
 #win-defender .activity-icon {
-    border-radius: 8px;
+    border-radius: var(--radius-xl);
     width: 32px;
     height: 32px;
     display: flex;
@@ -705,7 +705,7 @@
     background-color: var(--app-bg-dark);
     border: none;
     color: var(--main-color);
-    border-radius: 4px;
+    border-radius: var(--radius-xs);
 }
 
 #win-defender .close-menu {

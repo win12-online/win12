@@ -366,29 +366,54 @@
     function parseData(data, settings) {
 
         var parsed = '';
-        var lines = data.split(/\n/);
+        var lines = data.split(/\r?\n/);
         var regPlaceHolder = /(\{\d+})/g;
         var regRepPlaceHolder = /\{(\d+)}/g;
         var unicodeRE = /(\\u.{4})/ig;
         for (var i=0,j=lines.length;i<j;i++) {
             var line = lines[i];
 
+            // A logical .properties line may span several physical lines. Only an
+            // odd number of trailing backslashes continues the line; an even number
+            // represents escaped backslashes and therefore ends it.
+            var trailingBackslashes = 0;
+            for (var b = line.length - 1; b >= 0 && line.charAt(b) == '\\'; b--) {
+                trailingBackslashes++;
+            }
+            while (trailingBackslashes % 2 == 1) {
+                line = line.substring(0, line.length - 1);
+                if (++i >= j) break;
+                line += lines[i].replace(/^[ \t\f]+/, '');
+
+                trailingBackslashes = 0;
+                for (b = line.length - 1; b >= 0 && line.charAt(b) == '\\'; b--) {
+                    trailingBackslashes++;
+                }
+            }
+
             line = line.trim();
-            if (line.length > 0 && line.match("^#") != "#") { // skip comments
-                var pair = line.split('=');
-                if (pair.length > 0) {
+            if (line.length > 0 && line.charAt(0) != '#' && line.charAt(0) != '!') { // skip comments
+                // Split on the first unescaped '=' or ':'. Escaped delimiters are
+                // common in HTML attributes and URLs inside translation values.
+                var separator = -1;
+                var escaped = false;
+                for (var p = 0; p < line.length; p++) {
+                    var ch = line.charAt(p);
+                    if (ch == '\\') {
+                        escaped = !escaped;
+                        continue;
+                    }
+                    if (!escaped && (ch == '=' || ch == ':')) {
+                        separator = p;
+                        break;
+                    }
+                    escaped = false;
+                }
+
+                if (line.length > 0) {
                     /** Process key & value */
-                    var name = decodeURI(pair[0]).trim();
-                    var value = pair.length == 1 ? "" : pair[1];
-                    // process multi-line values
-                    while (value.search(/\\$/) != -1) {
-                        value = value.substring(0, value.length - 1);
-                        value += lines[++i].trimRight();
-                    }
-                    // Put values with embedded '='s back together
-                    for (var s = 2; s < pair.length; s++) {
-                        value += '=' + pair[s];
-                    }
+                    var name = decodeURI(separator == -1 ? line : line.substring(0, separator)).trim();
+                    var value = separator == -1 ? "" : line.substring(separator + 1);
                     value = value.trim();
 
                     /** Mode: bundle keys in a map */

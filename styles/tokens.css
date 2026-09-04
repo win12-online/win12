@@ -1,0 +1,28 @@
+/* 设计令牌层 —— 只收录在明暗两种主题下取值**完全一致**的量。
+ *
+ * 重要：desktop.css 的 :root 里已有 25 个变量，其中 22 个是主题相关的
+ * （:root.dark 会覆盖它们）。因此绝不能拿 --text / --bg / --hr 之类
+ * 去替换代码里硬编码的 #000 / #fff / #ccc —— 那会改变暗色模式下的表现，
+ * 属于行为变更而不是重构。详见 docs/refactor-notes.md。
+ *
+ * 主题无关、可安全引用的既有变量只有三个：--theme-1 / --theme-2 / --href。
+ */
+:root {
+    /* 圆角尺度：覆盖现有 191 处 border-radius 声明中的高频取值 */
+    --radius-xs: 4px;
+    --radius-sm: 5px;
+    --radius-md: 6px;
+    --radius-lg: 7px;
+    --radius-xl: 8px;
+    --radius-2xl: 10px;
+    --radius-3xl: 15px;
+    --radius-4xl: 20px;
+    --radius-pill: 25px;
+    --radius-circle: 50%;
+
+    /* 动效：JS 里散落 34 次的 200ms 常量，这里是唯一来源 */
+    --dur-fast: 100ms;
+    --dur-base: 200ms;
+    --dur-slow: 300ms;
+    --ease-win: cubic-bezier(0.9, 0, 0.1, 1);
+}

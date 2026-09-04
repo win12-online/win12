@@ -15,7 +15,7 @@
 
 #win-edge>.tool>.a {
     font-size: 18px;
-    border-radius: 6px;
+    border-radius: var(--radius-md);
     width: 35px;
     height: 30px;
     text-align: center;
@@ -76,7 +76,7 @@
     width: calc(100% - 4px);
     flex-grow: 1;
     margin: 2px;
-    border-radius: 10px;
+    border-radius: var(--radius-2xl);
     --bg: var(--bg);
     --text: var(--text);
     display: none;
@@ -113,7 +113,7 @@
 }
 
 .reloading>svg>circle:last-child {
-    stroke: #2983cc;
+    stroke: var(--href);
     stroke-width: 2px;
 }
 

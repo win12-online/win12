@@ -7,7 +7,7 @@
   font-size: 15px;
   display: flex;
   margin-bottom: 4px;
-  border-radius: 6px;
+  border-radius: var(--radius-md);
 }
 
 #win-about > .menu > list > a > img {
@@ -35,7 +35,7 @@
   height: calc(100% - 138px);
   overflow-y: auto;
   padding-right: 10px;
-  border-radius: 6px;
+  border-radius: var(--radius-md);
 }
 
 #win-about > .menu > list > * > img {
@@ -69,7 +69,7 @@
 
 #win-about > .cnt .tit > span {
   background: linear-gradient(180deg, var(--theme-1), var(--theme-2));
-  border-radius: 10px;
+  border-radius: var(--radius-2xl);
   width: 6px;
   margin: 5px 8px 5px 5px;
   transition: 200ms;
@@ -84,7 +84,7 @@
 #win-about > .update > div > details {
   background-color: var(--card);
   padding: 10px 10px 0 15px;
-  border-radius: 8px;
+  border-radius: var(--radius-xl);
   box-shadow: 0 1px 2px 1px var(--s3d);
   margin: 12px 10px 0 0;
   transition:
@@ -97,7 +97,7 @@
 
 :root.corner_squ #win-about > .update > div > details {
   corner-shape: squircle;
-  border-radius: 20px;
+  border-radius: var(--radius-4xl);
 }
 
 #win-about > .update > div > details[open] {
@@ -146,7 +146,7 @@
   padding: 10px;
   background: var(--card);
   box-shadow: 0 1px 2px #00000016;
-  border-radius: 8px;
+  border-radius: var(--radius-xl);
   font-size: 13px;
   color: inherit;
   text-decoration: none;
@@ -170,7 +170,7 @@
   width: 42px;
   height: 42px;
   flex: 0 0 42px;
-  border-radius: 50%;
+  border-radius: var(--radius-circle);
   background: var(--hover);
   box-shadow: 0 0 0 1px var(--hover-b);
   object-fit: cover;
@@ -206,9 +206,9 @@
   height: 20px;
   padding: 0 6px;
   margin-left: 3px;
-  border-radius: 10px;
+  border-radius: var(--radius-2xl);
   background: #2983cc20;
-  color: #2983cc;
+  color: var(--href);
   font-size: 13px;
   font-weight: 700;
 }
@@ -241,7 +241,7 @@
 }
 
 #win-winver > .logo > p {
-  background-image: linear-gradient(100deg, #b660d9, #2983cc);
+  background-image: linear-gradient(100deg, #b660d9, var(--href));
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;

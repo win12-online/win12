@@ -78,6 +78,7 @@
         </svg>
         <input type="text" onkeyup="handleKeyPress(event)" placeholder="在必应中搜索，或输入一个网址">
     </div>
+    <script src="./scripts/edge-address.js"></script>
     <script>
         function handleKeyPress(event) {
             // 如果按下的是回车键
@@ -99,10 +100,7 @@
         }
     
         function isSearchQuery(value) {
-            // 正则用来验证大部分常见的 URL 格式，包括以"http://"、"https://"或"ftp://"开头的 URL
-            var urlPattern = /^(((ht|f)tps?):\/\/)?([^!@#$%^&*?.\s-]([^!@#$%^&*?.\s]{0,63}[^!@#$%^&*?.\s])?\.)+[a-z]{2,6}\/?/;
-            // 判断是否为 URL
-            return !urlPattern.test(value);
+            return resolveEdgeAddressInput(value).type !== 'navigate';
         }
     
         function searchInBing(query) {
@@ -110,20 +108,22 @@
             var encodedQuery = encodeURIComponent(query);
             // 在新标签页中打开 Bing 搜索
             window.location = 'https://bing.com/search?q=' + encodedQuery;
-            // 可能报错
-            apps.edge.rename(query);
+            if (typeof apps !== 'undefined' && apps.edge && typeof apps.edge.rename === 'function') {
+                apps.edge.rename(query);
+            }
         }
     
         function navigateToURL(url) {
-            // 如果 URL 不包含协议前缀
-            if (!/^https?:\/\//.test(url)) {
-                // 添加默认的 HTTP 协议前缀
-                url = 'http://' + url;
+            const resolvedInput = resolveEdgeAddressInput(url);
+            if (resolvedInput.type !== 'navigate') {
+                searchInBing(String(url == null ? '' : url).trim());
+                return;
             }
             // 导航到指定 URL
-            window.location = url;
-            // 可能报错
-            apps.edge.rename(url); 
+            window.location = resolvedInput.url;
+            if (typeof apps !== 'undefined' && apps.edge && typeof apps.edge.rename === 'function') {
+                apps.edge.rename(resolvedInput.url);
+            }
         }
     </script>
 </body>

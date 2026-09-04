@@ -46,7 +46,7 @@
     align-items: center;
     justify-content: center;
     color: #ccc;
-    border-radius: 4px;
+    border-radius: var(--radius-xs);
     cursor: pointer;
     font-size: 14px;
     transition: background 0.12s, color 0.12s;
@@ -71,7 +71,7 @@
     background: #2d2d2d;
     color: #ccc;
     border: 1px solid #444;
-    border-radius: 4px;
+    border-radius: var(--radius-xs);
     padding: 2px 6px;
     font-size: 12px;
     height: 26px;

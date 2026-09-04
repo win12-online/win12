@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -85,6 +85,7 @@
       },
     };
     if (lang && i18n[lang]) {
+      document.documentElement.lang = lang;
       for (const k in i18n[lang]) {
         document.getElementById(k).innerText = i18n[lang][k];
       }

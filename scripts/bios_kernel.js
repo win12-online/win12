@@ -22,8 +22,8 @@ function BIOS_confirm(tit, func) {
     $('#confirm-tit')[0].innerText = tit;
     $('#confirmContainer').css('display', 'flex');
     $('#confirm').attr('data-show', 'true');
-    $('#confirm>.btns>*:first-child').attr('click', func);
-    $('#confirm>.btns>*:first-child').attr('ontouchstart', func);
+    $('#confirm>.btns>*:first-child').attr('onclick', func);
+    $('#confirm>.btns>*:first-child').attr('ontouchstart', `event.preventDefault();${func}`);
 }
 
 function changePage(t) {
@@ -82,7 +82,7 @@ function toggleOption(optionElement) {
 }
 
 function handleExitOption(option) {
-    const action = $(option).attr('click');
+    const action = $(option).attr('onclick') || '';
     if (action.includes('toBoot()')) {
         toBoot();
     } else if (action.includes('BIOS_confirm')) {

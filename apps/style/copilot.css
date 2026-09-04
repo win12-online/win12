@@ -81,7 +81,7 @@
 #copilot > .chat > .line > .text {
   width: max-content;
   padding: 10px 15px;
-  border-radius: 10px;
+  border-radius: var(--radius-2xl);
   box-shadow: 0 1px 6px var(--shadow);
   max-width: calc(100% - 40px);
   word-break: break-word;
@@ -90,7 +90,7 @@
 }
 :root.corner_squ #copilot > .chat > .line > .text {
   corner-shape: squircle;
-  border-radius: 20px;
+  border-radius: var(--radius-4xl);
 }
 #copilot > .chat > .line.ai > .text {
   background-color: var(--msg);
@@ -112,7 +112,7 @@
 }
 :root.corner_squ #copilot > .chat > .line.ai > .text > .action {
   corner-shape: squircle;
-  border-radius: 20px;
+  border-radius: var(--radius-4xl);
 }
 #copilot > .chat > .line.ai > .text > .action > .tit {
   font-size: 20px;

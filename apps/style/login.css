@@ -19,17 +19,21 @@
 }
 
 #login {
+    appearance: none;
     background-color: #eeeeee40;
     width: 100px;
     padding: 5.5px 8px;
     color: #fff;
-    border-radius: 6px;
+    border-radius: var(--radius-md);
     font-size: 15.8px;
     text-align: center;
     border: 3px solid #00000000;
     transition: 50ms;
     margin-bottom: -40px;
     z-index: 1;
+    cursor: pointer;
+    font-family: inherit;
+    line-height: 1.5;
 }
 
 #login:hover {
@@ -45,6 +49,11 @@
     transition: 80ms;
 }
 
+#login:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+}
+
 #login-password {
     display: none;
     width: 220px;
@@ -53,7 +62,7 @@
     color: #fff;
     background-color: #eeeeee40;
     border: 2px solid #ffffff50;
-    border-radius: 6px;
+    border-radius: var(--radius-md);
     outline: none;
     text-align: center;
 }
@@ -78,7 +87,7 @@
 
 :root.corner_squ #login {
     corner-shape: squircle;
-    border-radius: 15px;
+    border-radius: var(--radius-3xl);
 }
 
 #login-welc{
@@ -144,7 +153,7 @@
     justify-content: center;
     align-items: center;
     padding: 7px;
-    border-radius: 7px;
+    border-radius: var(--radius-lg);
 }
 
 #loginback .power>*:hover {

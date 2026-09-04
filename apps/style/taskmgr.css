@@ -46,7 +46,7 @@
             padding: 5px 20px;
             margin-left: 5px;
             display: block;
-            border-radius: 7px;
+            border-radius: var(--radius-lg);
             max-width: 58px;
             margin-bottom: 3px;
             transition: 80ms, transform 400ms cubic-bezier(0.14, 1.02, 0.17, 0.03) !important;
@@ -212,7 +212,7 @@
 }
 
 #win-taskmgr>.main>.cnt.performance>.content>.select-menu>* {
-    border-radius: 10px;
+    border-radius: var(--radius-2xl);
     padding: 12px;
     margin: 10px 0px;
     transition: 80ms, transform 400ms cubic-bezier(0.14, 1.02, 0.17, 0.03) !important;
@@ -254,7 +254,7 @@
 }
 
 #win-taskmgr>.main>.cnt.performance>.content>.select-menu>*>.left>.graph-view-cpu {
-    border-color: #2983cc;
+    border-color: var(--href);
 }
 
 #win-taskmgr>.main>.cnt.performance>.content>.select-menu>*>.left>.graph-view-memory {
@@ -270,7 +270,7 @@
 }
 
 #win-taskmgr>.main>.cnt.performance>.content>.select-menu>*>.left>.graph-view-gpu {
-    border-color: #2983cc;
+    border-color: var(--href);
 }
 
 #win-taskmgr>.main>.cnt.performance>.content>.select-menu>.check {

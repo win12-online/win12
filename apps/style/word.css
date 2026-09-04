@@ -104,7 +104,7 @@
 #win-word>.app-main>.card-list>.card>img {
     height: 175px !important;
     width: 125px !important;
-    border-radius: 8px;
+    border-radius: var(--radius-xl);
     margin: 12.5px;
     background-color: var(--contextmeu);
 }
@@ -197,14 +197,14 @@
     background-color: #2c579b;
     height: 2.5px;
     width: 24px;
-    border-radius: 8px;
+    border-radius: var(--radius-xl);
     position:absolute;
     left: 62px;
     top: 32px;
 }
 
 .window.word>.pages>.edit>.ribbon>.tab>a {
-    border-radius: 8px;
+    border-radius: var(--radius-xl);
     transition: all 80ms;
     padding: 4px;
 }
@@ -219,7 +219,7 @@
     height: 100px;
     width: calc(100% - 16px);
     margin: auto;
-    border-radius: 8px;
+    border-radius: var(--radius-xl);
     background-color: var(--card);
     display: flex;
     gap: 4px;
@@ -233,7 +233,7 @@
     justify-content: center;
     height: 100%;
     width: 64px;
-    border-radius: 8px;
+    border-radius: var(--radius-xl);
     transition: all 0.1s;
 }
 
