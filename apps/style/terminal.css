@@ -35,6 +35,7 @@
     color: #ddd;
     margin: 0px 15px;
     font-family: "Consolas", "Monaco", "monospace", system-ui;
+    -webkit-user-select: text;
     user-select: text;
     font-size: 16px;
 }

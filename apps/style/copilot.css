@@ -86,6 +86,7 @@
   max-width: calc(100% - 40px);
   word-break: break-word;
   animation: msg 400ms cubic-bezier(0, 0, 0, 1);
+  -webkit-user-select: text;
   user-select: text;
 }
 :root.corner_squ #copilot > .chat > .line > .text {
