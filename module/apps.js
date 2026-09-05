@@ -3,6 +3,7 @@ let apps = {
     setting: {
         init: () => {
             $('#win-setting>.menu>list>a.home')[0].click();
+            apps.setting.syncLanguageSelect();
             $('#win-setting>.page>.cnt.update>.setting-list>div:last-child>.alr>a.checkbox')[localStorage.getItem('autoUpdate') == 'true' ? 'addClass' : 'removeClass']('checked');
             apps.setting.checkUpdate();
             // 加载已保存的蓝屏颜色
@@ -16,6 +17,22 @@ let apps = {
             $('#win-setting>.page>.cnt.' + name).addClass('show');
             $('#win-setting>.menu>list>a.check').removeClass('check');
             $('#win-setting>.menu>list>a.' + name).addClass('check');
+            if (name === 'time') apps.setting.timePanel('overview');
+        },
+        timePanel: (name) => {
+            const $time = $('#win-setting>.page>.cnt.time');
+            $time.find('.time-panel.show').removeClass('show');
+            $time.find('.time-panel.' + name).addClass('show');
+            $time.scrollTop(0);
+        },
+        changeLanguage: (code) => {
+            localStorage.setItem('lang', code);
+            window.location.reload();
+        },
+        syncLanguageSelect: () => {
+            const savedLanguage = localStorage.getItem('lang');
+            const language = savedLanguage === 'en-US' ? 'en' : (savedLanguage || 'auto');
+            $('#win-setting .languageSelect').val(language);
         },
         theme_get: () => {
             $('#set-theme').html(`<loading><svg width="30px" height="30px" viewBox="0 0 16 16">

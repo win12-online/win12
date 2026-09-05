@@ -987,6 +987,20 @@ let copilot = {
 
     }
 };
+function toggleLoginLanguage() {
+    const $box = $('#login-language-box');
+    const $button = $('.language-dock');
+    if ($box.hasClass('show')) {
+        $box.removeClass('show');
+        $button.attr('aria-expanded', 'false');
+        setTimeout(() => $box.removeClass('show-begin'), 300);
+    } else {
+        $box.addClass('show-begin');
+        $button.attr('aria-expanded', 'true');
+        setTimeout(() => $box.addClass('show'), 0);
+    }
+}
+
 // 日期、时间
 let da = new Date();
 

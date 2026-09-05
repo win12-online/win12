@@ -50,21 +50,26 @@ let langcode, lang = (txt, id) => {
     return translated === null ? txt : translated;
 };
 
-if (localStorage.getItem('lang') != null) {
-    if (localStorage.getItem('lang') == 'hans' || localStorage.getItem('lang') == 'zh_cn' || localStorage.getItem('lang') == 'zh-cn') {
-        localStorage.setItem('lang', 'zh-CN');
-    }
-} else {
-    if (navigator.language in langc)
-        localStorage.setItem('lang', langc[navigator.language]);
-    else
-        localStorage.setItem('lang', 'en');
+function getDeviceLanguage() {
+    const browserLanguage = navigator.language || '';
+    return langc[browserLanguage] || langc[browserLanguage.toLowerCase()] || 'en';
 }
+
+const savedLanguage = localStorage.getItem('lang');
+if (savedLanguage == 'hans' || savedLanguage == 'zh_cn' || savedLanguage == 'zh-cn' || savedLanguage == 'en-US') {
+    localStorage.setItem('lang', savedLanguage === 'en-US' ? 'en' : 'zh-CN');
+}
+
 langcode = localStorage.getItem('lang');
+if (langcode == null || langcode == 'auto')
+    langcode = getDeviceLanguage();
+
 document.documentElement.lang = langcode;
 
 
-if (document.querySelectorAll('#loginback>.langselect>.' + langcode).length != 0) {
+if (localStorage.getItem('lang') == 'auto' || localStorage.getItem('lang') == null) {
+    $('#loginback>.langselect>.def').addClass('selected')
+} else if (document.querySelectorAll('#loginback>.langselect>.' + langcode).length != 0) {
     $('#loginback>.langselect>.' + langcode).addClass('selected')
 } else {
     $('#loginback>.langselect>.en').addClass('selected')
@@ -106,4 +111,3 @@ function updateAboutAppEntrypoints() {
 }
 
 updateAboutAppEntrypoints();
-

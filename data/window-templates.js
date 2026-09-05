@@ -413,7 +413,7 @@ const windowMarkup = `	<div class="window defender" data-min-width="800" style="
 					<a class="enable appearance avlb" onclick="apps.setting.page('appearance')"><img src="apps/icons/setting/personal.png"><span data-i18n="setting.psnl">个性化</span></a><!-- 个性化  stsc 远古-->
 					<a class="enable apps" onclick="apps.setting.page('apps')"><img src="apps/icons/setting/apps.png"><span data-i18n="setting.apps">应用</span></a><!-- 应用  @Junchen Yi 2023-9-11-->
 					<a class="enable user" onclick="apps.setting.page('user')"><img src="apps/icons/setting/user.png"><span data-i18n="setting.accounts">账户</span></a><!-- 账户  @Junchen Yi 2023-9-11-->
-					<a class="enable time" onclick="apps.setting.page('time')"><img src="apps/icons/setting/time.png"><span data-i18n="setting.timelang">时间和语言</span></a><!-- 时间  @Junchen Yi 2023-9-17-->
+					<a class="enable time avlb" onclick="apps.setting.page('time')"><img src="apps/icons/setting/time.png"><span data-i18n="setting.timelang">时间和语言</span></a><!-- 时间  @Junchen Yi 2023-9-17-->
 					<a class="enable game" onclick="apps.setting.page('game')"><img src="apps/icons/setting/game.png"><span data-i18n="setting.game">游戏</span></a>
 					<a><img src="apps/icons/setting/help.png"><span data-i18n="setting.acc">辅助功能</span></a>
 					<a class="enable safe avlb" onclick="apps.setting.page('safe')"><img src="apps/icons/setting/safe.png"><span data-i18n="setting.privacy">隐私和安全性</span></a>
@@ -696,16 +696,39 @@ const windowMarkup = `	<div class="window defender" data-min-width="800" style="
 				<!-- 账户 end -->
 				<!-- 时间 -->
 				<div class="cnt time">
-					<p class="title">时间和语言</p>
-					<div class="settingTimeItem">
-						<p class="settingTimeTitle">当前设备时间：</p>
-						<span class="settingTime"></span>
+					<div class="time-panel overview show">
+						<p class="title" data-i18n="setting.timelang">时间和语言</p>
+						<div class="settingTimeItem">
+							<p class="settingTimeTitle" data-i18n="setting.currentTime">当前设备时间：</p>
+							<span class="settingTime"></span>
+						</div>
+						<div class="setting-list">
+							<a class="time-option" onclick="apps.setting.timePanel('date')"><icon></icon><div><p data-i18n="setting.dateTime">日期与时间</p><p data-i18n="setting.dateTimeDesc">时区、自动时钟设置、日历显示</p></div><i class="bi bi-chevron-right"></i></a>
+							<a class="time-option" onclick="apps.setting.timePanel('language')"><icon></icon><div><p data-i18n="setting.languageRegion">语言和区域</p><p data-i18n="setting.languageRegionDesc">Windows 和某些应用程序根据您所在的地区设置日期和时间的格式</p></div><i class="bi bi-chevron-right"></i></a>
+							<a><icon></icon><div><p>输入</p><p>触摸键盘、文本建议、首选项</p></div><i class="bi bi-chevron-right"></i></a>
+							<a><icon></icon><div><p>语音</p><p>语音语言、语音识别麦克风设置、声音</p></div><i class="bi bi-chevron-right"></i></a>
+						</div>
 					</div>
-					<div class="setting-list">
-						<a><icon></icon><div><p>日期与时间</p><p>时区、自动时钟设置、日历显示</p></div><i class="bi bi-chevron-right"></i></a>
-						<a><icon></icon><div><p>语言和区域</p><p>Windows 和某些应用程序根据您所在的地区设置日期和时间的格式</p></div><i class="bi bi-chevron-right"></i></a>
-						<a><icon></icon><div><p>输入</p><p>触摸键盘、文本建议、首选项</p></div><i class="bi bi-chevron-right"></i></a>
-						<a><icon></icon><div><p>语音</p><p>语音语言、语音识别麦克风设置、声音</p></div><i class="bi bi-chevron-right"></i></a>
+					<div class="time-panel date">
+						<a class="time-back" onclick="apps.setting.timePanel('overview')"><i class="bi bi-arrow-left"></i><span data-i18n="setting.timelang">时间和语言</span></a>
+						<p class="title" data-i18n="setting.dateTime">日期与时间</p>
+						<div class="setting-card"><p data-i18n="setting.currentTime">当前设备时间：</p><span class="settingTime"></span></div>
+					</div>
+					<div class="time-panel language">
+						<a class="time-back" onclick="apps.setting.timePanel('overview')"><i class="bi bi-arrow-left"></i><span data-i18n="setting.timelang">时间和语言</span></a>
+						<p class="title" data-i18n="setting.languageRegion">语言和区域</p>
+						<div class="setting-card language-card">
+							<div><p data-i18n="setting.displayLanguage">Windows 显示语言</p><p data-i18n="setting.displayLanguageDesc">选择应用于 Windows 和应用程序的显示语言。</p></div>
+							<div class="languageSelectControl">
+								<select class="languageSelect" aria-label="Windows display language" onchange="apps.setting.changeLanguage(this.value)">
+									<option value="auto" data-i18n="setting.languageAuto">自动（根据设备语言）</option>
+									<option value="zh-CN">简体中文</option>
+									<option value="zh-TW">繁體中文</option>
+									<option value="en">English</option>
+								</select>
+								<i class="bi bi-chevron-down"></i>
+							</div>
+						</div>
 					</div>
 				</div>
 				<!-- 时间 end -->
