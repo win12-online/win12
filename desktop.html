@@ -149,7 +149,7 @@ toggletheme() 切换主题
 	<!-- 风水宝地，不可移动 -->
 	<script src="./scripts/jq.min.js"></script>
 	<script src="./scripts/jquery.i18n.properties.js"></script>
-
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.16.2/dist/cdn.min.js"></script>
 	<base target="_blank">
 
 	<title>Win12 网页版</title>
@@ -158,7 +158,7 @@ toggletheme() 切换主题
 
 
 <body>
-	<audio src="media/startup.mp3" id="startup-music"></audio>
+	<audio x-data x-ref="startupMusic" src="media/startup.mp3" @play-startup.window="$refs.startupMusic.play()"></audio>
 	<div id="loadback" style="background-color:#000;width:100%;height:100%;z-index:105;position:absolute;transition:opacity 200ms, visibility 0s 200ms;cursor: none;/*加载界面隐藏鼠标指针*/">
 		<style>
 			#loadback.hide {
