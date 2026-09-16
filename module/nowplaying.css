@@ -1,0 +1,213 @@
+/* Now Playing taskbar-pin controls plus normal widget ... menu. */
+
+.nowplaying.np-dock-nuclear {
+    position: relative;
+    top: 0;
+    margin-bottom: 0;
+    width: 348px;
+    min-width: 348px;
+    max-width: 348px;
+    height: 52px;
+    min-height: 52px;
+    max-height: 52px;
+    padding: 0;
+    overflow: visible;
+    background: transparent;
+    box-shadow: none;
+    border: 0;
+    pointer-events: auto;
+}
+
+.nowplaying.np-dock-nuclear:hover,
+.nowplaying.np-dock-nuclear:focus-within {
+    width: 348px;
+    min-width: 348px;
+    max-width: 348px;
+    height: 52px;
+    min-height: 52px;
+    max-height: 52px;
+}
+
+.nowplaying.np-dock-nuclear > :not(.np-dock-pill):not(.np-dock-menu) {
+    display: none;
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+}
+
+.nowplaying.np-dock-nuclear > .np-dock-pill {
+    width: 348px;
+    height: 52px;
+    min-width: 348px;
+    max-width: 348px;
+    box-sizing: border-box;
+    padding: 6px 38px 6px 7px;
+    display: grid;
+    grid-template-columns: 38px minmax(0, 1fr) 42px 120px;
+    grid-template-areas: "cover title time controls";
+    gap: 8px;
+    align-items: center;
+    border-radius: 15px;
+    overflow: hidden;
+    background: color-mix(in srgb, var(--card) 96%, transparent);
+    box-shadow: 0 5px 16px color-mix(in srgb, black 20%, transparent);
+    position: relative;
+    z-index: 10002;
+}
+
+.nowplaying.np-dock-nuclear .np-dock-cover,
+.wg.toolbar.nowplaying .np-cover {
+    grid-area: cover;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at 30% 20%, #ffffff55, transparent 30%),
+        linear-gradient(135deg, var(--theme-1), var(--theme-2));
+    color: #fff;
+}
+
+.nowplaying.np-dock-nuclear .np-dock-title {
+    grid-area: title;
+    min-width: 0;
+    font-size: 12px;
+    line-height: 1.15;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.nowplaying.np-dock-nuclear .np-dock-time {
+    grid-area: time;
+    min-width: 38px;
+    max-width: 42px;
+    font-size: 10px;
+    text-align: right;
+    white-space: nowrap;
+    color: var(--text2);
+}
+
+.nowplaying.np-dock-nuclear .np-dock-slider,
+.nowplaying.np-dock-nuclear input[type="range"] {
+    display: none;
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+}
+
+.nowplaying.np-dock-nuclear .np-dock-controls {
+    grid-area: controls;
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 5px;
+    opacity: 1;
+    pointer-events: auto;
+    visibility: visible;
+}
+
+.nowplaying.np-dock-nuclear .np-dock-import,
+.nowplaying.np-dock-nuclear .np-dock-back,
+.nowplaying.np-dock-nuclear .np-dock-play,
+.nowplaying.np-dock-nuclear .np-dock-forward {
+    width: 26px;
+    height: 26px;
+    min-width: 26px;
+    max-width: 26px;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: var(--hover);
+    color: var(--text);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 1;
+    pointer-events: auto;
+    visibility: visible;
+    cursor: pointer;
+}
+
+.nowplaying.np-dock-nuclear .np-dock-pill > .np-dock-widget-more {
+    position: absolute;
+    top: 50%;
+    right: 7px;
+    transform: translateY(-50%);
+    width: 24px;
+    height: 24px;
+    min-width: 24px;
+    max-width: 24px;
+    border: 0;
+    border-radius: 999px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--hover);
+    color: var(--text);
+    opacity: 1;
+    pointer-events: auto;
+    visibility: visible;
+    cursor: pointer;
+    z-index: 10080;
+}
+
+.nowplaying.np-dock-nuclear > .np-dock-menu {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    right: 0;
+    z-index: 10090;
+    min-width: 150px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 6px;
+    border-radius: 14px;
+    background: color-mix(in srgb, var(--card) 98%, transparent);
+    box-shadow: 0 8px 24px color-mix(in srgb, black 26%, transparent);
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition:
+        opacity 160ms ease,
+        transform 160ms ease,
+        visibility 160ms ease;
+}
+
+.nowplaying.np-dock-nuclear > .np-dock-menu.show {
+    opacity: 1;
+    pointer-events: auto;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.nowplaying.np-dock-nuclear > .np-dock-menu .np-dock-menu-item {
+    width: 100%;
+    height: 30px;
+    border: 0;
+    border-radius: 10px;
+    padding: 0 9px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+    background: transparent;
+    color: var(--text);
+    cursor: pointer;
+    text-align: left;
+}
+
+.nowplaying.np-dock-nuclear > .np-dock-menu .np-dock-menu-item:hover {
+    background: var(--hover);
+}
+
+.nowplaying.np-dock-nuclear > .np-dock-menu .np-dock-menu-label {
+    white-space: nowrap;
+    font-size: 12px;
+}

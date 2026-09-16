@@ -46,6 +46,7 @@ const nts = {
                 <a class="a" onclick="closenotice(); widgets.widgets.add('calc');">${lang('计算器', 'calc.name')}</a>
                 <a class="a" onclick="closenotice(); widgets.widgets.add('weather');">${lang('天气', 'nts.addwg.weather')}</a>
                 <a class="a" onclick="closenotice(); widgets.widgets.add('monitor');">${lang('系统性能监视器', 'nts.addwg.monitor')}</a>
+                <a class="a" onclick="closenotice(); widgets.widgets.add('nowplaying');">${lang('正在播放', 'nts.addwg.nowplaying')}</a>
             </list>`,
         btn: [
             { type: 'cancel', text: lang('取消', 'cancel'), js: 'closenotice();' }
@@ -89,6 +90,7 @@ const nts = {
                 <a class="a" onclick="closenotice(); widgets.widgets.addToDesktop('calc');">计算器</a>
                 <a class="a" onclick="closenotice(); widgets.widgets.addToDesktop('weather');">天气</a>
                 <a class="a" onclick="closenotice(); widgets.widgets.addToDesktop('monitor');">系统性能监视器</a>
+                <a class="a" onclick="closenotice(); widgets.widgets.addToDesktop('nowplaying');">${lang('正在播放', 'nts.addwg.nowplaying')}</a>
             </list>`,
         btn: [
             { type: 'cancel', text: lang('取消', 'cancel'), js: 'closenotice();' }
