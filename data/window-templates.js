@@ -1623,6 +1623,11 @@ const windowMarkup = `	<div class="window defender" data-min-width="800" style="
 			</div>
 			<canvas style="display: none;"></canvas>
 			<a style="display: none;"></a>
+			<div class="error">
+				<div class="icon"></div>
+				<p>嗯。。。您的摄像头好像有问题，请将它拔下来，重新插入</p>
+				<a class="a act" onclick="apps.camera.init()">重试</a>
+			</div>
 		</div>
 	</div>
 	<div class="window windows12">

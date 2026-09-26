@@ -925,6 +925,7 @@ let apps = {
             if (localStorage.getItem('camera')) {
                 const requestGeneration = ++apps.camera.requestGeneration;
                 apps.camera.streaming = false;
+                apps.camera.hideError();
                 apps.camera.video = $('#win-camera video')[0];
                 const video = apps.camera.video;
                 apps.camera.canvas = $('#win-camera canvas')[0];
@@ -932,6 +933,12 @@ let apps = {
                 apps.camera.context.fillStyle = '#aaa';
                 apps.camera.downloadLink = $('#win-camera a')[0];
                 // apps.camera.control = document.querySelector('#win-camera>.control')
+                if (!navigator.mediaDevices || typeof navigator.mediaDevices.getUserMedia != 'function') {
+                    if (requestGeneration === apps.camera.requestGeneration) {
+                        apps.camera.showError();
+                    }
+                    return;
+                }
                 navigator.mediaDevices.getUserMedia({ video: true, audio: false })
                     .then(stream => {
                         if (requestGeneration !== apps.camera.requestGeneration) {
@@ -944,7 +951,7 @@ let apps = {
                     })
                     .catch(() => {
                         if (requestGeneration === apps.camera.requestGeneration) {
-                            hidewin('camera');
+                            apps.camera.showError();
                         }
                     });
                 apps.camera.video.addEventListener('canplay', () => {
@@ -961,6 +968,12 @@ let apps = {
             else {
                 hidewin('camera');
             }
+        },
+        hideError: () => {
+            $('#win-camera>.error').removeClass('show');
+        },
+        showError: () => {
+            $('#win-camera>.error').addClass('show');
         },
         clearCanvas: () => {
             apps.camera.context.fillRect(0, 0, canvas.width, canvas.height);
