@@ -1625,8 +1625,8 @@ const windowMarkup = `	<div class="window defender" data-min-width="800" style="
 			<a style="display: none;"></a>
 			<div class="error">
 				<div class="icon"></div>
-				<p>嗯。。。您的摄像头好像有问题，请将它拔下来，重新插入<br />
-					或者请检查是否为本网页开启了摄像头权限</p>
+				<p><strong>嗯...无法连接到摄像头</strong></p>
+				<p>请检查摄像头是否已正确连接，以及是否为本页面授权了摄像头访问</p>
 				<a class="a act" onclick="apps.camera.init()">重试</a>
 			</div>
 		</div>
