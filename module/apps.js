@@ -917,6 +917,7 @@ let apps = {
     },
     camera: {
         requestGeneration: 0,
+        deviceLostTimer: null,
         init: () => {
             if (!localStorage.getItem('camera')) {
                 showwin('camera-notice');
@@ -925,6 +926,7 @@ let apps = {
             if (localStorage.getItem('camera')) {
                 const requestGeneration = ++apps.camera.requestGeneration;
                 apps.camera.streaming = false;
+                apps.camera.stopStream();
                 apps.camera.hideError();
                 apps.camera.video = $('#win-camera video')[0];
                 const video = apps.camera.video;
@@ -946,6 +948,7 @@ let apps = {
                             return;
                         }
                         video.srcObject = stream;
+                        apps.camera.watchTracks(stream, requestGeneration);
                         const playing = video.play();
                         if (playing && typeof playing.catch == 'function') playing.catch(() => {});
                     })
@@ -969,6 +972,44 @@ let apps = {
                 hidewin('camera');
             }
         },
+        stopStream: () => {
+            clearTimeout(apps.camera.deviceLostTimer);
+            apps.camera.deviceLostTimer = null;
+            const video = apps.camera.video;
+            const stream = video && video.srcObject;
+            if (stream) {
+                stream.getTracks().forEach((track) => track.stop());
+            }
+            if (video) video.srcObject = null;
+        },
+        markDeviceLost: (requestGeneration) => {
+            if (requestGeneration !== apps.camera.requestGeneration) return;
+            apps.camera.streaming = false;
+            const video = apps.camera.video;
+            if (video) video.srcObject = null;
+            apps.camera.showError();
+        },
+        watchTracks: (stream, requestGeneration) => {
+            const tracks = typeof stream.getVideoTracks == 'function' ? stream.getVideoTracks() : [];
+            tracks.forEach((track) => {
+                track.addEventListener('ended', () => {
+                    apps.camera.markDeviceLost(requestGeneration);
+                });
+                track.addEventListener('mute', () => {
+                    if (requestGeneration !== apps.camera.requestGeneration) return;
+                    clearTimeout(apps.camera.deviceLostTimer);
+                    apps.camera.deviceLostTimer = setTimeout(() => {
+                        apps.camera.markDeviceLost(requestGeneration);
+                    }, 3000);
+                });
+                track.addEventListener('unmute', () => {
+                    if (requestGeneration !== apps.camera.requestGeneration) return;
+                    clearTimeout(apps.camera.deviceLostTimer);
+                    apps.camera.deviceLostTimer = null;
+                    apps.camera.hideError();
+                });
+            });
+        },
         hideError: () => {
             $('#win-camera>.error').removeClass('show');
         },
@@ -979,6 +1020,10 @@ let apps = {
             apps.camera.context.fillRect(0, 0, canvas.width, canvas.height);
         },
         takePhoto: () => {
+            if (!apps.camera.streaming) {
+                apps.camera.showError();
+                return;
+            }
             apps.camera.context.drawImage(apps.camera.video, 0, 0, apps.camera.canvas.width, apps.camera.canvas.height);
             apps.camera.downloadLink.href = apps.camera.canvas.toDataURL('image/png');
             apps.camera.downloadLink.download = 'photo.png';
