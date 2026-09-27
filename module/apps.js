@@ -1880,7 +1880,7 @@ let apps = {
             const selector = apps.about.contributorsSelector();
             apps.about.run_loading(selector);
             // 实时获取项目贡献者
-            $.get(`https://api.github.com/repos/${apps.about.repo()}/contributors`).then(cs => {
+            $.get(`https://api.github.com/repos/${apps.about.repo()}/contributors?per_page=100`).then(cs => {
                 setTimeout(() => {
                     $(selector).html('');
                     cs.forEach(c => {
