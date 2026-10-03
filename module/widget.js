@@ -131,7 +131,8 @@ let widgets = {
                 "n900": "Hazy-Night",
                 "xxxx1": "WindyV2"
             };
-            $.getJSON('https://api.msn.cn/weather/overview?apikey=j5i4gDqHL6nGYwx5wi5kRhXjtf2c5qgFX9fzfk0TOo&locale=zh-cn&ocid=msftweather').then(r => {
+            const weatherApiKey = (window.WIN12_CONFIG && window.WIN12_CONFIG.weatherApiKey) || '';
+            $.getJSON(`https://api.msn.cn/weather/overview?apikey=${weatherApiKey}&locale=zh-cn&ocid=msftweather`).then(r => {
                 let inf = r.value[0].responses[0].weather[0].current;
                 // console.log(inf.icon,wic[inf.icon]);
                 $('.wg.weather>.content>.img').attr('src', `https://assets.msn.cn/weathermapdata/1/static/weather/Icons/taskbar_v10/Condition_Card/${wic[inf.symbol]}.svg`);
