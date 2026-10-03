@@ -283,6 +283,14 @@
     box-shadow: 0 1px 2px 1px var(--s3d);
 }
 
+/* The advanced personalization panel contains a floating WebGL picker. Keep
+   this panel's overflow visible so the picker is not clipped at its bottom. */
+.setting-list>div.dp.advanced {
+    overflow: visible;
+    position: relative;
+    z-index: 5;
+}
+
 .setting-password {
     display: grid;
     gap: 10px;
