@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Win12 Copilot - Standalone Client</title>
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        :root {
+            --bg-color: #1e1e1e;
+            --panel-bg: #2d2d2d;
+            --text-color: #f3f3f3;
+            --accent-color: #0078d4;
+            --border-color: #3f3f3f;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        #copilot {
+            width: 420px;
+            height: 600px;
+            background: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            overflow: hidden;
+        }
+        .titbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background: rgba(255,255,255,0.03);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .titbar .text {
+            margin: 0;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .titbar .btn {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            cursor: pointer;
+            font-size: 16px;
+            padding: 4px;
+        }
+        .chat {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .line {
+            max-width: 85%;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+        .line.system {
+            background: rgba(255,255,255,0.05);
+            color: #aaa;
+            align-self: center;
+            text-align: center;
+            width: 100%;
+        }
+        .line.user {
+            background: var(--accent-color);
+            color: white;
+            align-self: flex-end;
+        }
+        .line.ai {
+            background: rgba(255,255,255,0.08);
+            align-self: flex-start;
+        }
+        .action {
+            margin-top: 6px;
+            padding: 6px 10px;
+            background: rgba(0,0,0,0.2);
+            border-left: 3px solid var(--accent-color);
+            font-size: 12px;
+        }
+        .action .tit {
+            font-weight: bold;
+            margin: 0;
+            color: #82b1ff;
+        }
+        .action .detail {
+            margin: 2px 0 0 0;
+            color: #ccc;
+        }
+        .inputbox {
+            display: flex;
+            padding: 12px;
+            background: rgba(0,0,0,0.1);
+            border-top: 1px solid var(--border-color);
+            gap: 8px;
+        }
+        .inputbox.disable {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        .inputbox .input {
+            flex: 1;
+            background: rgba(255,255,255,0.07);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 8px 12px;
+            color: white;
+            outline: none;
+        }
+        .inputbox .input:focus {
+            border-color: var(--accent-color);
+        }
+        .inputbox .send {
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 0 16px;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="copilot">
+        <div class="titbar">
+            <p class="text">Windows 12 Copilot</p>
+            <div class="alr">
+                <span class="btn about" onclick="alert('About Win12 Copilot')">
+                    <i class="bi bi-info-circle"></i>
+                </span>
+                <span class="btn hide" onclick="document.getElementById('copilot').style.display='none'">
+                    <i class="bi bi-chevron-bar-right"></i>
+                </span>
+            </div>
+        </div>
+        <div class="chat">
+            <div class="line system">
+                <p class="text">本 AI 助手基于 Deepseek v4 pro 模型，支持打开应用、搜索、主题切换等操作。</p>
+            </div>
+        </div>
+        <div class="inputbox">
+            <input type="text" class="input" id="userInput" placeholder="Ask Copilot something..." onkeydown="if(event.keyCode==13){sendMessage();}">
+            <a class="a send btn" onclick="sendMessage()">发送</a>
+        </div>
+    </div>
+
+    <!-- jQuery for API requests -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script>
+        const copilot = {
+            history: [{
+                role: 'system',
+                content: `请使用中文对话。你一个是 ai 助手，名叫 AI Copilot，由云智 API 提供支持。
+你可以在回答中发送对系统的一些指令。指令一并放在回答的最后。
+多条指令用换行隔开。系统收到指令后会执行，且对用户隐藏回答后的指令。
+1.指令"{openapp appid}";用来打开某个应用，用在下文"应用的功能介绍"中匹配的 id 代替其中的"appid"
+2.指令"{openurl url}";用来在 Microsoft Edge 浏览器中打开某个 URL，其中用 URL 地址代替"url"。当用户想要搜索某内容，请用 bing 搜索
+3.指令"{feedback copilot}";打开 ai 助手反馈界面
+4.指令"{feedback win12}";打开反馈中心
+5.指令"{settheme theme}";用于切换系统的深色、浅色模式`
+            }],
+            init: function() {
+                $('#copilot>.inputbox').removeClass('disable');
+            },
+            send: function(t) {
+                if (!t || t.length === 0) return;
+
+                $('#copilot>.inputbox').addClass('disable');
+                $('#copilot>.chat').append(`<div class="line user"><p class="text">${t}</p></div>`);
+                $('#copilot>.chat').scrollTop($('#copilot>.chat')[0].scrollHeight);
+                $('#userInput').val('');
+
+                // Step 1: Sensitive Word Check (from YunzhiAPI)[cite: 2]
+                $.ajax({
+                    url: `https://yunzhiapi.cn/vip/win12/mgwbgl.php?msg=${encodeURIComponent(t)}`,
+                    method: 'GET',
+                    success: function (filteredText) {
+                        if (filteredText !== t) {
+                            triggerBlockAction();
+                            return;
+                        }
+                        proceedAPIRequest(t);
+                    },
+                    error: function () {
+                        proceedAPIRequest(t);
+                    }
+                });
+
+                function triggerBlockAction() {
+                    $('#copilot>.chat').append(`<div class="line system"><p class="text">针对这个问题我无法为你提供相应解答[cite: 2]。</p></div>`);
+                    $('#copilot>.chat').scrollTop($('#copilot>.chat')[0].scrollHeight);
+                    $('#copilot>.inputbox').removeClass('disable');
+                }
+
+                function proceedAPIRequest(question) {
+                    const uid = localStorage.getItem('copilot_uid') || (() => {
+                        const newUid = Math.floor(100000 + Math.random() * 900000);
+                        localStorage.setItem('copilot_uid', newUid.toString());
+                        return newUid;
+                    })();
+
+                    const apiUrl = `https://yunzhiapi.cn/vip/win12/deepseek-v4-pro/index.php?question=${encodeURIComponent(question)}&system=${encodeURIComponent(copilot.history[0].content)}&uid=${uid}`;
+
+                    // Step 2: Main DeepSeek API Request[cite: 2]
+                    $.ajax({
+                        url: apiUrl,
+                        method: 'GET',
+                        success: function (responseText) {
+                            let rt = responseText;
+                            let r = [];
+                            if (/{.+}/.test(rt)) {
+                                r = rt.match(/{.+?}/g) || [];
+                            }
+
+                            if (r.length) {
+                                for (const i of r) {
+                                    if (/{openapp .+?}/.test(i)) {
+                                        let appid = i.match(/(?<={openapp ).+(?=})/)[0];
+                                        rt = rt.replace(i, `<div class="action"><p class="tit">打开应用</p><p class="detail">App ID: ${appid}</p></div>`);
+                                    } else if (/{openurl .+?}/.test(i)) {
+                                        const targetUrl = i.match(/(?<={openurl ).+(?=})/)[0];
+                                        rt = rt.replace(i, `<div class="action"><p class="tit">打开 URL</p><p class="detail">${targetUrl}</p></div>`);
+                                    } else if (/{settheme .+?}/.test(i)) {
+                                        const theme = i.match(/(?<={settheme ).+(?=})/)[0];
+                                        rt = rt.replace(i, `<div class="action"><p class="tit">切换外观模式</p><p class="detail">${theme} 模式</p></div>`);
+                                    }
+                                }
+                                $('#copilot>.chat').append(`<div class="line ai"><div class="text">${rt}</div></div>`);
+                            } else {
+                                $('#copilot>.chat').append(`<div class="line ai"><p class="text">${rt}</p></div>`);
+                            }
+
+                            $('#copilot>.chat').scrollTop($('#copilot>.chat')[0].scrollHeight);
+                            $('#copilot>.inputbox').removeClass('disable');
+                        },
+                        error: function (error) {
+                            console.error(error);
+                            $('#copilot>.chat').append('<div class="line system"><p class="text">发生错误，请稍后重试[cite: 2]</p></div>');
+                            $('#copilot>.chat').scrollTop($('#copilot>.chat')[0].scrollHeight);
+                            $('#copilot>.inputbox').removeClass('disable');
+                        }
+                    });
+                }
+            }
+        };
+
+        function sendMessage() {
+            const val = $('#userInput').val();
+            copilot.send(val);
+        }
+
+        // Initialize on load
+        copilot.init();
+    </script>
+</body>
+</html>

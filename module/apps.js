@@ -840,7 +840,7 @@ let apps = {
     },
     vscode: createWebapp('vscode', 'https://github1s.com/'),
     bilibili: createWebapp('bilibili', 'https://bilibili.com/'),
-    'copilot': createWebapp('copilot', '/chatgh/copilot.html'),
+    'copilot': createWebapp('copilot', 'chatgh/copilot.html'),
     'minesweeper': createWebapp('minesweeper', 'https://win12-online.github.io/win12/games/minesweeper.html'),
     macos: createWebapp('macos', 'https://macos-web.app/'),
     defender: {
@@ -2867,3 +2867,4 @@ Micrȯsoft Windows [版本 12.0.39035.7324]
 // （归一化 apps.explorer↔apps.edge 后逐行 diff，51 行里只有 4 行不同，全是按钮选择器）。
 Object.assign(apps.explorer, createHistoryStack('explorer', '#win-explorer>.path>.back', '#win-explorer>.path>.front'));
 Object.assign(apps.edge, createHistoryStack('edge', '#win-edge>.tool>.back', '#win-edge>.tool>.front'));
+window.apps = apps
