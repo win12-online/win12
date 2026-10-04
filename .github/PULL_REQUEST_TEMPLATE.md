@@ -1,5 +1,5 @@
 <!--
-感谢您对本项目的贡献！ 
+感谢您对本项目的贡献！
 
 Thank you for contributing to this project!
 
@@ -10,11 +10,11 @@ The following content is extremely important; please read it carefully!
 
 # PR 标题 / PR Title
 
-您的 PR 标题应当准确概括您的更改内容。 
+您的 PR 标题应当准确概括您的更改内容。
 
 Your PR title should accurately summarize your changes.
 
-如果您的 PR 是对某个 issue 的实现，请附上 issue 编号（例如 #114514）。 
+如果您的 PR 是对某个 issue 的实现，请附上 issue 编号（例如 #114514）。
 
 If your PR is an implementation of an issue, please include the issue number (e.g., #114514).
 

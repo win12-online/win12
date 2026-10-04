@@ -6,9 +6,6 @@ web.config
 
 .DS_Store
 
-.prettierrc
-.prettierignore
-
 
 # wrangler files
 .wrangler

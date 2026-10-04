@@ -48,9 +48,6 @@
 - [Soutenez-nous](#资助我们)
 - [Contact](#contact)
 - [Groupes communautaires](#groupes-communautaires)
-    
-
-    
 
 ## Avant-propos
 
@@ -64,25 +61,25 @@ C'est ainsi que ce projet est né (oui, la naissance de ce projet a été aussi 
 
 Cliquez [ici](https://win12.tech) pour essayer.
 
-
 ## Présentation des résultats
 
 La nouvelle version comporte de nombreux changements, à titre indicatif seulement ; veuillez vous référer à l’objet réel (cliquez [ici](https://win12-online.github.io/win12/desktop.html) et vous verrez, ce n’est pas compliqué `-_-)o`)
 
 ![image](https://win12-online.github.io/win12/img/start-menu.png)
 
-*Menu Démarrer*
+_Menu Démarrer_
 
 ![image](https://win12-online.github.io/win12/img/colorful-apps.png)
 
-*Applications riches*
+_Applications riches_
 
 ![image](https://win12-online.github.io/win12/img/dark-mode.png)
 
-*Mode sombre*
+_Mode sombre_
 
 ![image](https://win12-online.github.io/win12/img/ai-copilot.png)
-*AI Copilot([Méthode de réalisation](./scripts/AI%20Copilot%20service/README.md))*
+_AI Copilot([Méthode de réalisation](./scripts/AI%20Copilot%20service/README.md))_
+
 ## Planification future
 
 Concernant la feuille de route de ce projet :
@@ -118,12 +115,14 @@ Voici quelques... euh... rêvasseries `~o~)/` :
 - [ ] Renommer le projet en "550W"
 
 ## Déclaration open source
->[!TIP]
-Quelle que soit la manière dont vous utilisez ce projet, vous déclarez avoir lu attentivement et accepté de vous conformer à l’intégralité des dispositions de ce chapitre.
+
+> [!TIP]
+> Quelle que soit la manière dont vous utilisez ce projet, vous déclarez avoir lu attentivement et accepté de vous conformer à l’intégralité des dispositions de ce chapitre.
 
 Le contenu de la version Web de Windows12 est mis à la disposition du public sous une licence de droit d’auteur relativement permissive.
 
 ### Code source des programmes informatiques
+
 Wndows12 网页版 est un logiciel libre, distribué sous la licence Eclipse Public License 2.0 de la Fondation Eclipse (URL : <https://www.eclipse.org/legal/epl-2.0/>). Dans le respect de cette licence, vous êtes libre d’utiliser le code source de ce projet.
 
 ### Fichiers multimédias
@@ -133,12 +132,14 @@ Les fichiers multimédias de la version Web de Windows12 (œuvres graphiques, œ
 Les fichiers concernés relèvent de l'utilisation raisonnable ; il convient de noter qu'il existe des risques juridiques liés à l'utilisation de certains fichiers multimédias. Veuillez consulter les lois et règlements sur le droit d'auteur avant utilisation.
 
 ### Conditions supplémentaires
+
 1. Toute personne utilisant, partageant ou distribuant ce projet doit mentionner clairement les informations de l'auteur original (谭景元，tjy-gitnub) et le lien du projet original (<https://github.com/win12-online/win12>) dans la présentation du projet, la documentation ou les documents connexes. Vous ne devez pas dissimuler, supprimer ou modifier délibérément les informations de signature, les informations d'auteur ou le lien du projet dans le projet original ; vous ne devez pas restreindre l'accès de tiers à ces informations.
 2. Toute personne utilisant ce projet à des fins commerciales doit indiquer l'auteur original et le lien du projet, et publier en open source la totalité du code source concerné sous la licence EPL-2.0.
 3. Le code source non modifié ne peut pas être utilisé à des fins commerciales.
 4. Toute personne utilisant ou partageant ce projet ne doit pas retirer, cacher ou restreindre l'accès à cette déclaration open source.
 5. Si vous découvrez qu'une autre personne enfreint l'une quelconque des exigences énoncées dans les quatre alinéas précédents, veuillez-nous en [signaler](https://github.com/win12-online/win12/issues) immédiatement et, dans la mesure du possible, empêcher promptement la publication et la diffusion des contenus concernés.
 6. Si vous commettez un acte de contrefaçon, nous conserverons des enregistrements conformément aux dispositions légales et nous réservons le droit, à tout moment et par tous moyens, d'engager des actions en justice et de demander réparation (y compris, sans s'y limiter, signaler l'affaire aux organismes chargés de l'application de la loi, porter plainte devant les autorités judiciaires, collaborer aux enquêtes des autorités compétentes, etc.).
+
 ## Instructions pour les contributions
 
 Pour plus de détails, veuillez consulter le [guide de contribution](./CONTRIBUTING.md).
@@ -146,7 +147,9 @@ Pour plus de détails, veuillez consulter le [guide de contribution](./CONTRIBUT
 Ce projet utilise la bibliothèque i18n pour fournir la fonctionnalité multilingue; le travail de traduction suit le [guide de contribution pour les traductions](lang/readme.md).
 
 ## Index du projet
+
 En raison de problèmes hérités, une grande partie du contenu de ce projet est dispersée dans différents dépôts ou sites web. Voici quelques liens pour vous y retrouver.
+
 - [Surveillance de l'état](https://status.win12.tech/status/win12)
 - [Dépôt de thèmes](https://github.com/tjy-gitnub/win12-theme)
 - [Aperçu des PR](https://github.com/tangyuan0821/win12-pr-preview)
@@ -169,11 +172,14 @@ Contributeurs du projet : voir [ici](https://github.com/win12-online/win12/graph
 Vous pouvez faire un don via notre [compte Afdian](https://afdian.com/a/qstudio)
 
 Remerciements particuliers aux sponsors suivants :
+
 - CursoR_光标（<https://afdian.com/a/cursor>）
 - Baymax（<https://afdian.com/u/a131cd504dea11eeb6be5254001e7c00>）
 
 ## Contact
+
 ### Courriel
+
 Pour les demandes de partenariat, les demandes des médias, les plaintes et les signalements, veuillez contacter le propriétaire du projet : `starry-source@outlook.com`
 
 Pour les plaintes liées à la propriété intellectuelle, veuillez mettre en copie `ipcomplaint@win12.tech` lors de l'envoi à l'adresse ci-dessus.
@@ -185,6 +191,7 @@ Veuillez inclure des informations de contact détaillées lors de votre correspo
 **Remarque** : Les courriels se terminant par `win12.tech` sont traités par @tangyuan0821.
 
 ## Groupes communautaires
+
 Nous proposons plusieurs groupes permettant aux utilisateurs et aux contributeurs d'échanger.
 
 - [Microsoft Teams](https://teams.live.com/l/invite/FEA0yrNkE_bAn-ddwI)

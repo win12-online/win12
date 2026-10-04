@@ -1,213 +1,220 @@
 @font-face {
-    font-family: StoreIcons;
-    src: url("../icons/msstore/icons.ttf");
+  font-family: StoreIcons;
+  src: url('../icons/msstore/icons.ttf');
 }
 /* I love CSS! */
 #win-msstore {
-    display: grid;
-    grid-template-columns: 80px auto;
+  display: grid;
+  grid-template-columns: 80px auto;
 
-    & icon {
-        font-family: StoreIcons;
+  & icon {
+    font-family: StoreIcons;
+  }
+
+  & > .menu {
+    & .m-icon {
+      color: transparent;
+      -webkit-text-stroke: 2px #000;
     }
 
-    &>.menu {
-        & .m-icon {
-            color: transparent;
-            -webkit-text-stroke: 2px #000;
-        }
+    & > list {
+      margin-left: 5px;
+      overflow-y: auto;
+      padding-right: 10px;
+      border-radius: var(--radius-md);
+      height: 100%;
 
-        &>list {
-            margin-left: 5px;
-            overflow-y: auto;
-            padding-right: 10px;
-            border-radius: var(--radius-md);
-            height: 100%;
+      & icon {
+        font-size: 1.8em;
+        margin-bottom: 0px;
+        line-height: 1.1;
+        transition: all 500ms;
+      }
 
-            & icon {
-                font-size: 1.8em;
-                margin-bottom: 0px;
-                line-height: 1.1;
-                transition: all 500ms;
-            }
+      & .t2 {
+        font-size: 0.7em !important;
+        color: var(--text2);
+        transition: all 500ms;
+        overflow: hidden;
+        opacity: 1;
+      }
 
-            & .t2 {
-                font-size: 0.7em !important;
-                color: var(--text2);
-                transition: all 500ms;
-                overflow: hidden;
-                opacity: 1.0;
-            }
+      & > a {
+        padding: 5px 10px;
+        height: 59px !important;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 4px;
+        border-radius: var(--radius-md);
+        transition: all 500ms;
+        overflow: hidden;
+        position: relative;
 
-            &>a {
-                padding: 5px 10px;
-                height: 59px !important;
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-                margin-bottom: 4px;
-                border-radius: var(--radius-md);
-                transition: all 500ms;
-                overflow: hidden;
-                position: relative;
+        &.check {
+          background-color: var(--hover) !important;
 
-                &.check {
-                    background-color: var(--hover) !important;
+          & icon {
+            font-size: 2.3em;
+            background-image: linear-gradient(
+              to right bottom,
+              var(--theme-1),
+              var(--theme-2)
+            );
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: #00000022;
+          }
 
-                    & icon {
-                        font-size: 2.3em;
-                        background-image: linear-gradient(to right bottom, var(--theme-1), var(--theme-2));
-                        -webkit-background-clip: text;
-                        background-clip: text;
-                        color: #00000022;
-                    }
-
-                    & .t2 {
-                        opacity: 0.0;
-                        margin-bottom: -20px;
-                    }
-                }
-            }
-
-            &>span.focs {
-                height: 26px;
-                margin-top: -47px;
-            }
-        }
-    }
-
-    &>.page {
-        background-color: var(--bg50);
-        border-radius: 10px 0px 0px 0px;
-
-        &>.cnt {
-            transition: transform 400ms cubic-bezier(0.05, 0.96, 0.11, 1), opacity 300ms, height 0ms;
-            transform: translate(0, 50%);
+          & .t2 {
             opacity: 0;
-            height: 0px;
-            padding: 0px;
-            overflow: hidden;
-
-            &.show {
-                height: 100%;
-                transform: none !important;
-                opacity: 1;
-                overflow-y: auto;
-                min-height: 0px;
-            }
-
-            &.home {
-                &>.container {
-                    height: 100%;
-                    display: grid;
-                    grid-template-rows: auto min-content;
-                    padding: 0px 15px 30px 15px;
-
-                    &>.apps {
-                        &>.tit {
-                            margin-left: 30px;
-                            font-size: 1.6em;
-                            line-height: 1.5;
-                        }
-
-                        &>.app-cards {
-                            display: grid;
-                            grid-template-columns: auto auto auto;
-                            grid-template-rows: auto auto auto;
-
-                            &>* {
-                                background-color: var(--hover);
-                                margin: 10px;
-                                border-radius: var(--radius-2xl);
-                                padding: 14px;
-                                display: flex; 
-
-                                &>.left {
-                                    width: 70px;
-                                    height: 70px;
-                                    flex: 0 0 70px;
-                                    margin-right: 16px;
-                                    border-radius: 12px;
-                                    background-color: var(--fill);
-                                    background-position: center;
-                                    background-repeat: no-repeat;
-                                    background-size: cover;
-                                    box-shadow: 0 2px 8px var(--s3d);
-                                    display: flex;
-                                    align-items: center;
-                                    justify-content: center;
-                                    overflow: hidden;
-                                }
-
-                                &>.left::before {
-                                    color: #fff;
-                                    font-size: 22px;
-                                    font-weight: 600;
-                                    line-height: 1;
-                                }
-
-                                &.card1>.left {
-                                    background-color: #1f1f1f;
-                                    background-image: url("../../icon/vscode.png");
-                                    background-size: 58px 58px;
-                                }
-
-                                &.card2>.left {
-                                    background-image: url("https://bkimg.cdn.bcebos.com/pic/024f78f0f736afc37206d596bd19ebc4b745123e?x-bce-process=image/format,f_auto/quality,Q_70/resize,m_lfit,limit_1,w_536");
-                                }
-
-                                &.card3>.left {
-                                    background-image: url("https://www.minecraft.net/etc.clientlibs/minecraftnet/clientlibs/clientlib-site/resources/favicon.ico");
-                                }
-
-                                &.card4>.left {
-                                   background-image: url("https://krita.org/images/favicon.ico");
-                                }
-
-                                &.card5>.left {
-                                    background-image: url("https://www.virtualbox.org/favicon.ico");
-                                }
-
-                                &.card6>.left {
-                                    background-color: #fff;
-                                    background-image: url("https://wiki.documentfoundation.org/images/4/48/LibreOffice_7.5_Main_Icon.svg");
-                                    background-size: 58px 58px;
-                                }
-
-                                &>.right {
-                                    flex: 1;
-                                    min-width: 0;
-
-                                    &>.tit {
-                                        width: 100%;
-
-                                        &>.up {
-                                            width: 100%;
-                                            display: flex;
-                                            align-items: center;
-                                            justify-content: space-between;
-
-                                            &>.type {
-                                                font-size: 0.85em;
-                                                padding: 4px 8px;
-                                                border-radius: var(--radius-sm);
-                                                background-color: var(--fill);
-                                                color: var(--text2);
-                                                flex-shrink: 0;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+            margin-bottom: -20px;
+          }
         }
+      }
+
+      & > span.focs {
+        height: 26px;
+        margin-top: -47px;
+      }
     }
+  }
+
+  & > .page {
+    background-color: var(--bg50);
+    border-radius: 10px 0px 0px 0px;
+
+    & > .cnt {
+      transition:
+        transform 400ms cubic-bezier(0.05, 0.96, 0.11, 1),
+        opacity 300ms,
+        height 0ms;
+      transform: translate(0, 50%);
+      opacity: 0;
+      height: 0px;
+      padding: 0px;
+      overflow: hidden;
+
+      &.show {
+        height: 100%;
+        transform: none !important;
+        opacity: 1;
+        overflow-y: auto;
+        min-height: 0px;
+      }
+
+      &.home {
+        & > .container {
+          height: 100%;
+          display: grid;
+          grid-template-rows: auto min-content;
+          padding: 0px 15px 30px 15px;
+
+          & > .apps {
+            & > .tit {
+              margin-left: 30px;
+              font-size: 1.6em;
+              line-height: 1.5;
+            }
+
+            & > .app-cards {
+              display: grid;
+              grid-template-columns: auto auto auto;
+              grid-template-rows: auto auto auto;
+
+              & > * {
+                background-color: var(--hover);
+                margin: 10px;
+                border-radius: var(--radius-2xl);
+                padding: 14px;
+                display: flex;
+
+                & > .left {
+                  width: 70px;
+                  height: 70px;
+                  flex: 0 0 70px;
+                  margin-right: 16px;
+                  border-radius: 12px;
+                  background-color: var(--fill);
+                  background-position: center;
+                  background-repeat: no-repeat;
+                  background-size: cover;
+                  box-shadow: 0 2px 8px var(--s3d);
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  overflow: hidden;
+                }
+
+                & > .left::before {
+                  color: #fff;
+                  font-size: 22px;
+                  font-weight: 600;
+                  line-height: 1;
+                }
+
+                &.card1 > .left {
+                  background-color: #1f1f1f;
+                  background-image: url('../../icon/vscode.png');
+                  background-size: 58px 58px;
+                }
+
+                &.card2 > .left {
+                  background-image: url('https://bkimg.cdn.bcebos.com/pic/024f78f0f736afc37206d596bd19ebc4b745123e?x-bce-process=image/format,f_auto/quality,Q_70/resize,m_lfit,limit_1,w_536');
+                }
+
+                &.card3 > .left {
+                  background-image: url('https://www.minecraft.net/etc.clientlibs/minecraftnet/clientlibs/clientlib-site/resources/favicon.ico');
+                }
+
+                &.card4 > .left {
+                  background-image: url('https://krita.org/images/favicon.ico');
+                }
+
+                &.card5 > .left {
+                  background-image: url('https://www.virtualbox.org/favicon.ico');
+                }
+
+                &.card6 > .left {
+                  background-color: #fff;
+                  background-image: url('https://wiki.documentfoundation.org/images/4/48/LibreOffice_7.5_Main_Icon.svg');
+                  background-size: 58px 58px;
+                }
+
+                & > .right {
+                  flex: 1;
+                  min-width: 0;
+
+                  & > .tit {
+                    width: 100%;
+
+                    & > .up {
+                      width: 100%;
+                      display: flex;
+                      align-items: center;
+                      justify-content: space-between;
+
+                      & > .type {
+                        font-size: 0.85em;
+                        padding: 4px 8px;
+                        border-radius: var(--radius-sm);
+                        background-color: var(--fill);
+                        color: var(--text2);
+                        flex-shrink: 0;
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 }
 
 .m-icon {
-    font-family: StoreIcons;
+  font-family: StoreIcons;
 }

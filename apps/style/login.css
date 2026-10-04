@@ -1,259 +1,267 @@
 #loginback {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    background-image: url('../../img/login.jpg'); 
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: 50% 50%;
-    transition: filter 500ms, background-color 500ms, opacity 1500ms ease-in-out;
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    opacity: 0;
-    display: none;
-    z-index: 101;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  background-image: url('../../img/login.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  transition:
+    filter 500ms,
+    background-color 500ms,
+    opacity 1500ms ease-in-out;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  display: none;
+  z-index: 101;
 }
 
 #login {
-    appearance: none;
-    background-color: #eeeeee40;
-    width: 100px;
-    padding: 5.5px 8px;
-    color: #fff;
-    border-radius: var(--radius-md);
-    font-size: 15.8px;
-    text-align: center;
-    border: 3px solid #00000000;
-    transition: 50ms;
-    margin-bottom: -40px;
-    z-index: 1;
-    cursor: pointer;
-    font-family: inherit;
-    line-height: 1.5;
+  appearance: none;
+  background-color: #eeeeee40;
+  width: 100px;
+  padding: 5.5px 8px;
+  color: #fff;
+  border-radius: var(--radius-md);
+  font-size: 15.8px;
+  text-align: center;
+  border: 3px solid #00000000;
+  transition: 50ms;
+  margin-bottom: -40px;
+  z-index: 1;
+  cursor: pointer;
+  font-family: inherit;
+  line-height: 1.5;
 }
 
 #login:hover {
-    border-color: #ffffff50;
-    transition: 50ms;
+  border-color: #ffffff50;
+  transition: 50ms;
 }
 
 #login:active {
-    filter: brightness(2);
-    scale: 0.97;
-    border-color: #00000000;
-    background-color: #eeeeee70;
-    transition: 80ms;
+  filter: brightness(2);
+  scale: 0.97;
+  border-color: #00000000;
+  background-color: #eeeeee70;
+  transition: 80ms;
 }
 
 #login:focus-visible {
-    outline: 2px solid #fff;
-    outline-offset: 2px;
+  outline: 2px solid #fff;
+  outline-offset: 2px;
 }
 
 #login-password {
-    display: none;
-    width: 220px;
-    margin-bottom: 10px;
-    padding: 7px 10px;
-    color: #fff;
-    background-color: #eeeeee40;
-    border: 2px solid #ffffff50;
-    border-radius: var(--radius-md);
-    outline: none;
-    text-align: center;
+  display: none;
+  width: 220px;
+  margin-bottom: 10px;
+  padding: 7px 10px;
+  color: #fff;
+  background-color: #eeeeee40;
+  border: 2px solid #ffffff50;
+  border-radius: var(--radius-md);
+  outline: none;
+  text-align: center;
 }
 
 #login-password::placeholder {
-    color: #ffffffaa;
+  color: #ffffffaa;
 }
 
 #login-error {
-    display: none;
-    min-height: 18px;
-    margin-bottom: 8px;
-    color: #fff;
-    font-size: 14px;
-    text-shadow: 0 1px 3px #000;
+  display: none;
+  min-height: 18px;
+  margin-bottom: 8px;
+  color: #fff;
+  font-size: 14px;
+  text-shadow: 0 1px 3px #000;
 }
 
 #loginback.tauri-password #login-password,
 #loginback.tauri-password #login-error {
-    display: block;
+  display: block;
 }
 
 :root.corner_squ #login {
-    corner-shape: squircle;
-    border-radius: var(--radius-3xl);
+  corner-shape: squircle;
+  border-radius: var(--radius-3xl);
 }
 
-#login-welc{
-    height: 100px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+#login-welc {
+  height: 100px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-#loginback>div.user {
-    width: 150px;
-    height: 150px;
-    border-radius: 100%;
-    background-image: url("../../icon/user.svg");
-    background-size: 65% 65%;
-    background-position: 50% 50%;
-    background-repeat: no-repeat;
-    margin-bottom: 10px;
-    background-color: #ddd;
-    transition: filter 500ms;
-    margin-top: -35px;
+#loginback > div.user {
+  width: 150px;
+  height: 150px;
+  border-radius: 100%;
+  background-image: url('../../icon/user.svg');
+  background-size: 65% 65%;
+  background-position: 50% 50%;
+  background-repeat: no-repeat;
+  margin-bottom: 10px;
+  background-color: #ddd;
+  transition: filter 500ms;
+  margin-top: -35px;
 }
 
-#loginback>div.name {
-    color: #fefefe;
-    font-size: 30px;
-    font-family: Arial, Helvetica, sans-serif;
-    margin-bottom: 15px;
-    transition: color 500ms;
+#loginback > div.name {
+  color: #fefefe;
+  font-size: 30px;
+  font-family: Arial, Helvetica, sans-serif;
+  margin-bottom: 15px;
+  transition: color 500ms;
 }
 
 #loginback.close,
-#loginback.close>div.user {
-    filter: brightness(0);
-    /* backdrop-filter: brightness(0); */
+#loginback.close > div.user {
+  filter: brightness(0);
+  /* backdrop-filter: brightness(0); */
 }
 
-#loginback.close>div.name,
+#loginback.close > div.name,
 #loginback.close #login-after {
-    color: #000 !important;
+  color: #000 !important;
 }
 
 #loginback.close {
-    background-color: black;
+  background-color: black;
 }
 
 #loginback .power {
-    display: flex;
-    position: absolute;
-    bottom: 20px;
-    right: 20px;
-    /* width: 165px; */
-    /* justify-content: space-evenly; */
-    color: #fff;
-    align-items: center;
+  display: flex;
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  /* width: 165px; */
+  /* justify-content: space-evenly; */
+  color: #fff;
+  align-items: center;
 }
 
-#loginback .power>* {
-    cursor: pointer;
-    transition: 100ms;
-    font-size: 30px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 7px;
-    border-radius: var(--radius-lg);
+#loginback .power > * {
+  cursor: pointer;
+  transition: 100ms;
+  font-size: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 7px;
+  border-radius: var(--radius-lg);
 }
 
-#loginback .power>*:hover {
-    background-color: #ffffff30;
+#loginback .power > *:hover {
+  background-color: #ffffff30;
 }
 
-#loginback .power>*:active {
-    opacity: 0.7;
+#loginback .power > *:active {
+  opacity: 0.7;
 }
 
-#loginback>.language-dock {
-    position: absolute;
-    bottom: 20px;
-    left: 20px;
-    width: 42px;
-    height: 42px;
-    padding: 5px;
-    color: #fff;
-    background-color: #eeeeee30;
-    border: 1.5px solid #ffffff30;
-    border-radius: var(--radius-lg);
-    font-size: 22px;
-    cursor: pointer;
-    z-index: 102;
-    transition: 100ms, transform 300ms cubic-bezier(0.05, 0.96, 0.11, 1);
+#loginback > .language-dock {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  width: 42px;
+  height: 42px;
+  padding: 5px;
+  color: #fff;
+  background-color: #eeeeee30;
+  border: 1.5px solid #ffffff30;
+  border-radius: var(--radius-lg);
+  font-size: 22px;
+  cursor: pointer;
+  z-index: 102;
+  transition:
+    100ms,
+    transform 300ms cubic-bezier(0.05, 0.96, 0.11, 1);
 }
 
-#loginback>.language-dock:hover {
-    background-color: #ffffff40;
-    border-color: #ffffff50;
+#loginback > .language-dock:hover {
+  background-color: #ffffff40;
+  border-color: #ffffff50;
 }
 
-#loginback>.language-dock:active {
-    filter: opacity(0.7);
+#loginback > .language-dock:active {
+  filter: opacity(0.7);
 }
 
-#loginback>.language-dock:focus-visible {
-    outline: 2px solid #fff;
-    outline-offset: 2px;
+#loginback > .language-dock:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
 }
 
-:root.corner_squ #loginback>.language-dock {
-    corner-shape: squircle;
-    border-radius: var(--radius-3xl);
+:root.corner_squ #loginback > .language-dock {
+  corner-shape: squircle;
+  border-radius: var(--radius-3xl);
 }
 
-#loginback>.langselect {
-    display: none;
-    position: absolute;
-    bottom: 72px;
-    left: 20px;
-    width: 240px;
-    padding: 10px;
-    border: 1.5px solid #99999950;
-    border-radius: var(--radius-2xl);
-    background: #20202dcc;
-    backdrop-filter: saturate(4) contrast(0.8) blur(30px);
-    -webkit-backdrop-filter: blur(30px) saturate(3);
-    box-shadow: 3px 3px 20px 1px #00000060;
-    opacity: 0;
-    transform: translateY(30px);
-    transition: 300ms, transform 400ms cubic-bezier(0.05, 0.96, 0.11, 1), opacity 300ms;
-    z-index: 102;
+#loginback > .langselect {
+  display: none;
+  position: absolute;
+  bottom: 72px;
+  left: 20px;
+  width: 240px;
+  padding: 10px;
+  border: 1.5px solid #99999950;
+  border-radius: var(--radius-2xl);
+  background: #20202dcc;
+  backdrop-filter: saturate(4) contrast(0.8) blur(30px);
+  -webkit-backdrop-filter: blur(30px) saturate(3);
+  box-shadow: 3px 3px 20px 1px #00000060;
+  opacity: 0;
+  transform: translateY(30px);
+  transition:
+    300ms,
+    transform 400ms cubic-bezier(0.05, 0.96, 0.11, 1),
+    opacity 300ms;
+  z-index: 102;
 }
 
-#loginback>.langselect.show-begin {
-    display: flex;
-    flex-direction: column;
+#loginback > .langselect.show-begin {
+  display: flex;
+  flex-direction: column;
 }
 
-#loginback>.langselect.show {
-    opacity: 1;
-    transform: none;
+#loginback > .langselect.show {
+  opacity: 1;
+  transform: none;
 }
 
-:root.corner_squ #loginback>.langselect {
-    corner-shape: squircle;
-    border-radius: var(--radius-3xl);
+:root.corner_squ #loginback > .langselect {
+  corner-shape: squircle;
+  border-radius: var(--radius-3xl);
 }
 
-#loginback>.langselect>.language-box-title {
-    margin: 2px 8px 6px;
-    color: #fff;
-    font-size: 16px;
-    opacity: 0.75;
+#loginback > .langselect > .language-box-title {
+  margin: 2px 8px 6px;
+  color: #fff;
+  font-size: 16px;
+  opacity: 0.75;
 }
 
-#loginback>.langselect>a {
-    padding: 7px 10px;
-    color: #fff;
-    border-radius: var(--radius-md);
-    transition: 100ms;
+#loginback > .langselect > a {
+  padding: 7px 10px;
+  color: #fff;
+  border-radius: var(--radius-md);
+  transition: 100ms;
 }
 
-#loginback>.langselect>a:hover {
-    background-color: #ffffff25;
+#loginback > .langselect > a:hover {
+  background-color: #ffffff25;
 }
 
-#loginback>.langselect>.selected {
-    pointer-events: none;
-    font-weight: bold;
-    background-color: #ffffff20;
+#loginback > .langselect > .selected {
+  pointer-events: none;
+  font-weight: bold;
+  background-color: #ffffff20;
 }

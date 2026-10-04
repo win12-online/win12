@@ -3,10 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="format-detection" content="telephone=no" />
 
     <!-- 添加有关网页的描述信息 -->
@@ -428,7 +425,10 @@
           如果致电支持人员，请向他们提供以下信息：
           <br />
           终止代码：
-          <span id="stopcode" style="-webkit-user-select: text; user-select: text">
+          <span
+            id="stopcode"
+            style="-webkit-user-select: text; user-select: text"
+          >
             YOU_MAY_DID_NOT_STAR_THIS_PROJECT
           </span>
         </p>
@@ -437,7 +437,7 @@
     <script src="scripts/jq.min.js"></script>
     <script>
       // 读取已保存的蓝屏颜色 (panic-color)
-      (function() {
+      (function () {
         var color = localStorage.getItem('panic-color');
         if (color) {
           document.documentElement.style.setProperty('--panic-color', color);
@@ -462,7 +462,7 @@
 
         if (i >= 100) {
           // 重新加载页面
-          $("html").css("filter", "brightness(0)");
+          $('html').css('filter', 'brightness(0)');
           setTimeout(() => {
             reload();
           }, 2000);
@@ -497,12 +497,12 @@
         window.location.reload();
       }
 
-      let complete = document.getElementById("complete");
+      let complete = document.getElementById('complete');
       next_loop();
       // 从 URL 参数中获取名为"code"的值
       var r = window.location.search.substr(1).match(/(^|&)code=([^&]*)(&|$)/);
       if (r != null) {
-        document.getElementById("stopcode").innerHTML = r[2];
+        document.getElementById('stopcode').innerHTML = r[2];
       }
     </script>
   </body>

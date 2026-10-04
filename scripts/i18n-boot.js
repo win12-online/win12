@@ -1,5 +1,5 @@
 /* i18n 与桌面版探测的引导层。
- * 从 desktop.js 抽出，必须早于 data/context-menus.js 与 data/notices.js —— 
+ * 从 desktop.js 抽出，必须早于 data/context-menus.js 与 data/notices.js ——
  * 那两张表的值里有 ${lang(...)} / ${isTauriApp()}，在对象字面量求值时就会执行。
  * 也必须早于 tauri/tauri_api.js：后者在解析期直接调用 updateAboutAppEntrypoints()。
  * 依赖：langc（data/languages.js）、jQuery + jquery.i18n.properties（head 内同步加载）。
@@ -14,100 +14,111 @@
  * 本仓库补不了；但至少不该把兜底文本毁掉。
  */
 function i18nOrNull(key) {
-    if (!key) return null;
-    const v = $.i18n.prop(key);
-    if (v === undefined || v === null) return null;
-    if (v === '[' + key + ']') return null;   // 缺失键的占位串
-    return v;
+  if (!key) return null;
+  const v = $.i18n.prop(key);
+  if (v === undefined || v === null) return null;
+  if (v === '[' + key + ']') return null; // 缺失键的占位串
+  return v;
 }
 
 function loadlang(code) {
-    $.i18n.properties({
-        name: 'lang',
-        path: 'lang/lang/', // 目录
-        language: code,
-        mode: 'map',
-        callback: function () {
-            $('[data-i18n]').each(function () {
-                // 标签的内容
-                const v = i18nOrNull($(this).data('i18n'));
-                if (v !== null) $(this).html(v);
-            });
-            $('[data-i18n-attr]').each(function () {
-                // 标签的属性
-                const v = i18nOrNull($(this).data('i18n-key'));
-                if (v !== null) $(this).attr($(this).data('i18n-attr'), v);
-            });
-            updateAboutAppEntrypoints();
-        }
-    });
+  $.i18n.properties({
+    name: 'lang',
+    path: 'lang/lang/', // 目录
+    language: code,
+    mode: 'map',
+    callback: function () {
+      $('[data-i18n]').each(function () {
+        // 标签的内容
+        const v = i18nOrNull($(this).data('i18n'));
+        if (v !== null) $(this).html(v);
+      });
+      $('[data-i18n-attr]').each(function () {
+        // 标签的属性
+        const v = i18nOrNull($(this).data('i18n-key'));
+        if (v !== null) $(this).attr($(this).data('i18n-attr'), v);
+      });
+      updateAboutAppEntrypoints();
+    },
+  });
 }
 
 let nl = 'zh-TW';
 
-let langcode, lang = (txt, id) => {
+let langcode,
+  lang = (txt, id) => {
     const translated = i18nOrNull(id);
     return translated === null ? txt : translated;
-};
+  };
 
 function getDeviceLanguage() {
-    const browserLanguage = navigator.language || '';
-    return langc[browserLanguage] || langc[browserLanguage.toLowerCase()] || 'en';
+  const browserLanguage = navigator.language || '';
+  return langc[browserLanguage] || langc[browserLanguage.toLowerCase()] || 'en';
 }
 
 const savedLanguage = localStorage.getItem('lang');
-if (savedLanguage == 'hans' || savedLanguage == 'zh_cn' || savedLanguage == 'zh-cn' || savedLanguage == 'en-US') {
-    localStorage.setItem('lang', savedLanguage === 'en-US' ? 'en' : 'zh-CN');
+if (
+  savedLanguage == 'hans' ||
+  savedLanguage == 'zh_cn' ||
+  savedLanguage == 'zh-cn' ||
+  savedLanguage == 'en-US'
+) {
+  localStorage.setItem('lang', savedLanguage === 'en-US' ? 'en' : 'zh-CN');
 }
 
 langcode = localStorage.getItem('lang');
-if (langcode == null || langcode == 'auto')
-    langcode = getDeviceLanguage();
+if (langcode == null || langcode == 'auto') langcode = getDeviceLanguage();
 
 document.documentElement.lang = langcode;
 
-
-if (localStorage.getItem('lang') == 'auto' || localStorage.getItem('lang') == null) {
-    $('#loginback>.langselect>.def').addClass('selected')
-} else if (document.querySelectorAll('#loginback>.langselect>.' + langcode).length != 0) {
-    $('#loginback>.langselect>.' + langcode).addClass('selected')
+if (
+  localStorage.getItem('lang') == 'auto' ||
+  localStorage.getItem('lang') == null
+) {
+  $('#loginback>.langselect>.def').addClass('selected');
+} else if (
+  document.querySelectorAll('#loginback>.langselect>.' + langcode).length != 0
+) {
+  $('#loginback>.langselect>.' + langcode).addClass('selected');
 } else {
-    $('#loginback>.langselect>.en').addClass('selected')
+  $('#loginback>.langselect>.en').addClass('selected');
 }
 
-
-if (langcode != 'zh-CN')
-    loadlang(langcode);
+if (langcode != 'zh-CN') loadlang(langcode);
 
 if (langcode == 'zh-CN') {
-    lang = (txt, id) => {
-        // if(txt!=$.i18n.prop(id))console.log(id,txt);
-        return txt;
-    };
+  lang = (txt, id) => {
+    // if(txt!=$.i18n.prop(id))console.log(id,txt);
+    return txt;
+  };
 }
-console.log('?')
-
+console.log('?');
 
 // 函数 lang(txt,id)
 /// langcode==zh_cn 下返回 txt,
 /// 否则优先返回语言 properties 文件中键 id 对应的值，缺失时保留 txt 兜底。
 /// 用例：lang('设置','setting.name')
-// 
+//
 // 为开发方便，故不将简体中文纳入语言考虑
 
 function isTauriApp() {
-    return !!((window.win12Native && window.win12Native.isTauri && window.win12Native.isTauri()) || (window.__TAURI__ && window.__TAURI__.core));
+  return !!(
+    (window.win12Native &&
+      window.win12Native.isTauri &&
+      window.win12Native.isTauri()) ||
+    (window.__TAURI__ && window.__TAURI__.core)
+  );
 }
 
 function getAboutAppTitle() {
-    if (!isTauriApp()) return lang('关于 Win12 网页版', 'about.name');
-    if (langcode == 'en') return 'About Win12-desktop';
-    if (langcode == 'zh-TW') return '關於 Win12-desktop';
-    return '关于 Win12-desktop';
+  if (!isTauriApp()) return lang('关于 Win12 网页版', 'about.name');
+  if (langcode == 'en') return 'About Win12-desktop';
+  if (langcode == 'zh-TW') return '關於 Win12-desktop';
+  return '关于 Win12-desktop';
 }
 
 function updateAboutAppEntrypoints() {
-    $('.about-app-title').text(getAboutAppTitle());
+  $('.about-app-title').text(getAboutAppTitle());
 }
 
 updateAboutAppEntrypoints();

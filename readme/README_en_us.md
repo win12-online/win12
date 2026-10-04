@@ -49,9 +49,6 @@
   - [Support Us](#support-us)
   - [Contact Us](#contact-us)
   - [Community Groups](#community-groups)
-    
-
-    
 
 ## Foreword
 
@@ -80,25 +77,25 @@ This project (Win12 Online, abbreviated as "Win12OL") is a **purely non-commerci
 
 Click [here](https://win12.tech) to experience it.
 
-
 ## Feature Preview
 
 > The new version has many changes. This is for reference only. Please refer to the actual product (you can click [here](https://win12-online.github.io/win12/desktop.html) to see for yourself, no trouble `-_-)o` )
 
 ![image](https://win12-online.github.io/win12/img/start-menu.png)
 
-*Start Menu*
+_Start Menu_
 
 ![image](https://win12-online.github.io/win12/img/colorful-apps.png)
 
-*Rich Applications*
+_Rich Applications_
 
 ![image](https://win12-online.github.io/win12/img/dark-mode.png)
 
-*Dark Mode*
+_Dark Mode_
 
 ![image](https://win12-online.github.io/win12/img/ai-copilot.png)
-*AI Copilot([Implementation Method](./scripts/AI%20Copilot%20service/README.md))*
+_AI Copilot([Implementation Method](./scripts/AI%20Copilot%20service/README.md))_
+
 ## Future Planning
 
 Regarding the roadmap for this project:
@@ -134,12 +131,14 @@ Here are some... uh... wild... ideas `~o~)/`:
 - [ ] Rename the project to "550W"
 
 ## Open Source Statement
->[!TIP]
-Regardless of how you use this project, it represents that you have carefully read and agreed to comply with all content in this section.
+
+> [!TIP]
+> Regardless of how you use this project, it represents that you have carefully read and agreed to comply with all content in this section.
 
 The content of Windows12 Online is licensed under a relatively permissive copyright license for use by the general public.
 
 ### Computer Program Source Code
+
 Windows12 Online is free software licensed under the Eclipse Public License 2.0 (URL: <https://www.eclipse.org/legal/epl-2.0/>) issued by the Eclipse Foundation. Subject to compliance with this license, you are free to use the source code of this project.
 
 ### Media Files
@@ -149,12 +148,14 @@ The media file content (graphic works, artistic works, audiovisual works) of Win
 Related files fall within the scope of fair use. Please note that the use of related media files carries legal risks. Please consult the provisions of copyright laws and regulations before use.
 
 ### Additional Terms
+
 1. Anyone who uses, shares, or distributes this project must clearly include the original author information (Tan Jingyuan, tjy-gitnub) and the original project link (<https://github.com/win12-online/win12>) in the project introduction, documentation, or related materials. **You must not intentionally conceal, remove, or modify the attribution information, author information, or project links in the original project; you must not restrict others from viewing this information**.
 2. Those who use this project for commercial purposes must clearly indicate the original author and project link, and open-source all related source code under the EPL-2.0 license.
 3. Unmodified source code must not be used for commercial purposes.
 4. Anyone who uses or shares this project must not remove, hide, or restrict access to this open-source statement.
 5. If you discover that others violate any of the requirements listed in the preceding four paragraphs, please [report it to us](https://github.com/win12-online/win12/issues) in a timely manner and prevent the publication and transmission of the relevant content as promptly as possible.
 6. If you engage in infringing conduct, we will retain records in accordance with applicable laws and reserve the right to take legal action in any manner and pursue legal liability at any time (including but not limited to submitting reports to law enforcement agencies in accordance with law, filing complaints with judicial authorities, cooperating with law enforcement and judicial investigations, etc.).
+
 ## Contribution Guidelines
 
 For details, please see [Contribution Guide](./CONTRIBUTING.md).
@@ -162,7 +163,9 @@ For details, please see [Contribution Guide](./CONTRIBUTING.md).
 This project uses the i18n library to implement multi-language support. Translation work is conducted according to the [Translation Contribution Guide](lang/readme.md).
 
 ## Project Index
+
 Due to legacy issues, much of this project's content is scattered across different repositories or websites. For easier access, here are some links.
+
 - [Status Monitoring](https://status.win12.tech/status/win12)
 - [Theme Repository](https://github.com/tjy-gitnub/win12-theme)
 - [PR Preview](https://github.com/tangyuan0821/win12-pr-preview)
@@ -185,11 +188,14 @@ Project contributors: See [here](https://github.com/win12-online/win12/graphs/co
 You can donate to our [Afdian account](https://afdian.com/a/qstudio)
 
 Special thanks to the following sponsors:
+
 - CursoR_光标（<https://afdian.com/a/cursor>）
 - Baymax（<https://afdian.com/u/a131cd504dea11eeb6be5254001e7c00>）
 
 ## Contact Us
+
 ### Email
+
 For partnership requests, media inquiries, complaints and reports, please contact the project owner: `starry-source@outlook.com`
 
 For intellectual property complaints, please CC `ipcomplaint@win12.tech` when sending to the above address.
@@ -201,6 +207,7 @@ Please include detailed contact information when writing so we can reply.
 **Note**: Emails ending with `win12.tech` are handled by @tangyuan0821.
 
 ## Community Groups
+
 We provide several groups for users and contributors to communicate.
 
 - [Microsoft Teams](https://teams.live.com/l/invite/FEA0yrNkE_bAn-ddwI)

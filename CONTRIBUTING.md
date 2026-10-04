@@ -14,14 +14,15 @@
 
 2. 然后 Fork 本仓库，将其 Clone 到本地。
 
-3. 在本地进行修改，完成后 Commit。（请尽量一次 Commit 提交全部内容。可以追加 Commits，但尽量不要频繁提交内容较少的 Commits。）
+3. 在本地进行修改，使用 [Prettier](https://prettier.io/) 格式化后 Commit。（请尽量一次 Commit 提交全部内容。可以追加 Commits，但尽量不要频繁提交内容较少的 Commits。）
 
 4. 将修改推送到您的仓库
 
 5. 再[创建一个 Pull Request](https://github.com/win12-online/win12/pulls)。
 
 6. 然后`坐和放宽`，等待其他人对你的代码进行审查。
->[!TIP]
+
+> [!TIP]
 > 在此过程中请尽量使用 Git 命令行、代码编辑器（例如 Visual Studio Code）内置的 Git 功能、Github Desktop、[https://github.dev](https://github.dev/win12-online/win12)等方式进行提交。
 
 ## 重要提醒
@@ -45,6 +46,8 @@
 > 3.  内容要用列表的方式阐述更新内容。
 
 > [!NOTE]
+>
+> // 这一段是不是过时了？实际上现在好像几乎不用版本号了...？
 >
 > 1.  **请不要**任意选取版本号。若您不清楚，可以通过[我们的交流群](https://teams.live.com/l/invite/FEA0yrNkE_bAn-ddwI)与我们取得联系并分配到版本号。
 > 2.  在更新时，**记住**要在“关于 Windows 12 网页版”应用的更新记录中，添加关于该更新的相关内容。
@@ -91,15 +94,8 @@
    并列出所有差异。非预期的差异请在提交前解决。
 
 4. 对 JS 文件的规定
-   1. 请按照以下代码风格进行开发：
-
-   ```js
-   var sum = 0;
-   for (var i = 0; i < 10; i++) {
-     sum += i;
-   }
-   console.log(sum);
-   ```
+   1. 请使用 [Prettier](https://prettier.io/) 格式化代码
+      （按照项目根目录下的 `.prettierrc` 配置文件）
 
    2. 对于函数名及变量命名，请使用驼峰式命名法，如：
       - isLoaded
@@ -110,7 +106,3 @@
       - WindowManager
 
       - Widgets
-
-   4. 对于代码规范的规定：
-
-      对于那些不需要展开的代码，尽量压成一行

@@ -48,9 +48,6 @@
 - [資助我們](#资助我們)
 - [聯絡我們](#聯絡我們)
 - [交流群](#交流群)
-    
-
-    
 
 ## 前言
 
@@ -64,25 +61,25 @@
 
 點擊[此處](https://win12.tech)即可體驗。
 
-
 ## 效果展示
 
 > 新的版本有很多變化，僅供參考，請以實物為準（你點一下 [這裡](https://win12-online.github.io/win12/desktop.html) 就知道了啊，不麻煩`-_-)o` ）
 
 ![image](https://win12-online.github.io/win12/img/start-menu.png)
 
-*開始功能表*
+_開始功能表_
 
 ![image](https://win12-online.github.io/win12/img/colorful-apps.png)
 
-*豐富的應用*
+_豐富的應用_
 
 ![image](https://win12-online.github.io/win12/img/dark-mode.png)
 
-*深色模式*
+_深色模式_
 
 ![image](https://win12-online.github.io/win12/img/ai-copilot.png)
-*AI Copilot([實作方法](./scripts/AI%20Copilot%20service/README.md))*
+_AI Copilot([實作方法](./scripts/AI%20Copilot%20service/README.md))_
+
 ## 前景規劃
 
 關於該專案的路徑規劃：
@@ -118,12 +115,14 @@
 - [ ] 將專案更名為「550W」
 
 ## 開源聲明
+
 > [!TIP]
->無論您以何種方式使用本專案，皆表示您已仔細閱讀並同意遵守本章節的全部內容。
+> 無論您以何種方式使用本專案，皆表示您已仔細閱讀並同意遵守本章節的全部內容。
 
 Windows12 網頁版的內容均採用較為寬鬆的著作權許可協議授權社會大眾使用。
 
 ### 計算機程式原始碼
+
 Wndows12 網頁版是自由軟體，採用 Eclipse 基金會發佈的 Eclipse Public License 2.0 許可證（網址：<https://www.eclipse.org/legal/epl-2.0/>）進行授權。在遵守該許可證的前提下，您可以自由使用本專案的原始碼。
 
 ### 媒體檔案
@@ -133,6 +132,7 @@ Windows12 網頁版的媒體檔案內容（圖形作品、美術作品、視聽�
 相關檔案屬於合理使用的範疇，但使用相關媒體檔案可能存在法律風險，請在使用前查閱著作權相關法律法規之規定。
 
 ### 附加條款
+
 1. 任何使用、分享或分發本專案者，必須在專案介紹、文件或相關材料中明確附上原作者資訊（譚景元，tjy-gitnub）及原專案連結（<https://github.com/win12-online/win12>）。**您不得故意隱瞞、移除或修改原專案中的署名資訊、作者資訊或專案連結等；不得限制他人查看這些資訊**。
 2. 將本專案用於商業用途者，必須標明原作者及專案連結，並以 EPL-2.0 協議開源全部相關原始碼。
 3. 未經修改的原始碼不得用於商業用途。
@@ -147,7 +147,9 @@ Windows12 網頁版的媒體檔案內容（圖形作品、美術作品、視聽�
 本專案使用 i18n 函式庫實現多語言，翻譯工作依據[翻譯貢獻指南](lang/readme.md)進行。
 
 ## 專案索引
+
 由於歷史遺留問題，本專案的很多內容分散在不同的倉庫或網站中，為了方便大家尋找，以下是一些內容的索引。
+
 - [狀態監測](https://status.win12.tech/status/win12)
 - [主題倉庫](https://github.com/tjy-gitnub/win12-theme)
 - [PR 預覽](https://github.com/tangyuan0821/win12-pr-preview)
@@ -170,11 +172,14 @@ Windows12 網頁版的媒體檔案內容（圖形作品、美術作品、視聽�
 您可以透過我們的[愛發電帳戶](https://afdian.com/a/qstudio)捐款
 
 特別感謝以下贊助者：
+
 - CursoR_光標（<https://afdian.com/a/cursor>）
 - Baymax（<https://afdian.com/u/a131cd504dea11eeb6be5254001e7c00>）
 
 ## 聯絡我們
+
 ### 郵件聯絡
+
 有關合作請求、媒體諮詢、投訴檢舉等問題，您可聯絡本專案的擁有者：`starry-source@outlook.com`
 
 若涉及智慧財產權投訴，在向前述地址傳送郵件的同時，請抄送`ipcomplaint@win12.tech`
@@ -186,6 +191,7 @@ Windows12 網頁版的媒體檔案內容（圖形作品、美術作品、視聽�
 **注意事項**:以`win12.tech`結尾的郵箱由 @tangyuan0821 負責處理。
 
 ## 交流群
+
 我們提供多個供用戶、貢獻者交流的交流群。
 
 - [Microsoft Teams](https://teams.live.com/l/invite/FEA0yrNkE_bAn-ddwI)

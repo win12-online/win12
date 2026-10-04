@@ -3,7 +3,7 @@
 export const FROZEN_EPOCH = 1735689600000; // 2025-01-01T00:00:00Z
 
 export function determinismScript(epoch = FROZEN_EPOCH) {
-    return `(() => {
+  return `(() => {
         const EPOCH = ${epoch};
         // ---- 冻结 Date ----
         const RealDate = Date;
@@ -55,24 +55,26 @@ export function determinismScript(epoch = FROZEN_EPOCH) {
 // 非确定性的外部 API —— 一律拦截，返回稳定的空响应。
 // CDN 脚本（Ace/Chart.js/marked/dompurify/big.js）不拦截：应用初始化需要它们，且版本固定、内容不变。
 export const BLOCKED_HOSTS = [
-    'api.github.com',
-    'tjy-gitnub.github.io',
-    'win12server.freehk.svipss.top',
-    'yunzhiapi.cn',
-    'api.msn.cn',
-    'assets.msn.cn',
-    'tools.mgtv100.com',
-    'v.api.aa1.cn',
-    'api.xcboke.cn',
-    'android11react.osrc.com',
-    'github1s.com',
-    'bilibili.com',
-    'unpkg.com',            // Pyodide：数 MB 且只有 python 应用用得到，拦掉以保证跑得快且稳定
+  'api.github.com',
+  'tjy-gitnub.github.io',
+  'win12server.freehk.svipss.top',
+  'yunzhiapi.cn',
+  'api.msn.cn',
+  'assets.msn.cn',
+  'tools.mgtv100.com',
+  'v.api.aa1.cn',
+  'api.xcboke.cn',
+  'android11react.osrc.com',
+  'github1s.com',
+  'bilibili.com',
+  'unpkg.com', // Pyodide：数 MB 且只有 python 应用用得到，拦掉以保证跑得快且稳定
 ];
 
 export function shouldBlock(url) {
-    try {
-        const h = new URL(url).hostname;
-        return BLOCKED_HOSTS.some(b => h === b || h.endsWith('.' + b));
-    } catch { return false; }
+  try {
+    const h = new URL(url).hostname;
+    return BLOCKED_HOSTS.some((b) => h === b || h.endsWith('.' + b));
+  } catch {
+    return false;
+  }
 }

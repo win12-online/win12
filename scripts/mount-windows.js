@@ -8,11 +8,11 @@
  */
 'use strict';
 (function mountWindows() {
-    const host = document.getElementById('window-mount');
-    if (!host) {
-        console.error('mount-windows: 找不到 #window-mount 占位元素');
-        return;
-    }
-    host.insertAdjacentHTML('beforebegin', windowMarkup);
-    host.remove();
+  const host = document.getElementById('window-mount');
+  if (!host) {
+    console.error('mount-windows: 找不到 #window-mount 占位元素');
+    return;
+  }
+  host.insertAdjacentHTML('beforebegin', windowMarkup);
+  host.remove();
 })();

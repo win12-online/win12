@@ -68,7 +68,7 @@ Win12 Online（以下简称“Win12OL”或“本项目”）是一个**非商�
 > - 项目中一切界面布局设计、配色等视觉元素，系[贡献者](https://github.com/win12-online/win12/graphs/contributors?all=1)基于公开资料进行**独立再创作**的结果，不曾直接复制、修改或分发微软的原始可执行资产。
 > - 大多数图标已由[贡献者](https://github.com/win12-online/win12/graphs/contributors?all=1)参考当前版本 Windows 图标进行重绘；其余少数未重绘的图标，仅用于识别与展示目的，其版权归微软公司所有。
 > - 本项目不包含任何微软 Windows 操作系统的专有二进制代码、闭源算法及商业机密。
-> 
+>
 > 您应当充分了解到：本项目全部代码、素材及文档等仅供学习与技术研究之用途。您不得利用本项目实施任何侵犯微软或其第三方权利人合法权益的行为。本项目[贡献者](https://github.com/win12-online/win12/graphs/contributors?all=1)不为任何对本项目的使用造成的结果承担任何责任。
 
 ## 在线体验
@@ -180,7 +180,7 @@ Win12 Online 中部分独立创作的媒体文件内容（图形作品、美术�
 
 - [状态监测](https://status.win12.tech/status/win12)
 - [主题仓库](https://github.com/win12-online/win12-theme)
-- [Wiki 仓库](https://github.com/freedom-323/win12-wiki)
+- [Wiki 仓库](https://github.com/lingbopro/win12-wiki)
 - [桌面版仓库](https://github.com/win12-online/win12-desktop)
 
 ## 贡献者

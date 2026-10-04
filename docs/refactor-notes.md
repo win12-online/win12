@@ -11,13 +11,14 @@
 在**解析期**就调用 `updateAboutAppEntrypoints()` —— 这只在 `desktop.js` 排在它前面时才成立。
 转 ES 模块后这个保证还成不成立，实测结果：
 
-| 场景 | 结果 |
-|---|---|
+| 场景                                                                 | 结果                                            |
+| -------------------------------------------------------------------- | ----------------------------------------------- |
 | `<script type="module">` 在前（模块图 5 层深）、classic `defer` 在后 | **模块图全部求值完毕**后才轮到 classic defer ✅ |
-| 同上，但 module 里有**顶层 await** | **classic defer 抢先执行**，全局尚未装上 ❌ |
-| classic `defer` 排在 module 标签之前 | classic 抢先执行 ❌ |
+| 同上，但 module 里有**顶层 await**                                   | **classic defer 抢先执行**，全局尚未装上 ❌     |
+| classic `defer` 排在 module 标签之前                                 | classic 抢先执行 ❌                             |
 
 **由此得出的三条硬规则：**
+
 1. `<script type="module" src="src/main.js">` 必须排在 `tauri/*.js` **之前**
 2. **模块图里绝对不能出现顶层 `await`** —— 它会静默破坏顺序保证，且只在桌面版(Tauri)才看得出后果
 3. 仍然要把 `tauri_api.js:82-83` 的解析期调用移进 `boot.js`，让正确性不依赖于第 1 条
@@ -56,15 +57,15 @@
 
 扫描「在属主文件之外被赋值」的全局，初筛出 6 个，人工核对后 **3 个是误报**：
 
-| 名字 | 判定 |
-|---|---|
-| `icon` | ❌ 误报 —— `apps.js:1482` 是**默认参数** `icon = ''` |
-| `date` | ❌ 误报 —— `apps.js:1814` 是**局部 `const` 声明** |
+| 名字                    | 判定                                                          |
+| ----------------------- | ------------------------------------------------------------- |
+| `icon`                  | ❌ 误报 —— `apps.js:1482` 是**默认参数** `icon = ''`          |
+| `date`                  | ❌ 误报 —— `apps.js:1814` 是**局部 `const` 声明**             |
 | `deltaLeft`(desktop.js) | ❌ 误报 —— `desktop.js:2587` 是**局部 `let`**，遮蔽了同名全局 |
-| **`run_cmd`** | ✅ 真外部写 —— `module/apps.js:163` |
-| **`autoUpdate`** | ✅ 真外部写 —— `desktop.html:1656` 内联 handler |
-| **`font_window`** | ✅ 真外部写 —— `desktop.html:2139`、`:2217` 内联 handler |
-| **`deltaLeft`**(真) | ✅ 真外部写 —— `module/tab.js:22,25`、`module/widget.js:210` |
+| **`run_cmd`**           | ✅ 真外部写 —— `module/apps.js:163`                           |
+| **`autoUpdate`**        | ✅ 真外部写 —— `desktop.html:1656` 内联 handler               |
+| **`font_window`**       | ✅ 真外部写 —— `desktop.html:2139`、`:2217` 内联 handler      |
+| **`deltaLeft`**(真)     | ✅ 真外部写 —— `module/tab.js:22,25`、`module/widget.js:210`  |
 
 **结论：`globals.js` 里只有 `run_cmd`、`autoUpdate`、`font_window`、`deltaLeft` 需要
 `Object.defineProperty` 的 get/set 转发；其余 67 个直接值赋值即可。**
@@ -84,6 +85,7 @@ node tools/regress/run.mjs                       # 与 ../win12-baseline 工作�
 单次采集约 55s/locale，跑 zh-CN 与 en 两个 locale。
 
 **已完成的两项自测：**
+
 1. **确定性**：两棵内容等价的工作树、两个 locale → **0 处差异**。
    （靠 `determinism.mjs` 冻结 `Date`/`Math.random`/`performance.now`，并拦截 12 个非确定性外部 API 主机）
 2. **灵敏度**：故意注入两个回归 → 全部捕获，共 20 处差异：
@@ -129,19 +131,20 @@ oncontextmenu="return showcm(event,'smapp',['calc','计算器'])"
 
 「套件报无差异」只有在确实测到的范围内才有意义。当前实际覆盖：
 
-| 项 | 覆盖 |
-|---|---|
-| 窗口 | 29/29，逐个 开→最大化→还原→最小化→还原→关闭 |
-| 右键菜单 | **15/16**。`explorer.file` 需要先初始化 explorer 应用才能渲染，目前测不到，已用 `HARNESS_EMPTY` 显式标记 |
-| 通知对话框 | 26/26 |
-| 计算样式 | **3319 条逐元素记录**，覆盖 29 个窗口 + 9 个 shell 区域的**每一个后代元素** |
-| locale | zh-CN + en |
+| 项         | 覆盖                                                                                                     |
+| ---------- | -------------------------------------------------------------------------------------------------------- |
+| 窗口       | 29/29，逐个 开→最大化→还原→最小化→还原→关闭                                                              |
+| 右键菜单   | **15/16**。`explorer.file` 需要先初始化 explorer 应用才能渲染，目前测不到，已用 `HARNESS_EMPTY` 显式标记 |
+| 通知对话框 | 26/26                                                                                                    |
+| 计算样式   | **3319 条逐元素记录**，覆盖 29 个窗口 + 9 个 shell 区域的**每一个后代元素**                              |
+| locale     | zh-CN + en                                                                                               |
 
 **为什么必须逐元素走一遍**：最初只比对约 30 个根选择器，那样的话
 `apps/style/defender.css`（843 行、26 个硬编码色值）整体改写也照样报「无差异」——
 它的内部元素一个都不在列表里。阶段 2 的验收标准依赖这一层覆盖。
 
 **两条守卫**（防止「跑过了但什么都没测到」再次发生）：
+
 - `HARNESS_BUG`：`openDockWidget` 收到不认识的实参时标记
 - `HARNESS_EMPTY`：右键菜单渲染为空时标记
 
@@ -163,12 +166,12 @@ oncontextmenu="return showcm(event,'smapp',['calc','计算器'])"
 
 **25 个现有变量里有 22 个是主题相关的**（`:root.dark` 会覆盖）：
 
-| 变量 | light | dark |
-|---|---|---|
-| `--text` | `#000` | `#eee` |
-| `--bg` | `#ffffff` | `#000000` |
-| `--bggrey` | `#eee` | `#444` |
-| `--hr` | `#ccc` | `#333` |
+| 变量       | light     | dark      |
+| ---------- | --------- | --------- |
+| `--text`   | `#000`    | `#eee`    |
+| `--bg`     | `#ffffff` | `#000000` |
+| `--bggrey` | `#eee`    | `#444`    |
+| `--hr`     | `#ccc`    | `#333`    |
 
 所以把代码里的 `#000` 换成 `var(--text)`，暗色模式下会从黑变成 `#eee` ——
 **这是行为变更，不是重构**，直接踩红线。
@@ -176,6 +179,7 @@ oncontextmenu="return showcm(event,'smapp',['calc','计算器'])"
 主题无关、可以安全引用的既有变量只有三个：`--theme-1`、`--theme-2`、`--href`。
 
 **阶段 2 因此收窄为「只做可证明等价的部分」**，全部通过 0 差异验证：
+
 - 新建 `styles/tokens.css`，只放明暗同值的量（10 级圆角尺度 + 时长/缓动）
 - 155 处 `border-radius` 单值 → 圆角令牌
 - 7 处 `#2983cc` → `var(--href)`（该变量明暗同值，已核实）
@@ -193,22 +197,22 @@ oncontextmenu="return showcm(event,'smapp',['calc','计算器'])"
 
 结论：那 80 处里绝大多数**不是 bug**：
 
-| 类别 | 例子 | 判定 |
-|---|---|---|
-| 令牌定义本身 | `desktop.css` 的 `:root` / `:root.dark` | 正常 |
-| 局部调色板覆盖 | `terminal.css` 的 `.window.terminal-apps { --text:#ddd; --bg:#000 }` | **有意为之**，终端两种主题下都该是黑的 |
-| 渐变/图片上的白字 | `copilot`、`login`、`imgviewer`、开始菜单固定项 | 两种主题下白色都正确 |
-| 自带配色的应用 | `defender`（深蓝）、`code-editor`（Ace 暗色主题） | 有意为之 |
-| 独立页面 | `bios.css`（desktop.html 根本不加载它） | 无关 |
-| 浏览器默认样式 | `setting` 里三个 `<input type="color">` 的黑边 | 非项目 CSS |
-| 产品图标磁贴 | msstore `.card6>.left` 的白底（LibreOffice 图标） | 有意为之 |
+| 类别              | 例子                                                                 | 判定                                   |
+| ----------------- | -------------------------------------------------------------------- | -------------------------------------- |
+| 令牌定义本身      | `desktop.css` 的 `:root` / `:root.dark`                              | 正常                                   |
+| 局部调色板覆盖    | `terminal.css` 的 `.window.terminal-apps { --text:#ddd; --bg:#000 }` | **有意为之**，终端两种主题下都该是黑的 |
+| 渐变/图片上的白字 | `copilot`、`login`、`imgviewer`、开始菜单固定项                      | 两种主题下白色都正确                   |
+| 自带配色的应用    | `defender`（深蓝）、`code-editor`（Ace 暗色主题）                    | 有意为之                               |
+| 独立页面          | `bios.css`（desktop.html 根本不加载它）                              | 无关                                   |
+| 浏览器默认样式    | `setting` 里三个 `<input type="color">` 的黑边                       | 非项目 CSS                             |
+| 产品图标磁贴      | msstore `.card6>.left` 的白底（LibreOffice 图标）                    | 有意为之                               |
 
 **真正的主题 bug 只有一个**：计算器输入框的闪烁光标动画写死了 `border-color: #111`
 （`apps/style/calc.css` 与 `module/widget.css` 各 4 处）。实测：
 
-|  | 修复前 | 修复后 |
-|---|---|---|
-| 亮色 | 边框 `rgb(17,17,17)` / 底色 `rgb(234,234,234)` | 逐字节不变 |
+|      | 修复前                                                    | 修复后                  |
+| ---- | --------------------------------------------------------- | ----------------------- |
+| 亮色 | 边框 `rgb(17,17,17)` / 底色 `rgb(234,234,234)`            | 逐字节不变              |
 | 暗色 | 边框 `rgb(17,17,17)` / 底色 `rgb(32,32,32)` —— 几乎不可见 | 边框 `rgb(238,238,238)` |
 
 修法：新增主题相关令牌 `--caret`（亮色 `#111` 保持原值，暗色 `#eee`），
@@ -223,15 +227,15 @@ oncontextmenu="return showcm(event,'smapp',['calc','计算器'])"
 
 重构过程中发现并修复的、在纯净 `main` 上真实存在的缺陷：
 
-| bug | 原因 | 实测证据 |
-|---|---|---|
-| 桌面自建快捷方式没有右键菜单 | `addMenu` 的选择器写成 `'#div'`（id 选择器），恒匹配 0 个 | `userIconIndexAttr`: `null` → `"0"` |
-| 关 code-editor / camera-notice 抛 TypeError | `hidewin` 用 `apps[name]`，`openapp` 用 camelCase | `closeThrew`: TypeError → `undefined` |
-| 「自动更新」开关第一次取消勾选无效 | `autoUpdate == 'true'` 拿布尔比字符串，恒 false | `autoUpdateVar`: `false` → `true` |
-| 窗口 resize 后桌面图标吸附网格失效 | `cols`/`rows` 是 const，只算一次 | `hasRefreshDesktopGrid`: `false` → `true` |
-| **已有菜单打开时再右键函数型菜单项必崩** | `showcm` 复制的那份函数体里 `ret = item(arg)` 未声明，`'use strict'` 下抛 ReferenceError | `reopenContextMenu.errors`: `ReferenceError: ret is not defined` → 无；`itemCount` 6 → 3 |
-| `console.err` 不是函数 | 应为 `console.error` | 由套件的 `openDockWidget` 守卫暴露 |
-| `module/tab.js` 隐式全局 `app` | 仅因该文件无 `'use strict'` 才能跑 | 无断言（见 4d） |
+| bug                                         | 原因                                                                                     | 实测证据                                                                                 |
+| ------------------------------------------- | ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| 桌面自建快捷方式没有右键菜单                | `addMenu` 的选择器写成 `'#div'`（id 选择器），恒匹配 0 个                                | `userIconIndexAttr`: `null` → `"0"`                                                      |
+| 关 code-editor / camera-notice 抛 TypeError | `hidewin` 用 `apps[name]`，`openapp` 用 camelCase                                        | `closeThrew`: TypeError → `undefined`                                                    |
+| 「自动更新」开关第一次取消勾选无效          | `autoUpdate == 'true'` 拿布尔比字符串，恒 false                                          | `autoUpdateVar`: `false` → `true`                                                        |
+| 窗口 resize 后桌面图标吸附网格失效          | `cols`/`rows` 是 const，只算一次                                                         | `hasRefreshDesktopGrid`: `false` → `true`                                                |
+| **已有菜单打开时再右键函数型菜单项必崩**    | `showcm` 复制的那份函数体里 `ret = item(arg)` 未声明，`'use strict'` 下抛 ReferenceError | `reopenContextMenu.errors`: `ReferenceError: ret is not defined` → 无；`itemCount` 6 → 3 |
+| `console.err` 不是函数                      | 应为 `console.error`                                                                     | 由套件的 `openDockWidget` 守卫暴露                                                       |
+| `module/tab.js` 隐式全局 `app`              | 仅因该文件无 `'use strict'` 才能跑                                                       | 无断言（见 4d）                                                                          |
 
 最后一条的 `itemCount` 6 → 3 很能说明故障形态：异常中断了渲染，
 `innerHTML` 从未被写入，屏幕上留着**上一个**菜单的 6 个条目。
@@ -245,9 +249,9 @@ oncontextmenu="return showcm(event,'smapp',['calc','计算器'])"
 
 普通 Chrome（不加任何命令行参数）打开本地 HTML 文件：
 
-| 脚本类型 | 结果 |
-|---|---|
-| classic `<script defer>` | 正常执行 |
+| 脚本类型                 | 结果                            |
+| ------------------------ | ------------------------------- |
+| classic `<script defer>` | 正常执行                        |
 | `<script type="module">` | `net::ERR_FAILED`，被 CORS 拦截 |
 
 实测当前 `desktop.html` 直接双击打开：29 个窗口就位、`openapp` 可用、开机动画正常退出，
@@ -259,6 +263,7 @@ oncontextmenu="return showcm(event,'smapp',['calc','计算器'])"
 
 **替代方案：用 classic script 按关注点拆分。**
 文件级的分离效果与 ESM 方案基本一致，而且：
+
 - 不破坏 file://
 - 不需要 barrel 间接层
 - 不引入「模块图里永远不能出现顶层 await」这条隐形约束
@@ -270,6 +275,7 @@ oncontextmenu="return showcm(event,'smapp',['calc','计算器'])"
 ## 5. 已知的基线噪音
 
 采集时有 4 条控制台错误，**基线与重构版完全相同**，属预期：
+
 - `获取 star 数量时出错: TypeError: Failed to fetch` —— `api.github.com` 被拦截
 - `ReferenceError: loadPyodide is not defined` —— `unpkg.com` 的 Pyodide 被拦截（数 MB，且只有 python 应用用得到）
 

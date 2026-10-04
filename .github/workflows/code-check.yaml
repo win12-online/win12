@@ -1,0 +1,21 @@
+name: Code Check
+
+on:
+  push:
+  pull_request:
+
+concurrency:
+  group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
+  cancel-in-progress: true
+
+jobs:
+  prettier:
+    name: Prettier Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Setup Prettier
+        run: npm install -g prettier
+      - name: Run Prettier
+        run: prettier -c .
