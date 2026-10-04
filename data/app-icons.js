@@ -7,6 +7,7 @@ const nomin = { 'notepad-fonts': 0, 'camera-notice': 0, 'run': 0 };
 
 // png 格式的图标在此备注，否则以 标识+.svg 的名称自动检索
 const icon = {
+    'alaricholt677-news': 'about.svg',
     bilibili: 'bilibili.png',
     vscode: 'vscode.png',
     // python: 'python.png',

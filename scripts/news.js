@@ -70,7 +70,52 @@ var news = {
                 }
             },
         },
-    ],
+        {
+            name: 'AlaricHolt677 News',
+            description: 'Community news provided by AlaricHolt677',
+            url: 'https://alaricholt677.github.io/news/news.json',
+            async getData() {
+                try {
+                    const response = await fetch(this.url);
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    if (!Array.isArray(data.articles)) {
+                        return {
+                            status: 'error',
+                            message: '返回结果中未包含文章列表',
+                        };
+                    }
+
+                    const list = data.articles.map((value) => {
+                        const articleData = JSON.stringify(value, null, 2);
+                        const articleURL =
+                            'data:application/json;charset=utf-8,' +
+                            encodeURIComponent(articleData).replace(/'/g, '%27');
+
+                        return {
+                            title: value.name,
+                            category: Array.isArray(value.tags) ? value.tags.join(', ') : '',
+                            url: articleURL,
+                            image: value.imageURL,
+                            raw: value,
+                        };
+                    });
+
+                    return {
+                        status: 'success',
+                        data: list,
+                    };
+                } catch (error) {
+                    return {
+                        status: 'error',
+                        error: error,
+                    };
+                }
+            },
+        },    ],
     setupExecuted: false,
     selectedSource: 0,
     setup() {
@@ -94,6 +139,14 @@ var news = {
         this.selectedSource = index;
         this.refresh();
     },
+    currentArticles: [],
+
+    openArticle(index) {
+        const article = this.currentArticles[index];
+        if (!article) return;
+        apps.alaricholt677News.open(article);
+    },
+
     async refresh() {
         const contentEl = document.querySelector('#widgets>.news>.content');
         const contentNewsEl = document.querySelector('#widgets>.news>.content>.news-all');
@@ -111,13 +164,18 @@ var news = {
             return;
         }
         const genCardHTML = async (data, classList = '') => {
+            const articleIndex = this.currentArticles.indexOf(data);
+            const action = this.selectedSource === 2
+                ? `news.openArticle(${articleIndex});`
+                : `openapp('edge');window.setTimeout(() => {apps.edge.newtab();apps.edge.goto('${data.url}');}, 300);`;
             return `
 <div class="card ${classList}" style="background: url(${data.image}) right;">
     <p class="tit">${await this.parseToHTMLString(data.title)}</p>
-    <a class="a" onclick="openapp(\'edge\');window.setTimeout(() => {apps.edge.newtab();apps.edge.goto('${data.url}');}, 300);">详细信息 &gt;</a>
+    <a class="a" onclick="${action}">详细信息 &gt;</a>
 </div>
 `;
         };
+        this.currentArticles = data.data.slice();
         const topNews = data.data.shift();
         const topNewsHTML = await genCardHTML(topNews, 'top-news');
         let contentNews = [''];

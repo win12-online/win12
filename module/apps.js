@@ -2835,6 +2835,143 @@ Micrȯsoft Windows [版本 12.0.39035.7324]
             null;
         }
     },
+    alaricholt677News: {
+        currentArticle: null,
+        init: () => {
+            const app = apps.alaricholt677News;
+            if (app.currentArticle) {
+                app.renderArticle(app.currentArticle);
+                app.currentArticle = null;
+            } else app.showHome();
+        },
+        open: (article) => {
+            const app = apps.alaricholt677News;
+            app.currentArticle = article;
+            openapp('alaricholt677-news');
+            window.requestAnimationFrame(() => {
+                app.renderArticle(article);
+                app.currentArticle = null;
+            });
+        },
+        setView: (name) => {
+            const root = document.getElementById('win-alaricholt677-news');
+            if (!root) return;
+            root.querySelectorAll('.news-view').forEach((view) => view.hidden = true);
+            const view = root.querySelector('.news-view.' + name);
+            if (view) view.hidden = false;
+        },
+        showHome: () => {
+            const app = apps.alaricholt677News;
+            const root = document.getElementById('win-alaricholt677-news');
+            if (!root) return;
+            $('.window.alaricholt677-news>.titbar>p').text('AlaricHolt677 News');
+            app.setView('home');
+            const grid = root.querySelector('.homepage-grid');
+            const status = root.querySelector('.homepage-status');
+            if (!grid || !status) return;
+            grid.replaceChildren();
+
+            // Reuse the articles already fetched and normalized by scripts/news.js.
+            const articles = Array.isArray(news.currentArticles)
+                ? news.currentArticles
+                : [];
+            if (!articles.length) {
+                status.hidden = false;
+                status.textContent = 'Open the AlaricHolt677 source in the News panel first.';
+                return;
+            }
+            status.hidden = true;
+            articles.forEach((article) => {
+                const card = document.createElement('button');
+                card.type = 'button';
+                card.className = 'article-card a';
+                card.style.cssText = 'display:flex;flex-direction:column;text-align:left;border:0;padding:0;overflow:hidden;min-height:220px;';
+                const media = document.createElement('div');
+                media.className = 'article-card-media';
+                const placeholder = document.createElement('div');
+                placeholder.className = 'news-image-placeholder';
+                placeholder.innerHTML = '<i class="spinner-border" aria-label="Loading"></i>';
+                media.appendChild(placeholder);
+                if (article.image) {
+                    const image = document.createElement('img');
+                    image.src = article.image;
+                    image.alt = '';
+                    image.addEventListener('load', () => placeholder.hidden = true);
+                    image.addEventListener('error', () => {
+                        image.remove();
+                        placeholder.hidden = false;
+                        const fallback = placeholder.querySelector('img');
+                        if (fallback) {
+                            fallback.remove();
+                            placeholder.innerHTML = '<i class="bi bi-image" aria-label="Image unavailable"></i>';
+                        }
+                    });
+                    media.appendChild(image);
+                }
+                card.appendChild(media);
+                const body = document.createElement('div');
+                body.style.cssText = 'padding:16px;';
+                const title = document.createElement('h2');
+                title.textContent = article.title || 'Untitled article';
+                title.style.cssText = 'font-size:18px;margin:0 0 8px;';
+                body.appendChild(title);
+                if (article.category) {
+                    const tags = document.createElement('p');
+                    tags.textContent = article.category;
+                    tags.style.cssText = 'opacity:.65;margin:0;';
+                    body.appendChild(tags);
+                }
+                card.appendChild(body);
+                card.addEventListener('click', () => app.renderArticle(article));
+                grid.appendChild(card);
+            });
+        },
+        renderArticle: (article) => {
+            const app = apps.alaricholt677News;
+            const raw = article.raw || article;
+            const title = article.title || raw.name || raw.title || 'Untitled article';
+            const tags = article.category || (Array.isArray(raw.tags) ? raw.tags.join(', ') : '');
+            const body = raw.content || raw.body || raw.description || raw.text || JSON.stringify(raw, null, 2);
+            const root = document.getElementById('win-alaricholt677-news');
+            if (!root) return;
+            app.setView('article');
+            root.querySelector('.article-title').textContent = title;
+            root.querySelector('.article-tags').textContent = tags;
+            root.querySelector('.article-tags').hidden = !tags;
+            root.querySelector('.article-body').textContent = String(body);
+            const image = root.querySelector('.article-image');
+            const imageUrl = article.image || raw.imageURL || raw.image || '';
+            let placeholder = root.querySelector('.article-image-placeholder');
+            if (!placeholder) {
+                placeholder = document.createElement('div');
+                placeholder.className = 'article-image-placeholder';
+                const placeholderIcon = document.createElement('i');
+                placeholderIcon.remove();
+                const placeholderImage = document.createElement('img');
+                placeholderImage.remove();
+                const missingIcon = document.createElement('i');
+                missingIcon.className = 'bi bi-image';
+                missingIcon.setAttribute('aria-label', 'Image unavailable');
+                placeholder.appendChild(missingIcon);
+                image.parentNode.insertBefore(placeholder, image);
+            }
+            const showPlaceholder = () => {
+                image.hidden = true;
+                placeholder.hidden = false;
+            };
+            const showImage = () => {
+                image.hidden = false;
+                placeholder.hidden = true;
+            };
+            image.onerror = showPlaceholder;
+            image.onload = showImage;
+            if (imageUrl) {
+                placeholder.hidden = true;
+                image.src = imageUrl;
+            } else showPlaceholder();
+            $('.window.alaricholt677-news>.titbar>p').text(title);
+        }
+    },
     word: {
         init: () => {
             $('#win-word>.app-left>.focs>.home').css("display", "flex");
