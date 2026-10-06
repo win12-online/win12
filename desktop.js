@@ -148,30 +148,6 @@ page.addEventListener('click', (event) => {
 });
 //开始菜单收回
 
-
-// 上古代码，列表前的小竖线
-document.querySelectorAll('list.focs').forEach(li => {
-    li.addEventListener('click', () => {
-        let _ = li.$$('span.focs')[0], la = li.$$('a.check')[0],
-            las = li.$$('a');
-        if (_.dataset.type == 'abs') {
-            $(_).addClass('cl');
-            $(_).css('top', (la.getBoundingClientRect().top - li.parentElement.getBoundingClientRect().top) + 'px');
-            setTimeout(() => {
-                $(_).removeClass('cl');
-            }, 500);
-        }
-        else {
-            $(_).addClass('cl');
-            $(_).css('top', la.offsetTop - las[las.length - 1].offsetTop);
-            $(_).css('left', la.offsetLeft - li.offsetLeft);
-            setTimeout(() => {
-                $(_).removeClass('cl');
-            }, 500);
-        }
-    });
-});
-
 // 禁止拖拽图片
 $('img').on('dragstart', () => {
     return false;
