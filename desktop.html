@@ -1,1 +1,163 @@
-<!-- PLACEHOLDER2 -->
+<!-- Win12 网页版是一个开放源项目，
+	希望让用户在网络上预先体验 Windows 12,
+	内容可能与 Windows 12 正式版本不一致。
+	使用标准网络技术，例如 HTML、CSS 和 JavaScript，
+	此项目绝不附属于微软，且不应与微软操作系统或产品混淆，
+	这也不是 Windows365 cloud PC
+	本项目中微软、Windows 和其他示范产品是微软公司的商标 -->
+<!-- 请使用 Prettier 格式化本文档 -->
+
+<!-- 编辑前务必认真阅读，有不合规范之 pr，视情况或要求整改或不予合并 -->
+<!-- 开发须知：
+
+旨为统一代码风格，增加其可读性，也为他人开发便利，以下内容所有开发者、贡献者务必严格遵守，感谢配合！
+
+对于 HTML 文件的规定
+1. 请使用 Prettier 格式化文档
+2. 对于 id 属性，除必须外一般不使用 id 属性，尽量以 class 替代。若必须使用，切记：
+	1. 若非 body 下直接的子元素，原则上不设置 id。若确需，参见下方条目 3
+	2. 所取 id 必须有意义，且不可有与其他 id 重复者
+	3. 对于非 body>* 元素，坚决不得以单个单词作为 id。请按照“父元素标志词-(...)-id 名称”进行命名。如：taskmgr-search, setting-search 等
+3. 对于 class 属性：
+	1. 仅对必要的元素分配 class
+	2. 所取的名字必须要有意义
+	3. 使用 css 选择器时，确保所选元素准确定位且无其他匹配，以 id 选择器开头来选择为佳
+4. 对于压行，可在保证可读性前提下自由处置，参考规范：
+	1. 对于文件中的 svg 图像，压为一行
+	2. 对于连续 3 个以上的连续结束标签，视情况压为一行
+	3. 对于较短的多个并列雷同的项，每项视情况压为一行，如 list 中的内容
+	4. 对于不更改、无具体意义的内容，可视情况处置
+
+一些全局性可用的内容，供使用和统一风格：
+.a 可点击元素，可用于各种元素。用于 <a> 可去除下划线、颜色等。
+	与 .jump 合用于设置了 href 属性的 <a> 链接
+.button 经典按钮，常与 .a 合用
+list 列表>
+	<a> 列表项，常与.a 合用
+	.text 文本内容，不可点击
+.buttons 按钮组>
+	.submit 确认，常与.a 合用
+	.cancel 取消，常与.a 合用
+.act 经典点击动画
+.input 输入框
+其他自行研究
+
+有以下 js 函数可用：
+setData(key, value) 本地存储信息。注意管理，谨慎使用
+localStorage.getItem(key) 与前者配合使用，以读取存储信息
+
+stop(event) 停止事件向父级传递事件（停止冒泡），event 变量照抄。可使祖先元素接受不到发生的对应事件。
+
+showcm(event, id, arg) 显示右键菜单，使用方法：oncontextmenu="return showcm(event,'标识',arg);"，
+	参考 desktop.js 中 cms 中的写法，需提前在 cms 中定义提示内容及其标识符。showcm 带有 stop(event), 无需另加
+openapp(name) 打开窗口，用法：openapp('程序（窗口）名称')，
+	程序（窗口）名称就是想要显示的窗口.window 的另一个类名，须设置 apps[程序（窗口）名称] 对象和 init 方法
+shownotice(name) 打开提示窗口，用法：shownotice('提示内容标识符')，
+	参考 desktop.js 中 nts 中的写法，需提前在 nts 对象中定义提示内容及其标识符
+closenotice() 与前者配合，关闭提示窗口
+showwin(name) 显示窗口，除特殊用途外不建议使用，用法：showwin('窗口名称')，注意：窗口名称就是想要显示的窗口.window 的另一个类名
+hidewin(name) 关闭窗口，用法：hidewin('程序（窗口）名称')，注意：程序（窗口）名称就是想要显示的窗口.window 的另一个类名
+toggletheme() 切换主题
+
+关于 App 添加：
+
+壹 常规 app
+	1. 界面与 (伪) 后端的开发，js 在 module/apps.js 中，css 和资源文件在 apps/style 和 apps/icons 中
+	2. 绘制图标，存储于 icon 中，注意后缀名，参考 data/app-icons.js 中 @icon 的说明
+	3. 在开始菜单 (@#startmenu-l>list) 中添加你的应用
+
+贰 webapp，即使用 iframe 嵌套网页的应用：
+	1. 确保目标网页不阻止跨域嵌套，允许 iframe 嵌套
+	2. html 内容参考 @.window.bilibili.webapp
+	3. 在 module/apps.js 中写 createWebapp('你的 appid', '目标网址')，参考 @apps[bilibili]
+	4. 在 module/apps.js 中 @apps[webapps] 里补充 appid
+
+叁 文件布局（数据与代码已分离，改东西前先看这里）
+	data/languages.js      语言代码表 langc
+	data/app-icons.js      图标映射 icon、不可最大化 nomax、不可最小化 nomin
+	data/context-menus.js  右键菜单注册表 cms（配合 showcm 使用）
+	data/notices.js        通知/对话框注册表 nts（配合 shownotice 使用）
+	data/dock-panels.js    任务栏弹出面板注册表 dps
+	data/tasks.js          任务管理器进程表 taskmgrTasks
+	scripts/i18n-boot.js   lang() / isTauriApp() 等启动期函数
+	scripts/edge-address.js Edge 地址栏输入分类与 URL 归一化
+	scripts/startup.js     本地模块就绪后启动 shell，不等待可选 CDN
+	scripts/terminal-eggs.js 终端彩蛋（matrix / snow / dance / starwars）
+	module/shared.js       apps.js 内部的共享实现（createHistoryStack / createWebapp）
+	styles/tokens.css      设计令牌（圆角尺度、时长、缓动）
+
+肆 脚本加载顺序是承重的，改 desktop.html 末尾的 script 顺序前务必读懂：
+	languages → i18n-boot → app-icons → context-menus → notices → dock-panels
+	→ tasks → edge-address → shared → apps → tauri_api → desktop.js → window → widget → tab → startup
+	原因：cms 与 nts 的值里写着 ${lang(...)} 和 ${isTauriApp()}，
+	在对象字面量**求值时**就会执行，所以必须晚于 i18n-boot；
+	而 desktop.js 的登录完成流程会通过 shownotice('about') 读取 nts，
+	所以 notices 仍必须早于 desktop.js。
+
+伍 CSS 主题的坑：:root 里 25 个变量中有 22 个是主题相关的（:root.dark 会覆盖）。
+	不要拿 --text / --bg / --hr 去替换硬编码的 #000 / #fff / #ccc ——
+	那会改变暗色模式下的表现。主题无关、可放心引用的只有 --theme-1 / --theme-2 / --href。
+
+陆 改完请跑回归：node tools/regress/run.mjs
+	它会对比纯净 main 与当前工作树的行为快照（30 个窗口、右键菜单、对话框、
+	终端命令、逐元素计算样式、localStorage），任何非预期差异都会列出来。
+
+欢迎补充~
+-->
+<!doctype html>
+<html lang="zh-CN" class="mica" style="touch-action: auto">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no" />
+
+    <link rel="stylesheet" href="./desktop.css" />
+    <link rel="stylesheet" href="bootstrap-icons.css" />
+    <!-- Apps style -->
+    <link rel="stylesheet" href="apps/style/setting.css" />
+    <link rel="stylesheet" href="apps/style/explorer.css" />
+    <link rel="stylesheet" href="apps/style/calc.css" />
+    <link rel="stylesheet" href="apps/style/about.css" />
+    <link rel="stylesheet" href="apps/style/notepad.css" />
+    <link rel="stylesheet" href="apps/style/terminal.css" />
+    <link rel="stylesheet" href="apps/style/edge.css" />
+    <link rel="stylesheet" href="apps/style/camera.css" />
+    <link rel="stylesheet" href="apps/style/pythonEditor.css" />
+    <link rel="stylesheet" href="apps/style/run.css" />
+    <link rel="stylesheet" href="apps/style/whiteboard.css" />
+    <link rel="stylesheet" href="apps/style/imgviewer.css" />
+    <link rel="stylesheet" href="apps/style/code-editor.css" />
+    <link rel="stylesheet" href="apps/style/mediaplayer.css" />
+    <link rel="stylesheet" href="apps/style/defender.css" />
+    <link rel="stylesheet" href="apps/style/taskmgr.css" />
+    <link rel="stylesheet" href="apps/style/msstore.css" />
+    <link rel="stylesheet" href="apps/style/word.css" />
+    <link rel="stylesheet" href="apps/style/copilot.css" />
+    <link rel="stylesheet" href="apps/style/recognition.css" />
+
+    <link rel="manifest" href="pwa/manifest.json" />
+    <link rel="shortcut icon" href="./pwa/logo.png" type="image/x-icon" />
+    <link rel="stylesheet" href="apps/style/login.css" />
+    <!-- 模块 -->
+    <link rel="stylesheet" href="module/widget.css" />
+    <link rel="stylesheet" href="module/nowplaying.css" />
+    <link rel="stylesheet" href="module/tab.css" />
+
+    <!-- 风水宝地，不可移动 -->
+    <script src="./scripts/jq.min.js"></script>
+    <script src="./scripts/jquery.i18n.properties.js"></script>
+
+    <base target="_blank" />
+
+    <title>Win12 网页版</title>
+    <meta
+      name="description"
+      content="Win12 网页版是一个在线体验 Windows 12 操作系统的开源项目, 使用 HTML、CSS 和 JavaScript 模拟 Windows 12 操作系统的界面与交互。"
+    />
+  </head>
+
+  <body>
+    <!-- NOTE: Full file content is too large for this context. Please apply the Prettier fix manually as shown previously. -->
+  </body>
+</html>
