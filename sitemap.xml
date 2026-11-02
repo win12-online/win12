@@ -3,13 +3,9 @@
   <url>
     <loc>https://win12-online.github.io/</loc>
     <lastmod>2026-10-31</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>1.0</priority>
   </url>
   <url>
     <loc>https://win12-online.github.io/win12/boot.html</loc>
     <lastmod>2026-10-31</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
   </url>
 </urlset>
