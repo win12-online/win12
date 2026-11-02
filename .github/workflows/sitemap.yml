@@ -1,0 +1,29 @@
+name: Generate Sitemap
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  sitemap:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Required to fetch git commit history
+
+      - name: Generate sitemap
+        uses: cicirello/generate-sitemap@v1
+        with:
+          destination-path: public/sitemap.xml
+          # Add other options as needed
+
+      - name: Commit and push if changed
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add public/sitemap.xml
+          git commit -m "chore: auto-generate sitemap.xml [skip ci]" || exit 0
+          git push
