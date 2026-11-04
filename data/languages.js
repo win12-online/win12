@@ -12,6 +12,12 @@ let langc = {
   'zh-Hant': 'zh-TW',
   'zh-HK': 'zh-TW',
   'zh-hk': 'zh-TW',
+  'zh-MO': 'zh-TW',
+  'zh-mo': 'zh-TW',
+  'zh-SG': 'zh-CN',
+  'zh-sg': 'zh-CN',
+  'zh-MY': 'zh-CN',
+  'zh-my': 'zh-CN',
   zh: 'zh-CN',
 
   en: 'en',
