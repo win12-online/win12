@@ -1079,7 +1079,7 @@ let apps = {
   },
   // webapp 即将网页嵌套作为应用内容，格式参考 desktop.html 中 vscode, bilibili
   webapps: {
-    apps: ['vscode', 'bilibili', 'copilot', 'minesweeper'],
+    apps: ['vscode', 'bilibili', 'copilot', 'minesweeper', 'solitaire'],
     init: () => {
       for (const app of apps.webapps.apps) {
         if (!apps[app].loaded) apps[app].load();
@@ -1095,9 +1095,13 @@ let apps = {
   copilot: createWebapp('copilot', '/chatgh/copilot.html'),
   minesweeper: createWebapp(
     'minesweeper',
-    'https://win12-online.github.io/win12/games/minesweeper.html',
+    'https://win12-online.github.io/win12/games/minesweeper.html/',
   ),
   macos: createWebapp('macos', 'https://macos-web.app/'),
+  solitaire: createWebapp(
+    'solitaire',
+    'https://freedom-323.github.io/solitaire/standalone.html',
+  ),
   defender: {
     init: () => {
       return null;

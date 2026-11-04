@@ -954,6 +954,18 @@ toggletheme() 切换主题
             <p data-i18n="bilibili.name">哔哩哔哩</p>
           </a>
           <a
+            oncontextmenu="
+              return showcm(event, 'smlapp', ['solitaire', '纸牌']);
+            "
+            onclick="
+              openapp('solitaire');
+              hide_startmenu();
+            "
+          >
+            <img src="icon/solitaire.png" />
+            <p>纸牌</p>
+          </a>
+          <a
             oncontextmenu="return showcm(event, 'smlapp', ['macos', 'MacOS']);"
             onclick="
               openapp('macos');
