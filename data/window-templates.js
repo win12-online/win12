@@ -1604,7 +1604,7 @@ const windowMarkup = `	<div class="window defender" data-min-width="800" style="
 			<img src="icon/wsa.png" class="icon">
 		</div>
 		<div class="content" id="win-wsa" style="margin-bottom:auto;">
-			<iframe src="https://android11react.osrc.com/" frameborder="0" style=" width: 100%;height: 100%;" loading="lazy"></iframe>
+			<iframe src="https://android.blueedge.me/" frameborder="0" style=" width: 100%;height: 100%;" loading="lazy"></iframe>
 		</div>
 	</div>
 	<div class="window pythonEditor">
