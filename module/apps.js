@@ -1100,7 +1100,7 @@ let apps = {
   macos: createWebapp('macos', 'https://macos-web.app/'),
   solitaire: createWebapp(
     'solitaire',
-    'https://freedom-323.github.io/solitaire/standalone.html/',
+    'https://freedom-323.github.io/solitaire/standalone.html',
   ),
   defender: {
     init: () => {
