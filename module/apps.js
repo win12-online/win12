@@ -3455,7 +3455,7 @@ Python 3.11.2  [MSC v.1912 64 bit (AMD64)] :: Anaconda, Inc. on win32
 Type "help", "copyright", "credits" or "license" for more information.
         </pre>
         <pre class="text-cmd"></pre>
-        <pre style="display: flex;"><span class='prompt'>>>> </span><input type="text" onkeyup="if (event.keyCode == 13) { apps.python.run(); }"></pre>`);
+        <pre style="display: flex;"><span class='prompt'>>>> </span><input type="text" onkeyup="if (event.key == 'Enter') { apps.python.run(); }"></pre>`);
       apps.python.showLoadError();
     },
     run: () => {
@@ -3539,13 +3539,13 @@ Micrȯsoft Windows [版本 12.0.39035.7324]
     },
     handleKeyUp: (event) => {
       const input = $('#win-terminal input');
-      if (event.keyCode === 13) {
+      if (event.key === 'Enter') {
         // Enter
         apps.terminal.run();
-      } else if (event.keyCode === 38) {
+      } else if (event.key === 'ArrowUp' || event.key === 'Up') {
         // Up arrow
         apps.terminal.history('up');
-      } else if (event.keyCode === 40) {
+      } else if (event.key === 'ArrowDown' || event.key === 'Down') {
         // Down arrow
         apps.terminal.history('down');
       }

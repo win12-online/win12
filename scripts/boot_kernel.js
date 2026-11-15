@@ -30,7 +30,7 @@ function toBIOS() {
 }
 
 window.onkeydown = (event) => {
-  if (event.keyCode === 113 || event.key === 'F2') {
+  if (event.key === 'F2') {
     toBIOS();
   }
 };

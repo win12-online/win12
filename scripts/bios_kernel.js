@@ -136,16 +136,16 @@ window.onkeydown = (evt) => {
   const event = evt || window.event;
 
   if ($('#confirm').attr('data-show') !== 'true') {
-    if (event.keyCode === 9) {
+    if (event.key === 'Tab') {
       // Tab
       event.preventDefault();
       tab = (tab + 1) % tabs.length;
       foc = 0;
       changePage(tab);
-    } else if (event.keyCode === 121) {
+    } else if (event.key === 'F10') {
       // F10
       toBoot();
-    } else if (event.keyCode === 39) {
+    } else if (event.key === 'ArrowRight' || event.key === 'Right') {
       // Right
       event.preventDefault();
       if (tab < tabs.length - 1) {
@@ -153,7 +153,7 @@ window.onkeydown = (evt) => {
         foc = 0;
         changePage(tab);
       }
-    } else if (event.keyCode === 37) {
+    } else if (event.key === 'ArrowLeft' || event.key === 'Left') {
       // Left
       event.preventDefault();
       if (tab > 0) {
@@ -161,7 +161,7 @@ window.onkeydown = (evt) => {
         foc = 0;
         changePage(tab);
       }
-    } else if (event.keyCode === 40) {
+    } else if (event.key === 'ArrowDown' || event.key === 'Down') {
       // Down
       event.preventDefault();
       const currentPage = $(`.page${tab}`);
@@ -179,14 +179,14 @@ window.onkeydown = (evt) => {
           updateFocus();
         }
       }
-    } else if (event.keyCode === 38) {
+    } else if (event.key === 'ArrowUp' || event.key === 'Up') {
       // Up
       event.preventDefault();
       if (foc > 0) {
         foc--;
         updateFocus();
       }
-    } else if (event.keyCode === 13) {
+    } else if (event.key === 'Enter') {
       // Enter
       const currentPage = $(`.page${tab}`);
       if (tab === tabs.length - 1) {
@@ -210,7 +210,12 @@ window.onkeydown = (evt) => {
     }
   } else {
     // Confirm dialog navigation
-    if (event.keyCode === 39 || event.keyCode === 37) {
+    if (
+      event.key === 'ArrowRight' ||
+      event.key === 'Right' ||
+      event.key === 'ArrowLeft' ||
+      event.key === 'Left'
+    ) {
       // Right/Left
       event.preventDefault();
       btn = btn ? 0 : 1;
@@ -221,7 +226,7 @@ window.onkeydown = (evt) => {
         $('#ok-btn').css('cssText', 'background-color: #000;color: #fff;');
         $('#cancel-btn').css('cssText', 'color: #000;background-color: #fff;');
       }
-    } else if (event.keyCode === 13) {
+    } else if (event.key === 'Enter') {
       // Enter
       event.preventDefault();
       if (btn) {

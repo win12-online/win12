@@ -2376,10 +2376,10 @@ document.addEventListener('focusin', handleBlockingLayerFocus, true);
 function setupGlobalKey() {
   $(document).keydown(function (event) {
     if (getHighestBlockingLayer()) {
-      if (event.keyCode == 116) event.preventDefault();
+      if (event.key == 'F5') event.preventDefault();
       return;
     }
-    if (event.keyCode == 116 /*F5 被按下 (刷新)*/) {
+    if (event.key == 'F5' /*F5 被按下 (刷新)*/) {
       event.preventDefault(); /*取消默认刷新行为*/
       $('#desktop').css('opacity', '0');
       setTimeout(() => {

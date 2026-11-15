@@ -519,7 +519,7 @@ toggletheme() 切换主题
         autocomplete="current-password"
         placeholder="密码"
         onkeydown="
-          if (event.keyCode == 13) {
+          if (event.key == 'Enter') {
             win12LoginSubmit();
           }
         "
@@ -2101,7 +2101,7 @@ toggletheme() 切换主题
           type="text"
           class="input"
           onkeydown="
-            if (event.keyCode == 13) {
+            if (event.key == 'Enter') {
               copilot.send($(this).val());
               $(this).val('');
               this.blur();

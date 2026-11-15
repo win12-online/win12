@@ -694,7 +694,7 @@ const windowMarkup = `	<div class="window defender" data-min-width="800" style="
 									<p id="setting-password-status">加载中</p>
 								</div>
 								<input id="setting-password-current" class="input" type="password" autocomplete="current-password" placeholder="当前密码">
-								<input id="setting-password-new" class="input" type="password" autocomplete="new-password" placeholder="新密码" onkeydown="if(event.keyCode==13){win12SetLoginPassword();}">
+								<input id="setting-password-new" class="input" type="password" autocomplete="new-password" placeholder="新密码" onkeydown="if(event.key == 'Enter'){win12SetLoginPassword();}">
 								<a id="setting-password-submit" class="a button" onclick="win12SetLoginPassword();">保存</a>
 							</div>
 						</div>
@@ -1387,7 +1387,7 @@ const windowMarkup = `	<div class="window defender" data-min-width="800" style="
 			</pre>
 			<pre class="text-cmd"></pre>
 			<pre
-				style="display: flex"><span class="prompt">C:\\Windows\\System32> </span><input type="text" onkeyup="if (event.keyCode == 13) { apps.terminal.run(); }"></pre>
+				style="display: flex"><span class="prompt">C:\\Windows\\System32> </span><input type="text" onkeyup="if (event.key == 'Enter') { apps.terminal.run(); }"></pre>
 		</div>
 	</div>
 	<div class="window python terminal-apps">
@@ -1411,7 +1411,7 @@ const windowMarkup = `	<div class="window defender" data-min-width="800" style="
 				Type "help", "copyright", "credits" or "license" for more information.
 			</pre>
 			<pre class="text-cmd"></pre>
-			<pre>>>> <input type="text" onkeyup="if (event.keyCode == 13) { apps.python.run(); }"></pre>
+			<pre>>>> <input type="text" onkeyup="if (event.key == 'Enter') { apps.python.run(); }"></pre>
 		</div>
 	</div>
 	<div class="window edge tabs" onmousemove="if(apps.edge.in_div('over-bar',event)||apps.edge.in_div('edge-path-bar',event)||apps.edge.in_div('edge-titbar',event)){null}else{if(apps.edge.fuls){$('.edge>.titbar').hide();$('.edge>.content>.tool').hide()}}">
@@ -1444,9 +1444,9 @@ const windowMarkup = `	<div class="window defender" data-min-width="800" style="
 				<a class="a" onclick="apps.edge.reload()">
 					<i class="bi bi-arrow-clockwise"></i>
 				</a>
-				<input type="text" onpointerdown="this.select();" onkeyup="if(event.keyCode==13&&$(this).val().trim()!=''){apps.edge.goto($(this).val().trim())}"
+				<input type="text" onpointerdown="this.select();" onkeyup="if(event.key == 'Enter'&&$(this).val().trim()!=''){apps.edge.goto($(this).val().trim())}"
 					placeholder="在必应中搜索，或输入一个网址" class="url" spellcheck="false" id="edge-path" data-i18n-attr="placeholder" data-i18n-key="edge.schbing">
-				<input type="text" onkeyup="if(event.keyCode==13&&$(this).val().trim()!=''){m_tab.rename('edge',$(this).val().trim());}"
+				<input type="text" onkeyup="if(event.key == 'Enter'&&$(this).val().trim()!=''){m_tab.rename('edge',$(this).val().trim());}"
 					placeholder="为标签页命名" class="rename" spellcheck="false"  data-i18n-attr="placeholder" data-i18n-key="edge.rename">
 				<a class="a">
 					<i class="bi bi-info-circle" win12_title="浏览器只能访问允许嵌套的网站。由于规则限制无法获取网页标题，请右键标签页手动命名"></i>
@@ -1716,7 +1716,7 @@ const windowMarkup = `	<div class="window defender" data-min-width="800" style="
 			<div class="open">
 				<div class="icon"></div>
 				<input class="input" type="text"
-					onkeyup="if (event.keyCode == 13) { hidewin('run');apps.run.run($('#win-run>.open>input').val()); }">
+					onkeyup="if (event.key == 'Enter') { hidewin('run');apps.run.run($('#win-run>.open>input').val()); }">
 				<a class="a button" onclick="hidewin('run');apps.run.run($('#win-run>.open>input').val())" data-i18n="ok">运行</a>
 			</div>
 		</div>
