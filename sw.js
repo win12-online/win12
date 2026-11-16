@@ -4,9 +4,66 @@ let dymanic = [
   'win12server.freehk.svipss.top',
   'assets.msn.cn',
 ];
+
+const DEV_TTL = 30 * 60 * 1000;
+const devClients = new Map();
+
+function hasDevQuery(url) {
+  try {
+    return new URL(url).searchParams.get('v') === 'dev';
+  } catch (e) {
+    return false;
+  }
+}
+
+function markDev(clientId) {
+  if (!clientId) return;
+  devClients.set(clientId, Date.now() + DEV_TTL);
+}
+
+function isDevClient(clientId) {
+  if (!clientId) return false;
+  const exp = devClients.get(clientId);
+  if (!exp) return false;
+  if (Date.now() > exp) {
+    devClients.delete(clientId);
+    return false;
+  }
+  return true;
+}
+
+function sweepDevClients() {
+  const now = Date.now();
+  for (const [id, exp] of devClients) {
+    if (now > exp) devClients.delete(id);
+  }
+}
+
+this.addEventListener('install', function (event) {
+  self.skipWaiting();
+});
+
 this.addEventListener('fetch', function (event) {
   if (!/^https?:$/.test(new URL(event.request.url).protocol)) return;
   if (event.request.method !== 'GET') return;
+
+  const reqUrl = event.request.url;
+  const isSameOrigin = new URL(reqUrl).origin === self.location.origin;
+
+  if (event.request.mode === 'navigate' && event.resultingClientId) {
+    if (hasDevQuery(reqUrl)) markDev(event.resultingClientId);
+    if (isDevClient(event.clientId)) markDev(event.resultingClientId);
+  }
+
+  const inDev =
+    hasDevQuery(reqUrl) ||
+    isDevClient(event.clientId) ||
+    isDevClient(event.resultingClientId);
+
+  if (inDev && isSameOrigin) {
+    event.respondWith(fetch(event.request, { cache: 'no-store' }));
+    return;
+  }
 
   event.respondWith(
     caches.match(event.request).then((res) => {
@@ -104,93 +161,7 @@ this.addEventListener('message', function (e) {
   }
 });
 this.addEventListener('activate', function (event) {
+  sweepDevClients();
+  event.waitUntil(clients.claim());
   event.waitUntil(update(false));
 });
-
-// let dongtai=[
-//   'api.github.com',
-//   'tjy-gitnub.github.io/win12-theme',
-//   'win12server.freehk.svipss.top',
-//   'assets.msn.cn'
-// ]
-// this.addEventListener('fetch', function (event) {
-//   event.respondWith(
-//     caches.match(event.request).then(res => {
-//       let fl=false;
-//       dongtai.forEach(d=>{
-//         if(event.request.url.indexOf(d)>0){
-//           fl=true;
-//           return;
-//         }
-//       });
-//       if(fl){console.log('动态请求',event.request.url);return fetch(event.request);}
-//       return res ||
-//         fetch(event.request)
-//           .then(responese => {
-//             // console.log(event.request);
-//             const responeseClone = responese.clone();
-//             caches.open('def').then(cache => {
-//               console.log('下载数据', responeseClone.url);
-//               cache.put(event.request, responeseClone);
-//             })
-//             return responese;
-//           })
-//           .catch(err => {
-//             console.log(err);
-//           });
-//     })
-//   )
-// });
-// const cacheNames = ['def'];
-// let nochanges = [
-//   '/win12/fonts/',
-//   '/win12/img/',
-//   '/win12/apps/icons/',
-//   '/win12/jq.min.js',
-//   '/win12/bootstrap-icons.css',
-// ]
-// let flag = false;
-// this.addEventListener('activate', function (event) {
-//   flag = true;
-//   console.log('开始更新');
-//   event.waitUntil(
-//     caches.keys().then(keys => {
-//       if (keys.includes('def')) {
-//         caches.open('def').then(cc => {
-//           cc.keys().then(key => {
-//             key.forEach(k => {
-//               let fl = true;
-//               nochanges.forEach(fi => {
-//                 if (RegExp(fi + '\\S+').test(k.url)) {
-//                   fl = false;
-//                   return;
-//                 }
-//               });
-//               if (fl) {
-//                 console.log('删除数据', k.url);
-//                 return cc.delete(k);
-//               }
-//             });
-//           })
-//         })
-//       }
-//     })
-//   );
-//   event.waitUntil(
-//     caches.open('def').then(function (cache) {
-//       return cache.addAll([
-//         'bg-dark.svg'
-//       ]);
-//     })
-//   );
-// });
-// this.addEventListener('message', function (e) {
-//   if (e.data.head == 'is_update') {
-//     if (flag) {
-//       e.source.postMessage({
-//         head: 'update'
-//       });
-//       flag = false;
-//     }
-//   }
-// });
