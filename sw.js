@@ -1,4 +1,4 @@
-let dymanic = [
+let dynamic = [
   'api.github.com',
   'tjy-gitnub.github.io/win12-theme',
   'win12server.freehk.svipss.top',
@@ -115,7 +115,7 @@ this.addEventListener('fetch', function (event) {
 
       return caches.match(event.request).then((res) => {
         let fl = false;
-        dymanic.forEach((d) => {
+        dynamic.forEach((d) => {
           if (event.request.url.indexOf(d) > 0) {
             fl = true;
             return;
