@@ -1,48 +1,154 @@
-let dymanic = [
+let dynamic = [
   'api.github.com',
   'tjy-gitnub.github.io/win12-theme',
   'win12server.freehk.svipss.top',
   'assets.msn.cn',
 ];
+
+const V_TTL = 30 * 60 * 1000;
+const clientV = new Map();
+const vNegative = new Map();
+
+function getV(url) {
+  try {
+    return new URL(url).searchParams.get('v');
+    return v || null;
+  } catch (e) {
+    return null;
+  }
+}
+
+function markV(clientId, v) {
+  if (!clientId || v == null || v === '') return;
+  clientV.set(clientId, { v, exp: Date.now() + V_TTL });
+}
+
+function getClientVCached(clientId) {
+  if (!clientId) return null;
+  const rec = clientV.get(clientId);
+  if (!rec) return null;
+  if (Date.now() > rec.exp) {
+    clientV.delete(clientId);
+    return null;
+  }
+  return rec.v;
+}
+
+async function getClientVAsync(clientId) {
+  if (!clientId) return null;
+  const cached = getClientVCached(clientId);
+  if (cached !== null) return cached;
+  const until = vNegative.get(clientId);
+  if (until && Date.now() < until) return null;
+  try {
+    const c = await clients.get(clientId);
+    if (c) {
+      const v = getV(c.url);
+      if (v !== null) {
+        markV(clientId, v);
+        vNegative.delete(clientId);
+        return v;
+      }
+    }
+  } catch (e) {}
+  vNegative.set(clientId, Date.now() + 5000);
+  return null;
+}
+
+async function getParentVAsync(clientId) {
+  if (!clientId) return null;
+  try {
+    const c = await clients.get(clientId);
+    if (c) {
+      const v = getV(c.url);
+      if (v !== null) markV(clientId, v);
+      else clientV.delete(clientId);
+      return v;
+    }
+  } catch (e) {}
+  return getClientVCached(clientId);
+}
+
+function sweepV() {
+  const now = Date.now();
+  for (const [id, rec] of clientV) {
+    if (now > rec.exp) clientV.delete(id);
+  }
+  for (const [id, until] of vNegative) {
+    if (now > until) vNegative.delete(id);
+  }
+}
+
+this.addEventListener('install', function (event) {
+  event.waitUntil(self.skipWaiting());
+});
+
 this.addEventListener('fetch', function (event) {
   if (!/^https?:$/.test(new URL(event.request.url).protocol)) return;
   if (event.request.method !== 'GET') return;
 
   event.respondWith(
-    caches.match(event.request).then((res) => {
-      let fl = false;
-      dymanic.forEach((d) => {
-        if (event.request.url.indexOf(d) > 0) {
-          fl = true;
-          return;
-        }
-      });
-      if (fl) {
-        console.log('动态请求', event.request.url);
-        return fetch(event.request);
+    (async () => {
+      const reqUrl = event.request.url;
+      const isSameOrigin = new URL(reqUrl).origin === self.location.origin;
+      const isNavigation = event.request.mode === 'navigate';
+      const ownV = getV(reqUrl);
+
+      const parentV = isNavigation
+        ? await getParentVAsync(event.clientId)
+        : await getClientVAsync(event.clientId);
+
+      if (isNavigation && event.resultingClientId && isSameOrigin) {
+        const newV = ownV !== null ? ownV : parentV;
+        if (newV !== null) markV(event.resultingClientId, newV);
       }
-      return res && res.ok
-        ? res
-        : fetch(event.request)
-            .then((responese) => {
-              if (!responese.ok) return responese;
-              const responeseClone = responese.clone();
-              return caches
-                .open('def')
-                .then((cache) => {
-                  console.log('下载数据', responeseClone.url);
-                  return cache.put(event.request, responeseClone);
-                })
-                .catch((err) => {
-                  console.log(err);
-                })
-                .then(() => responese);
-            })
-            .catch((err) => {
-              console.log(err);
-              throw err;
-            });
-    }),
+
+      if (isNavigation && isSameOrigin && parentV !== null && ownV === null) {
+        const u = new URL(reqUrl);
+        u.searchParams.set('v', parentV);
+        return Response.redirect(u.toString(), 302);
+      }
+
+      const inDev = ownV === 'dev' || parentV === 'dev';
+      if (inDev && isSameOrigin) {
+        return fetch(event.request, { cache: 'no-store' });
+      }
+
+      return caches.match(event.request).then((res) => {
+        let fl = false;
+        dynamic.forEach((d) => {
+          if (event.request.url.indexOf(d) > 0) {
+            fl = true;
+            return;
+          }
+        });
+        if (fl) {
+          console.log('动态请求', event.request.url);
+          return fetch(event.request);
+        }
+        return res && res.ok
+          ? res
+          : fetch(event.request)
+              .then((responese) => {
+                if (!responese.ok || responese.status === 206) return responese;
+                const responeseClone = responese.clone();
+                return caches
+                  .open('def')
+                  .then((cache) => {
+                    console.log('下载数据', responeseClone.url);
+                    return cache.put(event.request, responeseClone);
+                  })
+                  .catch((err) => {
+                    console.log(err);
+                  })
+                  .then(() => responese);
+              })
+              .catch((err) => {
+                console.log(err);
+                throw err;
+              });
+      });
+    })(),
   );
 });
 const cacheNames = ['def'];
@@ -98,99 +204,14 @@ function update(force = false) {
 }
 
 this.addEventListener('message', function (e) {
-  if (e.data && e.data.head == 'update') {
-    const updating = update(Boolean(e.data.force));
-    if (typeof e.waitUntil == 'function') e.waitUntil(updating);
-  }
-});
-this.addEventListener('activate', function (event) {
-  event.waitUntil(update(false));
+  if (!e.data || e.data.head !== 'update') return;
+  if (e.origin !== self.location.origin) return;
+  const updating = update(Boolean(e.data.force));
+  if (typeof e.waitUntil == 'function') e.waitUntil(updating);
 });
 
-// let dongtai=[
-//   'api.github.com',
-//   'tjy-gitnub.github.io/win12-theme',
-//   'win12server.freehk.svipss.top',
-//   'assets.msn.cn'
-// ]
-// this.addEventListener('fetch', function (event) {
-//   event.respondWith(
-//     caches.match(event.request).then(res => {
-//       let fl=false;
-//       dongtai.forEach(d=>{
-//         if(event.request.url.indexOf(d)>0){
-//           fl=true;
-//           return;
-//         }
-//       });
-//       if(fl){console.log('动态请求',event.request.url);return fetch(event.request);}
-//       return res ||
-//         fetch(event.request)
-//           .then(responese => {
-//             // console.log(event.request);
-//             const responeseClone = responese.clone();
-//             caches.open('def').then(cache => {
-//               console.log('下载数据', responeseClone.url);
-//               cache.put(event.request, responeseClone);
-//             })
-//             return responese;
-//           })
-//           .catch(err => {
-//             console.log(err);
-//           });
-//     })
-//   )
-// });
-// const cacheNames = ['def'];
-// let nochanges = [
-//   '/win12/fonts/',
-//   '/win12/img/',
-//   '/win12/apps/icons/',
-//   '/win12/jq.min.js',
-//   '/win12/bootstrap-icons.css',
-// ]
-// let flag = false;
-// this.addEventListener('activate', function (event) {
-//   flag = true;
-//   console.log('开始更新');
-//   event.waitUntil(
-//     caches.keys().then(keys => {
-//       if (keys.includes('def')) {
-//         caches.open('def').then(cc => {
-//           cc.keys().then(key => {
-//             key.forEach(k => {
-//               let fl = true;
-//               nochanges.forEach(fi => {
-//                 if (RegExp(fi + '\\S+').test(k.url)) {
-//                   fl = false;
-//                   return;
-//                 }
-//               });
-//               if (fl) {
-//                 console.log('删除数据', k.url);
-//                 return cc.delete(k);
-//               }
-//             });
-//           })
-//         })
-//       }
-//     })
-//   );
-//   event.waitUntil(
-//     caches.open('def').then(function (cache) {
-//       return cache.addAll([
-//         'bg-dark.svg'
-//       ]);
-//     })
-//   );
-// });
-// this.addEventListener('message', function (e) {
-//   if (e.data.head == 'is_update') {
-//     if (flag) {
-//       e.source.postMessage({
-//         head: 'update'
-//       });
-//       flag = false;
-//     }
-//   }
-// });
+this.addEventListener('activate', function (event) {
+  sweepV();
+  event.waitUntil(clients.claim());
+  event.waitUntil(update(false));
+});
