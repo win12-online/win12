@@ -130,7 +130,7 @@ this.addEventListener('fetch', function (event) {
           ? res
           : fetch(event.request)
               .then((responese) => {
-                if (!responese.ok) return responese;
+                if (!responese.ok || responese.status === 206) return responese;
                 const responeseClone = responese.clone();
                 return caches
                   .open('def')
@@ -204,11 +204,12 @@ function update(force = false) {
 }
 
 this.addEventListener('message', function (e) {
-  if (e.data && e.data.head == 'update') {
-    const updating = update(Boolean(e.data.force));
-    if (typeof e.waitUntil == 'function') e.waitUntil(updating);
-  }
+  if (!e.data || e.data.head !== 'update') return;
+  if (e.origin !== self.location.origin) return;
+  const updating = update(Boolean(e.data.force));
+  if (typeof e.waitUntil == 'function') e.waitUntil(updating);
 });
+
 this.addEventListener('activate', function (event) {
   sweepV();
   event.waitUntil(clients.claim());
