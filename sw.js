@@ -12,13 +12,14 @@ const vNegative = new Map();
 function getV(url) {
   try {
     return new URL(url).searchParams.get('v');
+    return v || null;
   } catch (e) {
     return null;
   }
 }
 
 function markV(clientId, v) {
-  if (!clientId || v == null) return;
+  if (!clientId || v == null || v === '') return;
   clientV.set(clientId, { v, exp: Date.now() + V_TTL });
 }
 
@@ -79,7 +80,7 @@ function sweepV() {
 }
 
 this.addEventListener('install', function (event) {
-  self.skipWaiting();
+  event.waitUntil(self.skipWaiting());
 });
 
 this.addEventListener('fetch', function (event) {
