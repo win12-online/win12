@@ -5,37 +5,76 @@ let dymanic = [
   'assets.msn.cn',
 ];
 
-const DEV_TTL = 30 * 60 * 1000;
-const devClients = new Map();
+const V_TTL = 30 * 60 * 1000;
+const clientV = new Map();
+const vNegative = new Map();
 
-function hasDevQuery(url) {
+function getV(url) {
   try {
-    return new URL(url).searchParams.get('v') === 'dev';
+    return new URL(url).searchParams.get('v');
   } catch (e) {
-    return false;
+    return null;
   }
 }
 
-function markDev(clientId) {
-  if (!clientId) return;
-  devClients.set(clientId, Date.now() + DEV_TTL);
+function markV(clientId, v) {
+  if (!clientId || v == null) return;
+  clientV.set(clientId, { v, exp: Date.now() + V_TTL });
 }
 
-function isDevClient(clientId) {
-  if (!clientId) return false;
-  const exp = devClients.get(clientId);
-  if (!exp) return false;
-  if (Date.now() > exp) {
-    devClients.delete(clientId);
-    return false;
+function getClientVCached(clientId) {
+  if (!clientId) return null;
+  const rec = clientV.get(clientId);
+  if (!rec) return null;
+  if (Date.now() > rec.exp) {
+    clientV.delete(clientId);
+    return null;
   }
-  return true;
+  return rec.v;
 }
 
-function sweepDevClients() {
+async function getClientVAsync(clientId) {
+  if (!clientId) return null;
+  const cached = getClientVCached(clientId);
+  if (cached !== null) return cached;
+  const until = vNegative.get(clientId);
+  if (until && Date.now() < until) return null;
+  try {
+    const c = await clients.get(clientId);
+    if (c) {
+      const v = getV(c.url);
+      if (v !== null) {
+        markV(clientId, v);
+        vNegative.delete(clientId);
+        return v;
+      }
+    }
+  } catch (e) {}
+  vNegative.set(clientId, Date.now() + 5000);
+  return null;
+}
+
+async function getParentVAsync(clientId) {
+  if (!clientId) return null;
+  try {
+    const c = await clients.get(clientId);
+    if (c) {
+      const v = getV(c.url);
+      if (v !== null) markV(clientId, v);
+      else clientV.delete(clientId);
+      return v;
+    }
+  } catch (e) {}
+  return getClientVCached(clientId);
+}
+
+function sweepV() {
   const now = Date.now();
-  for (const [id, exp] of devClients) {
-    if (now > exp) devClients.delete(id);
+  for (const [id, rec] of clientV) {
+    if (now > rec.exp) clientV.delete(id);
+  }
+  for (const [id, until] of vNegative) {
+    if (now > until) vNegative.delete(id);
   }
 }
 
@@ -47,59 +86,68 @@ this.addEventListener('fetch', function (event) {
   if (!/^https?:$/.test(new URL(event.request.url).protocol)) return;
   if (event.request.method !== 'GET') return;
 
-  const reqUrl = event.request.url;
-  const isSameOrigin = new URL(reqUrl).origin === self.location.origin;
-
-  if (event.request.mode === 'navigate' && event.resultingClientId) {
-    if (hasDevQuery(reqUrl)) markDev(event.resultingClientId);
-    if (isDevClient(event.clientId)) markDev(event.resultingClientId);
-  }
-
-  const inDev =
-    hasDevQuery(reqUrl) ||
-    isDevClient(event.clientId) ||
-    isDevClient(event.resultingClientId);
-
-  if (inDev && isSameOrigin) {
-    event.respondWith(fetch(event.request, { cache: 'no-store' }));
-    return;
-  }
-
   event.respondWith(
-    caches.match(event.request).then((res) => {
-      let fl = false;
-      dymanic.forEach((d) => {
-        if (event.request.url.indexOf(d) > 0) {
-          fl = true;
-          return;
-        }
-      });
-      if (fl) {
-        console.log('动态请求', event.request.url);
-        return fetch(event.request);
+    (async () => {
+      const reqUrl = event.request.url;
+      const isSameOrigin = new URL(reqUrl).origin === self.location.origin;
+      const isNavigation = event.request.mode === 'navigate';
+      const ownV = getV(reqUrl);
+
+      const parentV = isNavigation
+        ? await getParentVAsync(event.clientId)
+        : await getClientVAsync(event.clientId);
+
+      if (isNavigation && event.resultingClientId && isSameOrigin) {
+        const newV = ownV !== null ? ownV : parentV;
+        if (newV !== null) markV(event.resultingClientId, newV);
       }
-      return res && res.ok
-        ? res
-        : fetch(event.request)
-            .then((responese) => {
-              if (!responese.ok) return responese;
-              const responeseClone = responese.clone();
-              return caches
-                .open('def')
-                .then((cache) => {
-                  console.log('下载数据', responeseClone.url);
-                  return cache.put(event.request, responeseClone);
-                })
-                .catch((err) => {
-                  console.log(err);
-                })
-                .then(() => responese);
-            })
-            .catch((err) => {
-              console.log(err);
-              throw err;
-            });
-    }),
+
+      if (isNavigation && isSameOrigin && parentV !== null && ownV === null) {
+        const u = new URL(reqUrl);
+        u.searchParams.set('v', parentV);
+        return Response.redirect(u.toString(), 302);
+      }
+
+      const inDev = ownV === 'dev' || parentV === 'dev';
+      if (inDev && isSameOrigin) {
+        return fetch(event.request, { cache: 'no-store' });
+      }
+
+      return caches.match(event.request).then((res) => {
+        let fl = false;
+        dymanic.forEach((d) => {
+          if (event.request.url.indexOf(d) > 0) {
+            fl = true;
+            return;
+          }
+        });
+        if (fl) {
+          console.log('动态请求', event.request.url);
+          return fetch(event.request);
+        }
+        return res && res.ok
+          ? res
+          : fetch(event.request)
+              .then((responese) => {
+                if (!responese.ok) return responese;
+                const responeseClone = responese.clone();
+                return caches
+                  .open('def')
+                  .then((cache) => {
+                    console.log('下载数据', responeseClone.url);
+                    return cache.put(event.request, responeseClone);
+                  })
+                  .catch((err) => {
+                    console.log(err);
+                  })
+                  .then(() => responese);
+              })
+              .catch((err) => {
+                console.log(err);
+                throw err;
+              });
+      });
+    })(),
   );
 });
 const cacheNames = ['def'];
@@ -161,7 +209,7 @@ this.addEventListener('message', function (e) {
   }
 });
 this.addEventListener('activate', function (event) {
-  sweepDevClients();
+  sweepV();
   event.waitUntil(clients.claim());
   event.waitUntil(update(false));
 });
