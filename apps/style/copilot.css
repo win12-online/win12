@@ -96,6 +96,14 @@
 #copilot > .chat > .line.ai > .text {
   background-color: var(--msg);
 }
+#copilot > .chat > .line.ai > .text > .draw-image {
+  margin-top: 10px;
+}
+#copilot > .chat > .line.ai > .text > .draw-image > img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
 #copilot > .chat > .line.user > .text {
   background: linear-gradient(100deg, #3397e9c0, #1b5dbad6);
   color: #fff;

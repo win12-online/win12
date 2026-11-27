@@ -838,6 +838,34 @@ function decodeHtml(s) {
   $('#translater').text(s);
   return $('#translater').html().replace(/\n/g, '<br>').replace(/ /g, '&nbsp;');
 }
+function appendCopilotDrawImage(textElement, prompt) {
+  const imageContainer = document.createElement('div');
+  imageContainer.className = 'draw-image';
+
+  const status = document.createElement('p');
+  status.textContent = '正在生成图片…';
+
+  const image = document.createElement('img');
+  image.alt = 'AI 生成的图片';
+  image.style.display = 'none';
+  image.addEventListener('load', () => {
+    status.remove();
+    image.style.display = 'block';
+    const chat = document.querySelector('#copilot>.chat');
+    chat.scrollTop = chat.scrollHeight;
+  });
+  image.addEventListener('error', () => {
+    status.textContent = '图片生成失败，请稍后重试。';
+    const chat = document.querySelector('#copilot>.chat');
+    chat.scrollTop = chat.scrollHeight;
+  });
+
+  imageContainer.append(status, image);
+  textElement.appendChild(imageContainer);
+  const encodedPrompt = encodeURIComponent(prompt);
+  image.src =
+    `https://image.pollinations.ai/prompt/${encodedPrompt}?width=1024&height=1024&enhance=true&private=true`;
+}
 function msgDoneOperate() {
   $('#copilot>.inputbox').removeClass('disable');
   setTimeout(() => {
@@ -858,6 +886,7 @@ let copilot = {
 3.指令"{feedback copilot}";打开 ai 助手反馈界面，用于用户想对 ai 助手的功能提出反馈时帮助他打开
 4.指令"{feedback win12}";打开反馈中心，当用户希望对除 ai 助手外的其他系统功能发送反馈时，帮他打开反馈中心
 5.指令"{settheme theme}";用于切换系统的深色、浅色模式，区别于主题。用"light"表浅色，"dark"表深色，来替换其中的"theme"
+6.指令"{draw 绘画内容}";当用户要求绘画时，先润色用户描述为清晰、具体的绘画提示词，并在回答末尾输出"{draw 润色后的绘画内容}"指令
 如下是应用的功能介绍。
 1.设置:id 为 setting;在个性化页面中可以设置系统的主题，主题色，是否启用动画、阴影、圆角、云母 mica 效果和为所有窗口开启亚克力透明效果。
 2.关于 win12 网页版:id 为 about;简介页面有关于本项目的介绍说明与贡献者信息，更新记录页面有本项目的各版本更新记录。
@@ -896,6 +925,7 @@ let copilot = {
         2.在浏览器中打开链接、搜索<br>
         3.发送对系统、AI 助手的反馈<br>
         4.切换颜色主题<br>
+        5.根据描述生成图片<br>
         需注意，根据相关法律法规，我们不向欧盟用户提供服务。</p></div>`);
     setTimeout(() => {
       $('#copilot>.chat').append(
@@ -999,10 +1029,11 @@ let copilot = {
 
           // 处理特殊命令
           let rt = responseText;
-          let r = [];
-          if (/{.+}/.test(rt)) {
-            r = rt.match(/{.+?}/g) || [];
-          }
+          const r =
+            rt.match(
+              /\{(?:openapp\s+[^{}]+|openurl\s+[^{}]+|feedback\s+(?:copilot|win12)|settheme\s+[^{}]+|draw\s+[^{}]+)\}/g,
+            ) || [];
+          const drawPrompts = [];
 
           if (r.length) {
             for (const i of r) {
@@ -1059,6 +1090,12 @@ let copilot = {
                     i,
                     `<div class="action"><p class="tit">切换外观模式</p><p class="detail">${t == 'dark' ? '深色' : '浅色'} 模式</p></div>`,
                   );
+              } else if (/^\{draw\s+[\s\S]+?\}$/.test(i)) {
+                const prompt = i.match(/^\{draw\s+([\s\S]+?)\}$/)[1].trim();
+                if (prompt) {
+                  drawPrompts.push(prompt);
+                  rt = rt.replace(i, '');
+                }
               }
             }
             $('#copilot>.chat').append(
@@ -1068,6 +1105,15 @@ let copilot = {
             $('#copilot>.chat').append(
               `<div class="line ai"><p class="text">${decodeHtml(rt)}</p></div>`,
             );
+          }
+
+          if (drawPrompts.length) {
+            const textElement = $('#copilot>.chat>.line.ai')
+              .last()
+              .find('.text')[0];
+            for (const prompt of drawPrompts) {
+              appendCopilotDrawImage(textElement, prompt);
+            }
           }
 
           copilot.history.push({ role: 'assistant', content: responseText });
