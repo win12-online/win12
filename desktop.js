@@ -52,25 +52,6 @@ page.addEventListener('mouseup', enableIframes);
 page.addEventListener('touchend', enableIframes);
 page.addEventListener('touchcancel', enableIframes);
 
-page.addEventListener('click', (event) => {
-  if (
-    $('#start-menu').hasClass('show') &&
-    !$(event.target).closest('#start-menu').length
-  ) {
-    hide_startmenu();
-  }
-});
-// 开始菜单收回
-page.addEventListener('click', (event) => {
-  if (
-    $('#search-win').hasClass('show') &&
-    !$(event.target).closest('#search-win').length
-  ) {
-    hide_search();
-  }
-});
-// 搜索收回
-
 // 上古代码，列表前的小竖线
 document.querySelectorAll('list.focs').forEach((li) => {
   li.addEventListener('click', () => {
@@ -1304,17 +1285,10 @@ function openDockWidget(name) {
   } else if (name == 'control') {
     //打开控制
     if ($('#control').hasClass('show')) {
-      $('#control').removeClass('show');
-      setTimeout(() => {
-        $('#control').removeClass('show-begin');
-      }, 200);
+      hide_control();
     } else {
       if ($('#datebox').hasClass('show')) {
-        $('.dock.date').removeClass('show');
-        $('#datebox').removeClass('show');
-        setTimeout(() => {
-          $('#datebox').removeClass('show-begin');
-        }, 200);
+        hide_datebox();
       }
       $('#control').css('left', $('.a.dock.control').position().left - 123);
       $('#control').addClass('show-begin');
@@ -1325,17 +1299,10 @@ function openDockWidget(name) {
   } else if (name == 'datebox') {
     //打开时间框
     if ($('#datebox').hasClass('show')) {
-      $('.dock.date').removeClass('show');
-      $('#datebox').removeClass('show');
-      setTimeout(() => {
-        $('#datebox').removeClass('show-begin');
-      }, 200);
+      hide_datebox();
     } else {
       if ($('#control').hasClass('show')) {
-        $('#control').removeClass('show');
-        setTimeout(() => {
-          $('#control').removeClass('show-begin');
-        }, 200);
+        hide_control();
       }
       $('.dock.date').addClass('show');
       $('#datebox').css('left', $('.a.dock.date').position().left - 125);
@@ -1374,6 +1341,38 @@ function hide_widgets() {
     $('#widgets').removeClass('show-begin');
   }, 200);
 }
+function hide_control() {
+  $('#control').removeClass('show');
+  setTimeout(() => {
+    $('#control').removeClass('show-begin');
+  }, 200);
+}
+function hide_datebox() {
+  $('.dock.date').removeClass('show');
+  $('#datebox').removeClass('show');
+  setTimeout(() => {
+    $('#datebox').removeClass('show-begin');
+  }, 200);
+}
+
+const taskbarPopupClosers = [
+  ['#start-menu', hide_startmenu],
+  ['#search-win', hide_search],
+  ['#widgets', hide_widgets],
+  ['#control', hide_control],
+  ['#datebox', hide_datebox],
+];
+
+page.addEventListener('click', (event) => {
+  for (const [selector, close] of taskbarPopupClosers) {
+    if (
+      $(selector).hasClass('show') &&
+      !$(event.target).closest(selector).length
+    ) {
+      close();
+    }
+  }
+});
 const FLY_HIDDEN_LIST_KEY = 'control_status_fly_hidden_list';
 function controlStatus(name) {
   if (this.classList.contains('active')) {
