@@ -1079,7 +1079,7 @@ let apps = {
   },
   // webapp 即将网页嵌套作为应用内容，格式参考 desktop.html 中 vscode, bilibili
   webapps: {
-    apps: ['vscode', 'bilibili', 'copilot', 'minesweeper', 'solitaire'],
+    apps: ['vscode', 'bilibili', 'mk48', 'copilot', 'minesweeper', 'solitaire'],
     init: () => {
       for (const app of apps.webapps.apps) {
         if (!apps[app].loaded) apps[app].load();
@@ -1092,6 +1092,7 @@ let apps = {
   },
   vscode: createWebapp('vscode', 'https://github1s.com/'),
   bilibili: createWebapp('bilibili', 'https://bilibili.com/'),
+  mk48: createWebapp('mk48', 'https://2.mk48.io'),
   copilot: createWebapp('copilot', '/chatgh/copilot.html'),
   minesweeper: createWebapp(
     'minesweeper',

@@ -1521,6 +1521,22 @@ const windowMarkup = `	<div class="window defender" data-min-width="800" style="
 			<!-- <iframe src="https://bilibili.com/" frameborder="0" style="width: 100%; height: 100%;" loading="lazy"></iframe> -->
 		</div>
 	</div>
+	<div class="window mk48 webapp">
+		<div class="resize-bar"></div>
+		<div class="titbar">
+			<img src="icon/mk48iologo.png" class="icon">
+			<p>mk48.io</p>
+			<div>
+				<a class="a wbtg red" onclick="hidewin('mk48')"><i class="bi bi-x-lg"></i></a>
+				<a class="a wbtg max" onclick="maxwin('mk48')"><i class="bi bi-app"></i></a>
+				<a class="a wbtg" onclick="minwin('mk48')"><i class="bi bi-dash-lg"></i></a>
+			</div>
+		</div>
+		<div class="loadback">
+			<img src="icon/mk48iologo.png" class="icon">
+		</div>
+		<div class="content" id="win-mk48"></div>
+	</div>
 	<div class="window solitaire webapp">
 		<div class="resize-bar"></div>
 		<div class="titbar">
