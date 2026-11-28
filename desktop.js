@@ -849,18 +849,58 @@ function appendCopilotDrawImage(textElement, prompt) {
   image.alt = 'AI 生成的图片';
   image.style.display = 'none';
   image.addEventListener('load', () => {
-    status.remove();
+    status.hidden = true;
     image.style.display = 'block';
+    downloadButton.hidden = false;
     const chat = document.querySelector('#copilot>.chat');
     chat.scrollTop = chat.scrollHeight;
   });
   image.addEventListener('error', () => {
+    status.hidden = false;
     status.textContent = '图片生成失败，请稍后重试。';
     const chat = document.querySelector('#copilot>.chat');
     chat.scrollTop = chat.scrollHeight;
   });
 
-  imageContainer.append(status, image);
+  const downloadButton = document.createElement('button');
+  downloadButton.type = 'button';
+  downloadButton.className = 'download-image';
+  downloadButton.textContent = '下载图片';
+  downloadButton.hidden = true;
+  downloadButton.addEventListener('click', async () => {
+    downloadButton.disabled = true;
+    downloadButton.textContent = '下载中…';
+    try {
+      const response = await fetch(image.src);
+      if (!response.ok) {
+        throw new Error(`Image download failed: ${response.status}`);
+      }
+      const blob = await response.blob();
+      const extension =
+        {
+          'image/jpeg': 'jpg',
+          'image/png': 'png',
+          'image/webp': 'webp',
+        }[blob.type] || 'png';
+      const downloadUrl = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = downloadUrl;
+      link.download = `ai-generated-image.${extension}`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(downloadUrl), 1000);
+    } catch (error) {
+      console.error(error);
+      status.textContent = '图片下载失败，请稍后重试。';
+      status.hidden = false;
+    } finally {
+      downloadButton.disabled = false;
+      downloadButton.textContent = '下载图片';
+    }
+  });
+
+  imageContainer.append(status, image, downloadButton);
   textElement.appendChild(imageContainer);
   const encodedPrompt = encodeURIComponent(prompt);
   image.src = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=1024&height=1024&enhance=true&private=true`;

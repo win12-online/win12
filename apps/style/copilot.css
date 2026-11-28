@@ -104,6 +104,18 @@
   height: auto;
   border-radius: 8px;
 }
+#copilot > .chat > .line.ai > .text > .draw-image > .download-image {
+  margin-top: 8px;
+  padding: 6px 12px;
+  border: 0;
+  border-radius: 6px;
+  background-color: var(--hover-b);
+  color: inherit;
+  cursor: pointer;
+}
+#copilot > .chat > .line.ai > .text > .draw-image > .download-image:disabled {
+  cursor: wait;
+}
 #copilot > .chat > .line.user > .text {
   background: linear-gradient(100deg, #3397e9c0, #1b5dbad6);
   color: #fff;
