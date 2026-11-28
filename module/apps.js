@@ -2574,14 +2574,16 @@ let apps = {
                       },
                       file: [],
                     },
-                    公用图片: {
+                    ['公用图片']: {
                       folder: {
-                        本机照片: { folder: {}, file: [] },
-                        屏幕截图: { folder: {}, file: [] },
+                        ['本机照片']: { folder: {}, file: [] },
+                        ['屏幕截图']: { folder: {}, file: [] },
                       },
                       file: [],
                     },
-                    公用音乐: { folder: { 录音机: { folder: {}, file: [] } } },
+                    ['公用音乐']: {
+                      folder: { ['录音机']: { folder: {}, file: [] } },
+                    },
                   },
                 },
               },
