@@ -969,6 +969,12 @@ let copilot = {
   clearHistory: () => {
     copilot.contextVersion += 1;
     copilot.history.splice(1);
+    const previousUid = localStorage.getItem('copilot_uid');
+    let uid;
+    do {
+      uid = Math.floor(100000 + Math.random() * 900000).toString();
+    } while (uid === previousUid);
+    localStorage.setItem('copilot_uid', uid);
     copilot.init();
   },
   send: (t, showusr = true, role = 'user') => {
