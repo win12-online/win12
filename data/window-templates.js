@@ -1043,6 +1043,12 @@ const windowMarkup = `	<div class="window defender" data-min-width="800" style="
 			<div class="cnt update update-web">
 				<h1 class="tit" data-i18n="about.update.name"><span></span>更新记录</h1>
 				<div style="margin-left: 20px;">
+					<details><summary><span>v10.2.5</span> 新增 mk48.io 海战游戏与 Copilot AI 绘画</summary><p>
+						&emsp;&emsp;-(更新来自 @kjmjh)<br>
+						&emsp;&emsp;-添加 mk48.io 海战游戏<br>
+						&emsp;&emsp;-为 Copilot 添加 AI 绘画功能<br>
+						&emsp;&emsp;-细节优化和修复
+					</p></details>
 					<details><summary><span>v10.2.4</span> 新增《Copliot 用户协议》和《Copliot 隐私政策》</summary><p>
 						&emsp;&emsp;-(更新来自 @tangyuan0821)<br>
 						&emsp;&emsp;-我们添加了《Copliot 用户协议》与《Copliot 隐私政策》，现已生效
