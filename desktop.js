@@ -863,8 +863,7 @@ function appendCopilotDrawImage(textElement, prompt) {
   imageContainer.append(status, image);
   textElement.appendChild(imageContainer);
   const encodedPrompt = encodeURIComponent(prompt);
-  image.src =
-    `https://image.pollinations.ai/prompt/${encodedPrompt}?width=1024&height=1024&enhance=true&private=true`;
+  image.src = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=1024&height=1024&enhance=true&private=true`;
 }
 function msgDoneOperate() {
   $('#copilot>.inputbox').removeClass('disable');
