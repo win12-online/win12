@@ -873,6 +873,7 @@ function msgDoneOperate() {
 }
 let isFirstChat = true; // 标记是否是刚进来时服务端返回的消息
 let copilot = {
+  contextVersion: 0,
   history: [
     {
       role: 'system',
@@ -885,7 +886,7 @@ let copilot = {
 3.指令"{feedback copilot}";打开 ai 助手反馈界面，用于用户想对 ai 助手的功能提出反馈时帮助他打开
 4.指令"{feedback win12}";打开反馈中心，当用户希望对除 ai 助手外的其他系统功能发送反馈时，帮他打开反馈中心
 5.指令"{settheme theme}";用于切换系统的深色、浅色模式，区别于主题。用"light"表浅色，"dark"表深色，来替换其中的"theme"
-6.指令"{draw 绘画内容}";当用户要求绘画时，先润色用户描述为清晰、具体的绘画提示词，并在回答末尾输出"{draw 润色后的绘画内容}"指令
+6.指令"{draw 绘画内容}";当用户要求绘画时，先润色用户描述为清晰、具体的绘画提示词，并使用英文填入指令。并在回答末尾输出"{draw 润色后的绘画内容英文版}"指令
 如下是应用的功能介绍。
 1.设置:id 为 setting;在个性化页面中可以设置系统的主题，主题色，是否启用动画、阴影、圆角、云母 mica 效果和为所有窗口开启亚克力透明效果。
 2.关于 win12 网页版:id 为 about;简介页面有关于本项目的介绍说明与贡献者信息，更新记录页面有本项目的各版本更新记录。
@@ -917,6 +918,37 @@ let copilot = {
     },
   ],
   init: () => {
+    const titlebar = document.querySelector('#copilot>.titbar');
+    if (!titlebar) {
+      throw new Error('Copilot titlebar was not found');
+    }
+    let titlebarActions = titlebar.querySelector('.alr');
+    if (!titlebarActions) {
+      titlebarActions = document.createElement('div');
+      titlebarActions.className = 'alr';
+      titlebar.appendChild(titlebarActions);
+    }
+    if (!titlebarActions.querySelector('.clear-history')) {
+      const clearButton = document.createElement('a');
+      clearButton.className = 'btn clear-history';
+      clearButton.title = '清除聊天记录';
+      clearButton.setAttribute('aria-label', '清除聊天记录');
+      clearButton.setAttribute('role', 'button');
+      clearButton.tabIndex = 0;
+      clearButton.innerHTML = '<i class="bi bi-trash3"></i>';
+      clearButton.addEventListener('click', (event) => {
+        event.preventDefault();
+        copilot.clearHistory();
+      });
+      clearButton.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          copilot.clearHistory();
+        }
+      });
+      titlebarActions.appendChild(clearButton);
+    }
+
     $('#copilot>.chat').html('');
     $('#copilot>.chat')
       .append(`<div class="line system"><p class="text">本 AI 助手基于 Deepseek v4 pro 模型，目前支持以下操作：<br>
@@ -934,6 +966,11 @@ let copilot = {
       $('#copilot>.chat').scrollTop($('#copilot>.chat')[0].scrollHeight);
     }, 200);
   },
+  clearHistory: () => {
+    copilot.contextVersion += 1;
+    copilot.history.splice(1);
+    copilot.init();
+  },
   send: (t, showusr = true, role = 'user') => {
     // 输入验证
     if (t.length == 0) {
@@ -945,6 +982,7 @@ let copilot = {
       return;
     }
 
+    const contextVersion = copilot.contextVersion;
     $('#copilot>.inputbox').addClass('disable');
 
     // 敏感词过滤
@@ -952,6 +990,9 @@ let copilot = {
       url: `https://yunzhiapi.cn/vip/win12/mgwbgl.php?msg=${encodeURIComponent(t)}`,
       method: 'GET',
       success: function (filteredText) {
+        if (contextVersion !== copilot.contextVersion) {
+          return;
+        }
         if (filteredText !== t) {
           triggerBlockAction();
           return;
@@ -959,6 +1000,9 @@ let copilot = {
         proceedSend();
       },
       error: function () {
+        if (contextVersion !== copilot.contextVersion) {
+          return;
+        }
         proceedSend();
       },
     });
@@ -1024,6 +1068,9 @@ let copilot = {
         url: apiUrl,
         method: 'GET',
         success: function (responseText) {
+          if (contextVersion !== copilot.contextVersion) {
+            return;
+          }
           msgDoneOperate();
 
           // 处理特殊命令
@@ -1120,6 +1167,9 @@ let copilot = {
           msgDoneOperate();
         },
         error: function (error) {
+          if (contextVersion !== copilot.contextVersion) {
+            return;
+          }
           console.log(error);
           $('#copilot>.chat').append(
             '<div class="line system"><p class="text">发生错误，请查看控制台输出或重试</p></div>',
