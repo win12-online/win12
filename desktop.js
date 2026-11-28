@@ -52,25 +52,6 @@ page.addEventListener('mouseup', enableIframes);
 page.addEventListener('touchend', enableIframes);
 page.addEventListener('touchcancel', enableIframes);
 
-page.addEventListener('click', (event) => {
-  if (
-    $('#start-menu').hasClass('show') &&
-    !$(event.target).closest('#start-menu').length
-  ) {
-    hide_startmenu();
-  }
-});
-// 开始菜单收回
-page.addEventListener('click', (event) => {
-  if (
-    $('#search-win').hasClass('show') &&
-    !$(event.target).closest('#search-win').length
-  ) {
-    hide_search();
-  }
-});
-// 搜索收回
-
 // 上古代码，列表前的小竖线
 document.querySelectorAll('list.focs').forEach((li) => {
   li.addEventListener('click', () => {
@@ -857,6 +838,73 @@ function decodeHtml(s) {
   $('#translater').text(s);
   return $('#translater').html().replace(/\n/g, '<br>').replace(/ /g, '&nbsp;');
 }
+function appendCopilotDrawImage(textElement, prompt) {
+  const imageContainer = document.createElement('div');
+  imageContainer.className = 'draw-image';
+
+  const status = document.createElement('p');
+  status.textContent = '正在生成图片…';
+
+  const image = document.createElement('img');
+  image.alt = 'AI 生成的图片';
+  image.style.display = 'none';
+  image.addEventListener('load', () => {
+    status.hidden = true;
+    image.style.display = 'block';
+    downloadButton.hidden = false;
+    const chat = document.querySelector('#copilot>.chat');
+    chat.scrollTop = chat.scrollHeight;
+  });
+  image.addEventListener('error', () => {
+    status.hidden = false;
+    status.textContent = '图片生成失败，请稍后重试。';
+    const chat = document.querySelector('#copilot>.chat');
+    chat.scrollTop = chat.scrollHeight;
+  });
+
+  const downloadButton = document.createElement('button');
+  downloadButton.type = 'button';
+  downloadButton.className = 'download-image';
+  downloadButton.textContent = '下载图片';
+  downloadButton.hidden = true;
+  downloadButton.addEventListener('click', async () => {
+    downloadButton.disabled = true;
+    downloadButton.textContent = '下载中…';
+    try {
+      const response = await fetch(image.src);
+      if (!response.ok) {
+        throw new Error(`Image download failed: ${response.status}`);
+      }
+      const blob = await response.blob();
+      const extension =
+        {
+          'image/jpeg': 'jpg',
+          'image/png': 'png',
+          'image/webp': 'webp',
+        }[blob.type] || 'png';
+      const downloadUrl = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = downloadUrl;
+      link.download = `ai-generated-image.${extension}`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(downloadUrl), 1000);
+    } catch (error) {
+      console.error(error);
+      status.textContent = '图片下载失败，请稍后重试。';
+      status.hidden = false;
+    } finally {
+      downloadButton.disabled = false;
+      downloadButton.textContent = '下载图片';
+    }
+  });
+
+  imageContainer.append(status, image, downloadButton);
+  textElement.appendChild(imageContainer);
+  const encodedPrompt = encodeURIComponent(prompt);
+  image.src = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=1024&height=1024&enhance=true&private=true`;
+}
 function msgDoneOperate() {
   $('#copilot>.inputbox').removeClass('disable');
   setTimeout(() => {
@@ -865,6 +913,7 @@ function msgDoneOperate() {
 }
 let isFirstChat = true; // 标记是否是刚进来时服务端返回的消息
 let copilot = {
+  contextVersion: 0,
   history: [
     {
       role: 'system',
@@ -877,6 +926,7 @@ let copilot = {
 3.指令"{feedback copilot}";打开 ai 助手反馈界面，用于用户想对 ai 助手的功能提出反馈时帮助他打开
 4.指令"{feedback win12}";打开反馈中心，当用户希望对除 ai 助手外的其他系统功能发送反馈时，帮他打开反馈中心
 5.指令"{settheme theme}";用于切换系统的深色、浅色模式，区别于主题。用"light"表浅色，"dark"表深色，来替换其中的"theme"
+6.指令"{draw 绘画内容}";当用户要求绘画时，先润色用户描述为清晰、具体的绘画提示词，并使用英文填入指令。并在回答末尾输出"{draw 润色后的绘画内容英文版}"指令
 如下是应用的功能介绍。
 1.设置:id 为 setting;在个性化页面中可以设置系统的主题，主题色，是否启用动画、阴影、圆角、云母 mica 效果和为所有窗口开启亚克力透明效果。
 2.关于 win12 网页版:id 为 about;简介页面有关于本项目的介绍说明与贡献者信息，更新记录页面有本项目的各版本更新记录。
@@ -908,6 +958,37 @@ let copilot = {
     },
   ],
   init: () => {
+    const titlebar = document.querySelector('#copilot>.titbar');
+    if (!titlebar) {
+      throw new Error('Copilot titlebar was not found');
+    }
+    let titlebarActions = titlebar.querySelector('.alr');
+    if (!titlebarActions) {
+      titlebarActions = document.createElement('div');
+      titlebarActions.className = 'alr';
+      titlebar.appendChild(titlebarActions);
+    }
+    if (!titlebarActions.querySelector('.clear-history')) {
+      const clearButton = document.createElement('a');
+      clearButton.className = 'btn clear-history';
+      clearButton.title = '清除聊天记录';
+      clearButton.setAttribute('aria-label', '清除聊天记录');
+      clearButton.setAttribute('role', 'button');
+      clearButton.tabIndex = 0;
+      clearButton.innerHTML = '<i class="bi bi-trash3"></i>';
+      clearButton.addEventListener('click', (event) => {
+        event.preventDefault();
+        copilot.clearHistory();
+      });
+      clearButton.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          copilot.clearHistory();
+        }
+      });
+      titlebarActions.appendChild(clearButton);
+    }
+
     $('#copilot>.chat').html('');
     $('#copilot>.chat')
       .append(`<div class="line system"><p class="text">本 AI 助手基于 Deepseek v4 pro 模型，目前支持以下操作：<br>
@@ -915,6 +996,7 @@ let copilot = {
         2.在浏览器中打开链接、搜索<br>
         3.发送对系统、AI 助手的反馈<br>
         4.切换颜色主题<br>
+        5.根据描述生成图片<br>
         需注意，根据相关法律法规，我们不向欧盟用户提供服务。</p></div>`);
     setTimeout(() => {
       $('#copilot>.chat').append(
@@ -923,6 +1005,17 @@ let copilot = {
       $('#copilot>.inputbox').removeClass('disable');
       $('#copilot>.chat').scrollTop($('#copilot>.chat')[0].scrollHeight);
     }, 200);
+  },
+  clearHistory: () => {
+    copilot.contextVersion += 1;
+    copilot.history.splice(1);
+    const previousUid = localStorage.getItem('copilot_uid');
+    let uid;
+    do {
+      uid = Math.floor(100000 + Math.random() * 900000).toString();
+    } while (uid === previousUid);
+    localStorage.setItem('copilot_uid', uid);
+    copilot.init();
   },
   send: (t, showusr = true, role = 'user') => {
     // 输入验证
@@ -935,6 +1028,7 @@ let copilot = {
       return;
     }
 
+    const contextVersion = copilot.contextVersion;
     $('#copilot>.inputbox').addClass('disable');
 
     // 敏感词过滤
@@ -942,6 +1036,9 @@ let copilot = {
       url: `https://yunzhiapi.cn/vip/win12/mgwbgl.php?msg=${encodeURIComponent(t)}`,
       method: 'GET',
       success: function (filteredText) {
+        if (contextVersion !== copilot.contextVersion) {
+          return;
+        }
         if (filteredText !== t) {
           triggerBlockAction();
           return;
@@ -949,6 +1046,9 @@ let copilot = {
         proceedSend();
       },
       error: function () {
+        if (contextVersion !== copilot.contextVersion) {
+          return;
+        }
         proceedSend();
       },
     });
@@ -1014,14 +1114,18 @@ let copilot = {
         url: apiUrl,
         method: 'GET',
         success: function (responseText) {
+          if (contextVersion !== copilot.contextVersion) {
+            return;
+          }
           msgDoneOperate();
 
           // 处理特殊命令
           let rt = responseText;
-          let r = [];
-          if (/{.+}/.test(rt)) {
-            r = rt.match(/{.+?}/g) || [];
-          }
+          const r =
+            rt.match(
+              /\{(?:openapp\s+[^{}]+|openurl\s+[^{}]+|feedback\s+(?:copilot|win12)|settheme\s+[^{}]+|draw\s+[^{}]+)\}/g,
+            ) || [];
+          const drawPrompts = [];
 
           if (r.length) {
             for (const i of r) {
@@ -1078,6 +1182,12 @@ let copilot = {
                     i,
                     `<div class="action"><p class="tit">切换外观模式</p><p class="detail">${t == 'dark' ? '深色' : '浅色'} 模式</p></div>`,
                   );
+              } else if (/^\{draw\s+[\s\S]+?\}$/.test(i)) {
+                const prompt = i.match(/^\{draw\s+([\s\S]+?)\}$/)[1].trim();
+                if (prompt) {
+                  drawPrompts.push(prompt);
+                  rt = rt.replace(i, '');
+                }
               }
             }
             $('#copilot>.chat').append(
@@ -1089,11 +1199,23 @@ let copilot = {
             );
           }
 
+          if (drawPrompts.length) {
+            const textElement = $('#copilot>.chat>.line.ai')
+              .last()
+              .find('.text')[0];
+            for (const prompt of drawPrompts) {
+              appendCopilotDrawImage(textElement, prompt);
+            }
+          }
+
           copilot.history.push({ role: 'assistant', content: responseText });
           $('#copilot>.chat').scrollTop($('#copilot>.chat')[0].scrollHeight);
           msgDoneOperate();
         },
         error: function (error) {
+          if (contextVersion !== copilot.contextVersion) {
+            return;
+          }
           console.log(error);
           $('#copilot>.chat').append(
             '<div class="line system"><p class="text">发生错误，请查看控制台输出或重试</p></div>',
@@ -1304,17 +1426,10 @@ function openDockWidget(name) {
   } else if (name == 'control') {
     //打开控制
     if ($('#control').hasClass('show')) {
-      $('#control').removeClass('show');
-      setTimeout(() => {
-        $('#control').removeClass('show-begin');
-      }, 200);
+      hide_control();
     } else {
       if ($('#datebox').hasClass('show')) {
-        $('.dock.date').removeClass('show');
-        $('#datebox').removeClass('show');
-        setTimeout(() => {
-          $('#datebox').removeClass('show-begin');
-        }, 200);
+        hide_datebox();
       }
       $('#control').css('left', $('.a.dock.control').position().left - 123);
       $('#control').addClass('show-begin');
@@ -1325,17 +1440,10 @@ function openDockWidget(name) {
   } else if (name == 'datebox') {
     //打开时间框
     if ($('#datebox').hasClass('show')) {
-      $('.dock.date').removeClass('show');
-      $('#datebox').removeClass('show');
-      setTimeout(() => {
-        $('#datebox').removeClass('show-begin');
-      }, 200);
+      hide_datebox();
     } else {
       if ($('#control').hasClass('show')) {
-        $('#control').removeClass('show');
-        setTimeout(() => {
-          $('#control').removeClass('show-begin');
-        }, 200);
+        hide_control();
       }
       $('.dock.date').addClass('show');
       $('#datebox').css('left', $('.a.dock.date').position().left - 125);
@@ -1374,6 +1482,38 @@ function hide_widgets() {
     $('#widgets').removeClass('show-begin');
   }, 200);
 }
+function hide_control() {
+  $('#control').removeClass('show');
+  setTimeout(() => {
+    $('#control').removeClass('show-begin');
+  }, 200);
+}
+function hide_datebox() {
+  $('.dock.date').removeClass('show');
+  $('#datebox').removeClass('show');
+  setTimeout(() => {
+    $('#datebox').removeClass('show-begin');
+  }, 200);
+}
+
+const taskbarPopupClosers = [
+  ['#start-menu', hide_startmenu],
+  ['#search-win', hide_search],
+  ['#widgets', hide_widgets],
+  ['#control', hide_control],
+  ['#datebox', hide_datebox],
+];
+
+page.addEventListener('click', (event) => {
+  for (const [selector, close] of taskbarPopupClosers) {
+    if (
+      $(selector).hasClass('show') &&
+      !$(event.target).closest(selector).length
+    ) {
+      close();
+    }
+  }
+});
 const FLY_HIDDEN_LIST_KEY = 'control_status_fly_hidden_list';
 function controlStatus(name) {
   if (this.classList.contains('active')) {

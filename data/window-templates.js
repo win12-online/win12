@@ -1043,6 +1043,12 @@ const windowMarkup = `	<div class="window defender" data-min-width="800" style="
 			<div class="cnt update update-web">
 				<h1 class="tit" data-i18n="about.update.name"><span></span>更新记录</h1>
 				<div style="margin-left: 20px;">
+					<details><summary><span>v10.2.5</span> 新增 mk48.io 海战游戏与 Copilot AI 绘画</summary><p>
+						&emsp;&emsp;-(更新来自 @kjmjh)<br>
+						&emsp;&emsp;-添加 mk48.io 海战游戏<br>
+						&emsp;&emsp;-为 Copilot 添加 AI 绘画功能<br>
+						&emsp;&emsp;-细节优化和修复
+					</p></details>
 					<details><summary><span>v10.2.4</span> 新增《Copliot 用户协议》和《Copliot 隐私政策》</summary><p>
 						&emsp;&emsp;-(更新来自 @tangyuan0821)<br>
 						&emsp;&emsp;-我们添加了《Copliot 用户协议》与《Copliot 隐私政策》，现已生效
@@ -1520,6 +1526,22 @@ const windowMarkup = `	<div class="window defender" data-min-width="800" style="
 		<div class="content" id="win-bilibili">
 			<!-- <iframe src="https://bilibili.com/" frameborder="0" style="width: 100%; height: 100%;" loading="lazy"></iframe> -->
 		</div>
+	</div>
+	<div class="window mk48 webapp">
+		<div class="resize-bar"></div>
+		<div class="titbar">
+			<img src="icon/mk48iologo.png" class="icon">
+			<p>mk48.io</p>
+			<div>
+				<a class="a wbtg red" onclick="hidewin('mk48')"><i class="bi bi-x-lg"></i></a>
+				<a class="a wbtg max" onclick="maxwin('mk48')"><i class="bi bi-app"></i></a>
+				<a class="a wbtg" onclick="minwin('mk48')"><i class="bi bi-dash-lg"></i></a>
+			</div>
+		</div>
+		<div class="loadback">
+			<img src="icon/mk48iologo.png" class="icon">
+		</div>
+		<div class="content" id="win-mk48"></div>
 	</div>
 	<div class="window solitaire webapp">
 		<div class="resize-bar"></div>

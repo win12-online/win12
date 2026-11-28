@@ -954,6 +954,15 @@ toggletheme() 切换主题
             <p data-i18n="bilibili.name">哔哩哔哩</p>
           </a>
           <a
+            onclick="
+              openapp('mk48');
+              hide_startmenu();
+            "
+          >
+            <img src="icon/mk48iologo.png" />
+            <p>mk48.io</p>
+          </a>
+          <a
             oncontextmenu="
               return showcm(event, 'smlapp', ['solitaire', '纸牌']);
             "

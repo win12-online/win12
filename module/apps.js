@@ -1079,7 +1079,7 @@ let apps = {
   },
   // webapp 即将网页嵌套作为应用内容，格式参考 desktop.html 中 vscode, bilibili
   webapps: {
-    apps: ['vscode', 'bilibili', 'copilot', 'minesweeper', 'solitaire'],
+    apps: ['vscode', 'bilibili', 'mk48', 'copilot', 'minesweeper', 'solitaire'],
     init: () => {
       for (const app of apps.webapps.apps) {
         if (!apps[app].loaded) apps[app].load();
@@ -1092,6 +1092,7 @@ let apps = {
   },
   vscode: createWebapp('vscode', 'https://github1s.com/'),
   bilibili: createWebapp('bilibili', 'https://bilibili.com/'),
+  mk48: createWebapp('mk48', 'https://2.mk48.io'),
   copilot: createWebapp('copilot', '/chatgh/copilot.html'),
   minesweeper: createWebapp(
     'minesweeper',
@@ -2331,7 +2332,7 @@ let apps = {
     },
 
     // 原本的开发规范不让格式化、展开
-    // 但现在统一引入了Prettier，所以可以全部格式化
+    // 但现在统一引入了 Prettier，所以可以全部格式化
 
     // 给我看蒙了这东西，写的是啥
     path: {
@@ -2432,11 +2433,11 @@ let apps = {
                 },
               ],
             },
-            用户: {
+            ['用户']: {
               folder: {
                 Administrator: {
                   folder: {
-                    推荐的项目: {
+                    ['推荐的项目']: {
                       folder: {},
                       file: [
                         {
@@ -2451,7 +2452,7 @@ let apps = {
                         },
                       ],
                     },
-                    文档: {
+                    ['文档']: {
                       folder: {
                         IISExpress: { folder: {}, file: [] },
                         PowerToys: { folder: {}, file: [] },
@@ -2469,10 +2470,10 @@ let apps = {
                         },
                       ],
                     },
-                    图片: {
+                    ['图片']: {
                       folder: {
-                        本机照片: { folder: {}, file: [] },
-                        屏幕截图: { folder: {}, file: [] },
+                        ['本机照片']: { folder: {}, file: [] },
+                        ['屏幕截图']: { folder: {}, file: [] },
                       },
                       file: [
                         {
@@ -2499,7 +2500,7 @@ let apps = {
                                     TaskManager: {},
                                     Themes: {},
                                     Shell: {},
-                                    应用程序快捷方式: {},
+                                    ['应用程序快捷方式']: {},
                                   },
                                 },
                               },
@@ -2550,7 +2551,7 @@ let apps = {
                                 Windows: {
                                   folder: {
                                     '「开始」菜单': {
-                                      folder: { 程序: { folder: {} } },
+                                      folder: { ['程序']: { folder: {} } },
                                     },
                                   },
                                 },
@@ -2561,26 +2562,30 @@ let apps = {
                       },
                       file: [],
                     },
-                    音乐: { folder: { 录音机: { folder: {}, file: [] } } },
+                    ['音乐']: {
+                      folder: { ['录音机']: { folder: {}, file: [] } },
+                    },
                   },
                 },
-                公用: {
+                ['公用']: {
                   folder: {
-                    公用文档: {
+                    ['公用文档']: {
                       folder: {
                         IISExpress: { folder: {}, file: [] },
                         PowerToys: { folder: {}, file: [] },
                       },
                       file: [],
                     },
-                    公用图片: {
+                    ['公用图片']: {
                       folder: {
-                        本机照片: { folder: {}, file: [] },
-                        屏幕截图: { folder: {}, file: [] },
+                        ['本机照片']: { folder: {}, file: [] },
+                        ['屏幕截图']: { folder: {}, file: [] },
                       },
                       file: [],
                     },
-                    公用音乐: { folder: { 录音机: { folder: {}, file: [] } } },
+                    ['公用音乐']: {
+                      folder: { ['录音机']: { folder: {}, file: [] } },
+                    },
                   },
                 },
               },

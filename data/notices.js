@@ -153,6 +153,7 @@ const nts = {
              <p>你可以使用此 AI 助手帮助你更快地完成工作，此 AI 助手基于 Deepseek v4 pro 模型 (有人用 Win12 工作？)<br>
             也请适当使用，不要谈论敏感、违规话题，<br>请有身为一个人类最基本的道德底线。<br>根据相关法律法规，我们不向欧盟用户提供服务。<br>
             在此特别感谢云智 API(yunzhiapi.cn) 为本项目提供赞助！</p>
+            <p>感谢 image.pollinations.ai 提供免费的 AI 绘画服务！</p>
             <a class="a" onclick="window.open('https://win12-online.github.io/win12/readme/legal/privacy-policy-copliot','_blank');" win12_title="在浏览器新窗口打开链接">《隐私政策》</a><br>
             <a class="a" onclick="window.open('https://win12-online.github.io/win12/readme/legal/user-agreement-copliot','_blank');" win12_title="在浏览器新窗口打开链接">《用户协议》</a><br>
             <a class="a" onclick="window.open('https://status.win12.tech/status/win12/','_blank');" win12_title="在浏览器新窗口打开链接">状态监测</a><br>
@@ -183,9 +184,9 @@ const nts = {
   recognition: {
     cnt: `
         <p class="tit">语音输入法使用须知</p>
-        <p>本语音输入法由@nb-group开发<br>
-        使用的语音识别api 仅可在使用 Chromium 内核的浏览器上使用，<br>
-        包括Microsoft Edge，Google Chrome等，<br>
+        <p>本语音输入法由@nb-group 开发<br>
+        使用的语音识别 api 仅可在使用 Chromium 内核的浏览器上使用，<br>
+        包括 Microsoft Edge，Google Chrome 等，<br>
         api（理论上）完全离线.<br>
         我们绝不会窃取您的输入信息，请放心使用。<br><br>
         每次语音识别都会重新申请一下麦克风，这是浏览器的问题，<br>
@@ -285,7 +286,7 @@ const nts = {
   },
   'word-open-files-fail': {
     cnt: lang(`<p class="tit">打开失败</p>
-            <p>Word在试图打开文件时遇到错误<br /></p>`),
+            <p>Word 在试图打开文件时遇到错误<br /></p>`),
     btn: [
       {
         type: 'main',
