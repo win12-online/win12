@@ -184,9 +184,9 @@ const nts = {
   recognition: {
     cnt: `
         <p class="tit">语音输入法使用须知</p>
-        <p>本语音输入法由@nb-group开发<br>
-        使用的语音识别api 仅可在使用 Chromium 内核的浏览器上使用，<br>
-        包括Microsoft Edge，Google Chrome等，<br>
+        <p>本语音输入法由@nb-group 开发<br>
+        使用的语音识别 api 仅可在使用 Chromium 内核的浏览器上使用，<br>
+        包括 Microsoft Edge，Google Chrome 等，<br>
         api（理论上）完全离线.<br>
         我们绝不会窃取您的输入信息，请放心使用。<br><br>
         每次语音识别都会重新申请一下麦克风，这是浏览器的问题，<br>
@@ -286,7 +286,7 @@ const nts = {
   },
   'word-open-files-fail': {
     cnt: lang(`<p class="tit">打开失败</p>
-            <p>Word在试图打开文件时遇到错误<br /></p>`),
+            <p>Word 在试图打开文件时遇到错误<br /></p>`),
     btn: [
       {
         type: 'main',
